@@ -1,77 +1,95 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import "./AnalyticsMain.css";
-import { Box, useColorMode, Text } from "@chakra-ui/react";
-import IrrigationGraph from "./IrrigationGraph";
-import axiosInstance from "@/app/lib/axiosInstance";
-import PhGraph from "./PhGraph";
-import DateRangePicker from "./DateRangePicker";
+import React, { useState } from "react";
+import { Box, Button, HStack, Input, Text, useBreakpointValue } from "@chakra-ui/react";
+import { subDays, subWeeks, subMonths, subYears, format } from "date-fns";
 
-const AnalyticsMain = () => {
-  const { colorMode } = useColorMode();
-  const [data, setData] = useState<any>(null); // State to hold the fetched data
-  const [startDate, setStartDate] = useState<string>(""); // State for start date
-  const [endDate, setEndDate] = useState<string>(""); // State for end date
+interface DateRangePickerProps {
+  setStartDate: (date: string) => void;
+  setEndDate: (date: string) => void;
+}
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Construct query parameters for date range
-        const params = {
-          start_date: startDate,
-          end_date: endDate,
-        };
+const DateRangePicker: React.FC<DateRangePickerProps> = ({ setStartDate, setEndDate }) => {
+  const today = new Date();
+  const formattedToday = format(today, "yyyy-MM-dd");
 
-        const response = await axiosInstance.get("http://localhost:8000/api/all-data/", { params });
-        setData(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+  // State for manual date selection
+  const [manualStartDate, setManualStartDate] = useState<string>("");
+  const [manualEndDate, setManualEndDate] = useState<string>("");
 
-    // Only fetch data if both start and end dates are set
-    if (startDate && endDate) {
-      fetchData();
+  const handleDateRangeClick = (days: number) => {
+    const startDate = format(subDays(today, days), "yyyy-MM-dd");
+    setStartDate(startDate);
+    setEndDate(formattedToday);
+  };
+
+  const handleWeeksClick = (weeks: number) => {
+    const startDate = format(subWeeks(today, weeks), "yyyy-MM-dd");
+    setStartDate(startDate);
+    setEndDate(formattedToday);
+  };
+
+  const handleMonthsClick = (months: number) => {
+    const startDate = format(subMonths(today, months), "yyyy-MM-dd");
+    setStartDate(startDate);
+    setEndDate(formattedToday);
+  };
+
+  const handleYearsClick = (years: number) => {
+    const startDate = format(subYears(today, years), "yyyy-MM-dd");
+    setStartDate(startDate);
+    setEndDate(formattedToday);
+  };
+
+  const handleManualDateSelection = () => {
+    if (manualStartDate && manualEndDate) {
+      setStartDate(manualStartDate);
+      setEndDate(manualEndDate);
     }
-  }, [startDate, endDate]); // Re-fetch data when dates change
+  };
 
-  if (!data) return <div>Loading...</div>;
+  // Check screen size and hide manual date picker on smaller screens
+  const showManualDatePicker = useBreakpointValue({ base: false, md: true });
 
   return (
-    <div className="container">
-      <Box
-        bg={colorMode === "light" ? "gray.200" : "gray.800"}
-        className="header"
-      >
-        <Text color={colorMode === "light" ? "gray.800" : "gray.200"}>
-          Données sur le sol
-        </Text>
-        {/* Include DateRangePicker to allow date selection */}
-        <DateRangePicker setStartDate={setStartDate} setEndDate={setEndDate} />
-      </Box>
-      
-      <Box
-        bg={colorMode === "light" ? "gray.200" : "gray.800"}
-        className="box wide"
-      >
-        <IrrigationGraph sensorData={data.sensor_data} />
-        <Box
-          bg={colorMode === "light" ? "gray.200" : "gray.700"}
-          className="box wide"
-        ></Box>
-      </Box>
-      <Box
-        bg={colorMode === "light" ? "gray.200" : "gray.800"}
-        className="box wide"
-      >
-        <PhGraph data={data.ph_data} />
-        <Box
-          bg={colorMode === "light" ? "gray.200" : "gray.700"}
-          className="box wide"
-        ></Box>
-      </Box>
-    </div>
+    <HStack
+    mr={2}
+      display="flex"
+      flexWrap="wrap"
+      justifyContent="space-between"
+      width="100%"
+      height="100%" // Ensure it takes full height of the parent
+    >
+      {/* Date range buttons - aligned top left */}
+      <HStack alignItems="flex-start" gap="2" display="flex" flexWrap="wrap">
+        <Button onClick={() => handleDateRangeClick(1)}>1d</Button>
+        {showManualDatePicker && (  <Button onClick={() => handleDateRangeClick(3)}>3d</Button>)}
+        <Button onClick={() => handleWeeksClick(1)}>1 w</Button>
+        {showManualDatePicker && (   <Button onClick={() => handleWeeksClick(2)}>2 w</Button>)}
+        <Button onClick={() => handleMonthsClick(1)}>1 m</Button>
+        <Button onClick={() => handleMonthsClick(3)}>3 m</Button>
+        <Button onClick={() => handleMonthsClick(6)}>6 m</Button>
+        <Button onClick={() => handleYearsClick(1)}>1 y</Button>
+      </HStack>
+
+      {/* Manual date range selection - only show on larger screens */}
+      {showManualDatePicker && (
+        <HStack alignItems="center" gap="2" ml="auto">
+          <Text>From:</Text>
+          <Input
+            type="date"
+            value={manualStartDate}
+            onChange={(e) => setManualStartDate(e.target.value)}
+          />
+          <Text>To:</Text>
+          <Input
+            type="date"
+            value={manualEndDate}
+            onChange={(e) => setManualEndDate(e.target.value)}
+          />
+          <Button onClick={handleManualDateSelection}>Apply</Button>
+        </HStack>
+      )}
+    </HStack>
   );
 };
 
-export default AnalyticsMain;
+export default DateRangePicker;
