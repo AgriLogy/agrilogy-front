@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, HStack, Input, Text, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Button, HStack, Input, Text, useBreakpointValue, useColorMode } from "@chakra-ui/react";
 import { subDays, subWeeks, subMonths, subYears, format } from "date-fns";
 
 interface DateRangePickerProps {
@@ -8,6 +8,7 @@ interface DateRangePickerProps {
 }
 
 const DateRangePicker: React.FC<DateRangePickerProps> = ({ setStartDate, setEndDate }) => {
+  const { colorMode } = useColorMode();
   const today = new Date();
   const formattedToday = format(today, "yyyy-MM-dd");
 
@@ -73,19 +74,21 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({ setStartDate, setEndD
       {/* Manual date range selection - only show on larger screens */}
       {showManualDatePicker && (
         <HStack alignItems="center" gap="2" ml="auto">
-          <Text>From:</Text>
+          <Text color={colorMode === "light" ? "gray.800" : "gray.200"} >From:</Text>
           <Input
             type="date"
-            value={manualStartDate}
+            value={manualStartDate} color={colorMode === "light" ? "gray.800" : "gray.200"}
             onChange={(e) => setManualStartDate(e.target.value)}
           />
-          <Text>To:</Text>
+          <Text color={colorMode === "light" ? "gray.800" : "gray.200"}>To:</Text>
           <Input
             type="date"
-            value={manualEndDate}
+            value={manualEndDate} color={colorMode === "light" ? "gray.800" : "gray.200"}
             onChange={(e) => setManualEndDate(e.target.value)}
           />
-          <Button onClick={handleManualDateSelection}>Apply</Button>
+          <Button  color={colorMode === "light" ? "gray.800" : "gray.200"} onClick={handleManualDateSelection}>
+          <Text padding={2} color={colorMode === "light" ? "gray.800" : "gray.200"} >Apply</Text>
+          </Button>
         </HStack>
       )}
     </HStack>
