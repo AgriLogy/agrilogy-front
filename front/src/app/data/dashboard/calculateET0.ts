@@ -1,4 +1,5 @@
 import { SensorData } from "./data";
+
 export const calculateET0 = (data: SensorData): number => {
   const {
     hc_air_temperature,

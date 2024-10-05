@@ -1,44 +1,36 @@
 "use client";
 import React from "react";
 import "./MainContent.css"; // Assuming you will include styles here
-import { Box, useColorMode, Text } from "@chakra-ui/react"; // Import Box and useColorMode from Chakra UI
+import { Box, Text } from "@chakra-ui/react"; // Import Box from Chakra UI
 import Zones from "./Zones";
 import SensorDataTable from "../SensorDataTable";
-import { data } from "@/app/data/dashboard/data";
 import SensorDataChart from "../SensorDataChart";
+import { data } from "@/app/data/dashboard/data";
+import useColorModeStyles from "@/app/utils/useColorModeStyles";
 
 export const MainContent = () => {
-  const { colorMode } = useColorMode();
+  const { bg, textColor } = useColorModeStyles(); // Use your utility
 
   return (
     <div className="container">
-      <Box
-        bg={colorMode === "light" ? "gray.200" : "gray.700"}
-        className="header"
-      >
-        <Text
-        color={colorMode === "light" ? "gray.700" : "gray.200"}
-        
-        >Dashboard</Text>
+      <Box bg={bg} className="header">
+        <Text color={textColor}>Dashboard</Text>
       </Box>
-      <Box bg={colorMode === "light" ? "gray.200" : "gray.700"} className="box">
+      <Box bg={bg} className="box">
         <Zones />
       </Box>
-      <Box bg={colorMode === "light" ? "gray.200" : "gray.700"} className="box">
+      <Box bg={bg} className="box">
         2
       </Box>
-      <Box bg={colorMode === "light" ? "gray.200" : "gray.700"} className="box">
+      <Box bg={bg} className="box">
         <SensorDataTable data={data} />
       </Box>
-      <Box bg={colorMode === "light" ? "gray.200" : "gray.700"} className="box">
+      <Box bg={bg} className="box">
         <SensorDataChart data={data} />
       </Box>
-      {/* <Box
-        bg={colorMode === "light" ? "gray.200" : "gray.700"}
-        className="box wide"
-      >
+      <Box bg={bg} className="box wide">
         5
-      </Box> */}
+      </Box>
     </div>
   );
 };

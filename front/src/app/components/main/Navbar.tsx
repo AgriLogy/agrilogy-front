@@ -51,13 +51,16 @@ const Sidebar = () => {
 
       {/* Sigma Icon */}
       <Tooltip label="Sigma" aria-label="Sigma">
+      <Link href="/station">
+
         <IconButton
           icon={<PiSigmaBold />}
           aria-label="Sigma"
           variant="ghost"
           mb={2}
           _hover={{ color: hoverColor }}
-        />
+          />
+          </Link>
       </Tooltip>
 
       {/* Delimiter */}

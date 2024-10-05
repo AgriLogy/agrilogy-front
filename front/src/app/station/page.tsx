@@ -5,6 +5,7 @@ import Header from "../components/main/Header";
 import Navbar from "../components/main/Navbar";
 import AnalyticsMain from "../components/analytics/AnalyticsMain";
 import useColorModeStyles from "../utils/useColorModeStyles";
+import StationMain from "../components/station/StationMain";
 
 const Page = () => {
   const { navBgColor } = useColorModeStyles(); 
@@ -28,14 +29,15 @@ const Page = () => {
         <Header />
       </GridItem>
       <GridItem
-        bg={navBgColor} 
+        bg={navBgColor}
         area={"nav"}
         display={{ base: "none", md: "block" }}
       >
         <Navbar />
       </GridItem>
       <GridItem pl="2" bg={navBgColor} area={"main"}>
-        <AnalyticsMain />
+        {/* <AnalyticsMain /> */}
+        <StationMain />
       </GridItem>
     </Grid>
   );

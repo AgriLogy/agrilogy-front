@@ -10,6 +10,7 @@ import ConductivityIrrigationGraph from "./ConductivityIrrigationGraph";
 import CumulIrrigationGraph from "./CumulIrrigationGraph";
 import TemperatureGraph from "./TemperatureGraph";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 const AnalyticsMain: React.FC = () => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
@@ -34,7 +35,7 @@ const AnalyticsMain: React.FC = () => {
     fetchData();
   }, [startDate, endDate]);
 
-  if (!data) return <div>Loading...</div>;
+  if (!data) return <LoadingSpinner/>;
 
   return (
     <div className="container">
