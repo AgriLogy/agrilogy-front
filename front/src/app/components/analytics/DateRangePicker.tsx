@@ -48,7 +48,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({ setStartDate, setEndD
   };
 
   // Check screen size and hide manual date picker on smaller screens
-  const showManualDatePicker = useBreakpointValue({ base: false, md: true });
+  const showManualDatePicker = useBreakpointValue({ base: false, lg: true });
 
   return (
     <HStack
@@ -62,13 +62,13 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({ setStartDate, setEndD
       {/* Date range buttons - aligned top left */}
       <HStack alignItems="flex-start" gap="2" display="flex" flexWrap="wrap">
         <Button onClick={() => handleDateRangeClick(1)}>1d</Button>
-        {showManualDatePicker && (  <Button onClick={() => handleDateRangeClick(3)}>3d</Button>)}
+        <Button onClick={() => handleDateRangeClick(3)}>3d</Button>
         <Button onClick={() => handleWeeksClick(1)}>1 w</Button>
-        {showManualDatePicker && (   <Button onClick={() => handleWeeksClick(2)}>2 w</Button>)}
-        <Button onClick={() => handleMonthsClick(1)}>1 m</Button>
-        <Button onClick={() => handleMonthsClick(3)}>3 m</Button>
-        <Button onClick={() => handleMonthsClick(6)}>6 m</Button>
-        <Button onClick={() => handleYearsClick(1)}>1 y</Button>
+        <Button onClick={() => handleWeeksClick(2)}>2 w</Button>
+        <Button onClick={() => handleMonthsClick(1)}>1 m</Button> 
+        {showManualDatePicker && ( <Button onClick={() => handleMonthsClick(3)}>3 m</Button> )}
+        {showManualDatePicker && ( <Button onClick={() => handleMonthsClick(6)}>6 m</Button> )}
+        {showManualDatePicker && ( <Button onClick={() => handleYearsClick(1)}>1 y</Button> )}
       </HStack>
 
       {/* Manual date range selection - only show on larger screens */}

@@ -17,7 +17,7 @@ const CustomLegend = (props: any) => {
 
 const CustomTick = ({ x, y, payload }: any) => {
   return (
-    <text x={x} y={y} textAnchor="middle" fill="#666" fontSize="10">
+    <text  x={x} y={y} textAnchor="middle" fill="#666" fontSize="10">
       {payload.value}
     </text>
   );
@@ -40,7 +40,7 @@ const IrrigationGraph = ({ sensorData }: { sensorData: any }) => {
         <LineChart data={sensorData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="formatted_timestamp" tick={<CustomTick />} />
-          <YAxis tick={<CustomTick />} />
+          <YAxis  tick={<CustomTick />} />
           <Tooltip />
           <Legend content={<CustomLegend />} />
           <Line type="monotone" dataKey="humidity_20" stroke={chartColor} name="Humidité 20 cm (%)" />

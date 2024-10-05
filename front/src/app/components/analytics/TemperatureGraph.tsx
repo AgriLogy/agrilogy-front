@@ -1,7 +1,5 @@
-// components/TemperatureGraph.tsx
 "use client";
 
-import { useEffect, useState } from 'react';
 import { Box, Text, useColorMode } from '@chakra-ui/react';
 import {
   LineChart,
@@ -13,78 +11,38 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import axiosInstance from '@/app/lib/axiosInstance';
 
 interface TemperatureData {
   formatted_timestamp: string;
   temperature: number;
 }
 
-const CustomLegend = (props: any) => {
-  return (
-    <ul
-      style={{
-        display: "flex",
-        listStyle: "none",
-        padding: 0,
-        flexWrap: "wrap",
-        margin: 0,
-        marginLeft: 60,
-      }}
-    >
-      {props.payload.map((entry: any, index: number) => (
-        <li
-          key={`item-${index}`}
-          style={{
-            marginRight: "15px",
-            fontSize: "12px",
-            color: entry.color,
-            whiteSpace: "nowrap",
-          }}
-        >
-          <span
-            style={{
-              marginRight: "5px",
-              backgroundColor: entry.color,
-              width: "10px",
-              height: "10px",
-              display: "inline-block",
-            }}
-          />
-          {entry.value}
-        </li>
-      ))}
-    </ul>
-  );
-};
+interface TemperatureGraphProps {
+  data: TemperatureData[];
+}
 
-const CustomTick = ({ x, y, payload }: any) => {
-  return (
-    <text x={x} y={y} textAnchor="middle" fill="#666" fontSize="10">
-      {payload.value}
-    </text>
-  );
-};
+const CustomLegend = (props: any) => (
+  <ul style={{ display: "flex", listStyle: "none", padding: 0, flexWrap: "wrap", margin: 0, marginLeft: 60 }}>
+    {props.payload.map((entry: any, index: number) => (
+      <li key={`item-${index}`} style={{ marginRight: "15px", fontSize: "12px", color: entry.color, whiteSpace: "nowrap" }}>
+        <span style={{ marginRight: "5px", backgroundColor: entry.color, width: "10px", height: "10px", display: "inline-block" }} />
+        {entry.value}
+      </li>
+    ))}
+  </ul>
+);
 
-const TemperatureGraph = () => {
-  const [chartData, setChartData] = useState<TemperatureData[]>([]);
+const CustomTick = ({ x, y, payload }: any) => (
+  <text x={x} y={y} textAnchor="middle" fill="#666" fontSize="10">
+    {payload.value}
+  </text>
+);
+
+const TemperatureGraph: React.FC<TemperatureGraphProps> = ({ data }) => {
   const { colorMode } = useColorMode();
   const chartBg = colorMode === "light" ? "white" : "gray.800";
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axiosInstance.get<TemperatureData[]>('api/temperaturedata/');
-        setChartData(response.data);
-      } catch (error) {
-        console.error('Error fetching temperature data:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (!chartData.length) return <div>Loading...</div>;
+  if (!data.length) return <div>No data available</div>;
 
   return (
     <Box width="100%" height="100%" bg={chartBg} borderRadius="md" boxShadow="lg" p={2}>
@@ -92,9 +50,9 @@ const TemperatureGraph = () => {
         Température
       </Text>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={chartData}>
+        <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="timestamp" tick={<CustomTick />} />
+          <XAxis dataKey="formatted_timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
           <Tooltip />
           <Legend content={<CustomLegend />} />

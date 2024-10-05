@@ -6,6 +6,9 @@ import IrrigationGraph from "./IrrigationGraph";
 import axiosInstance from "@/app/lib/axiosInstance";
 import PhGraph from "./PhGraph";
 import DateRangePicker from "./DateRangePicker";
+import ConductivityIrrigationGraph from "./ConductivityIrrigationGraph";
+import CumulIrrigationGraph from "./CumulIrrigationGraph";
+import TemperatureGraph from "./TemperatureGraph";
 
 const AnalyticsMain: React.FC = () => {
   const { colorMode } = useColorMode();
@@ -54,6 +57,16 @@ const AnalyticsMain: React.FC = () => {
 
       <Box bg={colorMode === "light" ? "gray.200" : "gray.800"} className="box wide">
         <PhGraph data={data.ph_data} />
+      </Box>
+
+      <Box bg={colorMode === "light" ? "gray.200" : "gray.700"} className="box wide">
+        <ConductivityIrrigationGraph data={data.conductivity_data} />
+      </Box>
+      <Box bg={colorMode === "light" ? "gray.200" : "gray.700"} className="box wide">
+        <CumulIrrigationGraph data={data.cumul_data} />
+      </Box>
+      <Box bg={colorMode === "light" ? "gray.200" : "gray.700"} className="box wide">
+        <TemperatureGraph data={data.temperature_data} />
       </Box>
     </div>
   );
