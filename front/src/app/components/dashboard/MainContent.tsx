@@ -9,6 +9,7 @@ import SensorDataChart from "../SensorDataChart";
 import StatusIndicators from "./StatusIndicators"; // Import the new component
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import { SensorData } from "@/app/data/dashboard/data";
+import GoogleMapWeather from "../GoogleMapWeather";
 
 export const MainContent: React.FC = () => {
   const { bg, textColor } = useColorModeStyles(); 
@@ -69,7 +70,7 @@ export const MainContent: React.FC = () => {
         <SensorDataChart data={sensorData} />
       </Box>
       <Box bg={bg} className="box wide">
-        5
+        <GoogleMapWeather/>
       </Box>
     </div>
   );
