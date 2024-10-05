@@ -8,24 +8,21 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  useColorMode,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { BellIcon, SettingsIcon } from '@chakra-ui/icons';
+import { BellIcon, SettingsIcon, MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { FaUser } from "react-icons/fa";
-import { MoonIcon, SunIcon } from '@chakra-ui/icons'; // Import icons for toggle
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
 
 const Header = () => {
-  const { toggleColorMode } = useColorMode();
-  const bgColor = useColorModeValue('gray.200', 'gray.800');
-  const textColor = useColorModeValue('gray.800', 'gray.200');
+  const { bg, textColor, toggleColorMode } = useColorModeStyles(); // Use the utility
 
   return (
     <Flex
       justify="space-between"
       align="center"
       p={4}
-      bg={bgColor}
+      bg={bg}
       h="100%"
     >
       <Text color={textColor} fontSize="xl" fontWeight="bold">
@@ -49,7 +46,7 @@ const Header = () => {
         </Menu>
 
         <IconButton
-          icon={useColorModeValue(<MoonIcon />, <SunIcon />)} // Use icons instead of strings
+          icon={bg === 'gray.200' ? <MoonIcon /> : <SunIcon />} // Toggle icons based on bg color
           aria-label="Toggle Color Mode"
           variant="ghost"
           onClick={toggleColorMode}

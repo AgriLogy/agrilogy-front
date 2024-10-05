@@ -1,31 +1,31 @@
 "use client";
 import React from "react";
-import { Flex, IconButton, useColorMode, Box, Tooltip, Link } from "@chakra-ui/react";
+import { Flex, IconButton, Box, Tooltip, Link } from "@chakra-ui/react";
 import { FaHome, FaChartLine, FaLeaf, FaCog } from "react-icons/fa";
 import { PiSigmaBold } from "react-icons/pi";
+import useColorModeStyles from "@/app/utils/useColorModeStyles";
 
 const Sidebar = () => {
-  const { colorMode } = useColorMode();
+  const { bg, hoverColor } = useColorModeStyles(); // Get styles from the utility
 
   return (
     <Flex
       direction="column"
       align="center"
-      bg={colorMode === "light" ? "gray.200" : "gray.800"}
+      bg={bg}
       p={4}
       width="100%"
-      height="100%" // Add this line to make it full height
-      // borderBottomRightRadius='10'
+      height="100%"
     >
       {/* Home Icon */}
       <Tooltip label="Home" aria-label="Home">
-      <Link href="/dashboard">
-        <IconButton
-          icon={<FaHome />}
-          aria-label="Home"
-          variant="ghost"
-          mb={2}
-          _hover={{ color: colorMode === "light" ? "blue.500" : "blue.300" }}
+        <Link href="/dashboard">
+          <IconButton
+            icon={<FaHome />}
+            aria-label="Home"
+            variant="ghost"
+            mb={2}
+            _hover={{ color: hoverColor }}
           />
         </Link>
       </Tooltip>
@@ -35,15 +35,15 @@ const Sidebar = () => {
 
       {/* Analytics Icon */}
       <Tooltip label="Analytics" aria-label="Analytics">
-      <Link href="/analytics">
-        <IconButton
-          icon={<FaChartLine />}
-          aria-label="Analytics"
-          variant="ghost"
-          mb={2}
-          _hover={{ color: colorMode === "light" ? "blue.500" : "blue.300" }}
+        <Link href="/analytics">
+          <IconButton
+            icon={<FaChartLine />}
+            aria-label="Analytics"
+            variant="ghost"
+            mb={2}
+            _hover={{ color: hoverColor }}
           />
-          </Link>
+        </Link>
       </Tooltip>
 
       {/* Delimiter */}
@@ -56,7 +56,7 @@ const Sidebar = () => {
           aria-label="Sigma"
           variant="ghost"
           mb={2}
-          _hover={{ color: colorMode === "light" ? "blue.500" : "blue.300" }}
+          _hover={{ color: hoverColor }}
         />
       </Tooltip>
 
@@ -70,7 +70,7 @@ const Sidebar = () => {
           aria-label="Soil Moisture"
           variant="ghost"
           mb={2}
-          _hover={{ color: colorMode === "light" ? "blue.500" : "blue.300" }}
+          _hover={{ color: hoverColor }}
         />
       </Tooltip>
 
@@ -83,12 +83,11 @@ const Sidebar = () => {
           icon={<FaCog />}
           aria-label="Settings"
           variant="ghost"
-          _hover={{ color: colorMode === "light" ? "blue.500" : "blue.300" }}
+          _hover={{ color: hoverColor }}
         />
       </Tooltip>
     </Flex>
   );
 };
-
 
 export default Sidebar;

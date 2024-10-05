@@ -1,6 +1,8 @@
+"use client";
 import React, { useState } from "react";
-import { Box, Button, HStack, Input, Text, useBreakpointValue, useColorMode } from "@chakra-ui/react";
+import { Box, Button, HStack, Input, Text, useBreakpointValue } from "@chakra-ui/react";
 import { subDays, subWeeks, subMonths, subYears, format } from "date-fns";
+import useColorModeStyles from "@/app/utils/useColorModeStyles";
 
 interface DateRangePickerProps {
   setStartDate: (date: string) => void;
@@ -8,11 +10,10 @@ interface DateRangePickerProps {
 }
 
 const DateRangePicker: React.FC<DateRangePickerProps> = ({ setStartDate, setEndDate }) => {
-  const { colorMode } = useColorMode();
+  const { textColor } = useColorModeStyles();
   const today = new Date();
   const formattedToday = format(today, "yyyy-MM-dd");
 
-  // State for manual date selection
   const [manualStartDate, setManualStartDate] = useState<string>("");
   const [manualEndDate, setManualEndDate] = useState<string>("");
 
@@ -47,47 +48,34 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({ setStartDate, setEndD
     }
   };
 
-  // Check screen size and hide manual date picker on smaller screens
   const showManualDatePicker = useBreakpointValue({ base: false, lg: true });
 
   return (
     <HStack
-    mr={2}
-      display="flex"
-      flexWrap="wrap"
+      spacing={2}
+      overflow="hidden" // Prevent overflow
       justifyContent="space-between"
       width="100%"
-      height="100%" // Ensure it takes full height of the parent
     >
-      {/* Date range buttons - aligned top left */}
-      <HStack alignItems="flex-start" gap="2" display="flex" flexWrap="wrap">
+      {/* <HStack alignItems="flex-start" gap="2" flexWrap="wrap"> */}
         <Button onClick={() => handleDateRangeClick(1)}>1d</Button>
         <Button onClick={() => handleDateRangeClick(3)}>3d</Button>
         <Button onClick={() => handleWeeksClick(1)}>1 w</Button>
         <Button onClick={() => handleWeeksClick(2)}>2 w</Button>
-        <Button onClick={() => handleMonthsClick(1)}>1 m</Button> 
-        {showManualDatePicker && ( <Button onClick={() => handleMonthsClick(3)}>3 m</Button> )}
-        {showManualDatePicker && ( <Button onClick={() => handleMonthsClick(6)}>6 m</Button> )}
-        {showManualDatePicker && ( <Button onClick={() => handleYearsClick(1)}>1 y</Button> )}
-      </HStack>
+        <Button onClick={() => handleMonthsClick(1)}>1 m</Button>
+        {showManualDatePicker && <Button onClick={() => handleMonthsClick(3)}>3 m</Button>}
+        {showManualDatePicker && <Button onClick={() => handleMonthsClick(6)}>6 m</Button>}
+        {showManualDatePicker && <Button onClick={() => handleYearsClick(1)}>1 y</Button>}
+      {/* </HStack> */}
 
-      {/* Manual date range selection - only show on larger screens */}
       {showManualDatePicker && (
-        <HStack alignItems="center" gap="2" ml="auto">
-          <Text color={colorMode === "light" ? "gray.800" : "gray.200"} >From:</Text>
-          <Input
-            type="date"
-            value={manualStartDate} color={colorMode === "light" ? "gray.800" : "gray.200"}
-            onChange={(e) => setManualStartDate(e.target.value)}
-          />
-          <Text color={colorMode === "light" ? "gray.800" : "gray.200"}>To:</Text>
-          <Input
-            type="date"
-            value={manualEndDate} color={colorMode === "light" ? "gray.800" : "gray.200"}
-            onChange={(e) => setManualEndDate(e.target.value)}
-          />
-          <Button  color={colorMode === "light" ? "gray.800" : "gray.200"} onClick={handleManualDateSelection}>
-          <Text padding={2} color={colorMode === "light" ? "gray.800" : "gray.200"} >Apply</Text>
+        <HStack alignItems="center" gap="1" ml="auto" mr={2}>
+          <Text color={textColor}>From:</Text>
+          <Input color={textColor} type="date" value={manualStartDate} onChange={(e) => setManualStartDate(e.target.value)} />
+          <Text color={textColor}>To:</Text>
+          <Input color={textColor} type="date" value={manualEndDate} onChange={(e) => setManualEndDate(e.target.value)} />
+          <Button onClick={handleManualDateSelection}>
+            <Text color={textColor} padding={2}>Apply</Text>
           </Button>
         </HStack>
       )}

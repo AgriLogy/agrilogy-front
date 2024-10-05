@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import "./AnalyticsMain.css";
-import { Box, useColorMode, Text } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import IrrigationGraph from "./IrrigationGraph";
 import axiosInstance from "@/app/lib/axiosInstance";
 import PhGraph from "./PhGraph";
@@ -9,9 +9,10 @@ import DateRangePicker from "./DateRangePicker";
 import ConductivityIrrigationGraph from "./ConductivityIrrigationGraph";
 import CumulIrrigationGraph from "./CumulIrrigationGraph";
 import TemperatureGraph from "./TemperatureGraph";
+import useColorModeStyles from "@/app/utils/useColorModeStyles";
 
 const AnalyticsMain: React.FC = () => {
-  const { colorMode } = useColorMode();
+  const { bg, textColor } = useColorModeStyles(); // Use the utility
   const [data, setData] = useState<any>(null); 
   const [startDate, setStartDate] = useState<string>(""); 
   const [endDate, setEndDate] = useState<string>(new Date().toISOString().split('T')[0]);
@@ -31,41 +32,37 @@ const AnalyticsMain: React.FC = () => {
       }
     };
     fetchData();
-  }, [startDate, endDate]); // Re-fetch data when dates change
+  }, [startDate, endDate]);
 
   if (!data) return <div>Loading...</div>;
 
   return (
     <div className="container">
-      <Box
-        bg={colorMode === "light" ? "gray.200" : "gray.800"}
-        className="header"
-      >
-        <Text color={colorMode === "light" ? "gray.800" : "gray.200"}>
-          Données sur le sol
-        </Text>
+      <Box bg={bg} className="header">
+        <Text color={textColor}>Données sur le sol</Text>
       </Box>
 
-      <Box
-        bg={colorMode === "light" ? "gray.200" : "gray.800" } className="header" mt={0} mb={0}>
+      <Box bg={bg} className="header" mt={0} mb={0}>
         <DateRangePicker setStartDate={setStartDate} setEndDate={setEndDate} />
       </Box>
 
-      <Box bg={colorMode === "light" ? "gray.200" : "gray.800"} className="box wide">
+      <Box bg={bg} className="box wide">
         <IrrigationGraph sensorData={data.sensor_data} />
       </Box>
 
-      <Box bg={colorMode === "light" ? "gray.200" : "gray.800"} className="box wide">
+      <Box bg={bg} className="box wide">
         <PhGraph data={data.ph_data} />
       </Box>
 
-      <Box bg={colorMode === "light" ? "gray.200" : "gray.700"} className="box wide">
+      <Box bg={bg} className="box wide">
         <ConductivityIrrigationGraph data={data.conductivity_data} />
       </Box>
-      <Box bg={colorMode === "light" ? "gray.200" : "gray.700"} className="box wide">
+
+      <Box bg={bg} className="box wide">
         <CumulIrrigationGraph data={data.cumul_data} />
       </Box>
-      <Box bg={colorMode === "light" ? "gray.200" : "gray.700"} className="box wide">
+
+      <Box bg={bg} className="box wide">
         <TemperatureGraph data={data.temperature_data} />
       </Box>
     </div>
