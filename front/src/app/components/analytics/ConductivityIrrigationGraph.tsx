@@ -15,7 +15,7 @@ import {
 import axiosInstance from "@/app/lib/axiosInstance";
 
 interface ConductivityData {
-	timestamp: string;
+	formatted_timestamp: string;
 	conductivity: number;
 	irrigation: number;
   }

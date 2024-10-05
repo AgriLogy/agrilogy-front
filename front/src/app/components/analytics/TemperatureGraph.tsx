@@ -16,7 +16,7 @@ import {
 import axiosInstance from '@/app/lib/axiosInstance';
 
 interface TemperatureData {
-  timestamp: string;
+  formatted_timestamp: string;
   temperature: number;
 }
 

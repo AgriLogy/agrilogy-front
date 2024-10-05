@@ -1,6 +1,6 @@
 // app/data/analytics/temperature.ts
 export interface TemperatureData {
-	timestamp: string;
+	formatted_timestamp: string;
 	temperature: number;
   }
   

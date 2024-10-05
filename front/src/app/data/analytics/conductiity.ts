@@ -1,6 +1,6 @@
 // data/conductivityData.ts
 export interface ConductivityData {
-	timestamp: string;
+	formatted_timestamp: string;
 	conductivity: number;
 	irrigation: number;
   }

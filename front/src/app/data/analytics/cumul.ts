@@ -1,5 +1,5 @@
 export interface CumulData {
-	timestamp: string;
+	formatted_timestamp: string;
 	cumul: number;
   }
   

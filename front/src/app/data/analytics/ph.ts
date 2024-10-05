@@ -1,5 +1,5 @@
 export interface PhData {
-	timestamp: string;
+	formatted_timestamp: string;
 	ph: number;
   }
   

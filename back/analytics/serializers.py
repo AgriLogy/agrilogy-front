@@ -1,38 +1,62 @@
 from rest_framework import serializers
 from .models import PhData, TemperatureData, SensorData, CumulData, ConductivityData
+from django.utils import timezone
 
 class PhDataSerializer(serializers.ModelSerializer):
+    formatted_timestamp = serializers.SerializerMethodField()
+
     class Meta:
         model = PhData
-        fields = '__all__'
+        fields = ['id', 'formatted_timestamp', 'ph']
+
+    def get_formatted_timestamp(self, obj):
+        # return obj.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+        return obj.timestamp.strftime('%Y-%m-%d %H:%M')
 
 
 class TemperatureDataSerializer(serializers.ModelSerializer):
+    formatted_timestamp = serializers.SerializerMethodField()
+
     class Meta:
         model = TemperatureData
-        fields = '__all__'
+        fields = ['id', 'formatted_timestamp', 'temperature']
+
+    def get_formatted_timestamp(self, obj):
+        # return obj.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+        return obj.timestamp.strftime('%Y-%m-%d %H:%M')
 
 
 class SensorDataSerializer(serializers.ModelSerializer):
+    formatted_timestamp = serializers.SerializerMethodField()
+
     class Meta:
         model = SensorData
-        fields = '__all__'
+        fields = ['id', 'formatted_timestamp', 'depth', 'humidity_20', 'humidity_40', 'humidity_60', 'irrigation']
+
+    def get_formatted_timestamp(self, obj):
+        # return obj.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+        return obj.timestamp.strftime('%Y-%m-%d %H:%M')
 
 
 class CumulDataSerializer(serializers.ModelSerializer):
+    formatted_timestamp = serializers.SerializerMethodField()
+
     class Meta:
         model = CumulData
-        fields = '__all__'
+        fields = ['id', 'formatted_timestamp', 'cumul']
+
+    def get_formatted_timestamp(self, obj):
+        # return obj.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+        return obj.timestamp.strftime('%Y-%m-%d %H:%M')
 
 
 class ConductivityDataSerializer(serializers.ModelSerializer):
+    formatted_timestamp = serializers.SerializerMethodField()
+
     class Meta:
         model = ConductivityData
-        fields = '__all__'
+        fields = ['id', 'formatted_timestamp', 'conductivity', 'irrigation']
 
-class AllDataSerializer(serializers.Serializer):
-    ph_data = PhDataSerializer(many=True)
-    temperature_data = TemperatureDataSerializer(many=True)
-    sensor_data = SensorDataSerializer(many=True)
-    cumul_data = CumulDataSerializer(many=True)
-    conductivity_data = ConductivityDataSerializer(many=True)
+    def get_formatted_timestamp(self, obj):
+        # return obj.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+        return obj.timestamp.strftime('%Y-%m-%d %H:%M')

@@ -1,5 +1,5 @@
 export interface SensorData {
-  timestamp: string;
+  formatted_timestamp: string;
   hc_air_temperature: number;
   wetbulb_temperature: number;
   solar_radiation: number;

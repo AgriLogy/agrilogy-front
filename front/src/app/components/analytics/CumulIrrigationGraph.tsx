@@ -17,7 +17,7 @@ import axiosInstance from '@/app/lib/axiosInstance';
 // import { CumulData, cumulData } from '@/app/data/analytics/cumul';
 
 export interface CumulData {
-	timestamp: string;
+	formatted_timestamp: string;
 	cumul: number;
   }
   

@@ -39,7 +39,7 @@ const IrrigationGraph = ({ sensorData }: { sensorData: any }) => {
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={sensorData}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="timestamp" tick={<CustomTick />} />
+          <XAxis dataKey="formatted_timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
           <Tooltip />
           <Legend content={<CustomLegend />} />

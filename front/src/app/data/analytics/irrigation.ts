@@ -1,5 +1,5 @@
 export interface SensorData {
-	timestamp: string;
+	formatted_timestamp: string;
 	depth: number;
 	humidity_20: number;
 	humidity_40: number;
@@ -8,8 +8,8 @@ export interface SensorData {
   }
   
   // Génération de données fictives
-  export const generateDummyData = (): { timestamp: string; sensors: SensorData[] }[] => {
-	const data: { timestamp: string; sensors: SensorData[] }[] = [];
+  export const generateDummyData = (): { formatted_timestamp: string; sensors: SensorData[] }[] => {
+	const data: { formatted_timestamp: string; sensors: SensorData[] }[] = [];
   
 	for (let i = 0; i < 10; i++) { // Générer 10 entrées
 	  const timestamp = new Date(Date.now() - i * 10 * 60 * 1000).toISOString(); // Données toutes les 10 minutes
@@ -30,5 +30,5 @@ export interface SensorData {
   };
   
   // Exemple de données générées
-  export const data: { timestamp: string; sensors: SensorData[] }[] = generateDummyData();
+  export const data: { formatted_timestamp: string; sensors: SensorData[] }[] = generateDummyData();
   

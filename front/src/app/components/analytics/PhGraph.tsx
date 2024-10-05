@@ -13,7 +13,7 @@ import {
 
 interface PhGraphProps {
   data: {
-    timestamp: string;
+    formatted_timestamp: string;
     ph: number;
   }[];
 }
@@ -47,7 +47,7 @@ const PhGraph: React.FC<PhGraphProps> = ({ data }) => {
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="timestamp" tick={<CustomTick />} />
+          <XAxis dataKey="formatted_timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
           <Tooltip />
           <Legend content={<CustomLegend />} />
