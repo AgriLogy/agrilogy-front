@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import {
   Box,
@@ -11,17 +10,20 @@ import {
   useBreakpointValue,
   Text,
 } from "@chakra-ui/react";
+import useColorModeStyles from "../utils/useColorModeStyles";
 import { SensorData } from "../data/dashboard/data";
-import useColorModeStyles from "../utils/useColorModeStyles"; // Import your utility
 
 interface SensorDataTableProps {
   data: SensorData[];
 }
 
 const SensorDataTable: React.FC<SensorDataTableProps> = ({ data }) => {
-  const { bg, textColor, hoverColor, bgColor, navBgColor } = useColorModeStyles(); // Use your utility
+  const { bg, textColor, navBgColor } = useColorModeStyles();
   const fontSize = useBreakpointValue({ base: "sm", md: "md" });
   const p = useBreakpointValue({ base: 2, md: 4 });
+
+  // Get the last 8 records
+  const lastRecords = data.slice(-8);
 
   return (
     <Box
@@ -31,42 +33,40 @@ const SensorDataTable: React.FC<SensorDataTableProps> = ({ data }) => {
       borderRadius="md"
       boxShadow="lg"
       p={p}
-      overflowX="auto"
+      overflowX="auto" // Ensure horizontal scroll is supported
     >
       <Text color={textColor} fontSize="lg" fontWeight="bold" mb={4}>
-        Sensor Data Table
+        Table des données des capteurs
       </Text>
       <div className="table-container">
         <Table variant="striped" size="sm" width="100%">
           <Thead>
             <Tr color={navBgColor}>
-              <Th fontSize={fontSize} whiteSpace="nowrap">Timestamp</Th>
-              <Th fontSize={fontSize} whiteSpace="nowrap">HC Air Temperature (°C)</Th>
-              <Th fontSize={fontSize} whiteSpace="nowrap">Wetbulb Temperature (°C)</Th>
-              <Th fontSize={fontSize} whiteSpace="nowrap">Solar Radiation (W/m²)</Th>
-              <Th fontSize={fontSize} whiteSpace="nowrap">VPD</Th>
-              <Th fontSize={fontSize} whiteSpace="nowrap">HC Relative Humidity (%)</Th>
-              <Th fontSize={fontSize} whiteSpace="nowrap">Precipitation (mm)</Th>
-              <Th fontSize={fontSize} whiteSpace="nowrap">Leaf Wetness</Th>
-              <Th fontSize={fontSize} whiteSpace="nowrap">Wind Speed (m/s)</Th>
-              <Th fontSize={fontSize} whiteSpace="nowrap">Solar Panel (V)</Th>
-              <Th fontSize={fontSize} whiteSpace="nowrap">Battery Voltage (V)</Th>
-              <Th fontSize={fontSize} whiteSpace="nowrap">Delta T</Th>
-              <Th fontSize={fontSize} whiteSpace="nowrap">Sunshine Duration (min)</Th>
-              <Th fontSize={fontSize} whiteSpace="nowrap">ET0 (mm/day)</Th>
+              <Th fontSize={fontSize}>Timestamp</Th>
+              <Th fontSize={fontSize}>Temp. Air HC (°C)</Th>
+              <Th fontSize={fontSize}>Temp. Humide (°C)</Th>
+              <Th fontSize={fontSize}>Rayonnement Solaire (W/m²)</Th>
+              <Th fontSize={fontSize}>VPD</Th>
+              <Th fontSize={fontSize}>Humidité Rel. HC (%)</Th>
+              <Th fontSize={fontSize}>Précipitation (mm)</Th>
+              <Th fontSize={fontSize}>Humidité Foliaire</Th>
+              <Th fontSize={fontSize}>Vitesse Vent (m/s)</Th>
+              <Th fontSize={fontSize}>Tension Panneau (V)</Th>
+              <Th fontSize={fontSize}>Tension Batterie (V)</Th>
+              <Th fontSize={fontSize}>Delta T</Th>
+              <Th fontSize={fontSize}>Durée ensoleillement (min)</Th>
+              <Th fontSize={fontSize}>ET0 (mm/jour)</Th>
             </Tr>
           </Thead>
           <Tbody>
-            {data.map((entry, index) => (
+            {lastRecords.map((entry, index) => (
               <Tr key={index}>
-                <Td fontSize={fontSize} className="fixed-column" color={textColor}>
-                  {entry.formatted_timestamp}
-                </Td>
+                <Td fontSize={fontSize} color={textColor}>{entry.formatted_timestamp}</Td>
                 <Td fontSize={fontSize} color={textColor}>{entry.hc_air_temperature}°C</Td>
                 <Td fontSize={fontSize} color={textColor}>{entry.wetbulb_temperature}°C</Td>
                 <Td fontSize={fontSize} color={textColor}>{entry.solar_radiation} W/m²</Td>
                 <Td fontSize={fontSize} color={textColor}>{entry.vpd}</Td>
-                <Td fontSize={fontSize} color={textColor}>{entry.hc_relative_humidity}%</Td>
+                <Td fontSize={fontSize} color={textColor}>{entry.relative_humidity}%</Td>
                 <Td fontSize={fontSize} color={textColor}>{entry.precipitation} mm</Td>
                 <Td fontSize={fontSize} color={textColor}>{entry.leaf_wetness}</Td>
                 <Td fontSize={fontSize} color={textColor}>{entry.wind_speed} m/s</Td>
@@ -74,7 +74,7 @@ const SensorDataTable: React.FC<SensorDataTableProps> = ({ data }) => {
                 <Td fontSize={fontSize} color={textColor}>{entry.battery_voltage} V</Td>
                 <Td fontSize={fontSize} color={textColor}>{entry.delta_t}</Td>
                 <Td fontSize={fontSize} color={textColor}>{entry.sunshine_duration} min</Td>
-                <Td fontSize={fontSize} color={textColor}>{entry.et0?.toFixed(2)} mm/day</Td>
+                <Td fontSize={fontSize} color={textColor}>{entry.et0?.toFixed(2)} mm/jour</Td>
               </Tr>
             ))}
           </Tbody>
@@ -82,24 +82,10 @@ const SensorDataTable: React.FC<SensorDataTableProps> = ({ data }) => {
       </div>
       <style jsx>{`
         .table-container {
-          max-height: 400px; /* Set a max height for the container */
-          overflow-y: auto;  /* Enable vertical scrolling */
+          max-height: 400px; // Limit height for vertical scrolling if needed
+          overflow-y: auto;
           position: relative;
-          overflow-x: auto;  /* Enable horizontal scrolling */
-        }
-
-        .fixed-column {
-          position: sticky;
-          left: 0;
-          background: ${bg}; /* Ensures the background matches the table */
-          z-index: 1;
-        }
-
-        thead {
-          position: sticky;
-          top: 0;
-          background: ${navBgColor}; /* Ensures the header matches the table background */
-          z-index: 2;
+          overflow-x: auto; // Enable horizontal scrolling
         }
       `}</style>
     </Box>

@@ -7,7 +7,7 @@ import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'your_project_name.settings')
 django.setup()
 
-from analytics.models import PhData, TemperatureData, SensorData, CumulData, ConductivityData
+from analytics.models import PhData, TemperatureData, SensorData, CumulData, ConductivityData, DashboardSensorData
 
 def generate_random_data():
     # Set the starting date for the simulation
@@ -45,8 +45,40 @@ def generate_random_data():
 
         # Generate random conductivity data
         conductivity = round(random.uniform(0.0, 5.0), 2)  # Conductivity in mS/cm
-        irrigation = random.randint(0, 1)  # Binary irrigation flag
-        ConductivityData.objects.create(timestamp=timestamp, conductivity=conductivity, irrigation=irrigation)
+        irrigation_flag = random.randint(0, 1)  # Binary irrigation flag
+        ConductivityData.objects.create(timestamp=timestamp, conductivity=conductivity, irrigation=irrigation_flag)
+
+        # Generate random dashboard sensor data
+        air_temperature = round(random.uniform(15.0, 35.0), 2)  # Air temperature in °C
+        wetbulb_temperature = round(random.uniform(10.0, 30.0), 2)  # Wetbulb temperature in °C
+        solar_radiation = round(random.uniform(0.0, 1000.0), 2)  # Solar radiation in W/m²
+        vpd = round(random.uniform(0.0, 5.0), 2)  # VPD in kPa
+        relative_humidity = round(random.uniform(0.0, 100.0), 2)  # Relative humidity in %
+        precipitation = round(random.uniform(0.0, 50.0), 2)  # Precipitation in mm
+        leaf_wetness = round(random.uniform(0.0, 1.0), 2)  # Leaf wetness index
+        wind_speed = round(random.uniform(0.0, 20.0), 2)  # Wind speed in m/s
+        solar_panel_voltage = round(random.uniform(0.0, 100.0), 2)  # Solar panel voltage in V
+        battery_voltage = round(random.uniform(0.0, 15.0), 2)  # Battery voltage in V
+        delta_t = round(random.uniform(-5.0, 5.0), 2)  # Delta T in °C
+        sunshine_duration = round(random.uniform(0.0, 24.0), 2)  # Sunshine duration in hours
+        et0 = round(random.uniform(0.0, 10.0), 2)  # ET0 in mm/day
+
+        DashboardSensorData.objects.create(
+            timestamp=timestamp,
+            air_temperature=air_temperature,
+            wetbulb_temperature=wetbulb_temperature,
+            solar_radiation=solar_radiation,
+            vpd=vpd,
+            relative_humidity=relative_humidity,
+            precipitation=precipitation,
+            leaf_wetness=leaf_wetness,
+            wind_speed=wind_speed,
+            solar_panel_voltage=solar_panel_voltage,
+            battery_voltage=battery_voltage,
+            delta_t=delta_t,
+            sunshine_duration=sunshine_duration,
+            et0=et0
+        )
 
 if __name__ == "__main__":
     generate_random_data()

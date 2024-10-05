@@ -18,7 +18,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { SensorData } from "../data/dashboard/data"; 
-import { calculateET0 } from "../data/dashboard/calculateET0";
+// import { calculateET0 } from "../data/dashboard/calculateET0";
 
 interface SensorDataChartProps {
   data: SensorData[];
@@ -32,8 +32,8 @@ const CustomLegend = (props: any) => {
         display: "flex",
         listStyle: "none",
         padding: 0,
-        flexWrap: "wrap",  // Allow wrapping of items
-        margin: 0,         // Remove default margin
+        flexWrap: "wrap",
+        margin: 0,
       }}
     >
       {props.payload.map((entry: any, index: number) => (
@@ -43,7 +43,7 @@ const CustomLegend = (props: any) => {
             marginRight: "15px",
             fontSize: "12px",
             color: entry.color,
-            whiteSpace: "nowrap", // Prevent text wrapping within each item
+            whiteSpace: "nowrap",
           }}
         >
           <span
@@ -62,7 +62,6 @@ const CustomLegend = (props: any) => {
   );
 };
 
-
 // Custom Tick Component for X and Y Axis
 const CustomTick = ({ x, y, payload }: any) => {
   return (
@@ -76,15 +75,16 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
   // Calculate ET0 for each data point
   const dataWithET0 = data.map((sensorData) => ({
     ...sensorData,
-    et0: calculateET0(sensorData),
   }));
+
+  // Slice to get only the last 8 entries
+  const lastEightData = dataWithET0.slice(-8);
 
   const chartColor = useColorModeValue("#4A90E2", "#90CDF4");
   const chartBg = useColorModeValue("white", "gray.800");
   const textColor = useColorModeValue("gray.800", "gray.200");
   const p = useBreakpointValue({ base: 2, md: 4 });
   const { colorMode } = useColorMode();
-
 
   return (
     <Box
@@ -96,19 +96,19 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
       p={p}
       overflow="hidden"
     >
-      <Text  color={colorMode === "light" ? "gray.700" : "gray.200"} fontSize="lg" fontWeight="bold" mb={4}>
-      ET0 / 10 minutes
+      <Text color={colorMode === "light" ? "gray.700" : "gray.200"} fontSize="lg" fontWeight="bold" mb={4}>
+        ET0 / H
       </Text>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={dataWithET0}>
+        <LineChart data={lastEightData}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="timestamp" tick={<CustomTick />} />
+          <XAxis dataKey="formatted_timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
           <Tooltip />
           <Legend content={<CustomLegend />} />
           <Line
             type="monotone"
-            dataKey="hc_air_temperature"
+            dataKey="air_temperature"
             stroke={chartColor}
             name="Température de l'air"
           />

@@ -43,3 +43,23 @@ class ConductivityData(models.Model):
 
     def __str__(self):
         return f"{self.timestamp} - Conductivity: {self.conductivity}, Irrigation: {self.irrigation}"
+
+
+class DashboardSensorData(models.Model):
+    timestamp = models.DateTimeField()
+    air_temperature = models.FloatField()
+    wetbulb_temperature = models.FloatField()
+    solar_radiation = models.FloatField()
+    vpd = models.FloatField()
+    relative_humidity = models.FloatField()
+    precipitation = models.FloatField()
+    leaf_wetness = models.FloatField()
+    wind_speed = models.FloatField()
+    solar_panel_voltage = models.FloatField()
+    battery_voltage = models.FloatField()
+    delta_t = models.FloatField()
+    sunshine_duration = models.FloatField()
+    et0 = models.FloatField()
+
+    def __str__(self):
+        return f"{self.timestamp} - Air Temp: {self.air_temperature}, Solar Rad: {self.solar_radiation}, ET0: {self.et0}"

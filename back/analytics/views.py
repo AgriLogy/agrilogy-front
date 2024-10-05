@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .models import PhData, TemperatureData, SensorData, CumulData, ConductivityData
-from .serializers import PhDataSerializer, TemperatureDataSerializer, SensorDataSerializer, CumulDataSerializer, ConductivityDataSerializer
+from .models import PhData, TemperatureData, SensorData, CumulData, ConductivityData, DashboardSensorData
+from .serializers import DashboardSensorDataSerializer, PhDataSerializer, TemperatureDataSerializer, SensorDataSerializer, CumulDataSerializer, ConductivityDataSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -72,3 +72,7 @@ class AllDataView(APIView):
 
         return Response(data)
 
+
+class DashboardSensorDataViewSet(viewsets.ModelViewSet):
+    queryset = DashboardSensorData.objects.all()
+    serializer_class = DashboardSensorDataSerializer

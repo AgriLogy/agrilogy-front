@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import PhData, TemperatureData, SensorData, CumulData, ConductivityData
+from .models import PhData, TemperatureData, SensorData, CumulData, ConductivityData, DashboardSensorData
 from django.utils import timezone
 
 class PhDataSerializer(serializers.ModelSerializer):
@@ -59,4 +59,32 @@ class ConductivityDataSerializer(serializers.ModelSerializer):
 
     def get_formatted_timestamp(self, obj):
         # return obj.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+        return obj.timestamp.strftime('%Y-%m-%d %H:%M')
+
+
+
+class DashboardSensorDataSerializer(serializers.ModelSerializer):
+    formatted_timestamp = serializers.SerializerMethodField()
+
+    class Meta:
+        model = DashboardSensorData
+        fields = [
+            'id',
+            'formatted_timestamp',
+            'air_temperature',
+            'wetbulb_temperature',
+            'solar_radiation',
+            'vpd',
+            'relative_humidity',
+            'precipitation',
+            'leaf_wetness',
+            'wind_speed',
+            'solar_panel_voltage',
+            'battery_voltage',
+            'delta_t',
+            'sunshine_duration',
+            'et0',
+        ]
+    
+    def get_formatted_timestamp(self, obj):
         return obj.timestamp.strftime('%Y-%m-%d %H:%M')
