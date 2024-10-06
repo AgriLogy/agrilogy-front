@@ -51,6 +51,7 @@ const PluvometricGraph: React.FC<PluvometricGraphProps> = ({ data }) => {
           <YAxis tick={<CustomTick />} />
           <Tooltip />
           <Legend content={<CustomLegend />} />
+          {/* Line for Pluvometric Data */}
           <Line type="monotone" dataKey="cumulative_rainfall" stroke="rgba(75, 192, 192, 1)" name="Rainfall (mm)" />
         </LineChart>
       </ResponsiveContainer>

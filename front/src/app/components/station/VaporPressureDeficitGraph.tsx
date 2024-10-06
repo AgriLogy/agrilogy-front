@@ -13,11 +13,12 @@ import {
 
 interface VaporPressureDeficitGraphProps {
   data: {
-    formatted_timestamp: string; // Should be formatted timestamp similar to previous graphs
-    vapor_pressure_deficit: number; // The vapor pressure deficit data (e.g., in kPa)
+    formatted_timestamp: string; // Formatted timestamp for the X-axis
+    vapor_pressure_deficit: number; // Vapor pressure deficit in kPa
   }[];
 }
 
+// Custom legend component
 const CustomLegend = (props: any) => (
   <ul style={{ display: "flex", listStyle: "none", padding: 0, flexWrap: "wrap", margin: 0, marginLeft: 60 }}>
     {props.payload.map((entry: any, index: number) => (
@@ -29,11 +30,25 @@ const CustomLegend = (props: any) => (
   </ul>
 );
 
+// Custom tick component
 const CustomTick = ({ x, y, payload }: any) => (
   <text x={x} y={y} textAnchor="middle" fill="#666" fontSize="10">
     {payload.value}
   </text>
 );
+
+// Custom tooltip for displaying data
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div style={{ backgroundColor: 'white', border: '1px solid #ccc', padding: '5px', borderRadius: '5px' }}>
+        <p>{`Timestamp: ${payload[0].payload.formatted_timestamp}`}</p>
+        <p>{`Vapor Pressure Deficit: ${payload[0].value} kPa`}</p>
+      </div>
+    );
+  }
+  return null;
+};
 
 const VaporPressureDeficitGraph: React.FC<VaporPressureDeficitGraphProps> = ({ data }) => {
   const { colorMode } = useColorMode();
@@ -49,7 +64,7 @@ const VaporPressureDeficitGraph: React.FC<VaporPressureDeficitGraphProps> = ({ d
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="formatted_timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
-          <Tooltip />
+          <Tooltip content={<CustomTooltip />} />
           <Legend content={<CustomLegend />} />
           <Line type="monotone" dataKey="vapor_pressure_deficit" stroke="rgba(54, 162, 235, 1)" name="Vapor Pressure Deficit (kPa)" />
         </LineChart>

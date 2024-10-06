@@ -13,8 +13,8 @@ import {
 
 interface SolarRadiationGraphProps {
   data: {
-    formatted_timestamp: string; // Should be formatted timestamp similar to previous graphs
-    solar_radiation: number;     // The solar radiation data (e.g., in W/m²)
+    formatted_timestamp: string; // Formatted timestamp for the X-axis
+    solar_radiation: number;     // Solar radiation data in W/m²
   }[];
 }
 
@@ -51,6 +51,7 @@ const SolarRadiationGraph: React.FC<SolarRadiationGraphProps> = ({ data }) => {
           <YAxis tick={<CustomTick />} />
           <Tooltip />
           <Legend content={<CustomLegend />} />
+          {/* Line for Solar Radiation */}
           <Line type="monotone" dataKey="solar_radiation" stroke="rgba(255, 205, 86, 1)" name="Solar Radiation (W/m²)" />
         </LineChart>
       </ResponsiveContainer>

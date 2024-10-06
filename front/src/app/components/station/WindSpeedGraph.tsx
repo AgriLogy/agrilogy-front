@@ -1,5 +1,5 @@
 "use client";
-import { Box, Text, useColorMode } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import {
   LineChart,
   Line,
@@ -10,6 +10,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import useColorModeStyles from "@/app/utils/useColorModeStyles"; // Import the utility
 
 interface WindSpeedGraphProps {
   data: {
@@ -36,12 +37,11 @@ const CustomTick = ({ x, y, payload }: any) => (
 );
 
 const WindSpeedGraph: React.FC<WindSpeedGraphProps> = ({ data }) => {
-  const { colorMode } = useColorMode();
-  const chartBg = colorMode === "light" ? "white" : "gray.800";
+  const { bg, textColor } = useColorModeStyles(); // Use the utility
 
   return (
-    <Box width="100%" height="100%" bg={chartBg} borderRadius="md" boxShadow="lg" p={2}>
-      <Text color={colorMode === "light" ? "gray.700" : "gray.200"} fontSize="lg" fontWeight="bold" mb={4}>
+    <Box width="100%" height="100%" bg={bg} borderRadius="md" boxShadow="lg" p={2}>
+      <Text color={textColor} fontSize="lg" fontWeight="bold" mb={4}>
         Wind Speed
       </Text>
       <ResponsiveContainer width="100%" height={300}>

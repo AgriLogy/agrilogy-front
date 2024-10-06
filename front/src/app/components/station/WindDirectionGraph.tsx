@@ -1,5 +1,5 @@
 "use client";
-import { Box, Text, useColorMode } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import {
   LineChart,
   Line,
@@ -9,7 +9,9 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  ReferenceLine,
 } from "recharts";
+import useColorModeStyles from "@/app/utils/useColorModeStyles"; // Import the utility
 
 interface WindDirectionGraphProps {
   data: {
@@ -36,12 +38,11 @@ const CustomTick = ({ x, y, payload }: any) => (
 );
 
 const WindDirectionGraph: React.FC<WindDirectionGraphProps> = ({ data }) => {
-  const { colorMode } = useColorMode();
-  const chartBg = colorMode === "light" ? "white" : "gray.800";
+  const { bg, textColor } = useColorModeStyles(); // Use the utility for styles
 
   return (
-    <Box width="100%" height="100%" bg={chartBg} borderRadius="md" boxShadow="lg" p={2}>
-      <Text color={colorMode === "light" ? "gray.700" : "gray.200"} fontSize="lg" fontWeight="bold" mb={4}>
+    <Box width="100%" height="100%" bg={bg} borderRadius="md" boxShadow="lg" p={2}>
+      <Text color={textColor} fontSize="lg" fontWeight="bold" mb={4}>
         Wind Direction
       </Text>
       <ResponsiveContainer width="100%" height={300}>
@@ -51,6 +52,13 @@ const WindDirectionGraph: React.FC<WindDirectionGraphProps> = ({ data }) => {
           <YAxis tick={<CustomTick />} domain={[0, 360]} />
           <Tooltip />
           <Legend content={<CustomLegend />} />
+          
+          {/* Reference lines for cardinal directions */}
+          <ReferenceLine y={0} stroke="red" strokeDasharray="3 3" label="N" />
+          <ReferenceLine y={90} stroke="green" strokeDasharray="3 3" label="E" />
+          <ReferenceLine y={180} stroke="blue" strokeDasharray="3 3" label="S" />
+          <ReferenceLine y={270} stroke="orange" strokeDasharray="3 3" label="W" />
+
           {/* Line for Wind Direction */}
           <Line type="monotone" dataKey="wind_direction" stroke="rgba(255, 159, 64, 1)" name="Wind Direction (°)" />
         </LineChart>

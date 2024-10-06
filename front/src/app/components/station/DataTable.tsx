@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Box, Button, Table, Thead, Tbody, Tr, Th, Td, Text, useColorMode, HStack } from "@chakra-ui/react";
+import { Box, Button, Table, Thead, Tbody, Tr, Th, Td, Text, useColorMode, HStack, Spinner } from "@chakra-ui/react";
 import { CSVLink } from "react-csv";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 
@@ -18,10 +18,11 @@ interface WeatherData {
 }
 
 interface DataTableProps {
-  data: WeatherData[];
+  data: WeatherData[] | null; // Changed to allow null for loading state
+  loading: boolean; // Added loading prop
 }
 
-const DataTable: React.FC<DataTableProps> = ({ data }) => {
+const DataTable: React.FC<DataTableProps> = ({ data, loading }) => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
   const { colorMode } = useColorMode();
 
@@ -38,6 +39,29 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
     { label: "Vapor Pressure Deficit (kPa)", key: "vapor_pressure_deficit" },
     { label: "Precipitation (mm)", key: "precipitation" },
   ];
+
+  if (loading) {
+    return (
+      <Box width="100%" p={4} bg={colorMode === "light" ? "white" : "gray.800"} borderRadius="md" boxShadow="lg">
+        <HStack justify="space-between">
+          <Text fontSize="lg" fontWeight="bold" mb={4} color={colorMode === "light" ? "gray.700" : "gray.200"}>
+            Weather Data
+          </Text>
+          <Spinner />
+        </HStack>
+      </Box>
+    );
+  }
+
+  if (!data || data.length === 0) {
+    return (
+      <Box width="100%" p={4} bg={colorMode === "light" ? "white" : "gray.800"} borderRadius="md" boxShadow="lg">
+        <Text fontSize="lg" fontWeight="bold" mb={4} color={colorMode === "light" ? "gray.700" : "gray.200"}>
+          No Data Available
+        </Text>
+      </Box>
+    );
+  }
 
   return (
     <Box width="100%" p={4} bg={colorMode === "light" ? "white" : "gray.800"} borderRadius="md" boxShadow="lg">
@@ -56,7 +80,6 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
           </Button>
         </CSVLink>
       </HStack>
-      {/* Added Box for horizontal and vertical scroll */}
       <Box overflowX="auto" overflowY="auto" maxHeight="400px">
         <Table variant="simple" whiteSpace="nowrap">
           <Thead>
