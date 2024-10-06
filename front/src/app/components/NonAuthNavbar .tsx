@@ -15,7 +15,7 @@ import { MoonIcon, SunIcon, HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import Image from "next/image";
 import logo from "../public/logo.png";
 import { useState } from "react";
-import Sidebar from "./main/Navbar";
+import Sidebar from "./main/Sidebar";
 
 const NonAuthNavbar = () => {
   const { colorMode, toggleColorMode } = useColorMode();

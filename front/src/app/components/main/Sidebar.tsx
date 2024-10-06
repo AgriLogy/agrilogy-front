@@ -18,7 +18,7 @@ const Sidebar = () => {
       height="100%"
     >
       {/* Home Icon */}
-      <Tooltip label="Home" aria-label="Home">
+      <Tooltip label="Dashboard" aria-label="Home">
         <Link href="/dashboard">
           <IconButton
             icon={<FaHome />}
@@ -34,7 +34,7 @@ const Sidebar = () => {
       <Box height="1px" width="20px" bg="gray.400" mb={2} />
 
       {/* Analytics Icon */}
-      <Tooltip label="Analytics" aria-label="Analytics">
+      <Tooltip label="analytique" aria-label="Analytics">
         <Link href="/analytics">
           <IconButton
             icon={<FaChartLine />}
@@ -50,7 +50,7 @@ const Sidebar = () => {
       <Box height="1px" width="20px" bg="gray.400" mb={2} />
 
       {/* Sigma Icon */}
-      <Tooltip label="Sigma" aria-label="Sigma">
+      <Tooltip label="Station météo" aria-label="Sigma">
       <Link href="/station">
 
         <IconButton
@@ -67,7 +67,7 @@ const Sidebar = () => {
       <Box height="1px" width="20px" bg="gray.400" mb={2} />
 
       {/* Soil Moisture Icon */}
-      <Tooltip label="Soil Moisture" aria-label="Soil Moisture">
+      <Tooltip label="Humidité du sol" aria-label="Soil Moisture">
         <IconButton
           icon={<FaLeaf />}
           aria-label="Soil Moisture"
@@ -81,7 +81,7 @@ const Sidebar = () => {
       <Box height="1px" width="20px" bg="gray.400" mb={2} />
 
       {/* Settings Icon */}
-      <Tooltip label="Settings" aria-label="Settings">
+      <Tooltip label="Paramètres" aria-label="Settings">
         <IconButton
           icon={<FaCog />}
           aria-label="Settings"

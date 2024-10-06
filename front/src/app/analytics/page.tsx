@@ -1,21 +1,21 @@
-"use client"
+"use client";
 import { Grid, GridItem } from "@chakra-ui/react";
 import React from "react";
 import Header from "../components/main/Header";
-import Navbar from "../components/main/Navbar";
+import Navbar from "../components/main/Sidebar";
 import AnalyticsMain from "../components/analytics/AnalyticsMain";
 import useColorModeStyles from "../utils/useColorModeStyles";
 
 const Page = () => {
-  const { navBgColor } = useColorModeStyles(); 
+  const { navBgColor } = useColorModeStyles();
 
   return (
     <Grid
       templateAreas={{
         base: `"header"
-               "main"`, 
+               "main"`,
         md: `"header header"
-             "nav main"`, 
+             "nav main"`,
       }}
       gridTemplateRows={{ base: "auto 1fr", md: "50px 1fr" }}
       gridTemplateColumns={{ base: "1fr", md: "50px 1fr" }}
@@ -28,7 +28,7 @@ const Page = () => {
         <Header />
       </GridItem>
       <GridItem
-        bg={navBgColor} 
+        bg={navBgColor}
         area={"nav"}
         display={{ base: "none", md: "block" }}
       >

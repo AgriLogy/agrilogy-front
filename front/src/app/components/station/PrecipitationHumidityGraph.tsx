@@ -42,10 +42,10 @@ const CustomTick = ({ x, y, payload }: any) => (
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div style={{ backgroundColor: 'white', border: '1px solid #ccc', padding: '5px', borderRadius: '5px' }}>
+      <div style={{ backgroundColor: 'white', border: '1px solid #ccc', padding: '5px', borderRadius: '5px'  }}>
         <p>{`Timestamp: ${payload[0].payload.formatted_timestamp}`}</p>
-        <p>{`Precipitation: ${payload[0].payload.precipitation} mm`}</p>
-        <p>{`Humidity: ${payload[1].payload.humidity} %`}</p>
+        <p style={{ color: 'rgba(75, 192, 192, 1)' }}>{`Precipitation: ${payload[0].payload.precipitation} mm`} </p>
+        <p style={{ color: 'rgba(255, 159, 64, 1)' }}>{`Humidity: ${payload[1].payload.humidity} %`}</p>
       </div>
     );
   }

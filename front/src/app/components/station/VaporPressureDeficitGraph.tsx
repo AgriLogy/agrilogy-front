@@ -13,8 +13,8 @@ import {
 
 interface VaporPressureDeficitGraphProps {
   data: {
-    formatted_timestamp: string; // Formatted timestamp for the X-axis
-    vapor_pressure_deficit: number; // Vapor pressure deficit in kPa
+    formatted_timestamp: string; 
+    vapor_pressure_deficit: number; 
   }[];
 }
 
@@ -41,7 +41,7 @@ const CustomTick = ({ x, y, payload }: any) => (
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div style={{ backgroundColor: 'white', border: '1px solid #ccc', padding: '5px', borderRadius: '5px' }}>
+      <div style={{ backgroundColor: 'white', border: '1px solid #ccc', padding: '5px', borderRadius: '5px',  color: "rgba(54, 162, 235, 1)"}}>
         <p>{`Timestamp: ${payload[0].payload.formatted_timestamp}`}</p>
         <p>{`Vapor Pressure Deficit: ${payload[0].value} kPa`}</p>
       </div>
