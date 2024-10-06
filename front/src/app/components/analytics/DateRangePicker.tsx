@@ -57,7 +57,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({ setStartDate, setEndD
       justifyContent="space-between"
       width="100%"
     >
-      {/* <HStack alignItems="flex-start" gap="2" flexWrap="wrap"> */}
+      <HStack >
         <Button onClick={() => handleDateRangeClick(1)}>1d</Button>
         <Button onClick={() => handleDateRangeClick(3)}>3d</Button>
         <Button onClick={() => handleWeeksClick(1)}>1 w</Button>
@@ -66,7 +66,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({ setStartDate, setEndD
         {showManualDatePicker && <Button onClick={() => handleMonthsClick(3)}>3 m</Button>}
         {showManualDatePicker && <Button onClick={() => handleMonthsClick(6)}>6 m</Button>}
         {showManualDatePicker && <Button onClick={() => handleYearsClick(1)}>1 y</Button>}
-      {/* </HStack> */}
+      </HStack>
 
       {showManualDatePicker && (
         <HStack alignItems="center" gap="1" ml="auto" mr={2}>
