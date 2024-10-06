@@ -10,6 +10,10 @@ import Et0Graph from "./Et0Graph";
 import TempHumidityGraph from "./TempHumidityGraph";
 import WindSpeedGraph from "./WindSpeedGraph";
 import WindDirectionGraph from "./WindDirectionGraph";
+import PluvometricGraph from "./PluvometricGraph";
+import SolarRadiationGraph from "./SolarRadiationGraph";
+import VaporPressureDeficitGraph from "./VaporPressureDeficitGraph";
+import PrecipitationHumidityGraph from "./PrecipitationHumidityGraph";
 
 const StationMain: React.FC = () => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
@@ -55,6 +59,18 @@ const StationMain: React.FC = () => {
       </Box>
       <Box bg={bg} className="box wide">
         <WindDirectionGraph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <PluvometricGraph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <SolarRadiationGraph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <VaporPressureDeficitGraph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <PrecipitationHumidityGraph data={data} />
       </Box>
     </div>
   );
