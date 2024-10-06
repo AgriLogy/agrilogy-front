@@ -4,10 +4,10 @@ from datetime import datetime, timedelta
 import django
 
 # Set up Django environment
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'your_project_name.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'agriBack.settings')
 django.setup()
 
-from analytics.models import PhData, TemperatureData, SensorData, CumulData, ConductivityData, DashboardSensorData
+from analytics.models import PhData, TemperatureData, SensorData, CumulData, ConductivityData, DashboardSensorData, StationData
 
 def generate_random_data():
     # Set the starting date for the simulation
@@ -78,6 +78,24 @@ def generate_random_data():
             delta_t=delta_t,
             sunshine_duration=sunshine_duration,
             et0=et0
+        )
+
+        # Insert data into StationData model
+        wind_direction = round(random.uniform(0.0, 360.0), 2)  # Wind direction in degrees
+        cumulative_rainfall = round(random.uniform(0.0, 100.0), 2)  # Cumulative rainfall (pluvometric)
+        vapor_pressure_deficit = round(random.uniform(0.0, 10.0), 2)  # Vapor pressure deficit in kPa
+        
+        StationData.objects.create(
+            timestamp=timestamp,
+            et0=et0,
+            temperature=air_temperature,
+            humidity=relative_humidity,
+            wind_speed=wind_speed,
+            wind_direction=wind_direction,
+            cumulative_rainfall=cumulative_rainfall,
+            solar_radiation=solar_radiation,
+            vapor_pressure_deficit=vapor_pressure_deficit,
+            precipitation=precipitation
         )
 
 if __name__ == "__main__":

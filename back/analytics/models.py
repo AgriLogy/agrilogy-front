@@ -63,3 +63,20 @@ class DashboardSensorData(models.Model):
 
     def __str__(self):
         return f"{self.timestamp} - Air Temp: {self.air_temperature}, Solar Rad: {self.solar_radiation}, ET0: {self.et0}"
+    
+    from django.db import models
+
+class StationData(models.Model):
+    timestamp = models.DateTimeField()
+    et0 = models.FloatField()  # Evapotranspiration
+    temperature = models.FloatField()  # Air temperature
+    humidity = models.FloatField()  # Relative humidity
+    wind_speed = models.FloatField()  # Wind speed
+    wind_direction = models.FloatField()  # Wind direction (in degrees, for example)
+    cumulative_rainfall = models.FloatField()  # Cumulative rainfall (pluvometric)
+    solar_radiation = models.FloatField()  # Solar radiation
+    vapor_pressure_deficit = models.FloatField()  # Deficit pressure of vapor
+    precipitation = models.FloatField()  # Precipitation
+    
+    def __str__(self):
+        return f"{self.timestamp} - Temp: {self.temperature}, Humidity: {self.humidity}, Wind Speed: {self.wind_speed}, ET0: {self.et0}"

@@ -37,6 +37,11 @@ from rest_framework.views import APIView
 from django.utils.dateparse import parse_date
 from django.db.models import Q
 
+class DashboardSensorDataViewSet(viewsets.ModelViewSet):
+    queryset = DashboardSensorData.objects.all()
+    serializer_class = DashboardSensorDataSerializer
+
+
 class AllDataView(APIView):
     def get(self, request, *args, **kwargs):
         # Get 'start_date' and 'end_date' from query parameters
@@ -73,6 +78,42 @@ class AllDataView(APIView):
         return Response(data)
 
 
-class DashboardSensorDataViewSet(viewsets.ModelViewSet):
-    queryset = DashboardSensorData.objects.all()
-    serializer_class = DashboardSensorDataSerializer
+from rest_framework import viewsets
+from rest_framework.response import Response
+from rest_framework import status
+from django.utils.dateparse import parse_datetime
+from django.shortcuts import get_object_or_404
+from .models import StationData
+from .serializers import StationDataSerializer
+
+class StationDataViewSet(viewsets.ModelViewSet):
+    """
+    A ViewSet for viewing and editing StationData entries.
+    It accepts `start_date` and `end_date` query params to filter by timestamp.
+    """
+    queryset = StationData.objects.all().order_by('-timestamp')
+    serializer_class = StationDataSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
+
+        if start_date and end_date:
+            try:
+                # Parse the start and end dates
+                start_date_parsed = parse_datetime(start_date)
+                end_date_parsed = parse_datetime(end_date)
+
+                if start_date_parsed and end_date_parsed:
+                    # Filter the queryset based on the date range
+                    queryset = queryset.filter(
+                        timestamp__range=[start_date_parsed, end_date_parsed]
+                    )
+                else:
+                    raise ValueError("Invalid date format")
+            except ValueError:
+                # You can add error handling for invalid date formats
+                return queryset.none()  # Return no results if the dates are invalid
+        
+        return queryset
