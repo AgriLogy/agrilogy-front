@@ -5,6 +5,11 @@ import { Box, Text } from "@chakra-ui/react";
 import axiosInstance from "@/app/lib/axiosInstance";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import LoadingSpinner from "../common/LoadingSpinner";
+import DateRangePicker from "../analytics/DateRangePicker";
+import Et0Graph from "./Et0Graph";
+import TempHumidityGraph from "./TempHumidityGraph";
+import WindSpeedGraph from "./WindSpeedGraph";
+import WindDirectionGraph from "./WindDirectionGraph";
 
 const StationMain: React.FC = () => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
@@ -20,7 +25,7 @@ const StationMain: React.FC = () => {
           end_date: endDate,
         };
 
-        const response = await axiosInstance.get("/api/all-data/", { params });
+        const response = await axiosInstance.get("/api/stationdata/", { params });
         setData(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -35,6 +40,21 @@ const StationMain: React.FC = () => {
     <div className="container">
       <Box bg={bg} className="header">
         <Text color={textColor}>Données du station météo</Text>
+      </Box>
+      <Box bg={bg} className="header" mt={0} mb={0}>
+        <DateRangePicker setStartDate={setStartDate} setEndDate={setEndDate} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <Et0Graph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <TempHumidityGraph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <WindSpeedGraph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <WindDirectionGraph data={data} />
       </Box>
     </div>
   );
