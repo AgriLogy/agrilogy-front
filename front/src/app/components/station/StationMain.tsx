@@ -14,6 +14,7 @@ import PluvometricGraph from "./PluvometricGraph";
 import SolarRadiationGraph from "./SolarRadiationGraph";
 import VaporPressureDeficitGraph from "./VaporPressureDeficitGraph";
 import PrecipitationHumidityGraph from "./PrecipitationHumidityGraph";
+import DataTable from "./DataTable";
 
 const StationMain: React.FC = () => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
@@ -71,6 +72,9 @@ const StationMain: React.FC = () => {
       </Box>
       <Box bg={bg} className="box wide">
         <PrecipitationHumidityGraph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <DataTable data={data} />
       </Box>
     </div>
   );
