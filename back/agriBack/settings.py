@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'analytics',
     'corsheaders',
+    'CustomUser',
 ]
 
 MIDDLEWARE = [
@@ -132,3 +133,11 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',  # React frontend URL
     'http://localhost:8000',  # Your Django backend URL (if needed)
 ]
+
+AUTH_USER_MODEL = 'CustomUser.CustomUser'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
