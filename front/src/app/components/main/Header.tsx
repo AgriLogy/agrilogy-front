@@ -13,6 +13,8 @@ import {
 import { BellIcon, SettingsIcon, MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { FaUser } from "react-icons/fa";
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import logo from '../../public/logo.png'
+import Image from "next/image";
 
 const Header = () => {
   const { bg, textColor, toggleColorMode } = useColorModeStyles(); // Use the utility
@@ -25,9 +27,11 @@ const Header = () => {
       bg={bg}
       h="100%"
     >
+      <Image height={28} src={logo} alt="" />
+{/* 
       <Text color={textColor} fontSize="xl" fontWeight="bold">
-        Agligogy
-      </Text>
+        Agrilogy
+      </Text> */}
 
       <Flex align="center">
         <IconButton

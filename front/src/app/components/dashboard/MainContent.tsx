@@ -10,6 +10,7 @@ import StatusIndicators from "./StatusIndicators"; // Import the new component
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import { SensorData } from "@/app/data/dashboard/data";
 import GoogleMapWeather from "../GoogleMapWeather";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 export const MainContent: React.FC = () => {
   const { bg, textColor } = useColorModeStyles(); 
@@ -37,7 +38,7 @@ export const MainContent: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <Text>Loading data...</Text>;
+    return <LoadingSpinner/>;
   }
 
   if (error) {

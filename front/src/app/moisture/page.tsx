@@ -1,10 +1,11 @@
 "use client";
 import { Grid, GridItem } from "@chakra-ui/react";
 import React from "react";
-import Header from "./components/main/Header";
-import Navbar from "./components/main/Sidebar";
-import { MainContent } from "./components/dashboard/MainContent";
-import useColorModeStyles from "./utils/useColorModeStyles";
+import Header from "../components/main/Header";
+import Navbar from "../components/main/Sidebar";
+import { MainContent } from "../components/dashboard/MainContent";
+import useColorModeStyles from "../utils/useColorModeStyles";
+import MoistureMain from "../components/moisture/MoistureMain";
 
 const Page = () => {
   const { bg, textColor, navBgColor } = useColorModeStyles();
@@ -35,7 +36,7 @@ const Page = () => {
         <Navbar />
       </GridItem>
       <GridItem pl="2" bg={navBgColor} area={"main"}>
-        <MainContent />
+        <MoistureMain />
       </GridItem>
     </Grid>
   );

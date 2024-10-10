@@ -51,16 +51,15 @@ const Sidebar = () => {
 
       {/* Sigma Icon */}
       <Tooltip label="Station météo" aria-label="Sigma">
-      <Link href="/station">
-
-        <IconButton
-          icon={<PiSigmaBold />}
-          aria-label="Sigma"
-          variant="ghost"
-          mb={2}
-          _hover={{ color: hoverColor }}
+        <Link href="/station">
+          <IconButton
+            icon={<PiSigmaBold />}
+            aria-label="Sigma"
+            variant="ghost"
+            mb={2}
+            _hover={{ color: hoverColor }}
           />
-          </Link>
+        </Link>
       </Tooltip>
 
       {/* Delimiter */}
@@ -68,13 +67,15 @@ const Sidebar = () => {
 
       {/* Soil Moisture Icon */}
       <Tooltip label="Humidité du sol" aria-label="Soil Moisture">
-        <IconButton
-          icon={<FaLeaf />}
-          aria-label="Soil Moisture"
-          variant="ghost"
-          mb={2}
-          _hover={{ color: hoverColor }}
-        />
+        <Link href="/moisture">
+          <IconButton
+            icon={<FaLeaf />}
+            aria-label="Soil Moisture"
+            variant="ghost"
+            mb={2}
+            _hover={{ color: hoverColor }}
+          />
+        </Link>
       </Tooltip>
 
       {/* Delimiter */}
@@ -82,12 +83,14 @@ const Sidebar = () => {
 
       {/* Settings Icon */}
       <Tooltip label="Paramètres" aria-label="Settings">
-        <IconButton
-          icon={<FaCog />}
-          aria-label="Settings"
-          variant="ghost"
-          _hover={{ color: hoverColor }}
-        />
+        <Link href="/settings">
+          <IconButton
+            icon={<FaCog />}
+            aria-label="Settings"
+            variant="ghost"
+            _hover={{ color: hoverColor }}
+          />
+        </Link>
       </Tooltip>
     </Flex>
   );
