@@ -8,6 +8,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'agriBack.settings')
 django.setup()
 
 from analytics.models import PhData, TemperatureData, SensorData, CumulData, ConductivityData, DashboardSensorData, StationData
+from CustomUser.models import CustomUser  # Assuming your custom user model is in the 'users' app
 
 def generate_random_data():
     # Set the starting date for the simulation
@@ -98,6 +99,20 @@ def generate_random_data():
             precipitation=precipitation
         )
 
+def create_users():
+    # Create 10 users
+    for i in range(1, 11):
+        username = f'user{i}'
+        email = f'user{i}@example.com'
+        password = 'password123'
+        if i == 1:
+            # Make user1 an admin
+            CustomUser.objects.create_superuser(username=username, email=email, password=password, firstname='User', lastname=str(i))
+        else:
+            # Create regular users
+            CustomUser.objects.create_user(username=username, email=email, password=password, firstname='User', lastname=str(i))
+
 if __name__ == "__main__":
+    create_users()
     generate_random_data()
-    print("Random data generation complete.")
+    print("Random data generation and user creation complete.")

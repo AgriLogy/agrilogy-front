@@ -117,3 +117,8 @@ class StationDataViewSet(viewsets.ModelViewSet):
                 return queryset.none()  # Return no results if the dates are invalid
         
         return queryset
+
+class HeaderAPIView(APIView):
+    def get(self, request):
+        user = request.user
+        return Response(f"username : {user}")
