@@ -45,9 +45,8 @@ class ConductivityData(models.Model):
         return f"{self.timestamp} - Conductivity: {self.conductivity}, Irrigation: {self.irrigation}"
 
 from django.conf import settings  
-
 class DashboardSensorData(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False, blank=True) 
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     timestamp = models.DateTimeField()
     air_temperature = models.FloatField()
     wetbulb_temperature = models.FloatField()
@@ -65,11 +64,10 @@ class DashboardSensorData(models.Model):
 
     def __str__(self):
         return f"{self.timestamp} - Air Temp: {self.air_temperature}, Solar Rad: {self.solar_radiation}, ET0: {self.et0}"
-    
-    from django.db import models
+
 
 class StationData(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False, blank=True) 
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     timestamp = models.DateTimeField()
     et0 = models.FloatField()  # Evapotranspiration
     temperature = models.FloatField()  # Air temperature
@@ -80,7 +78,6 @@ class StationData(models.Model):
     solar_radiation = models.FloatField()  # Solar radiation
     vapor_pressure_deficit = models.FloatField()  # Deficit pressure of vapor
     precipitation = models.FloatField()  # Precipitation
-    
+
     def __str__(self):
         return f"{self.timestamp} - Temp: {self.temperature}, Humidity: {self.humidity}, Wind Speed: {self.wind_speed}, ET0: {self.et0}"
-

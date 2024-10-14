@@ -32,17 +32,20 @@ class ConductivityDataViewSet(viewsets.ModelViewSet):
 from rest_framework import viewsets
 from .models import PhData, TemperatureData, SensorData, CumulData, ConductivityData
 from .serializers import PhDataSerializer, TemperatureDataSerializer, SensorDataSerializer, CumulDataSerializer, ConductivityDataSerializer
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.utils.dateparse import parse_date
 from django.db.models import Q
 
 class DashboardSensorDataViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = DashboardSensorData.objects.all()
     serializer_class = DashboardSensorDataSerializer
 
 
 class AllDataView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         # Get 'start_date' and 'end_date' from query parameters
         start_date = request.query_params.get('start_date')
@@ -87,6 +90,7 @@ from .models import StationData
 from .serializers import StationDataSerializer
 
 class StationDataViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     """
     A ViewSet for viewing and editing StationData entries.
     It accepts `start_date` and `end_date` query params to filter by timestamp.
