@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Flex,
   Text,
@@ -15,9 +15,22 @@ import { FaUser } from "react-icons/fa";
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import logo from '../../public/logo.png'
 import Image from "next/image";
+import axiosInstance from '@/app/lib/axiosInstance';
 
 const Header = () => {
-  const { bg, textColor, toggleColorMode } = useColorModeStyles(); // Use the utility
+  const { bg, textColor, toggleColorMode } = useColorModeStyles();
+  const [username, setUsername] = useState('User');
+
+  useEffect (()=>{
+    axiosInstance.get('/api/header-data/').
+    then((response) =>{
+      const userData = response.data;
+      setUsername(userData.username);
+    })
+    .catch((error)=>{
+      console.log('Error fetching header data', error);
+    });
+  }, []);
 
   return (
     <Flex
@@ -28,11 +41,6 @@ const Header = () => {
       h="100%"
     >
       <Image height={28} src={logo} alt="" />
-{/* 
-      <Text color={textColor} fontSize="xl" fontWeight="bold">
-        Agrilogy
-      </Text> */}
-
       <Flex align="center">
         <IconButton
           icon={<BellIcon />}
@@ -44,7 +52,7 @@ const Header = () => {
         <Menu>
           <MenuButton as={IconButton} icon={<FaUser />} aria-label="Profile" variant="ghost" />
           <MenuList>
-            <MenuItem>Welcome User</MenuItem>
+            <MenuItem>Welcome {username}</MenuItem>
             <MenuItem icon={<SettingsIcon />}>Settings</MenuItem>
           </MenuList>
         </Menu>
