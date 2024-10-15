@@ -1,3 +1,4 @@
+'use client';
 
 import {
   Box,
@@ -15,19 +16,15 @@ import {
 } from "@chakra-ui/react";
 import { EmailIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useState } from "react";
+import { useRouter } from 'next/navigation'; // For redirecting after successful login
 import axiosInstance from "../lib/axiosInstance";
 
-// Define the prop types for LoginBox
-interface LoginBoxProps {
-  onSuccess: () => void;
-}
-
-const LoginBox: React.FC<LoginBoxProps> = ({ onSuccess }) => {
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [username, setUsername] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [errorMessage, setErrorMessage] = useState<string>('');
-
+const LoginBox = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  
   const handlePasswordVisibility = () => setShowPassword(!showPassword);
 
   const boxBg = useColorModeValue("white", "gray.700");
@@ -35,18 +32,21 @@ const LoginBox: React.FC<LoginBoxProps> = ({ onSuccess }) => {
   const inputBorderColor = useColorModeValue("gray.300", "gray.500");
   const textColor = useColorModeValue("gray.800", "white");
 
+  const router = useRouter(); // Use Next.js router for redirection
   const toast = useToast();
 
   const handleSubmit = async () => {
     try {
-      const response = await axiosInstance.post('/api/signin/', {
+      const response = await axiosInstance.post('/auth/signin/', {
         username,
         password,
       });
 
       if (response.status === 200) {
-        // Call the onSuccess callback passed from LoginPage
-        onSuccess();
+		const { access, refresh } = response.data;
+		localStorage.setItem('accessToken', access);
+        localStorage.setItem('refreshToken', refresh);
+        router.push('/');
       }
     } catch (error) {
       setErrorMessage('Nom d\'utilisateur ou mot de passe incorrect.');

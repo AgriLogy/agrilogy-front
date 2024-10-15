@@ -1,6 +1,5 @@
 "use client";
 import { Flex, useColorModeValue } from "@chakra-ui/react";
-import { useRouter } from 'next/router';
 import NonAuthNavbar from "../components/NonAuthNavbar ";
 import LoginBox from "../components/LoginBox ";
 
@@ -9,12 +8,6 @@ const LoginPage = () => {
     "linear(to-b, #C4DAD2, green.200)",
     "linear(to-b, #6A9C89, gray.700)"
   );
-  
-  const router = useRouter();
-
-  const handleLoginSuccess = () => {
-    router.push('/');
-  };
 
   return (
     <>
@@ -26,7 +19,7 @@ const LoginPage = () => {
         px={{ base: 4, md: 0 }}
         bgGradient={bgGradient}
       >
-        <LoginBox onSuccess={handleLoginSuccess} />
+        <LoginBox />
       </Flex>
     </>
   );

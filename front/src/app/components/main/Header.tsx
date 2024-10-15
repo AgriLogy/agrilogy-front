@@ -48,7 +48,6 @@ const Header = () => {
           variant="ghost"
           mr={4}
         />
-        
         <Menu>
           <MenuButton as={IconButton} icon={<FaUser />} aria-label="Profile" variant="ghost" />
           <MenuList>
