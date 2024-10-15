@@ -23,6 +23,7 @@ const Header = () => {
     axiosInstance.get('/api/header-data/')
       .then((response) => {
         const userData = response.data;
+        console.log(response.data)
         setUsername(userData.username);
       })
       .catch((error) => {

@@ -16,14 +16,16 @@ import {
 } from "@chakra-ui/react";
 import { EmailIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useState } from "react";
-import { useRouter } from 'next/navigation'; // For redirecting after successful login
-import axiosInstance from "../lib/axiosInstance";
+import { useRouter } from 'next/navigation'; // Importing useRouter from next/navigation
+import useAxiosInstance from "../lib/axiosInstance";
 
 const LoginBox = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const axiosInstance = useAxiosInstance();
+
   
   const handlePasswordVisibility = () => setShowPassword(!showPassword);
 
@@ -43,10 +45,10 @@ const LoginBox = () => {
       });
 
       if (response.status === 200) {
-		const { access, refresh } = response.data;
-		localStorage.setItem('accessToken', access);
+        const { access, refresh } = response.data;
+        localStorage.setItem('accessToken', access);
         localStorage.setItem('refreshToken', refresh);
-        router.push('/');
+        router.push('/'); // Redirecting to the home page after successful login
       }
     } catch (error) {
       setErrorMessage('Nom d\'utilisateur ou mot de passe incorrect.');
