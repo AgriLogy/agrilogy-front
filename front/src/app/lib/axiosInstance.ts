@@ -1,43 +1,51 @@
+// useAxiosInstance.js
+import { useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import axios from 'axios';
-import { useRouter } from 'next/router';
 
-const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8000/',
-});
+const useAxiosInstance = () => {
+  const router = useRouter();
+  const pathname = usePathname(); // Get the current path
 
-axiosInstance.interceptors.request.use(
-  (config) => {
-    const accessToken = localStorage.getItem('accessToken');
-    const publicRoutes = ['/login', '/signup'];
+  const axiosInstance = axios.create({
+    baseURL: 'http://localhost:8000/',
+  });
 
-    const router = useRouter(); 
+  useEffect(() => {
+    const requestInterceptor = axiosInstance.interceptors.request.use(
+      (config) => {
+        const accessToken = localStorage.getItem('accessToken');
+        const publicRoutes = ['/login', '/signup'];
 
-    if (!publicRoutes.includes(router.pathname) && accessToken) {
-      config.headers['Authorization'] = `Bearer ${accessToken}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+        if (!publicRoutes.includes(pathname) && accessToken) {
+          config.headers['Authorization'] = `Bearer ${accessToken}`;
+        }
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
 
-axiosInstance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    const router = useRouter();
-    console.log(error);
-
-    if (error.response && error.response.status === 401) {
-      if (router.pathname !== '/login') {
-        router.push('/login');
+    const responseInterceptor = axiosInstance.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        console.log(error);
+        if (error.response && error.response.status === 401) {
+          if (pathname !== '/login') {
+            router.push('/login');
+          }
+        }
+        return Promise.reject(error);
       }
-    }
+    );
 
-    return Promise.reject(error);
-  }
-);
+    // Cleanup interceptors on unmount
+    return () => {
+      axiosInstance.interceptors.request.eject(requestInterceptor);
+      axiosInstance.interceptors.response.eject(responseInterceptor);
+    };
+  }, [pathname, router]);
 
-export default axiosInstance;
+  return axiosInstance;
+};
+
+export default useAxiosInstance;

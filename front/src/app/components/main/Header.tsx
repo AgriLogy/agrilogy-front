@@ -1,35 +1,33 @@
-"use client";
 import React, { useEffect, useState } from 'react';
 import {
   Flex,
-  Text,
   IconButton,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
-  useColorModeValue,
 } from '@chakra-ui/react';
 import { BellIcon, SettingsIcon, MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { FaUser } from "react-icons/fa";
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
-import logo from '../../public/logo.png'
+import logo from '../../public/logo.png';
 import Image from "next/image";
-import axiosInstance from '@/app/lib/axiosInstance';
+import useAxiosInstance from '@/app/lib/axiosInstance';
 
 const Header = () => {
-  const { bg, textColor, toggleColorMode } = useColorModeStyles();
+  const { bg, toggleColorMode } = useColorModeStyles();
   const [username, setUsername] = useState('User');
+  const axiosInstance = useAxiosInstance();
 
-  useEffect (()=>{
-    axiosInstance.get('/api/header-data/').
-    then((response) =>{
-      const userData = response.data;
-      setUsername(userData.username);
-    })
-    .catch((error)=>{
-      console.log('Error fetching header data', error);
-    });
+  useEffect(() => {
+    axiosInstance.get('/api/header-data/')
+      .then((response) => {
+        const userData = response.data;
+        setUsername(userData.username);
+      })
+      .catch((error) => {
+        console.log('Error fetching header data', error);
+      });
   }, []);
 
   return (
@@ -40,7 +38,7 @@ const Header = () => {
       bg={bg}
       h="100%"
     >
-      <Image height={28} src={logo} alt="" />
+      <Image height={28} src={logo} alt="Logo" />
       <Flex align="center">
         <IconButton
           icon={<BellIcon />}
@@ -55,9 +53,8 @@ const Header = () => {
             <MenuItem icon={<SettingsIcon />}>Settings</MenuItem>
           </MenuList>
         </Menu>
-
         <IconButton
-          icon={bg === 'gray.200' ? <MoonIcon /> : <SunIcon />} // Toggle icons based on bg color
+          icon={bg === 'gray.200' ? <MoonIcon /> : <SunIcon />}
           aria-label="Toggle Color Mode"
           variant="ghost"
           onClick={toggleColorMode}

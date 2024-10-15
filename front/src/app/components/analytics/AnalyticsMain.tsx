@@ -11,12 +11,14 @@ import CumulIrrigationGraph from "./CumulIrrigationGraph";
 import TemperatureGraph from "./TemperatureGraph";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import LoadingSpinner from "../common/LoadingSpinner";
+import useAxiosInstance from "@/app/lib/axiosInstance";
 
 const AnalyticsMain: React.FC = () => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
   const [data, setData] = useState<any>(null); 
   const [startDate, setStartDate] = useState<string>(""); 
   const [endDate, setEndDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const axiosInstance = useAxiosInstance();
 
   useEffect(() => {
     const fetchData = async () => {
