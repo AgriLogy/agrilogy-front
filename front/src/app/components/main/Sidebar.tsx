@@ -117,7 +117,7 @@ const Sidebar = () => {
             icon={<IoLogOut style={{ transform: "scaleX(-1)" }} />} // Reverse the icon
             aria-label="Logout"
             variant="ghost"
-            onClick={onOpen}
+            onClick={onOpen} 
             _hover={{ color: hoverColor }}
           />
         </Tooltip>
