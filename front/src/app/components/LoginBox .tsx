@@ -78,7 +78,7 @@ const LoginBox = () => {
         top: "-20px",
         left: "50%",
         transform: "translateX(-50%)",
-        backgroundImage: "url('/leaf.png')",
+        // backgroundImage: "url('/leaf.png')",
         width: "60px",
         height: "60px",
         backgroundSize: "cover",

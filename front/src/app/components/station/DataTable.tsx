@@ -19,10 +19,10 @@ interface WeatherData {
 
 interface DataTableProps {
   data: WeatherData[] | null; // Changed to allow null for loading state
-  loading: boolean; // Added loading prop
+  // loading: boolean; // Added loading prop
 }
 
-const DataTable: React.FC<DataTableProps> = ({ data, loading }) => {
+const DataTable: React.FC<DataTableProps> = ({ data }) => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
   const { colorMode } = useColorMode();
 
@@ -39,19 +39,6 @@ const DataTable: React.FC<DataTableProps> = ({ data, loading }) => {
     { label: "Vapor Pressure Deficit (kPa)", key: "vapor_pressure_deficit" },
     { label: "Precipitation (mm)", key: "precipitation" },
   ];
-
-  if (loading) {
-    return (
-      <Box width="100%" p={4} bg={colorMode === "light" ? "white" : "gray.800"} borderRadius="md" boxShadow="lg">
-        <HStack justify="space-between">
-          <Text fontSize="lg" fontWeight="bold" mb={4} color={colorMode === "light" ? "gray.700" : "gray.200"}>
-            Weather Data
-          </Text>
-          <Spinner />
-        </HStack>
-      </Box>
-    );
-  }
 
   if (!data || data.length === 0) {
     return (

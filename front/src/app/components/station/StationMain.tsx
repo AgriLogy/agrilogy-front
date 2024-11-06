@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from "react";
 import "./StationMain.css";
 import { Box, Text } from "@chakra-ui/react";
-import axiosInstance from "@/app/lib/axiosInstance";
+import useAxiosInstance from "@/app/lib/axiosInstance";
+
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import LoadingSpinner from "../common/LoadingSpinner";
 import DateRangePicker from "../analytics/DateRangePicker";
@@ -21,6 +22,8 @@ const StationMain: React.FC = () => {
   const [data, setData] = useState<any>(null); 
   const [startDate, setStartDate] = useState<string>(""); 
   const [endDate, setEndDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const axiosInstance = useAxiosInstance();
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,16 +33,18 @@ const StationMain: React.FC = () => {
           end_date: endDate,
         };
 
-        const response = await axiosInstance.get("/api/stationdata/", { params });
+        // const response = await axiosInstance.get("/api/stationdata/", { params });
+        const response = await axiosInstance.get("/api/dashboard_sensor_data/");
         setData(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
     fetchData();
+    console.log(data);
   }, [startDate, endDate]);
 
-  if (!data) return <LoadingSpinner/>;
+  // if (!data) return <LoadingSpinner/>;
 
   return (
     <div className="container">

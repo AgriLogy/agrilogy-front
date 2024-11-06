@@ -9,7 +9,7 @@ import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import { SensorData } from "@/app/data/dashboard/data";
 import GoogleMapWeather from "../GoogleMapWeather";
 import LoadingSpinner from "../common/LoadingSpinner";
-import axiosInstance from "@/app/lib/axiosInstance";
+// import axiosInstance from "@/app/lib/axiosInstance";
 import useAxiosInstance from "@/app/lib/axiosInstance";
 
 const MainContent = () => {
