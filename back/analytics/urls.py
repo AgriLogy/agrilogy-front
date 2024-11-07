@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import HeaderAPIView, DashboardSensorDataViewSet, AllDataView, PhDataViewSet, StationDataViewSet, TemperatureDataViewSet, SensorDataViewSet, CumulDataViewSet, ConductivityDataViewSet
+from .views import *
 
 router = DefaultRouter()
 router.register(r'phdata', PhDataViewSet, basename='phdata')
@@ -15,4 +15,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('all-data/', AllDataView.as_view(), name='all-data'),
     path('header-data/', HeaderAPIView.as_view(), name='header-data'),
+	path('notifications', UserNotificationsAndAlertsView.as_view(), name='user-notifications-alerts'),
 ]

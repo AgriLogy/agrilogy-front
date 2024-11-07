@@ -1,4 +1,7 @@
+from CustomUser.models import CustomUser
 from django.db import models
+from django.conf import settings  
+
 
 class PhData(models.Model):
     timestamp = models.DateTimeField()
@@ -44,7 +47,6 @@ class ConductivityData(models.Model):
     def __str__(self):
         return f"{self.timestamp} - Conductivity: {self.conductivity}, Irrigation: {self.irrigation}"
 
-from django.conf import settings  
 class DashboardSensorData(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     timestamp = models.DateTimeField()
@@ -81,3 +83,73 @@ class StationData(models.Model):
 
     def __str__(self):
         return f"{self.timestamp} - Temp: {self.temperature}, Humidity: {self.humidity}, Wind Speed: {self.wind_speed}, ET0: {self.et0}"
+
+
+class Notification(models.Model):
+    # Temperatures
+    yesterday_temperature = models.DecimalField(max_digits=5, decimal_places=2, help_text="Temperature recorded yesterday in Celsius.")
+    today_temperature = models.DecimalField(max_digits=5, decimal_places=2, help_text="Temperature recorded today in Celsius.")
+    
+    # Humidity
+    yesterday_humidity = models.DecimalField(max_digits=5, decimal_places=2, help_text="Humidity recorded yesterday as a percentage.")
+    today_humidity = models.DecimalField(max_digits=5, decimal_places=2, help_text="Humidity recorded today as a percentage.")
+    
+    # ET0 (Evapotranspiration)
+    ET0 = models.DecimalField(max_digits=6, decimal_places=2, help_text="Reference evapotranspiration in mm/day.")
+    
+    # Soil conditions
+    soil_humidity = models.DecimalField(max_digits=5, decimal_places=2, help_text="Soil humidity percentage.")
+    soil_temperature = models.DecimalField(max_digits=5, decimal_places=2, help_text="Soil temperature in Celsius.")
+    soil_ph = models.DecimalField(max_digits=4, decimal_places=2, help_text="Soil pH level.")
+    
+    # Irrigation details
+    perfect_irrigation_period = models.CharField(max_length=100, help_text="Ideal time period for irrigation.")
+    last_irrigation_date = models.DateField(help_text="Date of the last irrigation.")
+    last_start_irrigation_hour = models.TimeField(help_text="Start time of the last irrigation.")
+    last_finish_irrigation_hour = models.TimeField(help_text="Finish time of the last irrigation.")
+    used_water_irrigation = models.DecimalField(max_digits=7, decimal_places=2, help_text="Water used in the last irrigation in liters.")
+
+    def __str__(self):
+        return f"Alert on {self.last_irrigation_date}"
+
+class Alert(models.Model):
+    LOW = 'Low'
+    MEDIUM = 'Medium'
+    HIGH = 'High'
+    DANGER_LEVEL_CHOICES = [
+        (LOW, 'Low'),
+        (MEDIUM, 'Medium'),
+        (HIGH, 'High'),
+    ]
+
+    title = models.CharField(max_length=200, help_text="A brief title for the alert.")
+    description = models.TextField(help_text="Detailed description of the alert.")
+    danger_level = models.CharField(
+        max_length=6,
+        choices=DANGER_LEVEL_CHOICES,
+        default=LOW,
+        help_text="Indicates the severity of the alert (Low, Medium, High)."
+    )
+
+    def __str__(self):
+        return f"{self.title} - {self.danger_level}"
+
+
+class NotificationsPerUser(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_notifications')
+    notification = models.ForeignKey(Notification, on_delete=models.CASCADE)
+    is_read = models.BooleanField(default=False, help_text="Whether the user has read this notification")
+    read_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.notification.title}"
+
+
+class AlertsPerUser(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_alerts')
+    alert = models.ForeignKey(Alert, on_delete=models.CASCADE)
+    is_read = models.BooleanField(default=False, help_text="Whether the user has read this alert")
+    read_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.alert.title}"

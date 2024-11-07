@@ -106,3 +106,18 @@ class StationDataSerializer(serializers.ModelSerializer):
     def get_formatted_timestamp(self, obj):
         # Custom format for the timestamp
         return obj.timestamp.strftime('%Y-%m-%d %H:%M')
+
+from rest_framework import serializers
+from .models import NotificationsPerUser, AlertsPerUser
+
+class NotificationsPerUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NotificationsPerUser
+        fields = ['id', 'notification', 'is_read', 'read_at']
+        depth = 1  # Use depth to include related `Notification` details
+
+class AlertsPerUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AlertsPerUser
+        fields = ['id', 'alert', 'is_read', 'read_at']
+        depth = 1  # Use depth to include related `Alert` details

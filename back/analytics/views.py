@@ -1,8 +1,13 @@
 from rest_framework import viewsets
-from .models import PhData, TemperatureData, SensorData, CumulData, ConductivityData, DashboardSensorData
-from .serializers import DashboardSensorDataSerializer, PhDataSerializer, TemperatureDataSerializer, SensorDataSerializer, CumulDataSerializer, ConductivityDataSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+
+from django.utils.dateparse import parse_date
+from django.db.models import Q
+
+from .serializers import *
+from .models import *
 
 class PhDataViewSet(viewsets.ModelViewSet):
     queryset = PhData.objects.all()
@@ -29,14 +34,7 @@ class ConductivityDataViewSet(viewsets.ModelViewSet):
     serializer_class = ConductivityDataSerializer
     
 
-from rest_framework import viewsets
-from .models import PhData, TemperatureData, SensorData, CumulData, ConductivityData
-from .serializers import PhDataSerializer, TemperatureDataSerializer, SensorDataSerializer, CumulDataSerializer, ConductivityDataSerializer
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from django.utils.dateparse import parse_date
-from django.db.models import Q
+
 
 class DashboardSensorDataViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
@@ -123,6 +121,27 @@ class StationDataViewSet(viewsets.ModelViewSet):
         return queryset
 
 class HeaderAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         user = request.user
-        return Response(f"username : {user}")
+        return Response({"username" : user.username}, status=status.HTTP_200_OK)
+    
+class UserNotificationsAndAlertsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        # Fetch notifications and alerts for the authenticated user
+        user_notifications = NotificationsPerUser.objects.filter(user=user)
+        user_alerts = AlertsPerUser.objects.filter(user=user)
+
+        # Serialize the data
+        notifications_serializer = NotificationsPerUserSerializer(user_notifications, many=True)
+        alerts_serializer = AlertsPerUserSerializer(user_alerts, many=True)
+
+        # Combine and return the response
+        return Response({
+            "notifications": notifications_serializer.data,
+            "alerts": alerts_serializer.data
+        })
