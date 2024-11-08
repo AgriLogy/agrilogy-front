@@ -84,6 +84,8 @@ class StationData(models.Model):
     def __str__(self):
         return f"{self.timestamp} - Temp: {self.temperature}, Humidity: {self.humidity}, Wind Speed: {self.wind_speed}, ET0: {self.et0}"
 
+from django.db import models
+from datetime import datetime
 
 class Notification(models.Model):
     # Temperatures
@@ -108,9 +110,13 @@ class Notification(models.Model):
     last_start_irrigation_hour = models.TimeField(help_text="Start time of the last irrigation.")
     last_finish_irrigation_hour = models.TimeField(help_text="Finish time of the last irrigation.")
     used_water_irrigation = models.DecimalField(max_digits=7, decimal_places=2, help_text="Water used in the last irrigation in liters.")
-
+    
+    # Notification date (new field)
+    notification_date = models.DateTimeField(default=datetime.now, help_text="Date and time when the notification was created.")
+    
     def __str__(self):
-        return f"Alert on {self.last_irrigation_date}"
+        return f"Alert on {self.last_irrigation_date} (Notification sent on {self.notification_date})"
+
 
 class Alert(models.Model):
     LOW = 'Low'

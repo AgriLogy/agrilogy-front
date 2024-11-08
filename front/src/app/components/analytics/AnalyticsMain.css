@@ -27,7 +27,6 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background-color: var(--chakra-colors-gray-200); /* Light mode background */
 	border: 1px solid #ccc;
 	height: 400px;
 	font-size: 24px;
@@ -59,7 +58,7 @@
 	  grid-column: span 2;
 	  width: 100%; 
 	  height: auto; 
-	  margin: 2px 0; 
+	  /* margin: 2px 0;  */
 	}
   }
   
