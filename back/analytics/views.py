@@ -43,7 +43,7 @@ class DashboardSensorDataViewSet(viewsets.ModelViewSet):
 
 
 class AllDataView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         # Get 'start_date' and 'end_date' from query parameters
         start_date = request.query_params.get('start_date')

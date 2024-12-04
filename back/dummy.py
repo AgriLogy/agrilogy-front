@@ -136,6 +136,6 @@ def create_alerts_and_notifications(users):
 
 if __name__ == "__main__":
     users = create_users()  # Create users first
-    # generate_random_data(users)  # Generate random sensor data for each user
+    generate_random_data(users)  # Generate random sensor data for each user
     create_alerts_and_notifications(users)  # Create alerts and notifications
     print("Data generation complete.")

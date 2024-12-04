@@ -2,10 +2,10 @@
 import React, { useEffect, useState } from "react";
 import "./MoistureMain.css";
 import { Box, Text } from "@chakra-ui/react";
-import axiosInstance from "@/app/lib/axiosInstance";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import LoadingSpinner from "../common/LoadingSpinner";
 import DateRangePicker from "../analytics/DateRangePicker";
+import useAxiosInstance from "@/app/lib/axiosInstance";
 
 
 const MoistureMain: React.FC = () => {
@@ -13,6 +13,8 @@ const MoistureMain: React.FC = () => {
   const [data, setData] = useState<any>(null); 
   const [startDate, setStartDate] = useState<string>(""); 
   const [endDate, setEndDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const axiosInstance = useAxiosInstance();
+
 
   useEffect(() => {
     const fetchData = async () => {

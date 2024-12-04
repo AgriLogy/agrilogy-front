@@ -41,7 +41,7 @@ const NotificationsMain: React.FC = () => {
         <Text color={textColor}>Notifications</Text>
       </Box>
 
-      {/* <Box bg={bg} className=" wide"> */}
+      {/* <Box bg={bg} className="   wide"> */}
       {/* Render Notifications */}
       <VStack spacing={4} align="stretch">
         {notifications.map((notification) => (
