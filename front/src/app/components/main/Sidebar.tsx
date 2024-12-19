@@ -18,6 +18,7 @@ import {
 import { FaHome, FaChartLine, FaLeaf, FaCog } from "react-icons/fa";
 import { PiSigmaBold } from "react-icons/pi";
 import { IoLogOut } from "react-icons/io5";
+import { FaBell } from "react-icons/fa"; // Import the notification icon
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import { useRouter } from "next/navigation";
 
@@ -112,18 +113,33 @@ const Sidebar = () => {
 
         <Box height="1px" width="20px" bg="gray.400" mb={2} />
 
+        {/* Notification icon */}
+        <Tooltip label="Alertes" aria-label="Notifications">
+          <Link href="/alerts">
+            <IconButton
+              icon={<FaBell />}
+              aria-label="Notifications"
+              variant="ghost"
+              mb={2}
+              _hover={{ color: hoverColor }}
+            />
+          </Link>
+        </Tooltip>
+
+        <Box height="1px" width="20px" bg="gray.400" mb={2} />
+
+        {/* Logout icon */}
         <Tooltip label="Se déconnecter" aria-label="Logout">
           <IconButton
             icon={<IoLogOut style={{ transform: "scaleX(-1)" }} />} // Reverse the icon
             aria-label="Logout"
             variant="ghost"
-            onClick={onOpen} 
+            onClick={onOpen}
             _hover={{ color: hoverColor }}
           />
         </Tooltip>
       </Flex>
 
-     
       <AlertDialog
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}
