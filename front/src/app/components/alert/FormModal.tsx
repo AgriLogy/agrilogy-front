@@ -12,12 +12,17 @@ import {
   Button,
   List,
   ListItem,
+  IconButton,
+  Flex,
+  Text,
 } from "@chakra-ui/react";
+import { ArrowBackIcon } from "@chakra-ui/icons";
 import WindSpeedForm from "../forms/wind/WindSpeedForm";
+import RainFallForm from "../forms/wind/RainFallForm";
 
 // Define the components for each alert type
-const AlertType1: React.FC = () => <WindSpeedForm/>;
-const AlertType2: React.FC = () => <div>Content for Alert Type 2</div>;
+const AlertType1: React.FC = () => <WindSpeedForm />;
+const AlertType2: React.FC = () => <RainFallForm />;
 const AlertType3: React.FC = () => <div>Content for Alert Type 3</div>;
 
 interface FormModalProps {
@@ -31,7 +36,7 @@ const FormModal: React.FC<FormModalProps> = ({ isOpen, onClose }) => {
   // Map alert types to their respective components
   const alertComponents: Record<string, React.FC> = {
     "Wind Speed": AlertType1,
-    "Type 2": AlertType2,
+    "Rain Fall": AlertType2,
     "Type 3": AlertType3,
   };
 
@@ -50,7 +55,18 @@ const FormModal: React.FC<FormModalProps> = ({ isOpen, onClose }) => {
       <ModalOverlay backdropFilter="blur(10px)" />
       <ModalContent>
         <ModalHeader>
-          {selectedAlert ? selectedAlert : "Available Alerts"}
+          <Flex align="center">
+            {selectedAlert && (
+              <IconButton
+                aria-label="Back"
+                icon={<ArrowBackIcon />}
+                onClick={handleBack}
+                variant="ghost"
+                mr={2}
+              />
+            )}
+            <Text>{selectedAlert ? selectedAlert : "Available Alerts"}</Text>
+          </Flex>
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
@@ -73,15 +89,9 @@ const FormModal: React.FC<FormModalProps> = ({ isOpen, onClose }) => {
           )}
         </ModalBody>
         <ModalFooter>
-          {selectedAlert ? (
-            <Button variant="ghost" onClick={handleBack}>
-              Back
-            </Button>
-          ) : (
-            <Button variant="ghost" onClick={onClose}>
-              Close
-            </Button>
-          )}
+          <Button variant="ghost" onClick={onClose}>
+            Close
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

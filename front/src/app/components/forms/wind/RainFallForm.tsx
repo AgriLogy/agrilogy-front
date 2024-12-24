@@ -19,10 +19,10 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 
-const WindSpeedForm: React.FC = () => {
+const RainFallForm: React.FC = () => {
   const [formData, setFormData] = useState({
     alertName: "",
-    alertType: "wind speed",
+    alertType: "Rain Fall",
     percentage: 1,
     description: "",
     sendAction: false,
@@ -98,7 +98,7 @@ const WindSpeedForm: React.FC = () => {
 
         {/* Percentage */}
         <FormControl isRequired>
-          <FormLabel>Percentage [m/s]</FormLabel>
+          <FormLabel>Percentage [mm/h]</FormLabel>
           <NumberInput
             defaultValue={1}
             min={1}
@@ -151,4 +151,4 @@ const WindSpeedForm: React.FC = () => {
   );
 };
 
-export default WindSpeedForm;
+export default RainFallForm;
