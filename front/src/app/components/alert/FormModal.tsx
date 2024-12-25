@@ -1,4 +1,4 @@
-"use client"; // Ensure client-side rendering for Next.js
+"use client";
 
 import React, { useState } from "react";
 import {
@@ -19,16 +19,20 @@ import {
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import WindSpeedForm from "../forms/wind/WindSpeedForm";
 import RainFallForm from "../forms/wind/RainFallForm";
+import LowTemperature from "../forms/wind/LowTemperature";
+import HighTemperature from "../forms/wind/HighTemperature";
+import LowPressure from "../forms/wind/LowPressure";
+import HighPressure from "../forms/wind/HighPressure";
 
 // Define the components for each alert type
 const AlertType1: React.FC = () => <WindSpeedForm />;
 const AlertType2: React.FC = () => <RainFallForm />;
-const AlertType3: React.FC = () => <div>Weather Temperature - Low</div>;
-const AlertType4: React.FC = () => <div>Weather Temperature - High</div>;
+const AlertType3: React.FC = () => <LowTemperature/>;
+const AlertType4: React.FC = () => <HighTemperature/>;
 const AlertType5: React.FC = () => <div>High Flow - High Water Usage</div>;
 const AlertType6: React.FC = () => <div>Low Flow - Low Water Usage</div>;
-const AlertType7: React.FC = () => <div>High Pressure</div>;
-const AlertType8: React.FC = () => <div>Low Pressure</div>;
+const AlertType7: React.FC = () => <HighPressure/>;
+const AlertType8: React.FC = () => <LowPressure/>;
 
 interface FormModalProps {
   isOpen: boolean;
