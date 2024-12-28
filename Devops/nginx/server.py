@@ -3,9 +3,21 @@ import threading
 import json
 
 # Server configuration
-HOST = '192.168.1.228'  # Replace with your server IP
+HOST = '0.0.0.0'  # Replace with your server IP
+# HOST = '192.168.1.228'  # Replace with your server IP
 PORT = 9090            # Port to listen on
-LOG_FILE = "post_requests.json"
+LOG_FILE = "post_requests.json"  # For valid JSON POST bodies
+RAW_LOG_FILE = "requests.log"    # For all raw HTTP requests
+
+def log_raw_request(client_address, request):
+    """Log raw HTTP requests to a file."""
+    try:
+        with open(RAW_LOG_FILE, "a") as raw_log:
+            raw_log.write(f"=== Request from {client_address} ===\n")
+            raw_log.write(request + "\n")
+            raw_log.write("=" * 40 + "\n")
+    except Exception as e:
+        print(f"Failed to write to {RAW_LOG_FILE}: {e}")
 
 def handle_client(client_socket):
     """Handle client connection and log all incoming requests."""
@@ -17,9 +29,11 @@ def handle_client(client_socket):
         print(request)
         print("====================================\n")
         
+        # Log the raw request
+        log_raw_request(client_address, request)
+        
         # Check if it's a POST request
         if request.startswith("POST"):
-            # Extract the body (assuming JSON) from the POST request
             try:
                 _, body = request.split("\r\n\r\n", 1)
             except ValueError:
@@ -33,7 +47,7 @@ def handle_client(client_socket):
                 client_socket.sendall("HTTP/1.1 400 Bad Request\r\n\r\nInvalid JSON".encode('utf-8'))
                 return
             
-            # Append the JSON body to the log file
+            # Append the JSON body to the JSON log file
             try:
                 with open(LOG_FILE, "r") as log_file:
                     logs = json.load(log_file)  # Load existing logs
