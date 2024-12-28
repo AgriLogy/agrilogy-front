@@ -1,8 +1,10 @@
 import socket
 import threading
+import json
+from datetime import datetime
 
 # Server configuration
-HOST = '192.168.1.228'  # Replace with your server IP
+HOST = '0.0.0.0'  # Replace with your server IP
 PORT = 9090            # Port to listen on
 LOG_FILE = "requests.json"  # Unified JSON log file
 
@@ -16,10 +18,15 @@ def extract_json(raw_data: str) -> str:
     return None
 
 def log_raw_data(json_data: str):
-    """Log JSON data to the file."""
+    """Log JSON data to the file after adding a timestamp."""
     try:
+        data = json.loads(json_data)  # Parse JSON string into a dictionary
+        data['timestamp'] = datetime.now().isoformat()  # Add timestamp in ISO format
+        
         with open(LOG_FILE, "a") as log_file:
-            log_file.write(json_data + "\n")
+            log_file.write(json.dumps(data) + "\n")  # Save as JSON string
+    except json.JSONDecodeError:
+        print("Invalid JSON format, cannot add timestamp.")
     except Exception as e:
         print(f"Failed to write to {LOG_FILE}: {e}")
 
@@ -34,7 +41,7 @@ def handle_client(client_socket):
         
         if json_data:
             print(json_data)  # Display only the JSON part in the terminal
-            log_raw_data(json_data)  # Save JSON part to the log file
+            log_raw_data(json_data)  # Save JSON part to the log file with timestamp
         else:
             print("No valid JSON found in the request.")
         

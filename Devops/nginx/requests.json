@@ -52,3 +52,15 @@
  "ec":0,
  "soil moisture":0.0
 }
+{
+ "client":"Router01",
+ "soil Temperature":18.6,
+ "ec":0,
+ "soil moisture":0.0
+}
+{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:05:07.382934"}
+{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:05:46.692642"}
+{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:06:26.466769"}
+{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:07:06.237371"}
+{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:07:45.539845"}
+{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:08:25.322482"}
