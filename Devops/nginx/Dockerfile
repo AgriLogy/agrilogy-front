@@ -4,7 +4,7 @@ FROM nginx:alpine
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expose the port the server listens on
-EXPOSE 9010
+EXPOSE 9090
 
 # Start NGINX
 CMD ["nginx", "-g", "daemon off;"]
