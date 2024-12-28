@@ -1,74 +1,51 @@
 import socket
 import threading
-import json
 
 # Server configuration
-HOST = '0.0.0.0'  # Replace with your server IP
-# HOST = '192.168.1.228'  # Replace with your server IP
+HOST = '192.168.1.228'  # Replace with your server IP
 PORT = 9090            # Port to listen on
-LOG_FILE = "post_requests.json"  # For valid JSON POST bodies
-RAW_LOG_FILE = "requests.log"    # For all raw HTTP requests
+LOG_FILE = "requests.json"  # Unified JSON log file
 
-def log_raw_request(client_address, request):
-    """Log raw HTTP requests to a file."""
+def extract_json(raw_data: str) -> str:
+    """Extract JSON content by trimming data before '{' and after '}'."""
+    start = raw_data.find('{')
+    end = raw_data.rfind('}')
+    
+    if start != -1 and end != -1 and end > start:
+        return raw_data[start:end + 1]  # Include both brackets
+    return None
+
+def log_raw_data(json_data: str):
+    """Log JSON data to the file."""
     try:
-        with open(RAW_LOG_FILE, "a") as raw_log:
-            raw_log.write(f"=== Request from {client_address} ===\n")
-            raw_log.write(request + "\n")
-            raw_log.write("=" * 40 + "\n")
+        with open(LOG_FILE, "a") as log_file:
+            log_file.write(json_data + "\n")
     except Exception as e:
-        print(f"Failed to write to {RAW_LOG_FILE}: {e}")
+        print(f"Failed to write to {LOG_FILE}: {e}")
 
 def handle_client(client_socket):
-    """Handle client connection and log all incoming requests."""
-    client_address = client_socket.getpeername()  # Store the client address before closing the socket
+    """Handle client connection and log JSON data."""
     try:
         # Receive data from the client
         request = client_socket.recv(4096).decode('utf-8')
-        print(f"\n=== Incoming Request from {client_address} ===")
-        print(request)
-        print("====================================\n")
         
-        # Log the raw request
-        log_raw_request(client_address, request)
+        # Extract JSON from the body
+        json_data = extract_json(request)
         
-        # Check if it's a POST request
-        if request.startswith("POST"):
-            try:
-                _, body = request.split("\r\n\r\n", 1)
-            except ValueError:
-                body = ""
-            
-            # Validate JSON body
-            try:
-                json_body = json.loads(body)
-            except json.JSONDecodeError:
-                print(f"Invalid JSON body received: {body}")
-                client_socket.sendall("HTTP/1.1 400 Bad Request\r\n\r\nInvalid JSON".encode('utf-8'))
-                return
-            
-            # Append the JSON body to the JSON log file
-            try:
-                with open(LOG_FILE, "r") as log_file:
-                    logs = json.load(log_file)  # Load existing logs
-            except (FileNotFoundError, json.JSONDecodeError):
-                logs = []  # Initialize logs if file doesn't exist or is invalid
-            
-            logs.append(json_body)
-            with open(LOG_FILE, "w") as log_file:
-                json.dump(logs, log_file, indent=4)
-            
-            print(f"Logged JSON body: {json_body}")
+        if json_data:
+            print(json_data)  # Display only the JSON part in the terminal
+            log_raw_data(json_data)  # Save JSON part to the log file
+        else:
+            print("No valid JSON found in the request.")
         
         # Send a response to the client
         response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nRequest received"
         client_socket.sendall(response.encode('utf-8'))
     
     except Exception as e:
-        print(f"Error handling client {client_address}: {e}")
+        print(f"Error handling client: {e}")
     finally:
         client_socket.close()
-        print(f"Connection closed with {client_address}")
 
 def start_server():
     """Start the TCP server."""
