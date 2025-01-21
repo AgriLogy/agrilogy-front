@@ -1,24 +1,24 @@
 from django.contrib import admin
 from .models import *
 
-@admin.register(PhData)
-class PhDataAdmin(admin.ModelAdmin):
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
     pass
 
-@admin.register(TemperatureData)
-class TemperatureDataAdmin(admin.ModelAdmin):
+@admin.register(Alert)
+class AlertAdmin(admin.ModelAdmin):
     pass
 
-@admin.register(SensorData)
+@admin.register(NotificationsPerUser)
+class NotificationsPerUserAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(AlertsPerUser)
+class AlertsPerUserAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(Sensor)
 class SensorDataAdmin(admin.ModelAdmin):
-    pass
-
-@admin.register(CumulData)
-class CumulDataAdmin(admin.ModelAdmin):
-    pass
-
-@admin.register(ConductivityData)
-class ConductivityDataAdmin(admin.ModelAdmin):
     pass
 
 # @admin.register(Achievement)

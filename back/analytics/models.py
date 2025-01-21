@@ -1,117 +1,23 @@
-from CustomUser.models import CustomUser
 from django.db import models
-from django.conf import settings  
-
-
-class PhData(models.Model):
-    timestamp = models.DateTimeField()
-    ph = models.FloatField()
-
-    def __str__(self):
-        return f"{self.timestamp} - pH: {self.ph}"
-
-
-class TemperatureData(models.Model):
-    timestamp = models.DateTimeField()
-    temperature = models.FloatField()
-
-    def __str__(self):
-        return f"{self.timestamp} - Temperature: {self.temperature}"
-
-
-class SensorData(models.Model):
-    timestamp = models.DateTimeField()
-    depth = models.FloatField()
-    humidity_20 = models.FloatField()
-    humidity_40 = models.FloatField()
-    humidity_60 = models.FloatField()
-    irrigation = models.FloatField()
-
-    def __str__(self):
-        return f"{self.timestamp} - Depth: {self.depth}, Irrigation: {self.irrigation}"
-
-
-class CumulData(models.Model):
-    timestamp = models.DateTimeField()
-    cumul = models.FloatField()
-
-    def __str__(self):
-        return f"{self.timestamp} - Cumulative: {self.cumul}"
-
-
-class ConductivityData(models.Model):
-    timestamp = models.DateTimeField()
-    conductivity = models.FloatField()
-    irrigation = models.IntegerField()
-
-    def __str__(self):
-        return f"{self.timestamp} - Conductivity: {self.conductivity}, Irrigation: {self.irrigation}"
-
-class DashboardSensorData(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
-    timestamp = models.DateTimeField()
-    air_temperature = models.FloatField()
-    wetbulb_temperature = models.FloatField()
-    solar_radiation = models.FloatField()
-    vpd = models.FloatField()
-    relative_humidity = models.FloatField()
-    precipitation = models.FloatField()
-    leaf_wetness = models.FloatField()
-    wind_speed = models.FloatField()
-    solar_panel_voltage = models.FloatField()
-    battery_voltage = models.FloatField()
-    delta_t = models.FloatField()
-    sunshine_duration = models.FloatField()
-    et0 = models.FloatField()
-
-    def __str__(self):
-        return f"{self.timestamp} - Air Temp: {self.air_temperature}, Solar Rad: {self.solar_radiation}, ET0: {self.et0}"
-
-
-class StationData(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
-    timestamp = models.DateTimeField()
-    et0 = models.FloatField()  # Evapotranspiration
-    temperature = models.FloatField()  # Air temperature
-    humidity = models.FloatField()  # Relative humidity
-    wind_speed = models.FloatField()  # Wind speed
-    wind_direction = models.FloatField()  # Wind direction (in degrees, for example)
-    cumulative_rainfall = models.FloatField()  # Cumulative rainfall (pluvometric)
-    solar_radiation = models.FloatField()  # Solar radiation
-    vapor_pressure_deficit = models.FloatField()  # Deficit pressure of vapor
-    precipitation = models.FloatField()  # Precipitation
-
-    def __str__(self):
-        return f"{self.timestamp} - Temp: {self.temperature}, Humidity: {self.humidity}, Wind Speed: {self.wind_speed}, ET0: {self.et0}"
-
-from django.db import models
+from django.conf import settings
 from datetime import datetime
 
+# User table remains as it is in your CustomUser.models module.
+
 class Notification(models.Model):
-    # Temperatures
     yesterday_temperature = models.DecimalField(max_digits=5, decimal_places=2, help_text="Temperature recorded yesterday in Celsius.")
     today_temperature = models.DecimalField(max_digits=5, decimal_places=2, help_text="Temperature recorded today in Celsius.")
-    
-    # Humidity
     yesterday_humidity = models.DecimalField(max_digits=5, decimal_places=2, help_text="Humidity recorded yesterday as a percentage.")
     today_humidity = models.DecimalField(max_digits=5, decimal_places=2, help_text="Humidity recorded today as a percentage.")
-    
-    # ET0 (Evapotranspiration)
     ET0 = models.DecimalField(max_digits=6, decimal_places=2, help_text="Reference evapotranspiration in mm/day.")
-    
-    # Soil conditions
     soil_humidity = models.DecimalField(max_digits=5, decimal_places=2, help_text="Soil humidity percentage.")
     soil_temperature = models.DecimalField(max_digits=5, decimal_places=2, help_text="Soil temperature in Celsius.")
     soil_ph = models.DecimalField(max_digits=4, decimal_places=2, help_text="Soil pH level.")
-    
-    # Irrigation details
     perfect_irrigation_period = models.CharField(max_length=100, help_text="Ideal time period for irrigation.")
     last_irrigation_date = models.DateField(help_text="Date of the last irrigation.")
     last_start_irrigation_hour = models.TimeField(help_text="Start time of the last irrigation.")
     last_finish_irrigation_hour = models.TimeField(help_text="Finish time of the last irrigation.")
     used_water_irrigation = models.DecimalField(max_digits=7, decimal_places=2, help_text="Water used in the last irrigation in liters.")
-    
-    # Notification date (new field)
     notification_date = models.DateTimeField(default=datetime.now, help_text="Date and time when the notification was created.")
     
     def __str__(self):
@@ -142,20 +48,45 @@ class Alert(models.Model):
 
 
 class NotificationsPerUser(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_notifications')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_notifications')
     notification = models.ForeignKey(Notification, on_delete=models.CASCADE)
     is_read = models.BooleanField(default=False, help_text="Whether the user has read this notification")
     read_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.notification.title}"
+        return f"{self.user.username} - Notification on {self.notification.notification_date}"
 
 
 class AlertsPerUser(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_alerts')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_alerts')
     alert = models.ForeignKey(Alert, on_delete=models.CASCADE)
     is_read = models.BooleanField(default=False, help_text="Whether the user has read this alert")
     read_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.alert.title}"
+        return f"{self.user.username} - Alert: {self.alert.title}"
+
+
+class Sensor(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_sensors')
+    timestamp = models.DateTimeField(auto_now_add=True, help_text="Timestamp when the sensor data was recorded.")
+    precipitation_rate = models.FloatField(help_text="Precipitation rate in mm/h.")
+    humidity_weather = models.FloatField(help_text="Humidity from the weather sensor as a percentage.")
+    wind_speed = models.FloatField(help_text="Wind speed in m/s.")
+    solar_radiation = models.FloatField(help_text="Solar radiation in W/m².")
+    pressure_weather = models.FloatField(help_text="Atmospheric pressure in hPa.")
+    wind_direction = models.FloatField(help_text="Wind direction in degrees.")
+    temperature_weather = models.FloatField(help_text="Air temperature in Celsius.")
+    ec_soil_medium = models.FloatField(help_text="Electrical conductivity of soil at medium depth in dS/m.")
+    soil_temperature_medium = models.FloatField(help_text="Soil temperature at medium depth in Celsius.")
+    soil_ec_high = models.FloatField(help_text="Electrical conductivity of soil at high depth in dS/m.")
+    ec_soil_low = models.FloatField(help_text="Electrical conductivity of soil at low depth in dS/m.")
+    soil_moisture_medium = models.FloatField(help_text="Soil moisture at medium depth in percentage.")
+    soil_moisture_high = models.FloatField(help_text="Soil moisture at high depth in percentage.")
+    soil_moisture_low = models.FloatField(help_text="Soil moisture at low depth in percentage.")
+    ph_soil = models.FloatField(help_text="Soil pH level.")
+    soil_temperature_low = models.FloatField(help_text="Soil temperature at low depth in Celsius.")
+    soil_temperature_high = models.FloatField(help_text="Soil temperature at high depth in Celsius.")
+
+    def __str__(self):
+        return f"{self.timestamp} - Sensors for {self.user.username}"

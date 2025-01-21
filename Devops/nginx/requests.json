@@ -1,66 +1,55 @@
-{
- "client":"Router01",
- "soil Temperature":18.6,
- "ec":0,
- "soil moisture":0.0
-}
-{
- "client":"Router01",
- "soil Temperature":18.5,
- "ec":0,
- "soil moisture":0.0
-}
-{
- "client":"Router01",
- "soil Temperature":18.5,
- "ec":0,
- "soil moisture":0.0
-}
-{
- "client":"Router01",
- "soil Temperature":18.5,
- "ec":0,
- "soil moisture":0.0
-}
-{
- "client":"Router01",
- "soil Temperature":18.5,
- "ec":0,
- "soil moisture":0.0
-}
-{
- "client":"Router01",
- "soil Temperature":18.5,
- "ec":0,
- "soil moisture":0.0
-}
-{
- "client":"Router01",
- "soil Temperature":18.5,
- "ec":0,
- "soil moisture":0.0
-}
-{
- "client":"Router01",
- "soil Temperature":18.6,
- "ec":0,
- "soil moisture":0.0
-}
-{
- "client":"Router01",
- "soil Temperature":18.5,
- "ec":0,
- "soil moisture":0.0
-}
-{
- "client":"Router01",
- "soil Temperature":18.6,
- "ec":0,
- "soil moisture":0.0
-}
-{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:05:07.382934"}
-{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:05:46.692642"}
-{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:06:26.466769"}
-{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:07:06.237371"}
-{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:07:45.539845"}
-{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:08:25.322482"}
+{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:11:03.462025"}
+{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:11:43.231115"}
+{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:13:42.942842"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:14:22.229587"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:15:01.997167"}
+{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:15:41.763452"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:16:21.030288"}
+{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:17:00.796648"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:17:40.566122"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:18:19.845650"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:18:59.612639"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:19:38.915247"}
+{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:20:18.681419"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:20:58.448483"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:21:38.750303"}
+{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:22:17.524800"}
+{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:22:57.291018"}
+{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:23:37.570218"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:24:36.438429"}
+{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:25:16.173338"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:25:56.443633"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:26:36.177972"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:27:14.913669"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:27:55.187604"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:28:35.069761"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:29:14.803844"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:30:49.279851"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:31:29.021468"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:32:09.276915"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:32:49.014217"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:33:28.753801"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:34:08.002082"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:34:47.835173"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:35:27.585841"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:36:06.868118"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:36:46.607435"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:37:26.884894"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:38:06.624172"}
+{"client": "Router01", "soil Temperature": 18.8, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:38:46.358557"}
+{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:39:25.629741"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:40:05.396784"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:40:45.136126"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:41:24.411027"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:42:04.145421"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:42:43.396874"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:43:23.132386"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:44:02.864791"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:44:43.136215"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:45:22.870740"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:46:01.605844"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:46:41.877541"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:47:21.612799"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:48:00.882603"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:48:40.616662"}
+{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:49:20.354300"}

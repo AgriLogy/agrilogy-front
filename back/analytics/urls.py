@@ -1,19 +1,22 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import *
+from .views import (
+    SensorViewSet,
+    NotificationsAndAlertsView,
+    AllSensorDataView,
+    HeaderAPIView,
+)
 
+# Create a router for viewsets
 router = DefaultRouter()
-router.register(r'phdata', PhDataViewSet, basename='phdata')
-router.register(r'temperaturedata', TemperatureDataViewSet, basename='temperaturedata')
-router.register(r'sensordata', SensorDataViewSet, basename='sensordata')
-router.register(r'cumuldata', CumulDataViewSet, basename='cumuldata')
-router.register(r'conductivitydata', ConductivityDataViewSet, basename='conductivitydata')
-router.register(r'dashboard_sensor_data', DashboardSensorDataViewSet, basename='dashboarddata')
-router.register(r'stationdata', StationDataViewSet, basename='stationdata')
+router.register(r'sensors', SensorViewSet, basename='sensor')
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('all-data/', AllDataView.as_view(), name='all-data'),
-    path('header-data/', HeaderAPIView.as_view(), name='header-data'),
-	path('notifications', UserNotificationsAndAlertsView.as_view(), name='user-notifications-alerts'),
+    # Include the router URLs for SensorViewSet
+    path('/', include(router.urls)),
+    
+    # Additional API endpoints
+    path('notifications-and-alerts/', NotificationsAndAlertsView.as_view(), name='notifications-and-alerts'),
+    path('all-sensor-data/', AllSensorDataView.as_view(), name='all-sensor-data'),
+    path('header/', HeaderAPIView.as_view(), name='header'),
 ]
