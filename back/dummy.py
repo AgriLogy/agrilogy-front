@@ -1,141 +1,110 @@
 import os
 import random
-from datetime import datetime, timedelta
 import django
+from datetime import datetime
+from faker import Faker
 
 # Set up Django environment
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'agriBack.settings')
 django.setup()
 
-from analytics.models import PhData, TemperatureData, SensorData, CumulData, ConductivityData, DashboardSensorData, StationData
-from CustomUser.models import CustomUser
-from analytics.models import Alert, AlertsPerUser, Notification, NotificationsPerUser
-from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
+from analytics.models import Notification, Alert, NotificationsPerUser, AlertsPerUser, Sensor
 
-def create_users():
-    # Create 10 users
-    users = []
-    for i in range(1, 5):
-        username = f'user{i}'
-        email = f'user{i}@example.com'
-        password = 'Password123!'  # A valid password with proper complexity
+password = "Pass123"
+# Initialize Faker
+fake = Faker()
 
-        # Check if user already exists (optional, in case you run this multiple times)
-        if CustomUser.objects.filter(email=email).exists() or CustomUser.objects.filter(username=username).exists():
-            print(f'User {username} already exists, skipping creation.')
-            user = CustomUser.objects.get(username=username)  # Fetch existing user
-        else:
-            try:
-                # Validate the password
-                validate_password(password)
-                # Create the user
-                user = CustomUser.objects.create_user(
-                    username=username, 
-                    email=email, 
-                    password=password, 
-                    firstname='User', 
-                    lastname=str(i)
-                )
-                print(f'User {username} created successfully.')
-            except ValidationError as e:
-                print(f"Password validation failed for {username}: {e.messages}")
-                continue
+# Create 10 users
+users = []
+for _ in range(10):
+    user = get_user_model().objects.create_user(
+        username=fake.user_name(),
+        email=fake.email(),
+        # password=fake.password(),
+        password=password,
+        firstname=fake.first_name(),
+        lastname=fake.last_name(),
+        phone_number=fake.phone_number(),
+        user_type=random.choice(['admin', 'regular']),
+        is_active=True,
+        is_staff=False
+    )
+    users.append(user)
 
-        users.append(user)
-    return users
+# Create 5 notifications and assign them to users
+notifications = []
+for _ in range(5):
+    notification = Notification.objects.create(
+        yesterday_temperature=fake.random_number(digits=2),
+        today_temperature=fake.random_number(digits=2),
+        yesterday_humidity=fake.random_number(digits=2),
+        today_humidity=fake.random_number(digits=2),
+        ET0=fake.random_number(digits=3),
+        soil_humidity=fake.random_number(digits=2),
+        soil_temperature=fake.random_number(digits=2),
+        soil_ph=fake.random_number(digits=2),
+        perfect_irrigation_period=fake.sentence(),
+        last_irrigation_date=fake.date_this_year(),
+        last_start_irrigation_hour=fake.time(),
+        last_finish_irrigation_hour=fake.time(),
+        used_water_irrigation=fake.random_number(digits=3),
+        notification_date=fake.date_this_year()
+    )
+    notifications.append(notification)
 
-def generate_random_data(users):
-    start_timestamp = datetime.now() - timedelta(days=30)  # Start from 30 days ago
-    for user in users:
-        for _ in range(10):  # Create 10 records for each user
-            # Generate a random timestamp
-            random_timestamp = start_timestamp + timedelta(days=random.randint(0, 30), hours=random.randint(0, 23), minutes=random.randint(0, 59))
+# Create 3 alerts and assign them to users
+alerts = []
+for _ in range(3):
+    alert = Alert.objects.create(
+        title=fake.sentence(),
+        description=fake.text(),
+        danger_level=random.choice(['Low', 'Medium', 'High'])
+    )
+    alerts.append(alert)
 
-            # Generate random values for each model and round to 2 decimal places
-            ph_data = PhData.objects.create(timestamp=random_timestamp, ph=round(random.uniform(5.0, 9.0), 2))
-            temperature_data = TemperatureData.objects.create(timestamp=random_timestamp, temperature=round(random.uniform(0.0, 40.0), 2))
-            sensor_data = SensorData.objects.create(
-                timestamp=random_timestamp,
-                depth=round(random.uniform(0.0, 2.0), 2),
-                humidity_20=round(random.uniform(0.0, 100.0), 2),
-                humidity_40=round(random.uniform(0.0, 100.0), 2),
-                humidity_60=round(random.uniform(0.0, 100.0), 2),
-                irrigation=round(random.uniform(0.0, 100.0), 2)
-            )
-            cumul_data = CumulData.objects.create(timestamp=random_timestamp, cumul=round(random.uniform(0.0, 1000.0), 2))
-            conductivity_data = ConductivityData.objects.create(
-                timestamp=random_timestamp,
-                conductivity=round(random.uniform(0.0, 10.0), 2),
-                irrigation=random.randint(0, 1)  # 0 or 1 for irrigation status
-            )
-            dashboard_sensor_data = DashboardSensorData.objects.create(
-                user=user,
-                timestamp=random_timestamp,
-                air_temperature=round(random.uniform(-10.0, 40.0), 2),
-                wetbulb_temperature=round(random.uniform(-10.0, 40.0), 2),
-                solar_radiation=round(random.uniform(0.0, 1000.0), 2),
-                vpd=round(random.uniform(0.0, 5.0), 2),
-                relative_humidity=round(random.uniform(0.0, 100.0), 2),
-                precipitation=round(random.uniform(0.0, 50.0), 2),
-                leaf_wetness=round(random.uniform(0.0, 100.0), 2),
-                wind_speed=round(random.uniform(0.0, 20.0), 2),
-                solar_panel_voltage=round(random.uniform(0.0, 60.0), 2),
-                battery_voltage=round(random.uniform(0.0, 60.0), 2),
-                delta_t=round(random.uniform(0.0, 10.0), 2),
-                sunshine_duration=round(random.uniform(0.0, 24.0), 2),
-                et0=round(random.uniform(0.0, 10.0), 2)
-            )
-            station_data = StationData.objects.create(
-                user=user,
-                timestamp=random_timestamp,
-                et0=round(random.uniform(0.0, 10.0), 2),
-                temperature=round(random.uniform(0.0, 40.0), 2),
-                humidity=round(random.uniform(0.0, 100.0), 2),
-                wind_speed=round(random.uniform(0.0, 20.0), 2),
-                wind_direction=round(random.uniform(0.0, 360.0), 2),  # Wind direction in degrees
-                cumulative_rainfall=round(random.uniform(0.0, 500.0), 2),
-                solar_radiation=round(random.uniform(0.0, 1000.0), 2),
-                vapor_pressure_deficit=round(random.uniform(0.0, 5.0), 2),
-                precipitation=round(random.uniform(0.0, 50.0), 2)
-            )
+# Link users to notifications and alerts
+for user in users:
+    # Assign random notifications to users
+    for notification in notifications:
+        NotificationsPerUser.objects.create(
+            user=user,
+            notification=notification,
+            is_read=random.choice([True, False]),
+            read_at=datetime.now() if random.choice([True, False]) else None
+        )
 
-            print(f"Generated data for {user.username} at {random_timestamp}")
+    # Assign random alerts to users
+    for alert in alerts:
+        AlertsPerUser.objects.create(
+            user=user,
+            alert=alert,
+            is_read=random.choice([True, False]),
+            read_at=datetime.now() if random.choice([True, False]) else None
+        )
 
-def create_alerts_and_notifications(users):
-    for user in users:
-        # Create 2 alerts per user
-        for i in range(2):
-            alert = Alert.objects.create(
-                title=f"Alert {i + 1} for {user.username}",
-                description="This is a test alert",
-                danger_level=random.choice(['Low', 'Medium', 'High'])
-            )
-            AlertsPerUser.objects.create(user=user, alert=alert)
-            print(f"Created alert {alert.title} for {user.username}")
+# Create random sensor data for each user
+for user in users:
+    for _ in range(5):  # 5 sensor records per user
+        Sensor.objects.create(
+            user=user,
+            precipitation_rate=fake.random_number(digits=2),
+            humidity_weather=fake.random_number(digits=2),
+            wind_speed=fake.random_number(digits=2),
+            solar_radiation=fake.random_number(digits=3),
+            pressure_weather=fake.random_number(digits=3),
+            wind_direction=fake.random_number(digits=3),
+            temperature_weather=fake.random_number(digits=2),
+            ec_soil_medium=fake.random_number(digits=2),
+            soil_temperature_medium=fake.random_number(digits=2),
+            soil_ec_high=fake.random_number(digits=2),
+            ec_soil_low=fake.random_number(digits=2),
+            soil_moisture_medium=fake.random_number(digits=2),
+            soil_moisture_high=fake.random_number(digits=2),
+            soil_moisture_low=fake.random_number(digits=2),
+            ph_soil=fake.random_number(digits=2),
+            soil_temperature_low=fake.random_number(digits=2),
+            soil_temperature_high=fake.random_number(digits=2)
+        )
 
-        # Create 3 notifications per user
-        for i in range(3):
-            notification = Notification.objects.create(
-                yesterday_temperature=round(random.uniform(10.0, 30.0), 2),
-                today_temperature=round(random.uniform(10.0, 30.0), 2),
-                yesterday_humidity=round(random.uniform(20.0, 80.0), 2),
-                today_humidity=round(random.uniform(20.0, 80.0), 2),
-                ET0=round(random.uniform(0.0, 10.0), 2),
-                soil_humidity=round(random.uniform(0.0, 100.0), 2),
-                soil_temperature=round(random.uniform(10.0, 30.0), 2),
-                soil_ph=round(random.uniform(4.0, 9.0), 2),
-                perfect_irrigation_period="Early Morning",
-                last_irrigation_date=datetime.now().date(),
-                last_start_irrigation_hour=datetime.now().time(),
-                last_finish_irrigation_hour=(datetime.now() + timedelta(hours=1)).time(),
-                used_water_irrigation=round(random.uniform(0.0, 1000.0), 2)
-            )
-            NotificationsPerUser.objects.create(user=user, notification=notification)
-            print(f"Created notification for {user.username}")
-
-if __name__ == "__main__":
-    users = create_users()  # Create users first
-    generate_random_data(users)  # Generate random sensor data for each user
-    create_alerts_and_notifications(users)  # Create alerts and notifications
-    print("Data generation complete.")
+print('Successfully created 10 users and populated related data!')

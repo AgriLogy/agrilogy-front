@@ -30,9 +30,13 @@ class AlertsPerUserSerializer(serializers.ModelSerializer):
         model = AlertsPerUser
         fields = '__all__'
 
-
 class SensorSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
+    et0 = serializers.SerializerMethodField()
+
+    def get_et0(self, obj):
+        et0 = obj.ec_soil_medium * (obj.soil_moisture_medium / 100)  # Example formula
+        return et0
 
     class Meta:
         model = Sensor

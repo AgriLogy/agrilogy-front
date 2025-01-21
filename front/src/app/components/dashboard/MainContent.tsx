@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import "./MainContent.css"; 
-import { Box, Text } from "@chakra-ui/react"; 
+import "./MainContent.css";
+import { Box, Text } from "@chakra-ui/react";
 import Zones from "./Zones";
 import SensorDataTable from "../SensorDataTable";
 import SensorDataChart from "../SensorDataChart";
@@ -13,18 +13,20 @@ import LoadingSpinner from "../common/LoadingSpinner";
 import useAxiosInstance from "@/app/lib/axiosInstance";
 
 const MainContent = () => {
-  const { bg, textColor } = useColorModeStyles(); 
+  const { bg, textColor } = useColorModeStyles();
   const [sensorData, setSensorData] = useState<SensorData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const axiosInstance = useAxiosInstance();
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosInstance.get("/api/dashboard_sensor_data/");
-        const data: SensorData[] = response.data; 
+        const response = await axiosInstance.get("/api/all-sensor-data/");
+        console.log("API Response:", response.data); // Log the API response to inspect its structure
+
+        // If response.data has a key "sensor_data" containing the array:
+        const data: SensorData[] = response.data.sensor_data || []; // Fallback to empty array if sensor_data is missing
         setSensorData(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
@@ -53,10 +55,10 @@ const MainContent = () => {
         <Zones />
       </Box>
       <Box bg={bg} className="box">
-        <StatusIndicators 
-          humidity={sensorData[0]?.relative_humidity} 
+        <StatusIndicators
+          humidity={sensorData[0]?.humidity_weather}
           solarRadiation={sensorData[0]?.solar_radiation}
-          solarPanelVoltage={sensorData[0]?.solar_panel_voltage}
+          solarPanelVoltage={sensorData[0]?.solar_radiation}
         />
       </Box>
       <Box bg={bg} className="box">
@@ -70,6 +72,6 @@ const MainContent = () => {
       </Box>
     </div>
   );
-}
+};
 
-export  {MainContent};
+export { MainContent };

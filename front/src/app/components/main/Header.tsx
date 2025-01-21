@@ -24,7 +24,7 @@ const Header = () => {
 
   useEffect(() => {
     axiosInstance
-      .get("/api/header-data/")
+      .get("/api/header/")
       .then((response) => {
         const userData = response.data;
         console.log(response.data);

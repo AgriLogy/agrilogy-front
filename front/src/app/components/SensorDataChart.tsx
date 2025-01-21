@@ -72,8 +72,13 @@ const CustomTick = ({ x, y, payload }: any) => {
 };
 
 const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
+
+  console.log("okay : ", data);
+  // Ensure data is an array and not empty
+  const validData = Array.isArray(data) && data.length > 0 ? data : [];
+
   // Calculate ET0 for each data point
-  const dataWithET0 = data.map((sensorData) => ({
+  const dataWithET0 = validData.map((sensorData) => ({
     ...sensorData,
   }));
 
@@ -85,6 +90,24 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
   const textColor = useColorModeValue("gray.800", "gray.200");
   const p = useBreakpointValue({ base: 2, md: 4 });
   const { colorMode } = useColorMode();
+
+  if (validData.length === 0) {
+    return (
+      <Box
+        width="100%"
+        height="100%"
+        bg={chartBg}
+        borderRadius="md"
+        boxShadow="lg"
+        p={p}
+        overflow="hidden"
+      >
+        <Text color={colorMode === "light" ? "gray.700" : "gray.200"} fontSize="lg" fontWeight="bold" mb={4}>
+          No data available for the chart
+        </Text>
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -102,13 +125,13 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={lastEightData}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="formatted_timestamp" tick={<CustomTick />} />
+          <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
           <Tooltip />
           <Legend content={<CustomLegend />} />
           <Line
             type="monotone"
-            dataKey="air_temperature"
+            dataKey="temperature_weather"
             stroke={chartColor}
             name="Température de l'air"
           />

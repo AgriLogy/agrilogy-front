@@ -23,7 +23,25 @@ const SensorDataTable: React.FC<SensorDataTableProps> = ({ data }) => {
   const p = useBreakpointValue({ base: 2, md: 4 });
 
   // Get the last 8 records
-  const lastRecords = data.slice(-8);
+  const lastRecords = Array.isArray(data) && data.length > 0 ? data : [];  // Ensure it's an array, and not empty
+
+  if (lastRecords.length === 0) {
+    return (
+      <Box
+        width="100%"
+        height="100%"
+        bg={bg}
+        borderRadius="md"
+        boxShadow="lg"
+        p={p}
+        overflowX="auto"
+      >
+        <Text color={textColor} fontSize="lg" fontWeight="bold" mb={4}>
+          No sensor data available
+        </Text>
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -43,38 +61,54 @@ const SensorDataTable: React.FC<SensorDataTableProps> = ({ data }) => {
           <Thead>
             <Tr color={navBgColor}>
               <Th fontSize={fontSize}>Timestamp</Th>
-              <Th fontSize={fontSize}>Temp. Air HC (°C)</Th>
-              <Th fontSize={fontSize}>Temp. Humide (°C)</Th>
-              <Th fontSize={fontSize}>Rayonnement Solaire (W/m²)</Th>
-              <Th fontSize={fontSize}>VPD</Th>
-              <Th fontSize={fontSize}>Humidité Rel. HC (%)</Th>
-              <Th fontSize={fontSize}>Précipitation (mm)</Th>
-              <Th fontSize={fontSize}>Humidité Foliaire</Th>
-              <Th fontSize={fontSize}>Vitesse Vent (m/s)</Th>
-              <Th fontSize={fontSize}>Tension Panneau (V)</Th>
-              <Th fontSize={fontSize}>Tension Batterie (V)</Th>
-              <Th fontSize={fontSize}>Delta T</Th>
-              <Th fontSize={fontSize}>Durée ensoleillement (min)</Th>
-              <Th fontSize={fontSize}>ET0 (mm/jour)</Th>
+              <Th fontSize={fontSize}>Temp. Air (°C)</Th>
+              <Th fontSize={fontSize}>Humidity Weather (%)</Th>
+              <Th fontSize={fontSize}>Solar Radiation (W/m²)</Th>
+              <Th fontSize={fontSize}>Wind Speed (m/s)</Th>
+              <Th fontSize={fontSize}>Precipitation Rate (mm/h)</Th>
+              <Th fontSize={fontSize}>Soil EC Medium (dS/m)</Th>
+              <Th fontSize={fontSize}>Soil Moisture Medium (%)</Th>
+              <Th fontSize={fontSize}>Soil Temperature Medium (°C)</Th>
+              <Th fontSize={fontSize}>Soil pH</Th>
+              <Th fontSize={fontSize}>Wind Direction (°)</Th>
             </Tr>
           </Thead>
           <Tbody>
             {lastRecords.map((entry, index) => (
               <Tr key={index}>
-                <Td fontSize={fontSize} color={textColor}>{entry.formatted_timestamp}</Td>
-                <Td fontSize={fontSize} color={textColor}>{entry.hc_air_temperature}°C</Td>
-                <Td fontSize={fontSize} color={textColor}>{entry.wetbulb_temperature}°C</Td>
-                <Td fontSize={fontSize} color={textColor}>{entry.solar_radiation} W/m²</Td>
-                <Td fontSize={fontSize} color={textColor}>{entry.vpd}</Td>
-                <Td fontSize={fontSize} color={textColor}>{entry.relative_humidity}%</Td>
-                <Td fontSize={fontSize} color={textColor}>{entry.precipitation} mm</Td>
-                <Td fontSize={fontSize} color={textColor}>{entry.leaf_wetness}</Td>
-                <Td fontSize={fontSize} color={textColor}>{entry.wind_speed} m/s</Td>
-                <Td fontSize={fontSize} color={textColor}>{entry.solar_panel} V</Td>
-                <Td fontSize={fontSize} color={textColor}>{entry.battery_voltage} V</Td>
-                <Td fontSize={fontSize} color={textColor}>{entry.delta_t}</Td>
-                <Td fontSize={fontSize} color={textColor}>{entry.sunshine_duration} min</Td>
-                <Td fontSize={fontSize} color={textColor}>{entry.et0?.toFixed(2)} mm/jour</Td>
+                <Td fontSize={fontSize} color={textColor}>
+                  {entry.timestamp}
+                </Td>
+                <Td fontSize={fontSize} color={textColor}>
+                  {entry.temperature_weather}°C
+                </Td>
+                <Td fontSize={fontSize} color={textColor}>
+                  {entry.humidity_weather}%
+                </Td>
+                <Td fontSize={fontSize} color={textColor}>
+                  {entry.solar_radiation} W/m²
+                </Td>
+                <Td fontSize={fontSize} color={textColor}>
+                  {entry.wind_speed} m/s
+                </Td>
+                <Td fontSize={fontSize} color={textColor}>
+                  {entry.precipitation_rate} mm/h
+                </Td>
+                <Td fontSize={fontSize} color={textColor}>
+                  {entry.ec_soil_medium} dS/m
+                </Td>
+                <Td fontSize={fontSize} color={textColor}>
+                  {entry.soil_moisture_medium}%
+                </Td>
+                <Td fontSize={fontSize} color={textColor}>
+                  {entry.soil_temperature_medium}°C
+                </Td>
+                <Td fontSize={fontSize} color={textColor}>
+                  {entry.ph_soil}
+                </Td>
+                <Td fontSize={fontSize} color={textColor}>
+                  {entry.wind_direction}°
+                </Td>
               </Tr>
             ))}
           </Tbody>

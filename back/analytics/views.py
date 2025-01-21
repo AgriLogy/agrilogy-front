@@ -7,14 +7,19 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from .models import *
 from .serializers import *
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from .models import Sensor
+from .serializers import SensorSerializer
+from django.utils.dateparse import parse_date
 
 class SensorViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
-    queryset = Sensor.objects.all()
     serializer_class = SensorSerializer
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = Sensor.objects.filter(user=self.request.user) 
+
         start_date = self.request.query_params.get('start_date')
         end_date = self.request.query_params.get('end_date')
 
@@ -33,6 +38,7 @@ class SensorViewSet(viewsets.ModelViewSet):
                 return queryset.none()
 
         return queryset
+
 
 class NotificationsAndAlertsView(APIView):
     permission_classes = [IsAuthenticated]
@@ -72,10 +78,11 @@ class AllSensorDataView(APIView):
                 return Response({"error": "Invalid date format"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Fetch and filter sensor data
-        sensors = Sensor.objects.filter(date_filter)
+        queryset = Sensor.objects.filter(user=self.request.user) 
+        queryset = queryset.filter(date_filter)
 
         # Serialize the data
-        serializer = SensorSerializer(sensors, many=True)
+        serializer = SensorSerializer(queryset, many=True)
         return Response({"sensor_data": serializer.data})
 
 class HeaderAPIView(APIView):
