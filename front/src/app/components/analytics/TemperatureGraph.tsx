@@ -13,8 +13,8 @@ import {
 } from 'recharts';
 
 interface TemperatureData {
-  formatted_timestamp: string;
-  temperature: number;
+  timestamp: string;
+  soil_temperature_medium: number;
 }
 
 interface TemperatureGraphProps {
@@ -52,12 +52,12 @@ const TemperatureGraph: React.FC<TemperatureGraphProps> = ({ data }) => {
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="formatted_timestamp" tick={<CustomTick />} />
+          <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
           <Tooltip />
           <Legend content={<CustomLegend />} />
           
-          <Line type="monotone" dataKey="temperature" stroke="rgba(75,192,192,1)" name="Température (°C)" />
+          <Line type="monotone" dataKey="soil_temperature_medium" stroke="rgba(75,192,192,1)" name="Température (°C)" />
         </LineChart>
       </ResponsiveContainer>
     </Box>

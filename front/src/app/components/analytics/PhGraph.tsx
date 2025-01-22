@@ -13,8 +13,8 @@ import {
 
 interface PhGraphProps {
   data: {
-    formatted_timestamp: string;
-    ph: number;
+    timestamp: string;
+    ph_soil: number;
   }[];
 }
 
@@ -47,11 +47,11 @@ const PhGraph: React.FC<PhGraphProps> = ({ data }) => {
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="formatted_timestamp" tick={<CustomTick />} />
+          <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
           <Tooltip />
           <Legend content={<CustomLegend />} />
-          <Line type="monotone" dataKey="ph" stroke="rgba(255,99,132,1)" name="pH du Sol" />
+          <Line type="monotone" dataKey="ph_soil" stroke="rgba(255,99,132,1)" name="pH du Sol" />
         </LineChart>
       </ResponsiveContainer>
     </Box>
@@ -59,18 +59,3 @@ const PhGraph: React.FC<PhGraphProps> = ({ data }) => {
 };
 
 export default PhGraph;
-
-
-
-// <Box bg={colorMode === "light" ? "gray.200" : "gray.700"} className="box wide">
-// <CumulIrrigationGraph />
-// </Box>
-// <Box bg={colorMode === "light" ? "gray.200" : "gray.700"} className="box wide">
-// <ConductivityIrrigationGraph/>
-// </Box>
-// <Box bg={colorMode === "light" ? "gray.200" : "gray.700"} className="box wide">
-// <TemperatureGraph/>
-// </Box>
-// <Box bg={colorMode === "light" ? "gray.200" : "gray.700"} className="box wide">
-// <PhGraph/>
-// </Box>

@@ -12,9 +12,9 @@ import {
 } from "recharts";
 
 interface ConductivityData {
-  formatted_timestamp: string;
-  conductivity: number;
-  irrigation: number;
+  timestamp: string;
+  ec_soil_medium: number;
+  // irrigation: number;
 }
 
 interface ConductivityIrrigationGraphProps {
@@ -52,12 +52,12 @@ const ConductivityIrrigationGraph: React.FC<ConductivityIrrigationGraphProps> = 
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="formatted_timestamp" tick={<CustomTick />} />
+          <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
           <Tooltip />
           <Legend content={<CustomLegend />} />
-          <Line type="monotone" dataKey="conductivity" stroke="rgba(75,192,192,1)" name="Conductivité (mS/cm)" />
-          <Line type="monotone" dataKey="irrigation" stroke="rgba(153,102,255,1)" name="Irrigation (L)" />
+          <Line type="monotone" dataKey="ec_soil_medium" stroke="rgba(75,192,192,1)" name="Conductivité (mS/cm)" />
+          {/* <Line type="monotone" dataKey="irrigation" stroke="rgba(153,102,255,1)" name="Irrigation (L)" /> */}
         </LineChart>
       </ResponsiveContainer>
     </Box>

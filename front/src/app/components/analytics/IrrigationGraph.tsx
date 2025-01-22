@@ -38,14 +38,14 @@ const IrrigationGraph = ({ sensorData }: { sensorData: any }) => {
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={sensorData}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="formatted_timestamp" tick={<CustomTick />} />
+          <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
           <Tooltip />
           <Legend content={<CustomLegend />} />
-          <Line type="monotone" dataKey="humidity_20" stroke={chartColor} name="Humidité 20 cm (%)" />
-          <Line type="monotone" dataKey="humidity_40" stroke="rgba(255,99,132,1)" name="Humidité 40 cm (%)" />
-          <Line type="monotone" dataKey="humidity_60" stroke="rgba(255,206,86,1)" name="Humidité 60 cm (%)" />
-          <Line type="monotone" dataKey="irrigation" stroke="rgba(153,102,255,1)" name="Irrigation (L)" />
+          <Line type="monotone" dataKey="soil_moisture_low" stroke={chartColor} name="Humidité 20 cm (%)" />
+          <Line type="monotone" dataKey="soil_moisture_medium" stroke="rgba(255,99,132,1)" name="Humidité 40 cm (%)" />
+          <Line type="monotone" dataKey="soil_moisture_high" stroke="rgba(255,206,86,1)" name="Humidité 60 cm (%)" />
+          {/* <Line type="monotone" dataKey="irrigation" stroke="rgba(153,102,255,1)" name="Irrigation (L)" /> */}
         </LineChart>
       </ResponsiveContainer>
     </Box>

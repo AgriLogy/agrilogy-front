@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import "./AnalyticsMain.css";
 import { Box, Text } from "@chakra-ui/react";
 import IrrigationGraph from "./IrrigationGraph";
-import axiosInstance from "@/app/lib/axiosInstance";
 import PhGraph from "./PhGraph";
 import DateRangePicker from "./DateRangePicker";
 import ConductivityIrrigationGraph from "./ConductivityIrrigationGraph";
@@ -12,32 +11,37 @@ import TemperatureGraph from "./TemperatureGraph";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import LoadingSpinner from "../common/LoadingSpinner";
 import useAxiosInstance from "@/app/lib/axiosInstance";
+import { SensorData } from "@/app/data/dashboard/data";
 
 const AnalyticsMain: React.FC = () => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
-  const [data, setData] = useState<any>(null); 
-  const [startDate, setStartDate] = useState<string>(""); 
-  const [endDate, setEndDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [data, setData] = useState<SensorData[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>(
+    new Date().toISOString().split("T")[0]
+  );
   const axiosInstance = useAxiosInstance();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const params = {
-          start_date: startDate,
-          end_date: endDate,
-        };
+        const response = await axiosInstance.get("/api/all-sensor-data/");
+        console.log("API Response:", response.data); // Log the API response to inspect its structure
 
-        const response = await axiosInstance.get("/api/all-data/", { params });
-        setData(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+        // Assuming response.data.sensor_data contains an array of SensorData
+        const sensorData: SensorData[] = response.data.sensor_data || [];
+        setData(sensorData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
       }
     };
+
     fetchData();
   }, [startDate, endDate]);
 
-  if (!data) return <LoadingSpinner/>;
+  if (error) return <LoadingSpinner />;
 
   return (
     <div className="container">
@@ -50,23 +54,23 @@ const AnalyticsMain: React.FC = () => {
       </Box>
 
       <Box bg={bg} className="box wide">
-        <IrrigationGraph sensorData={data.sensor_data} />
+        <IrrigationGraph sensorData={data} />
       </Box>
 
       <Box bg={bg} className="box wide">
-        <PhGraph data={data.ph_data} />
+        <PhGraph data={data} />
       </Box>
 
       <Box bg={bg} className="box wide">
-        <ConductivityIrrigationGraph data={data.conductivity_data} />
+        <ConductivityIrrigationGraph data={data} />
       </Box>
 
-      <Box bg={bg} className="box wide">
-        <CumulIrrigationGraph data={data.cumul_data} />
-      </Box>
+      {/* <Box bg={bg} className="box wide">
+        <CumulIrrigationGraph data={data} />
+      </Box> */}
 
       <Box bg={bg} className="box wide">
-        <TemperatureGraph data={data.temperature_data} />
+        <TemperatureGraph data={data} />
       </Box>
     </div>
   );
