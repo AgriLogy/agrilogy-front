@@ -1,12 +1,19 @@
-// useAxiosInstance.js
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import axios from 'axios';
 
 const useAxiosInstance = () => {
   const router = useRouter();
   const pathname = usePathname(); // Get the current path
-  const token = localStorage.getItem('accessToken');
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Access localStorage only on the client side
+    if (typeof window !== 'undefined') {
+      const accessToken = localStorage.getItem('accessToken');
+      setToken(accessToken); // Set the token state
+    }
+  }, []); // Run only once when the component mounts
 
   const axiosInstance = axios.create({
     baseURL: 'http://localhost:8000/',
@@ -18,11 +25,13 @@ const useAxiosInstance = () => {
   useEffect(() => {
     const requestInterceptor = axiosInstance.interceptors.request.use(
       (config) => {
-        const accessToken = localStorage.getItem('accessToken');
-        const publicRoutes = ['/login', '/signup'];
+        if (typeof window !== 'undefined') {
+          const accessToken = localStorage.getItem('accessToken');
+          const publicRoutes = ['/login', '/signup'];
 
-        if (!publicRoutes.includes(pathname) && accessToken) {
-          config.headers['Authorization'] = `Bearer ${accessToken}`;
+          if (!publicRoutes.includes(pathname) && accessToken) {
+            config.headers['Authorization'] = `Bearer ${accessToken}`;
+          }
         }
         return config;
       },
@@ -34,9 +43,7 @@ const useAxiosInstance = () => {
       (error) => {
         console.log(error);
         if (error.response && error.response.status === 401) {
-          // if (pathname !== '/login') {
-            router.push('/login');
-          // }
+          router.push('/login');
         }
         return Promise.reject(error);
       }
@@ -47,7 +54,7 @@ const useAxiosInstance = () => {
       axiosInstance.interceptors.request.eject(requestInterceptor);
       axiosInstance.interceptors.response.eject(responseInterceptor);
     };
-  }, [pathname, router]);
+  }, [pathname, router, token]); // Added token to the dependency array
 
   return axiosInstance;
 };

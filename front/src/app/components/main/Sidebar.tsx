@@ -60,8 +60,9 @@ const Sidebar = () => {
 
         <Tooltip label="Analytique" aria-label="Analytics">
           <Link href="/analytics">
-            <IconButton
-              icon={<FaChartLine />}
+            <IconButton 
+              icon={<FaLeaf />}
+              // icon={<FaChartLine />}
               aria-label="Analytics"
               variant="ghost"
               mb={2}
@@ -84,7 +85,7 @@ const Sidebar = () => {
           </Link>
         </Tooltip>
 
-        <Box height="1px" width="20px" bg="gray.400" mb={2} />
+        {/* <Box height="1px" width="20px" bg="gray.400" mb={2} />
 
         <Tooltip label="Humidité du sol" aria-label="Soil Moisture">
           <Link href="/moisture">
@@ -96,7 +97,7 @@ const Sidebar = () => {
               _hover={{ color: hoverColor }}
             />
           </Link>
-        </Tooltip>
+        </Tooltip> */}
 
         <Box height="1px" width="20px" bg="gray.400" mb={2} />
 
