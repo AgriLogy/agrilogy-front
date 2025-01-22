@@ -13,16 +13,41 @@ import {
 
 interface SolarRadiationGraphProps {
   data: {
-    formatted_timestamp: string; // Formatted timestamp for the X-axis
-    solar_radiation: number;     // Solar radiation data in W/m²
+    timestamp: string; // Formatted timestamp for the X-axis
+    solar_radiation: number; // Solar radiation data in W/m²
   }[];
 }
 
 const CustomLegend = (props: any) => (
-  <ul style={{ display: "flex", listStyle: "none", padding: 0, flexWrap: "wrap", margin: 0, marginLeft: 60 }}>
+  <ul
+    style={{
+      display: "flex",
+      listStyle: "none",
+      padding: 0,
+      flexWrap: "wrap",
+      margin: 0,
+      marginLeft: 60,
+    }}
+  >
     {props.payload.map((entry: any, index: number) => (
-      <li key={`item-${index}`} style={{ marginRight: "15px", fontSize: "12px", color: entry.color, whiteSpace: "nowrap" }}>
-        <span style={{ marginRight: "5px", backgroundColor: entry.color, width: "10px", height: "10px", display: "inline-block" }} />
+      <li
+        key={`item-${index}`}
+        style={{
+          marginRight: "15px",
+          fontSize: "12px",
+          color: entry.color,
+          whiteSpace: "nowrap",
+        }}
+      >
+        <span
+          style={{
+            marginRight: "5px",
+            backgroundColor: entry.color,
+            width: "10px",
+            height: "10px",
+            display: "inline-block",
+          }}
+        />
         {entry.value}
       </li>
     ))}
@@ -40,19 +65,36 @@ const SolarRadiationGraph: React.FC<SolarRadiationGraphProps> = ({ data }) => {
   const chartBg = colorMode === "light" ? "white" : "gray.800";
 
   return (
-    <Box width="100%" height="100%" bg={chartBg} borderRadius="md" boxShadow="lg" p={2}>
-      <Text color={colorMode === "light" ? "gray.700" : "gray.200"} fontSize="lg" fontWeight="bold" mb={4}>
+    <Box
+      width="100%"
+      height="100%"
+      bg={chartBg}
+      borderRadius="md"
+      boxShadow="lg"
+      p={2}
+    >
+      <Text
+        color={colorMode === "light" ? "gray.700" : "gray.200"}
+        fontSize="lg"
+        fontWeight="bold"
+        mb={4}
+      >
         Solar Radiation Data
       </Text>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="formatted_timestamp" tick={<CustomTick />} />
+          <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
           <Tooltip />
           <Legend content={<CustomLegend />} />
           {/* Line for Solar Radiation */}
-          <Line type="monotone" dataKey="solar_radiation" stroke="rgba(255, 205, 86, 1)" name="Solar Radiation (W/m²)" />
+          <Line
+            type="monotone"
+            dataKey="solar_radiation"
+            stroke="rgba(255, 205, 86, 1)"
+            name="Solar Radiation (W/m²)"
+          />
         </LineChart>
       </ResponsiveContainer>
     </Box>

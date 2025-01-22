@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Text, useColorMode } from '@chakra-ui/react';
+import { Box, Text, useColorMode } from "@chakra-ui/react";
 import {
   BarChart,
   Bar,
@@ -10,10 +10,10 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from 'recharts';
+} from "recharts";
 
 export interface CumulData {
-  formatted_timestamp: string;
+  timestamp: string;
   cumul: number;
 }
 
@@ -22,10 +22,35 @@ interface CumulIrrigationGraphProps {
 }
 
 const CustomLegend = (props: any) => (
-  <ul style={{ display: "flex", listStyle: "none", padding: 0, flexWrap: "wrap", margin: 0, marginLeft: 60 }}>
+  <ul
+    style={{
+      display: "flex",
+      listStyle: "none",
+      padding: 0,
+      flexWrap: "wrap",
+      margin: 0,
+      marginLeft: 60,
+    }}
+  >
     {props.payload.map((entry: any, index: number) => (
-      <li key={`item-${index}`} style={{ marginRight: "15px", fontSize: "12px", color: entry.color, whiteSpace: "nowrap" }}>
-        <span style={{ marginRight: "5px", backgroundColor: entry.color, width: "10px", height: "10px", display: "inline-block" }} />
+      <li
+        key={`item-${index}`}
+        style={{
+          marginRight: "15px",
+          fontSize: "12px",
+          color: entry.color,
+          whiteSpace: "nowrap",
+        }}
+      >
+        <span
+          style={{
+            marginRight: "5px",
+            backgroundColor: entry.color,
+            width: "10px",
+            height: "10px",
+            display: "inline-block",
+          }}
+        />
         {entry.value}
       </li>
     ))}
@@ -38,21 +63,35 @@ const CustomTick = ({ x, y, payload }: any) => (
   </text>
 );
 
-const CumulIrrigationGraph: React.FC<CumulIrrigationGraphProps> = ({ data }) => {
+const CumulIrrigationGraph: React.FC<CumulIrrigationGraphProps> = ({
+  data,
+}) => {
   const { colorMode } = useColorMode();
   const chartBg = colorMode === "light" ? "white" : "gray.800";
 
   if (!data.length) return <div>No data available</div>;
 
   return (
-    <Box width="100%" height="100%" bg={chartBg} borderRadius="md" boxShadow="lg" p={2}>
-      <Text color={colorMode === "light" ? "gray.700" : "gray.200"} fontSize="lg" fontWeight="bold" mb={4}>
+    <Box
+      width="100%"
+      height="100%"
+      bg={chartBg}
+      borderRadius="md"
+      boxShadow="lg"
+      p={2}
+    >
+      <Text
+        color={colorMode === "light" ? "gray.700" : "gray.200"}
+        fontSize="lg"
+        fontWeight="bold"
+        mb={4}
+      >
         Cumul d'Irrigation
       </Text>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="formatted_timestamp" tick={<CustomTick />} />
+          <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
           <Tooltip />
           <Legend content={<CustomLegend />} />

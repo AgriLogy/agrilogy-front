@@ -16,14 +16,17 @@ import SolarRadiationGraph from "./SolarRadiationGraph";
 import VaporPressureDeficitGraph from "./VaporPressureDeficitGraph";
 import PrecipitationHumidityGraph from "./PrecipitationHumidityGraph";
 import DataTable from "./DataTable";
+import { SensorData } from "@/app/data/dashboard/data";
 
 const StationMain: React.FC = () => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
-  const [data, setData] = useState<any>(null); 
-  const [startDate, setStartDate] = useState<string>(""); 
-  const [endDate, setEndDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [data, setData] = useState<any>(null);
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>(
+    new Date().toISOString().split("T")[0]
+  );
   const axiosInstance = useAxiosInstance();
-
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,16 +35,20 @@ const StationMain: React.FC = () => {
           start_date: startDate,
           end_date: endDate,
         };
+        const response = await axiosInstance.get("/api/all-sensor-data/", {
+          params,
+        });
+        console.log("API Response:", response.data); // Log the API response to inspect its structure
 
-        // const response = await axiosInstance.get("/api/stationdata/", { params });
-        const response = await axiosInstance.get("/api/dashboard_sensor_data/");
-        setData(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+        // Assuming response.data.sensor_data contains an array of SensorData
+        const sensorData: SensorData[] = response.data.sensor_data || [];
+        setData(sensorData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
       }
     };
+
     fetchData();
-    console.log(data);
   }, [startDate, endDate]);
 
   // if (!data) return <LoadingSpinner/>;

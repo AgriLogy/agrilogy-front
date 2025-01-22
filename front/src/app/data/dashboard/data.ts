@@ -1,21 +1,3 @@
-// export interface SensorData {
-//     formatted_timestamp: string;
-//     hc_air_temperature: number;
-//     wetbulb_temperature: number;
-//     solar_radiation: number;
-//     vpd: number;
-//     relative_humidity: number;
-//     solar_panel_voltage : number;
-//     precipitation: number;
-//     leaf_wetness: number;
-//     wind_speed: number;
-//     solar_panel: number;
-//     battery_voltage: number;
-//     delta_t: number;
-//     sunshine_duration: number;
-//     et0?: number; // ET0 calculated dynamically
-//   }
-  
 export interface SensorData {
   user: string; // Assuming user is a string representation (like a username or user ID)
   timestamp: string; // ISO string representation of the date and time

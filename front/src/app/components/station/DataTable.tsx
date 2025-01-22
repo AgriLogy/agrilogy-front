@@ -1,11 +1,24 @@
 "use client";
 import React from "react";
-import { Box, Button, Table, Thead, Tbody, Tr, Th, Td, Text, useColorMode, HStack, Spinner } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Text,
+  useColorMode,
+  HStack,
+  Spinner,
+} from "@chakra-ui/react";
 import { CSVLink } from "react-csv";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 
 interface WeatherData {
-  formatted_timestamp: string;
+  timestamp: string;
   et0: number;
   temperature: number;
   humidity: number;
@@ -28,7 +41,7 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
 
   // CSV headers
   const headers = [
-    { label: "Timestamp", key: "formatted_timestamp" },
+    { label: "Timestamp", key: "timestamp" },
     { label: "ET0 (mm)", key: "et0" },
     { label: "Temperature (°C)", key: "temperature" },
     { label: "Humidity (%)", key: "humidity" },
@@ -42,8 +55,19 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
 
   if (!data || data.length === 0) {
     return (
-      <Box width="100%" p={4} bg={colorMode === "light" ? "white" : "gray.800"} borderRadius="md" boxShadow="lg">
-        <Text fontSize="lg" fontWeight="bold" mb={4} color={colorMode === "light" ? "gray.700" : "gray.200"}>
+      <Box
+        width="100%"
+        p={4}
+        bg={colorMode === "light" ? "white" : "gray.800"}
+        borderRadius="md"
+        boxShadow="lg"
+      >
+        <Text
+          fontSize="lg"
+          fontWeight="bold"
+          mb={4}
+          color={colorMode === "light" ? "gray.700" : "gray.200"}
+        >
           No Data Available
         </Text>
       </Box>
@@ -51,9 +75,20 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
   }
 
   return (
-    <Box width="100%" p={4} bg={colorMode === "light" ? "white" : "gray.800"} borderRadius="md" boxShadow="lg">
+    <Box
+      width="100%"
+      p={4}
+      bg={colorMode === "light" ? "white" : "gray.800"}
+      borderRadius="md"
+      boxShadow="lg"
+    >
       <HStack justify="space-between">
-        <Text fontSize="lg" fontWeight="bold" mb={4} color={colorMode === "light" ? "gray.700" : "gray.200"}>
+        <Text
+          fontSize="lg"
+          fontWeight="bold"
+          mb={4}
+          color={colorMode === "light" ? "gray.700" : "gray.200"}
+        >
           Weather Data
         </Text>
         <CSVLink
@@ -70,8 +105,18 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
       <Box overflowX="auto" overflowY="auto" maxHeight="400px">
         <Table variant="simple" whiteSpace="nowrap">
           <Thead>
-            <Tr position="sticky" top="0" bg={colorMode === "light" ? "white" : "gray.800"} zIndex={1}>
-              <Th position="sticky" left="0" bg={colorMode === "light" ? "white" : "gray.800"} zIndex={1}>
+            <Tr
+              position="sticky"
+              top="0"
+              bg={colorMode === "light" ? "white" : "gray.800"}
+              zIndex={1}
+            >
+              <Th
+                position="sticky"
+                left="0"
+                bg={colorMode === "light" ? "white" : "gray.800"}
+                zIndex={1}
+              >
                 Timestamp
               </Th>
               {headers.slice(1).map((header) => (
@@ -82,8 +127,14 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
           <Tbody>
             {data.map((row, index) => (
               <Tr key={index}>
-                <Td color={textColor} position="sticky" left="0" bg={colorMode === "light" ? "white" : "gray.800"} zIndex={0}>
-                  {row.formatted_timestamp}
+                <Td
+                  color={textColor}
+                  position="sticky"
+                  left="0"
+                  bg={colorMode === "light" ? "white" : "gray.800"}
+                  zIndex={0}
+                >
+                  {row.timestamp}
                 </Td>
                 <Td color={textColor}>{row.et0}</Td>
                 <Td color={textColor}>{row.temperature}</Td>
