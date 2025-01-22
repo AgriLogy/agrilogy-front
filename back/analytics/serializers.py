@@ -33,6 +33,7 @@ class AlertsPerUserSerializer(serializers.ModelSerializer):
 class SensorSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
     et0 = serializers.SerializerMethodField()
+    timestamp = serializers.DateTimeField(format="%d-%m-%Y")  # Format the timestamp
 
     def get_et0(self, obj):
         et0 = obj.ec_soil_medium * (obj.soil_moisture_medium / 100)  # Example formula
