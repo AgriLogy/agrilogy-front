@@ -18,7 +18,7 @@ const AnalyticsMain: React.FC = () => {
   const [data, setData] = useState<SensorData[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const [startDate, setStartDate] = useState<string>("");
+  const [startDate, setStartDate] = useState<string>(""); 
   const [endDate, setEndDate] = useState<string>(
     new Date().toISOString().split("T")[0]
   );
@@ -27,7 +27,11 @@ const AnalyticsMain: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosInstance.get("/api/all-sensor-data/");
+        const params = {
+          start_date: startDate,
+          end_date: endDate,
+        };
+        const response = await axiosInstance.get("/api/all-sensor-data/", { params });
         console.log("API Response:", response.data); // Log the API response to inspect its structure
 
         // Assuming response.data.sensor_data contains an array of SensorData

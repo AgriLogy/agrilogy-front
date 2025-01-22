@@ -6,9 +6,13 @@ import axios from 'axios';
 const useAxiosInstance = () => {
   const router = useRouter();
   const pathname = usePathname(); // Get the current path
+  const token = localStorage.getItem('accessToken');
 
   const axiosInstance = axios.create({
     baseURL: 'http://localhost:8000/',
+    headers: {
+      Authorization: token ? `Bearer ${token}` : '', // Include token in Authorization header
+    },
   });
 
   useEffect(() => {
@@ -30,9 +34,9 @@ const useAxiosInstance = () => {
       (error) => {
         console.log(error);
         if (error.response && error.response.status === 401) {
-          if (pathname !== '/login') {
+          // if (pathname !== '/login') {
             router.push('/login');
-          }
+          // }
         }
         return Promise.reject(error);
       }
