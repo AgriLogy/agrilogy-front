@@ -1,55 +1,32 @@
-{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:11:03.462025"}
-{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:11:43.231115"}
-{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:13:42.942842"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:14:22.229587"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:15:01.997167"}
-{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:15:41.763452"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:16:21.030288"}
-{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:17:00.796648"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:17:40.566122"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:18:19.845650"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:18:59.612639"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:19:38.915247"}
-{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:20:18.681419"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:20:58.448483"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:21:38.750303"}
-{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:22:17.524800"}
-{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:22:57.291018"}
-{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:23:37.570218"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:24:36.438429"}
-{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:25:16.173338"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:25:56.443633"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:26:36.177972"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:27:14.913669"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:27:55.187604"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:28:35.069761"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:29:14.803844"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:30:49.279851"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:31:29.021468"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:32:09.276915"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:32:49.014217"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:33:28.753801"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:34:08.002082"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:34:47.835173"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:35:27.585841"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:36:06.868118"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:36:46.607435"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:37:26.884894"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:38:06.624172"}
-{"client": "Router01", "soil Temperature": 18.8, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:38:46.358557"}
-{"client": "Router01", "soil Temperature": 18.6, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:39:25.629741"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:40:05.396784"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:40:45.136126"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:41:24.411027"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:42:04.145421"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:42:43.396874"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:43:23.132386"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:44:02.864791"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:44:43.136215"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:45:22.870740"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:46:01.605844"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:46:41.877541"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:47:21.612799"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:48:00.882603"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:48:40.616662"}
-{"client": "Router01", "soil Temperature": 18.7, "ec": 0, "soil moisture": 0.0, "timestamp": "2024-12-29T00:49:20.354300"}
+{"client": "Router01", "ec_soil_medium": 183, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.4, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T18:58:51.367870"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.5, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T18:59:31.114134"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.6, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:00:11.412905"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.4, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:00:51.197533"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.2, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:01:51.219900"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.4, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:02:31.148513"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.5, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:03:10.458008"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.4, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:03:50.256767"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.3, "soil_moisture_medium": 18.4, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:04:29.599950"}
+{"client": "Router01", "ec_soil_medium": 183, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.3, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:05:09.400515"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.4, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:05:49.213120"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 183, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.4, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:06:28.506142"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.4, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:07:08.311102"}
+{"client": "Router01", "ec_soil_medium": 183, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.5, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:07:48.130900"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 183, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.6, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:08:27.440859"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.5, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:09:07.248608"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.6, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:09:46.584789"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.7, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:10:26.389357"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 183, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.6, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:11:06.191188"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.5, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:11:45.643557"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.4, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:12:25.437848"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.7, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:13:05.240900"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.4, "soil_moisture_medium": 18.7, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:13:44.570446"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 184, "soil_moisture_low": 18.4, "soil_temperature_low": 18.5, "soil_moisture_medium": 18.6, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:14:24.361330"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 185, "soil_moisture_low": 18.4, "soil_temperature_low": 18.5, "soil_moisture_medium": 18.9, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:15:03.687208"}
+{"client": "Router01", "ec_soil_medium": 185, "ec_soil_low": 184, "soil_moisture_low": 18.5, "soil_temperature_low": 18.5, "soil_moisture_medium": 18.5, "soil_temperature_high": 18.5, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:15:43.490991"}
+{"client": "Router01", "ec_soil_medium": 184, "ec_soil_low": 185, "soil_moisture_low": 18.5, "soil_temperature_low": 18.5, "soil_moisture_medium": 18.6, "soil_temperature_high": 18.4, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:16:23.288241"}
+{"client": "Router01", "ec_soil_medium": 185, "ec_soil_low": 185, "soil_moisture_low": 18.5, "soil_temperature_low": 18.5, "soil_moisture_medium": 18.8, "soil_temperature_high": 18.5, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:17:02.621511"}
+{"client": "Router01", "ec_soil_medium": 185, "ec_soil_low": 185, "soil_moisture_low": 18.5, "soil_temperature_low": 18.5, "soil_moisture_medium": 18.7, "soil_temperature_high": 18.5, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:17:42.483780"}
+{"client": "Router01", "ec_soil_medium": 185, "ec_soil_low": 185, "soil_moisture_low": 18.5, "soil_temperature_low": 18.5, "soil_moisture_medium": 18.7, "soil_temperature_high": 18.5, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:18:22.269313"}
+{"client": "Router01", "ec_soil_medium": 185, "ec_soil_low": 185, "soil_moisture_low": 18.5, "soil_temperature_low": 18.5, "soil_moisture_medium": 18.4, "soil_temperature_high": 18.5, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:19:01.583334"}
+{"client": "Router01", "ec_soil_medium": 185, "ec_soil_low": 185, "soil_moisture_low": 18.5, "soil_temperature_low": 18.5, "soil_moisture_medium": 18.6, "soil_temperature_high": 18.5, "soil_ec_high": 0, "soil_moisture_high": 0.0, "timestamp": "2025-01-22T19:19:41.373962"}

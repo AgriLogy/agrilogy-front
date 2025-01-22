@@ -1,10 +1,19 @@
-FROM nginx:alpine
+# Use an official Python base image
+FROM python:3.9-slim
 
-# Copy the custom NGINX configuration file
-COPY nginx.conf /etc/nginx/nginx.conf
+# Set the working directory inside the container
+WORKDIR /app
 
-# Expose the port the server listens on
+# Copy the server script to the working directory
+COPY server_script.py /app/server_script.py
+
+# Expose the required port
 EXPOSE 9090
 
-# Start NGINX
-CMD ["nginx", "-g", "daemon off;"]
+# Install any required Python packages (if any)
+# Uncomment the following lines if you need dependencies listed in requirements.txt
+# COPY requirements.txt /app/requirements.txt
+# RUN pip install --no-cache-dir -r requirements.txt
+
+# Command to run the Python script
+CMD ["python", "server.py"]
