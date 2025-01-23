@@ -45,7 +45,7 @@ const Sidebar = () => {
         height="100%"
       >
         <Tooltip label="Dashboard" aria-label="Home">
-          <Link href="/dashboard">
+          <Link href="/">
             <IconButton
               icon={<FaHome />}
               aria-label="Home"
@@ -60,7 +60,7 @@ const Sidebar = () => {
 
         <Tooltip label="Analytique" aria-label="Analytics">
           <Link href="/analytics">
-            <IconButton 
+            <IconButton
               icon={<FaLeaf />}
               // icon={<FaChartLine />}
               aria-label="Analytics"

@@ -34,7 +34,7 @@ const Page = () => {
       >
         <Navbar />
       </GridItem>
-      <GridItem pl="2" bg={navBgColor} area={"main"}>
+      <GridItem pl="2" bg={navBgColor} area={"main"} overflowY="auto" height="100%">
         <AnalyticsMain />
       </GridItem>
     </Grid>
