@@ -18,7 +18,7 @@ const NotificationsMain: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosInstance.get("/api/notifications");
+        const response = await axiosInstance.get("/api/notifications-and-alerts/");
         setNotifications(response.data.notifications);
         setAlerts(response.data.alerts);
         console.log("===============================");

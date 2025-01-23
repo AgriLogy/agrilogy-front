@@ -16,24 +16,24 @@ const SettingsMain: React.FC = () => {
   const axiosInstance = useAxiosInstance();
 
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const params = {
-          start_date: startDate,
-          end_date: endDate,
-        };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const params = {
+  //         start_date: startDate,
+  //         end_date: endDate,
+  //       };
 
-        const response = await axiosInstance.get("/api/stationdata/", { params });
-        setData(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchData();
-  }, [startDate, endDate]);
+  //       const response = await axiosInstance.get("/api/stationdata/", { params });
+  //       setData(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, [startDate, endDate]);
 
-  if (!data) return <LoadingSpinner/>;
+  // if (!data) return <LoadingSpinner/>;
 
   return (
     <div className="container">

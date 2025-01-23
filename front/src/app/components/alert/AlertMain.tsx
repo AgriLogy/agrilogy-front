@@ -28,7 +28,7 @@ const AlertMain: React.FC = () => {
           end_date: endDate,
         };
 
-        const response = await axiosInstance.get("/api/stationdata/", { params });
+        const response = await axiosInstance.get("/api/notifications-and-alerts/", { params });
         setData(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
