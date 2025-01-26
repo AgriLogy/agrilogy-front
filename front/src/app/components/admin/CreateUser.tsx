@@ -1,23 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  Input,
-  VStack,
-  Text,
-  useToast,
-} from "@chakra-ui/react";
+import { Box, Button, FormControl, FormLabel, Input, VStack, Text, Select, useToast } from "@chakra-ui/react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import useAxiosInstance from "@/app/lib/axiosInstance";
 
 const CreateUser = () => {
   const axiosInstance = useAxiosInstance();
-  const { bg, textColor, hoverColor, bgColor } = useColorModeStyles();
   const toast = useToast();
+  const { bg, textColor, hoverColor, bgColor } = useColorModeStyles();
 
   const [formData, setFormData] = useState({
     username: "",
@@ -26,10 +17,11 @@ const CreateUser = () => {
     email: "",
     phone_number: "",
     password: "",
-    user_type: "regular",
+    user_type: "regular", // Default to "regular"
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -39,7 +31,7 @@ const CreateUser = () => {
     try {
       const response = await axiosInstance.post("/auth/signup/", formData);
 
-      if (response.status === 201) {
+	  if (response.status === 201) {
         toast({
           title: "Success!",
           description: "User registered successfully.",
@@ -57,7 +49,7 @@ const CreateUser = () => {
         duration: 5000,
         isClosable: true,
       });
-    }
+	}
   };
 
   return (
@@ -131,6 +123,20 @@ const CreateUser = () => {
               onChange={handleChange}
               placeholder="Enter password"
             />
+          </FormControl>
+
+          {/* User Type Dropdown */}
+          <FormControl id="user_type" isRequired>
+            <FormLabel>User Type</FormLabel>
+            <Select
+              name="user_type"
+              value={formData.user_type}
+              onChange={handleChange}
+              placeholder="Select user type"
+            >
+              <option value="regular">Regular</option>
+              <option value="admin">Admin</option>
+            </Select>
           </FormControl>
 
           <Button
