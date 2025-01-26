@@ -3,8 +3,9 @@ import { Grid, GridItem } from "@chakra-ui/react";
 import React from "react";
 import Header from "../../components/main/Header";
 import Sidebar from "../../components/main/Sidebar";
+import { MainContent } from "../../components/dashboard/MainContent";
 import useColorModeStyles from "../../utils/useColorModeStyles";
-import AlertMain from "../../components/alert/AlertMain";
+import NotificationsMain from "../../components/notifications/NotificationsMain";
 
 const Page = () => {
   const { bg, textColor, navBgColor } = useColorModeStyles();
@@ -24,20 +25,20 @@ const Page = () => {
       color={textColor}
       fontWeight="bold"
     >
-      <GridItem area={"header"}>
-        <Header />
+      <GridItem area={"header"} bg={navBgColor}>
+        {/* <AdminHeader /> */}
+		AdminHeader
       </GridItem>
       <GridItem
         bg={navBgColor}
         area={"nav"}
         display={{ base: "none", md: "block" }}
       >
-        <Sidebar />
+        {/* <AdminSidebar /> */}
+		AdminSidebar
       </GridItem>
-      <GridItem pl="2" bg={navBgColor} area={"main"}>
-        {/* <AlertMain /> */}
-        {/* <WindSpeedMain /> */}
-        AlersMain
+      <GridItem pl="2" bg={navBgColor} area={"main"} overflowY="auto" height="100%">
+        {/* <NotificationsMain /> */}
       </GridItem>
     </Grid>
   );
