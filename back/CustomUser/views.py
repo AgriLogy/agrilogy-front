@@ -1,14 +1,15 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser
 from django.contrib.auth import authenticate, login
 from django.core.cache import cache
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import CustomUser
-from .serializers import UserSerializer
+from .serializers import UserSerializer, AdminUserSerializer
 from django.core.exceptions import ValidationError
+from rest_framework.exceptions import PermissionDenied
 
 class SignUpAPIView(APIView):
     permission_classes = [AllowAny]
@@ -77,3 +78,18 @@ class SignInAPIView(APIView):
         # Increment failed login attempts
         cache.set(cache_key, attempts + 1, timeout=300)  # Timeout of 5 minutes
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+
+class UserListView(APIView):
+    # permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        # if not request.user.is_staff:  # Double-check admin status
+        #     return Response({'error': 'Role non valid'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Exclude the logged-in admin from the returned data
+        users = CustomUser.objects.exclude(id=request.user.id)
+        serializer = AdminUserSerializer(users, many=True)
+        return Response(serializer.data)
