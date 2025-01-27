@@ -1,0 +1,75 @@
+"use client";
+import React, { useEffect, useState } from "react";
+import { Box, Text } from "@chakra-ui/react";
+import LoadingSpinner from "../common/LoadingSpinner";
+import useAxiosInstance from "@/app/lib/axiosInstance";
+import useColorModeStyles from "@/app/utils/useColorModeStyles";
+import DateRangePicker from "../analytics/DateRangePicker";
+import TemperatureGraph from "../analytics/TemperatureGraph";
+
+type Props = {
+  user: string;
+};
+
+const UserAlldata: React.FC<Props> = ({ user }) => {
+  const { bg, textColor } = useColorModeStyles();
+  const axiosInstance = useAxiosInstance();
+  const [data, setData] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState<string>(""); 
+  const [endDate, setEndDate] = useState<string>(new Date().toISOString().split("T")[0]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const payload = {
+          user, // Include the user parameter in the POST body
+          start_date: startDate,
+          end_date: endDate,
+        };
+        const response = await axiosInstance.post(`api/admin-user-data/`, payload);
+        console.log("API Response:", response.data.sensor_data); // Inspect the structure
+        setData(response.data.sensor_data || []); 
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
+      }
+    };
+  
+    fetchData();
+  }, [user, startDate, endDate]);
+  
+
+  if (error) {
+    return (
+      <Box>
+        <Text color="red.500">{error}</Text>
+      </Box>
+    );
+  }
+
+  if (!data.length) {
+    return <LoadingSpinner />;
+  }
+
+  return (
+    <Box bg={bg} p={4}>
+      {/* Header */}
+      <Box bg={bg} p={4} mb={4} borderRadius="md" boxShadow="sm">
+        <Text fontSize="2xl" fontWeight="bold" color={textColor}>
+          {user}'s Data
+        </Text>
+      </Box>
+
+      {/* Date Range Picker */}
+      <Box mb={4}>
+        <DateRangePicker setStartDate={setStartDate} setEndDate={setEndDate} />
+      </Box>
+
+      <Box bg={bg} className="box wide">
+        <TemperatureGraph data={data} />
+      </Box>
+    </Box>
+  );
+};
+
+export default UserAlldata;

@@ -5,6 +5,7 @@ from .views import (
     NotificationsAndAlertsView,
     AllSensorDataView,
     HeaderAPIView,
+    UserSensorDataView,
 )
 
 # Create a router for viewsets
@@ -18,5 +19,6 @@ urlpatterns = [
     # Additional API endpoints
     path('notifications-and-alerts/', NotificationsAndAlertsView.as_view(), name='notifications-and-alerts'),
     path('all-sensor-data/', AllSensorDataView.as_view(), name='all-sensor-data'),
+    path('admin-user-data/', UserSensorDataView.as_view(), name='admin-user-data'),
     path('header/', HeaderAPIView.as_view(), name='header'),
 ]
