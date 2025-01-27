@@ -1,0 +1,115 @@
+"use client";
+import React, { useEffect, useState } from "react";
+import { Box, Text } from "@chakra-ui/react";
+import LoadingSpinner from "../common/LoadingSpinner";
+import useAxiosInstance from "@/app/lib/axiosInstance";
+import useColorModeStyles from "@/app/utils/useColorModeStyles";
+import DateRangePicker from "../analytics/DateRangePicker";
+import TemperatureGraph from "../analytics/TemperatureGraph";
+import IrrigationGraph from "../analytics/IrrigationGraph";
+import PhGraph from "../analytics/PhGraph";
+import ConductivityIrrigationGraph from "../analytics/ConductivityIrrigationGraph";
+import DataTable from "../station/DataTable";
+import Et0Graph from "../station/Et0Graph";
+import PluvometricGraph from "../station/PluvometricGraph";
+import PrecipitationHumidityGraph from "../station/PrecipitationHumidityGraph";
+import SolarRadiationGraph from "../station/SolarRadiationGraph";
+import TempHumidityGraph from "../station/TempHumidityGraph";
+import VaporPressureDeficitGraph from "../station/VaporPressureDeficitGraph";
+import WindDirectionGraph from "../station/WindDirectionGraph";
+import WindSpeedGraph from "../station/WindSpeedGraph";
+import "./style.css";
+
+type Props = {
+  user: string;
+};
+
+const UserStationdata: React.FC<Props> = ({ user }) => {
+  const { bg, textColor } = useColorModeStyles();
+  const axiosInstance = useAxiosInstance();
+  const [data, setData] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>(
+    new Date().toISOString().split("T")[0]
+  );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const payload = {
+          user, // Include the user parameter in the POST body
+          start_date: startDate,
+          end_date: endDate,
+        };
+        const response = await axiosInstance.post(
+          `api/admin-user-data/`,
+          payload
+        );
+        console.log("API Response:", response.data.sensor_data); // Inspect the structure
+        setData(response.data.sensor_data || []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
+      }
+    };
+
+    fetchData();
+  }, [user, startDate, endDate]);
+
+  if (error) {
+    return (
+      <Box>
+        <Text color="red.500">{error}</Text>
+      </Box>
+    );
+  }
+
+  if (!data.length) {
+    return <LoadingSpinner />;
+  }
+
+  return (
+    <Box bg={bg} p={4}>
+      {/* Header */}
+      <Box bg={bg} p={4} mb={4} borderRadius="md" boxShadow="sm">
+        <Text fontSize="2xl" fontWeight="bold" color={textColor}>
+          {user}'s Soil Data
+        </Text>
+      </Box>
+
+      {/* Date Range Picker */}
+      <Box mb={4}>
+        <DateRangePicker setStartDate={setStartDate} setEndDate={setEndDate} />
+        <Box bg={bg} className="box wide">
+        <Et0Graph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <TempHumidityGraph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <WindSpeedGraph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <WindDirectionGraph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <PluvometricGraph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <SolarRadiationGraph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <VaporPressureDeficitGraph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <PrecipitationHumidityGraph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <DataTable data={data} />
+      </Box>
+      </Box>
+    </Box>
+  );
+};
+
+export default UserStationdata;

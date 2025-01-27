@@ -24,4 +24,9 @@ class UserSerializer(serializers.ModelSerializer):
 class AdminUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email',  'phone_number', 'payement_status', 'user_type', 'payement_status' ]
+        fields = ['username', 'email',  'phone_number', 'payement_status', 'user_type' ]
+
+class AdminModifyUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email',  'firstname', 'lastname', 'phone_number', 'payement_status', 'user_type' ]

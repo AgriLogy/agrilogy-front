@@ -1,11 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Box, Text } from "@chakra-ui/react";
+import "./style.css";
 import LoadingSpinner from "../common/LoadingSpinner";
 import useAxiosInstance from "@/app/lib/axiosInstance";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import DateRangePicker from "../analytics/DateRangePicker";
 import TemperatureGraph from "../analytics/TemperatureGraph";
+import IrrigationGraph from "../analytics/IrrigationGraph";
+import PhGraph from "../analytics/PhGraph";
+import ConductivityIrrigationGraph from "../analytics/ConductivityIrrigationGraph";
 
 type Props = {
   user: string;
@@ -16,8 +20,10 @@ const UserAlldata: React.FC<Props> = ({ user }) => {
   const axiosInstance = useAxiosInstance();
   const [data, setData] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [startDate, setStartDate] = useState<string>(""); 
-  const [endDate, setEndDate] = useState<string>(new Date().toISOString().split("T")[0]);
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>(
+    new Date().toISOString().split("T")[0]
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,17 +33,19 @@ const UserAlldata: React.FC<Props> = ({ user }) => {
           start_date: startDate,
           end_date: endDate,
         };
-        const response = await axiosInstance.post(`api/admin-user-data/`, payload);
+        const response = await axiosInstance.post(
+          `api/admin-user-data/`,
+          payload
+        );
         console.log("API Response:", response.data.sensor_data); // Inspect the structure
-        setData(response.data.sensor_data || []); 
+        setData(response.data.sensor_data || []);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
       }
     };
-  
+
     fetchData();
   }, [user, startDate, endDate]);
-  
 
   if (error) {
     return (
@@ -56,7 +64,7 @@ const UserAlldata: React.FC<Props> = ({ user }) => {
       {/* Header */}
       <Box bg={bg} p={4} mb={4} borderRadius="md" boxShadow="sm">
         <Text fontSize="2xl" fontWeight="bold" color={textColor}>
-          {user}'s Data
+          {user}'s Soil Data
         </Text>
       </Box>
 
@@ -64,7 +72,18 @@ const UserAlldata: React.FC<Props> = ({ user }) => {
       <Box mb={4}>
         <DateRangePicker setStartDate={setStartDate} setEndDate={setEndDate} />
       </Box>
-
+      <Box bg={bg} className="box wide">
+        <IrrigationGraph sensorData={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <PhGraph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <ConductivityIrrigationGraph data={data} />
+      </Box>
+      {/* <Box bg={bg} className="box wide">
+        <CumulIrrigationGraph data={data} />
+      </Box> */}
       <Box bg={bg} className="box wide">
         <TemperatureGraph data={data} />
       </Box>

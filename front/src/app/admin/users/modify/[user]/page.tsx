@@ -1,9 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import CreateUser from "@/app/components/admin/CreateUser";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import { Grid, GridItem } from "@chakra-ui/react";
-import UserAlldata from "@/app/components/admin/UserAlldata";
+import ModifyUser from "@/app/components/admin/ModifyUser";
 type Params = {
   user: string;
 };
@@ -55,7 +54,7 @@ const page = ({ params }: { params: Params }) => {
         overflowY="auto"
         height="100%"
       >
-        <UserAlldata user={user} />
+        <ModifyUser user={user} />
       </GridItem>
     </Grid>
   );

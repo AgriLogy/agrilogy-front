@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -7,7 +8,7 @@ from django.core.cache import cache
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import CustomUser
-from .serializers import UserSerializer, AdminUserSerializer
+from .serializers import AdminModifyUserSerializer, UserSerializer, AdminUserSerializer
 from django.core.exceptions import ValidationError
 from rest_framework.exceptions import PermissionDenied
 
@@ -93,3 +94,27 @@ class UserListView(APIView):
         users = CustomUser.objects.exclude(id=request.user.id)
         serializer = AdminUserSerializer(users, many=True)
         return Response(serializer.data)
+    
+class ModifyUserView(APIView):
+    def get(self, request, *args, **kwargs):
+        username = request.query_params.get("username")
+        if not username:
+            return Response({"error": "Username is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = get_object_or_404(CustomUser, username=username)
+        serializer = AdminModifyUserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        username = request.data.get("username")
+        if not username:
+            return Response({"error": "Username is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = get_object_or_404(CustomUser, username=username)
+
+        serializer = AdminModifyUserSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "User data updated successfully.", "data": serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
