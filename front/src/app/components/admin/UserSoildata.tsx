@@ -10,6 +10,7 @@ import TemperatureGraph from "../analytics/TemperatureGraph";
 import IrrigationGraph from "../analytics/IrrigationGraph";
 import PhGraph from "../analytics/PhGraph";
 import ConductivityIrrigationGraph from "../analytics/ConductivityIrrigationGraph";
+import "@/app/styles/graphes.css";
 
 type Props = {
   user: string;
@@ -60,16 +61,23 @@ const UserAlldata: React.FC<Props> = ({ user }) => {
   }
 
   return (
-    <Box bg={bg} p={4}>
+    <div className="container">
       {/* Header */}
-      <Box bg={bg} p={4} mb={4} borderRadius="md" boxShadow="sm">
+      <Box
+        className="header"
+        bg={bg}
+        p={4}
+        mb={4}
+        borderRadius="md"
+        boxShadow="sm"
+      >
         <Text fontSize="2xl" fontWeight="bold" color={textColor}>
           {user}'s Soil Data
         </Text>
       </Box>
 
       {/* Date Range Picker */}
-      <Box mb={4}>
+      <Box bg={bg} className="header" mt={0} mb={0}>
         <DateRangePicker setStartDate={setStartDate} setEndDate={setEndDate} />
       </Box>
       <Box bg={bg} className="box wide">
@@ -87,7 +95,7 @@ const UserAlldata: React.FC<Props> = ({ user }) => {
       <Box bg={bg} className="box wide">
         <TemperatureGraph data={data} />
       </Box>
-    </Box>
+    </div>
   );
 };
 

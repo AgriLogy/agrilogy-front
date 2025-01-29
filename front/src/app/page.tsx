@@ -6,6 +6,7 @@ import Navbar from "./components/main/Sidebar";
 import { MainContent } from "./components/dashboard/MainContent";
 import useColorModeStyles from "./utils/useColorModeStyles";
 
+
 const Page = () => {
   const { bg, textColor, navBgColor } = useColorModeStyles();
 

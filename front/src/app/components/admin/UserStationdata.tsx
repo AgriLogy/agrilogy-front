@@ -5,10 +5,6 @@ import LoadingSpinner from "../common/LoadingSpinner";
 import useAxiosInstance from "@/app/lib/axiosInstance";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import DateRangePicker from "../analytics/DateRangePicker";
-import TemperatureGraph from "../analytics/TemperatureGraph";
-import IrrigationGraph from "../analytics/IrrigationGraph";
-import PhGraph from "../analytics/PhGraph";
-import ConductivityIrrigationGraph from "../analytics/ConductivityIrrigationGraph";
 import DataTable from "../station/DataTable";
 import Et0Graph from "../station/Et0Graph";
 import PluvometricGraph from "../station/PluvometricGraph";
@@ -18,6 +14,8 @@ import TempHumidityGraph from "../station/TempHumidityGraph";
 import VaporPressureDeficitGraph from "../station/VaporPressureDeficitGraph";
 import WindDirectionGraph from "../station/WindDirectionGraph";
 import WindSpeedGraph from "../station/WindSpeedGraph";
+import "@/app/styles/graphes.css";
+
 import "./style.css";
 
 type Props = {
@@ -69,20 +67,29 @@ const UserStationdata: React.FC<Props> = ({ user }) => {
   }
 
   return (
-    <Box bg={bg} p={4}>
+    <div className="container">
       {/* Header */}
-      <Box bg={bg} p={4} mb={4} borderRadius="md" boxShadow="sm">
+      <Box
+        className="header"
+        bg={bg}
+        p={4}
+        mb={4}
+        borderRadius="md"
+        boxShadow="sm"
+      >
         <Text fontSize="2xl" fontWeight="bold" color={textColor}>
-          {user}'s Soil Data
+          {user}'s Station Data
         </Text>
       </Box>
 
       {/* Date Range Picker */}
-      <Box mb={4}>
+      <Box bg={bg} className="header" mt={0} mb={0}>
         <DateRangePicker setStartDate={setStartDate} setEndDate={setEndDate} />
-        <Box bg={bg} className="box wide">
+      </Box>
+      <Box bg={bg} className="box wide">
         <Et0Graph data={data} />
       </Box>
+
       <Box bg={bg} className="box wide">
         <TempHumidityGraph data={data} />
       </Box>
@@ -107,8 +114,7 @@ const UserStationdata: React.FC<Props> = ({ user }) => {
       <Box bg={bg} className="box wide">
         <DataTable data={data} />
       </Box>
-      </Box>
-    </Box>
+    </div>
   );
 };
 

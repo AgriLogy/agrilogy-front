@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from "react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import { Grid, GridItem } from "@chakra-ui/react";
+import HeaderAdmin from "@/app/components/main/HeaderAdmin";
+import AdminSidebar from "@/app/components/main/AdminSidebar";
 import UserStationdata from "@/app/components/admin/UserStationdata";
 type Params = {
   user: string;
@@ -22,30 +24,28 @@ const page = ({ params }: { params: Params }) => {
   }
   return (
     <Grid
-      templateAreas={{
-        base: `"header"
-				   "main"`,
-        md: `"header header"
-				 "nav main"`,
-      }}
-      gridTemplateRows={{ base: "auto 1fr", md: "50px 1fr" }}
-      gridTemplateColumns={{ base: "1fr", md: "50px 1fr" }}
-      height="100vh"
-      gap="0.5"
-      color={textColor}
-      fontWeight="bold"
-    >
+          templateAreas={{
+            base: `"header"
+                   "main"`,
+            md: `"header header"
+                 "nav main"`,
+          }}
+          gridTemplateRows={{ base: "auto 1fr", md: "50px 1fr" }}
+          gridTemplateColumns={{ base: "1fr", md: "50px 1fr" }}
+          height="100vh"
+          gap="0.5"
+          color={textColor}
+          fontWeight="bold"
+        >
       <GridItem area={"header"} bg={navBgColor}>
-        {/* <AdminHeader /> */}
-        AdminHeader
+        <HeaderAdmin />
       </GridItem>
       <GridItem
         bg={navBgColor}
         area={"nav"}
         display={{ base: "none", md: "block" }}
       >
-        {/* <AdminSidebar /> */}
-        AdminSidebar
+        <AdminSidebar />
       </GridItem>
       <GridItem
         pl="2"
