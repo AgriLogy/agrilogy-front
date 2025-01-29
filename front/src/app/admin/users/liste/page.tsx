@@ -8,6 +8,8 @@ import useColorModeStyles from "../../../utils/useColorModeStyles";
 import NotificationsMain from "../../../components/notifications/NotificationsMain";
 import CreateUser from "@/app/components/admin/CreateUser";
 import ListeUsers from "@/app/components/admin/ListeUsers";
+import HeaderAdmin from "@/app/components/main/HeaderAdmin";
+import AdminSidebar from "@/app/components/main/AdminSidebar";
 
 const Page = () => {
   const { bg, textColor, navBgColor } = useColorModeStyles();
@@ -28,16 +30,14 @@ const Page = () => {
       fontWeight="bold"
     >
       <GridItem area={"header"} bg={navBgColor}>
-        {/* <AdminHeader /> */}
-		AdminHeader
+        <HeaderAdmin />
       </GridItem>
       <GridItem
         bg={navBgColor}
         area={"nav"}
         display={{ base: "none", md: "block" }}
       >
-        {/* <AdminSidebar /> */}
-		AdminSidebar
+        <AdminSidebar />
       </GridItem>
       <GridItem pl="2" bg={navBgColor} area={"main"} overflowY="auto" height="100%">
         {/* <ListeUSers /> */}
