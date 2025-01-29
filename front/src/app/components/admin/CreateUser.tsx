@@ -46,7 +46,7 @@ const CreateUser = () => {
       if (response.status === 201) {
         toast({
           title: "Success!",
-          description: "User registered successfully.",
+          description: "Utilisateur enregistré avec succès.",
           status: "success",
           duration: 5000,
           isClosable: true,
@@ -56,7 +56,7 @@ const CreateUser = () => {
       console.error("Error registering user:", error);
       toast({
         title: "Error",
-        description: "Failed to register user. Please try again.",
+        description: "Impossible d'enregistrer l'utilisateur. Veuillez réessayer.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -75,17 +75,14 @@ const CreateUser = () => {
         boxShadow="sm"
       >
         <Text fontSize="2xl" fontWeight="bold" color={textColor}>
-          New user 
+        Créer un utilisateur
         </Text>
       </Box>
       <Box bg={bg} color={textColor} p={5} borderRadius="lg" boxShadow="md" className="wide admin-register">
-        <Text fontSize="xl" fontWeight="bold" mb={4}>
-          Create New User
-        </Text>
         <form onSubmit={handleSubmit}>
           <VStack spacing={4}>
             <FormControl id="username" isRequired>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Nom d'utilisateur</FormLabel>
               <Input
                 type="text"
                 name="username"
@@ -96,7 +93,7 @@ const CreateUser = () => {
             </FormControl>
 
             <FormControl id="firstname" isRequired>
-              <FormLabel>First Name</FormLabel>
+              <FormLabel>Nom</FormLabel>
               <Input
                 type="text"
                 name="firstname"
@@ -107,7 +104,7 @@ const CreateUser = () => {
             </FormControl>
 
             <FormControl id="lastname" isRequired>
-              <FormLabel>Last Name</FormLabel>
+              <FormLabel>Prénom</FormLabel>
               <Input
                 type="text"
                 name="lastname"
@@ -129,7 +126,7 @@ const CreateUser = () => {
             </FormControl>
 
             <FormControl id="phone_number">
-              <FormLabel>Phone Number</FormLabel>
+              <FormLabel>Numéro de téléphone</FormLabel>
               <Input
                 type="text"
                 name="phone_number"
@@ -140,7 +137,7 @@ const CreateUser = () => {
             </FormControl>
 
             <FormControl id="password" isRequired>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Mot de passe</FormLabel>
               <Input
                 type="password"
                 name="password"
@@ -152,7 +149,7 @@ const CreateUser = () => {
 
             {/* User Type Dropdown */}
             <FormControl id="user_type" isRequired>
-              <FormLabel>User Type</FormLabel>
+              <FormLabel>Type d'utilisateur</FormLabel>
               <Select
                 name="user_type"
                 value={formData.user_type}
@@ -171,7 +168,7 @@ const CreateUser = () => {
               _hover={{ bg: hoverColor }}
               width="100%"
             >
-              Register
+              créer
             </Button>
           </VStack>
         </form>

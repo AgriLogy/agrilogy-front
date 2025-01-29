@@ -75,7 +75,7 @@ const TempHumidityGraph: React.FC<TempHumidityGraphProps> = ({ data }) => {
       p={2}
     >
       <Text color={textColor} fontSize="lg" fontWeight="bold" mb={4}>
-        Temperature and Humidity
+        Température et humidité
       </Text>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>

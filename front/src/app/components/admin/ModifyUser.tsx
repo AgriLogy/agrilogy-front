@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import useAxiosInstance from "@/app/lib/axiosInstance";
+import "@/app/styles/graphes.css";
 
 type Props = {
   user: string;
@@ -37,7 +38,9 @@ const ModifyUser = ({ user }: Props) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axiosInstance.get(`/auth/modify-user/?username=${user}`);
+        const response = await axiosInstance.get(
+          `/auth/modify-user/?username=${user}`
+        );
         if (response.status === 200) {
           setFormData({
             ...formData,
@@ -57,9 +60,11 @@ const ModifyUser = ({ user }: Props) => {
     };
 
     fetchUserData();
-  }, [user,toast]);
+  }, [user, toast]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -72,7 +77,7 @@ const ModifyUser = ({ user }: Props) => {
       if (response.status === 200) {
         toast({
           title: "Success!",
-          description: "User data updated successfully.",
+          description: "Les données utilisateur ont été mises à jour avec succès.",
           status: "success",
           duration: 5000,
           isClosable: true,
@@ -91,92 +96,103 @@ const ModifyUser = ({ user }: Props) => {
   };
 
   return (
-    <Box bg={bg} color={textColor} p={5} borderRadius="lg" boxShadow="md">
-      <Text fontSize="xl" fontWeight="bold" mb={4}>
-        Modify User
-      </Text>
-      <form onSubmit={handleSubmit}>
-        <VStack spacing={4}>
-          <FormControl id="username" isReadOnly>
-            <FormLabel>Username</FormLabel>
-            <Input
-              type="text"
-              name="username"
-              value={formData.username}
-              placeholder="Username"
-              isReadOnly
-            />
-          </FormControl>
+    <div className="container">
+      <Box
+        className="header"
+        bg={bg}
+        p={4}
+        mb={4}
+        borderRadius="md"
+        boxShadow="sm"
+      >
+        <Text fontSize="2xl" fontWeight="bold" color={textColor}>
+          Modifier les données de {user}
+        </Text>
+      </Box>
+      <Box bg={bg} p={5} className="wide admin-register">
+        <form onSubmit={handleSubmit}>
+          <VStack spacing={4}>
+            <FormControl id="username" isReadOnly>
+              <FormLabel>Nom d'utilisateur</FormLabel>
+              <Input
+                type="text"
+                name="username"
+                value={formData.username}
+                placeholder="Username"
+                isReadOnly
+              />
+            </FormControl>
 
-          <FormControl id="firstname" isRequired>
-            <FormLabel>First Name</FormLabel>
-            <Input
-              type="text"
-              name="firstname"
-              value={formData.firstname}
-              onChange={handleChange}
-              placeholder="Enter first name"
-            />
-          </FormControl>
+            <FormControl id="firstname" isRequired>
+              <FormLabel>Prénom</FormLabel>
+              <Input
+                type="text"
+                name="firstname"
+                value={formData.firstname}
+                onChange={handleChange}
+                placeholder="Enter first name"
+              />
+            </FormControl>
 
-          <FormControl id="lastname" isRequired>
-            <FormLabel>Last Name</FormLabel>
-            <Input
-              type="text"
-              name="lastname"
-              value={formData.lastname}
-              onChange={handleChange}
-              placeholder="Enter last name"
-            />
-          </FormControl>
+            <FormControl id="lastname" isRequired>
+              <FormLabel>Nom</FormLabel>
+              <Input
+                type="text"
+                name="lastname"
+                value={formData.lastname}
+                onChange={handleChange}
+                placeholder="Enter last name"
+              />
+            </FormControl>
 
-          <FormControl id="email" isRequired>
-            <FormLabel>Email</FormLabel>
-            <Input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter email"
-            />
-          </FormControl>
+            <FormControl id="email" isRequired>
+              <FormLabel>Email</FormLabel>
+              <Input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter email"
+              />
+            </FormControl>
 
-          <FormControl id="phone_number">
-            <FormLabel>Phone Number</FormLabel>
-            <Input
-              type="text"
-              name="phone_number"
-              value={formData.phone_number}
-              onChange={handleChange}
-              placeholder="Enter phone number"
-            />
-          </FormControl>
+            <FormControl id="phone_number">
+              <FormLabel>Numéro de téléphone</FormLabel>
+              <Input
+                type="text"
+                name="phone_number"
+                value={formData.phone_number}
+                onChange={handleChange}
+                placeholder="Enter phone number"
+              />
+            </FormControl>
 
-          <FormControl id="user_type" isRequired>
-            <FormLabel>User Type</FormLabel>
-            <Select
-              name="user_type"
-              value={formData.user_type}
-              onChange={handleChange}
-              placeholder="Select user type"
+            <FormControl id="user_type" isRequired>
+              <FormLabel>Type d'utilisateur</FormLabel>
+              <Select
+                name="user_type"
+                value={formData.user_type}
+                onChange={handleChange}
+                placeholder="Select user type"
+              >
+                <option value="regular">Regular</option>
+                <option value="admin">Admin</option>
+              </Select>
+            </FormControl>
+
+            <Button
+              type="submit"
+              bg={bgColor}
+              color="white"
+              _hover={{ bg: hoverColor }}
+              width="100%"
             >
-              <option value="regular">Regular</option>
-              <option value="admin">Admin</option>
-            </Select>
-          </FormControl>
-
-          <Button
-            type="submit"
-            bg={bgColor}
-            color="white"
-            _hover={{ bg: hoverColor }}
-            width="100%"
-          >
-            Update
-          </Button>
-        </VStack>
-      </form>
-    </Box>
+              Mettre à jour
+            </Button>
+          </VStack>
+        </form>
+      </Box>
+    </div>
   );
 };
 

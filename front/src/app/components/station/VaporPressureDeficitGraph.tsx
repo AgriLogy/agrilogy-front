@@ -104,7 +104,7 @@ const VaporPressureDeficitGraph: React.FC<VaporPressureDeficitGraphProps> = ({
         fontWeight="bold"
         mb={4}
       >
-        Vapor Pressure Deficit
+        Déficit de pression de vapeur
       </Text>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>

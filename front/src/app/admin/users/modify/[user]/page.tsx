@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import { Grid, GridItem } from "@chakra-ui/react";
 import ModifyUser from "@/app/components/admin/ModifyUser";
+import HeaderAdmin from "@/app/components/main/HeaderAdmin";
+import AdminSidebar from "@/app/components/main/AdminSidebar";
 type Params = {
   user: string;
 };
@@ -36,16 +38,14 @@ const page = ({ params }: { params: Params }) => {
       fontWeight="bold"
     >
       <GridItem area={"header"} bg={navBgColor}>
-        {/* <AdminHeader /> */}
-        AdminHeader
+        <HeaderAdmin />
       </GridItem>
       <GridItem
         bg={navBgColor}
         area={"nav"}
         display={{ base: "none", md: "block" }}
       >
-        {/* <AdminSidebar /> */}
-        AdminSidebar
+        <AdminSidebar />
       </GridItem>
       <GridItem
         pl="2"

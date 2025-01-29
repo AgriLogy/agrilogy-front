@@ -39,9 +39,14 @@ const Page = () => {
       >
         <AdminSidebar />
       </GridItem>
-      <GridItem pl="2" bg={navBgColor} area={"main"} overflowY="auto" height="100%">
-        {/* <ListeUSers /> */}
-		<ListeUsers/>
+      <GridItem
+        pl="2"
+        bg={navBgColor}
+        area={"main"}
+        overflowY="auto"
+        height="100%"
+      >
+        <ListeUsers />
       </GridItem>
     </Grid>
   );

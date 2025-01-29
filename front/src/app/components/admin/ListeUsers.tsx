@@ -78,7 +78,7 @@ const ListeUsers = () => {
         boxShadow="sm"
       >
         <Text fontSize="2xl" fontWeight="bold" color={textColor}>
-          users list
+        Liste des utilisateurs
         </Text>
       </Box>
       <Box bg={bg} className="wide admin-register">

@@ -132,7 +132,7 @@ const PrecipitationHumidityGraph: React.FC<PrecipitationHumidityGraphProps> = ({
         fontWeight="bold"
         mb={4}
       >
-        Precipitation and Humidity
+        Précipitations et humidité
       </Text>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>

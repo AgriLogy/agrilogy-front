@@ -78,7 +78,7 @@ const UserStationdata: React.FC<Props> = ({ user }) => {
         boxShadow="sm"
       >
         <Text fontSize="2xl" fontWeight="bold" color={textColor}>
-          {user}'s Station Data
+        Données de la station météo de {user}
         </Text>
       </Box>
 

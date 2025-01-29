@@ -72,7 +72,7 @@ const UserAlldata: React.FC<Props> = ({ user }) => {
         boxShadow="sm"
       >
         <Text fontSize="2xl" fontWeight="bold" color={textColor}>
-          {user}'s Soil Data
+          Données sur les sols de {user}
         </Text>
       </Box>
 

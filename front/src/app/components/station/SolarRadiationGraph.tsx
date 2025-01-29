@@ -79,7 +79,7 @@ const SolarRadiationGraph: React.FC<SolarRadiationGraphProps> = ({ data }) => {
         fontWeight="bold"
         mb={4}
       >
-        Solar Radiation Data
+        Rayonnement solaire
       </Text>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>

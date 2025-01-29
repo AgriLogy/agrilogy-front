@@ -79,7 +79,7 @@ const PluvometricGraph: React.FC<PluvometricGraphProps> = ({ data }) => {
         fontWeight="bold"
         mb={4}
       >
-        Pluvometric Data (Rainfall)
+        Données pluviométriques (Pluies)
       </Text>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>

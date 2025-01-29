@@ -74,7 +74,7 @@ const WindSpeedGraph: React.FC<WindSpeedGraphProps> = ({ data }) => {
       p={2}
     >
       <Text color={textColor} fontSize="lg" fontWeight="bold" mb={4}>
-        Wind Speed
+        Vitesse du vent
       </Text>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
