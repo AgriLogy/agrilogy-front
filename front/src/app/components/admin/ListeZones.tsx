@@ -25,7 +25,7 @@ interface User {
   payement_status: string;
 }
 
-const ListeUsers = () => {
+const ListeZones = () => {
   const axiosInstance = useAxiosInstance();
   const [users, setUsers] = useState<User[]>([]);
   const [sortConfig, setSortConfig] = useState<{
@@ -79,7 +79,7 @@ const ListeUsers = () => {
         boxShadow="sm"
       >
         <Text fontSize="2xl" fontWeight="bold" color={textColor}>
-          Liste des utilisateurs
+          Liste des zones
         </Text>
       </Box>
       <Box bg={bg} className="wide admin-register">
@@ -206,7 +206,7 @@ const ListeUsers = () => {
                   </Button>
                 </Th>
                 <Th color={textColor}>
-                  <Button> Sol </Button>
+                  <Button> Soil </Button>
                 </Th>
                 <Th color={textColor}>
                   <Button> Station </Button>
@@ -238,7 +238,7 @@ const ListeUsers = () => {
                       color={hoverColor}
                       textDecoration="underline"
                     >
-                      Voire
+                      View
                     </Link>
                   </Td>
                   <Td>
@@ -247,7 +247,7 @@ const ListeUsers = () => {
                       color={hoverColor}
                       textDecoration="underline"
                     >
-                      Voire
+                      View
                     </Link>
                   </Td>
                 </Tr>
@@ -260,4 +260,4 @@ const ListeUsers = () => {
   );
 };
 
-export default ListeUsers;
+export default ListeZones;

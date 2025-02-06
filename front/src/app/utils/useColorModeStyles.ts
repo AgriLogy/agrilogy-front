@@ -8,6 +8,7 @@ const useColorModeStyles = () => {
   const hoverColor = useColorModeValue('blue.500', 'blue.300');
   const bgColor = useColorModeValue('green.500', 'green.300');
   const navBgColor = useColorModeValue('gray.100', 'gray.600');
+  const tableStripeClore = useColorModeValue('gray.400', 'gray.800');
 
   // Define specific colors for indicators
   const humidityColors = {
@@ -38,6 +39,7 @@ const useColorModeStyles = () => {
     humidityColors,
     solarRadiationColors,
     solarPanelVoltageColors,
+    tableStripeClore,
   };
 };
 

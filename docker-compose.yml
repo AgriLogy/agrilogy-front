@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  devops:
+    build: ./Devops/server
+    ports:
+      - "9090:9090"
+    container_name: agroserver
+    volumes:
+      - data:/app
+    networks:
+      - agro
+    restart: unless-stopped
+
+networks:
+  agro:
+
+volumes:
+  data:
