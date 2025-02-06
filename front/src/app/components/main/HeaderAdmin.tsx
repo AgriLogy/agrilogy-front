@@ -39,17 +39,7 @@ const HeaderAdmin = () => {
     <Flex justify="space-between" align="center" p={4} bg={bg} h="100%">
       <Image height={28} src={logo} alt="Logo" />
       <Flex align="center">
-        <Tooltip label="Notifications" aria-label="Analytics">
-          <Link href="/notifications">
-            <IconButton
-              icon={<BellIcon />}
-              aria-label="Notifications"
-              variant="ghost"
-              _hover={{ color: hoverColor }}
-              mr={4}
-            />
-          </Link>
-        </Tooltip>
+        
         <Menu>
           <MenuButton
             as={IconButton}

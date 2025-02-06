@@ -4,7 +4,6 @@ import React from "react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import HeaderAdmin from "@/app/components/main/HeaderAdmin";
 import AdminSidebar from "@/app/components/main/AdminSidebar";
-import MainAdmin from "../components/admin/MainAdmin";
 
 const Page = () => {
   const { bg, textColor, navBgColor } = useColorModeStyles();
@@ -41,7 +40,7 @@ const Page = () => {
         overflowY="auto"
         height="100%"
       >
-        <MainAdmin/>
+        Dashboard
       </GridItem>
     </Grid>
   );

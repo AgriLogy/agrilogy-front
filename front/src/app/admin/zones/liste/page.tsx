@@ -4,7 +4,7 @@ import React from "react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import HeaderAdmin from "@/app/components/main/HeaderAdmin";
 import AdminSidebar from "@/app/components/main/AdminSidebar";
-import MainAdmin from "../components/admin/MainAdmin";
+import ListeZones from "@/app/components/admin/ListeZones";
 
 const Page = () => {
   const { bg, textColor, navBgColor } = useColorModeStyles();
@@ -41,7 +41,7 @@ const Page = () => {
         overflowY="auto"
         height="100%"
       >
-        <MainAdmin/>
+        <ListeZones />
       </GridItem>
     </Grid>
   );
