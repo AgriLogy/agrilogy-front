@@ -13,11 +13,10 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import useAxiosInstance from "@/app/lib/axiosInstance";
+import axiosInstance from "@/app/lib/axiosInstance";
 import "@/app/styles/graphes.css";
 
 const CreateUser = () => {
-  const axiosInstance = useAxiosInstance();
   const toast = useToast();
   const { bg, textColor, hoverColor, bgColor } = useColorModeStyles();
 
@@ -56,7 +55,8 @@ const CreateUser = () => {
       console.error("Error registering user:", error);
       toast({
         title: "Error",
-        description: "Impossible d'enregistrer l'utilisateur. Veuillez réessayer.",
+        description:
+          "Impossible d'enregistrer l'utilisateur. Veuillez réessayer.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -75,10 +75,17 @@ const CreateUser = () => {
         boxShadow="sm"
       >
         <Text fontSize="2xl" fontWeight="bold" color={textColor}>
-        Créer un utilisateur
+          Créer un utilisateur
         </Text>
       </Box>
-      <Box bg={bg} color={textColor} p={5} borderRadius="lg" boxShadow="md" className="wide admin-register">
+      <Box
+        bg={bg}
+        color={textColor}
+        p={5}
+        borderRadius="lg"
+        boxShadow="md"
+        className="wide admin-register"
+      >
         <form onSubmit={handleSubmit}>
           <VStack spacing={4}>
             <FormControl id="username" isRequired>

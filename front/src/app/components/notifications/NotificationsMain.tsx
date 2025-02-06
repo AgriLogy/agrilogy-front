@@ -5,20 +5,21 @@ import { Box, Text, VStack } from "@chakra-ui/react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import LoadingSpinner from "../common/LoadingSpinner";
 import Notification from "../notifications/Notification";
-import useAxiosInstance from "@/app/lib/axiosInstance";
+import axiosInstance from "@/app/lib/axiosInstance";
 
 const NotificationsMain: React.FC = () => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
   const [notifications, setNotifications] = useState<any[]>([]);
   const [alerts, setAlerts] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const axiosInstance = useAxiosInstance();
 
   // Fetch notifications and alerts
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosInstance.get("/api/notifications-and-alerts/");
+        const response = await axiosInstance.get(
+          "/api/notifications-and-alerts/"
+        );
         setNotifications(response.data.notifications);
         setAlerts(response.data.alerts);
         console.log("===============================");
@@ -46,7 +47,7 @@ const NotificationsMain: React.FC = () => {
       <VStack spacing={4} align="stretch">
         {notifications.map((notification) => (
           <Box className="box" height="100%" gridColumn="span 2;">
-            <Notification 
+            <Notification
               key={notification.id}
               id={notification.id}
               notification={notification.notification}

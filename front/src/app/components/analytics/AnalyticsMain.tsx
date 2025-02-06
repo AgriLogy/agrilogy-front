@@ -10,7 +10,7 @@ import CumulIrrigationGraph from "./CumulIrrigationGraph";
 import TemperatureGraph from "./TemperatureGraph";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import LoadingSpinner from "../common/LoadingSpinner";
-import useAxiosInstance from "@/app/lib/axiosInstance";
+import axiosInstance from "@/app/lib/axiosInstance";
 import { SensorData } from "@/app/data/dashboard/data";
 
 const AnalyticsMain: React.FC = () => {
@@ -18,11 +18,10 @@ const AnalyticsMain: React.FC = () => {
   const [data, setData] = useState<SensorData[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const [startDate, setStartDate] = useState<string>(""); 
+  const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>(
     new Date().toISOString().split("T")[0]
   );
-  const axiosInstance = useAxiosInstance();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,7 +30,9 @@ const AnalyticsMain: React.FC = () => {
           start_date: startDate,
           end_date: endDate,
         };
-        const response = await axiosInstance.get("/api/all-sensor-data/", { params });
+        const response = await axiosInstance.get("/api/all-sensor-data/", {
+          params,
+        });
         console.log("API Response:", response.data); // Log the API response to inspect its structure
 
         // Assuming response.data.sensor_data contains an array of SensorData

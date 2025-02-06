@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import "./StationMain.css";
 import { Box, Text } from "@chakra-ui/react";
-import useAxiosInstance from "@/app/lib/axiosInstance";
+import axiosInstance from "@/app/lib/axiosInstance";
 
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import LoadingSpinner from "../common/LoadingSpinner";
@@ -25,7 +25,6 @@ const StationMain: React.FC = () => {
   const [endDate, setEndDate] = useState<string>(
     new Date().toISOString().split("T")[0]
   );
-  const axiosInstance = useAxiosInstance();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

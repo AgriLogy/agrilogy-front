@@ -13,7 +13,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import useAxiosInstance from "@/app/lib/axiosInstance";
+import axiosInstance from "@/app/lib/axiosInstance";
 import "@/app/styles/graphes.css";
 
 type Props = {
@@ -21,7 +21,6 @@ type Props = {
 };
 
 const ModifyUser = ({ user }: Props) => {
-  const axiosInstance = useAxiosInstance();
   const toast = useToast();
   const { bg, textColor, hoverColor, bgColor } = useColorModeStyles();
 
@@ -77,7 +76,8 @@ const ModifyUser = ({ user }: Props) => {
       if (response.status === 200) {
         toast({
           title: "Success!",
-          description: "Les données utilisateur ont été mises à jour avec succès.",
+          description:
+            "Les données utilisateur ont été mises à jour avec succès.",
           status: "success",
           duration: 5000,
           isClosable: true,

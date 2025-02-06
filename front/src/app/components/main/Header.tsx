@@ -14,12 +14,11 @@ import { FaUser } from "react-icons/fa";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import logo from "../../public/logo.png";
 import Image from "next/image";
-import useAxiosInstance from "@/app/lib/axiosInstance";
+import axiosInstance from "@/app/lib/axiosInstance";
 
 const Header = () => {
   const { bg, toggleColorMode } = useColorModeStyles();
   const [username, setUsername] = useState("User");
-  const axiosInstance = useAxiosInstance();
   const { hoverColor } = useColorModeStyles();
 
   useEffect(() => {

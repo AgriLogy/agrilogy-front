@@ -17,14 +17,13 @@ import {
 import { EmailIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 import { useRouter } from 'next/navigation'; // Importing useRouter from next/navigation
-import useAxiosInstance from "../lib/axiosInstance";
+import axiosInstance from "../lib/axiosInstance";
 
 const LoginBox = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const axiosInstance = useAxiosInstance();
 
   
   const handlePasswordVisibility = () => setShowPassword(!showPassword);

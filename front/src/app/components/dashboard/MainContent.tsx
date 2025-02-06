@@ -10,14 +10,13 @@ import { SensorData } from "@/app/data/dashboard/data";
 import GoogleMapWeather from "../GoogleMapWeather";
 import LoadingSpinner from "../common/LoadingSpinner";
 // import axiosInstance from "@/app/lib/axiosInstance";
-import useAxiosInstance from "@/app/lib/axiosInstance";
+import axiosInstance from "@/app/lib/axiosInstance";
 
 const MainContent = () => {
   const { bg, textColor } = useColorModeStyles();
   const [sensorData, setSensorData] = useState<SensorData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const axiosInstance = useAxiosInstance();
 
   useEffect(() => {
     const fetchData = async () => {

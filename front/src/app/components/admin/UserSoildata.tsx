@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Text } from "@chakra-ui/react";
 import "./style.css";
 import LoadingSpinner from "../common/LoadingSpinner";
-import useAxiosInstance from "@/app/lib/axiosInstance";
+import axiosInstance from "@/app/lib/axiosInstance";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import DateRangePicker from "../analytics/DateRangePicker";
 import TemperatureGraph from "../analytics/TemperatureGraph";
@@ -18,7 +18,6 @@ type Props = {
 
 const UserAlldata: React.FC<Props> = ({ user }) => {
   const { bg, textColor } = useColorModeStyles();
-  const axiosInstance = useAxiosInstance();
   const [data, setData] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<string>("");

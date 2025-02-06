@@ -12,7 +12,7 @@ import {
   Box,
   Link,
 } from "@chakra-ui/react";
-import useAxiosInstance from "@/app/lib/axiosInstance";
+import axiosInstance from "@/app/lib/axiosInstance";
 import { ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import "@/app/styles/graphes.css";
@@ -26,7 +26,6 @@ interface User {
 }
 
 const ListeZones = () => {
-  const axiosInstance = useAxiosInstance();
   const [users, setUsers] = useState<User[]>([]);
   const [sortConfig, setSortConfig] = useState<{
     key: keyof User | null;
@@ -85,7 +84,6 @@ const ListeZones = () => {
       <Box bg={bg} className="wide admin-register">
         <TableContainer bg={navBgColor} borderRadius="lg" boxShadow="md">
           <Table
-          
             variant="striped"
             sx={{
               border: "1px solid",
