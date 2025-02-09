@@ -22,7 +22,6 @@ class CustomUserManager(BaseUserManager):
         
         return self.create_user(username, email, password, **extra_fields)
 
-
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=100, unique=True)
     firstname = models.CharField(max_length=100)
@@ -47,6 +46,16 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
 
+    def save(self, *args, **kwargs):
+        # Adjust is_staff based on user_type
+        if self.user_type == 'admin':
+            self.is_staff = True
+        elif self.user_type == 'regular':
+            self.is_staff = False
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.username
+
 

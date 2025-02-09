@@ -7,7 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'firstname', 'lastname', 'phone_number', 'password']
+        fields = ['username', 'email', 'firstname', 'lastname', 'phone_number', 'password', 'user_type']
     
     def create(self, validated_data):
         user = CustomUser(
@@ -29,4 +29,14 @@ class AdminUserSerializer(serializers.ModelSerializer):
 class AdminModifyUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email',  'firstname', 'lastname', 'phone_number', 'payement_status', 'user_type' ]
+        fields = ['username', 'email', 'firstname', 'lastname', 'phone_number', 'payement_status', 'user_type']
+
+    def update(self, instance, validated_data):
+        # Optionally, you could check if the user_type has changed and handle any other logic if necessary
+        user_type = validated_data.get('user_type', instance.user_type)
+
+        if user_type != instance.user_type:
+            # Explicitly call the save method to update is_staff based on user_type
+            instance.user_type = user_type
+
+        return super().update(instance, validated_data)
