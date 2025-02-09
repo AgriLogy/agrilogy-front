@@ -27,7 +27,7 @@ const CreateUser = () => {
     email: "",
     phone_number: "",
     password: "",
-    user_type: "regular", // Default to "regular"
+    "is_staff": "",
   });
 
   const handleChange = (
@@ -155,16 +155,16 @@ const CreateUser = () => {
             </FormControl>
 
             {/* User Type Dropdown */}
-            <FormControl id="user_type" isRequired>
+            <FormControl id="is_staff" isRequired>
               <FormLabel>Type d'utilisateur</FormLabel>
               <Select
-                name="user_type"
-                value={formData.user_type}
+                name="is_staff"
+                value={formData.is_staff}
                 onChange={handleChange}
                 placeholder="Select user type"
               >
-                <option value="regular">Regular</option>
-                <option value="admin">Admin</option>
+                <option value="0">Regular</option>
+                <option value="1">Admin</option>
               </Select>
             </FormControl>
 

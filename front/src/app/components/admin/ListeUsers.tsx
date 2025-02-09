@@ -22,7 +22,7 @@ interface User {
   username: string;
   email: string;
   is_active: boolean;
-  user_type: string;
+  is_staff: string;
   payement_status: string;
 }
 
@@ -39,7 +39,7 @@ const ListeUsers = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axiosInstance.get<User[]>("/auth/users"); // Replace with your actual endpoint
+        const response = await axiosInstance.get<User[]>("/auth/users"); 
         setUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -171,14 +171,14 @@ const ListeUsers = () => {
                   <Button
                     fontWeight={700}
                     variant="ghost"
-                    onClick={() => sortUsers("user_type")}
+                    onClick={() => sortUsers("is_staff")}
                     color={textColor}
                     _hover={{ color: hoverColor }}
                     rightIcon={
-                      sortConfig.key === "user_type" &&
+                      sortConfig.key === "is_staff" &&
                       sortConfig.direction === "asc" ? (
                         <ChevronUpIcon />
-                      ) : sortConfig.key === "user_type" ? (
+                      ) : sortConfig.key === "is_staff" ? (
                         <ChevronDownIcon />
                       ) : undefined
                     }
@@ -230,7 +230,7 @@ const ListeUsers = () => {
                   <Td color={textColor}>
                     {user.is_active ? "Active" : "Inactive"}
                   </Td>
-                  <Td color={textColor}>{user.user_type}</Td>
+                  <Td color={textColor}>{user.is_staff ? "Admin" : "Regular"}</Td>
                   <Td color={textColor}>{user.payement_status}</Td>
                   <Td>
                     <Link

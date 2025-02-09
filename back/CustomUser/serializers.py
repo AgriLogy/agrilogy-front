@@ -7,7 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'firstname', 'lastname', 'phone_number', 'password', 'user_type']
+        fields = ['username', 'email', 'firstname', 'lastname', 'phone_number', 'password', ]
     
     def create(self, validated_data):
         user = CustomUser(
@@ -24,22 +24,12 @@ class UserSerializer(serializers.ModelSerializer):
 class AdminUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email',  'phone_number', 'payement_status', 'user_type' ]
+        fields = ['username', 'email',  'phone_number', 'payement_status',  'is_staff',]
 
 class AdminModifyUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'firstname', 'lastname', 'phone_number', 'payement_status', 'user_type']
-
-    def update(self, instance, validated_data):
-        # Optionally, you could check if the user_type has changed and handle any other logic if necessary
-        user_type = validated_data.get('user_type', instance.user_type)
-
-        if user_type != instance.user_type:
-            # Explicitly call the save method to update is_staff based on user_type
-            instance.user_type = user_type
-
-        return super().update(instance, validated_data)
+        fields = ['username', 'email', 'firstname', 'lastname', 'phone_number', 'payement_status', 'is_staff']
 
 class AdminCreateUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -47,7 +37,7 @@ class AdminCreateUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'firstname', 'lastname', 'phone_number', 'password', 'user_type']
+        fields = ['username', 'email', 'firstname', 'lastname', 'phone_number', 'password', 'is_staff']
     
     def create(self, validated_data):
         user = CustomUser(
@@ -56,7 +46,7 @@ class AdminCreateUserSerializer(serializers.ModelSerializer):
             firstname=validated_data['firstname'],
             lastname=validated_data['lastname'],
             phone_number=validated_data['phone_number'],
-            user_type=validated_data['user_type'],
+            is_staff=validated_data['is_staff'],
         )
         user.set_password(validated_data['password'])
         user.save()

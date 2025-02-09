@@ -33,11 +33,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         choices=[('actif', 'Actif'), ('suspended', 'Suspended')],
         default='actif'
     )
-    user_type = models.CharField(
-        max_length=10,
-        choices=[('admin', 'Admin'), ('regular', 'Regular')],
-        default='regular'
-    )
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -45,15 +40,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
-
-    def save(self, *args, **kwargs):
-        # Adjust is_staff based on user_type
-        if self.user_type == 'admin':
-            self.is_staff = True
-        elif self.user_type == 'regular':
-            self.is_staff = False
-
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.username

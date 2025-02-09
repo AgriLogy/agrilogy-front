@@ -30,7 +30,7 @@ const ModifyUser = ({ user }: Props) => {
     lastname: "",
     email: "",
     phone_number: "",
-    user_type: "", // Default to "regular"
+    "is_staff": "",
   });
 
   // Fetch user data on component mount
@@ -167,16 +167,16 @@ const ModifyUser = ({ user }: Props) => {
               />
             </FormControl>
 
-            <FormControl id="user_type" isRequired>
+            <FormControl id="is_staff" isRequired>
               <FormLabel>Type d'utilisateur</FormLabel>
               <Select
-                name="user_type"
-                value={formData.user_type}
+                name="is_staff"
+                value={formData.is_staff}
                 onChange={handleChange}
                 placeholder="Select user type"
               >
-                <option value="regular">Regular</option>
-                <option value="admin">Admin</option>
+                <option value="0">Regular</option>
+                <option value="1">Admin</option>
               </Select>
             </FormControl>
 

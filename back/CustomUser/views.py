@@ -105,10 +105,6 @@ class AdminSignInAPIView(APIView):
         except CustomUser.DoesNotExist:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
-        # Ensure user is an admin
-        if user.user_type != 'admin':
-            return Response({'error': 'Access denied. Admins only.'}, status=status.HTTP_403_FORBIDDEN)
-
         # Implement caching to limit login attempts
         cache_key = f"login_attempts_{username}"
         attempts = cache.get(cache_key, 0)
