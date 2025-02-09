@@ -1,39 +1,38 @@
 import axios from "axios";
 
 const API_URL = "http://127.0.0.1:8000/";
-
-const axiosInstance = axios.create({
+const api = axios.create({
   baseURL: API_URL,
-  withCredentials: true, // ✅ Ensures cookies (including CSRF token) are sent
 });
 
-// Function to get CSRF token from cookies
-const getCsrfToken = () => {
-  console.log("11", document.cookie);
-  
-  return document.cookie
-    .split('; ')
-    .find(cookie => cookie.startsWith('csrftoken='))
-    ?.split('=')[1];
-};
-
-axiosInstance.interceptors.request.use(
+// Add an interceptor to include the access token in every request
+api.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem("accessToken");
-    const csrfToken = getCsrfToken(); // Get CSRF token
-
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
-
-    if (csrfToken) {
-      
-      config.headers["X-CSRFToken"] = csrfToken;
-    }
-
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
-export default axiosInstance;
+// Add an interceptor to handle responses
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      // Clear the invalid token and redirect to the login page
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default api;

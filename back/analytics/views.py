@@ -13,6 +13,17 @@ from .models import Sensor
 from .serializers import SensorSerializer
 from django.utils.dateparse import parse_date
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAdminUser
+from rest_framework import status
+from django.db.models import Q
+from django.contrib.auth import get_user_model
+from django.utils.dateparse import parse_date
+
+from .models import Sensor
+from .serializers import SensorSerializer
+
 class SensorViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = SensorSerializer
@@ -92,22 +103,22 @@ class HeaderAPIView(APIView):
         user = request.user
         return Response({"username": user.username}, status=status.HTTP_200_OK)
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser
-from rest_framework import status
-from django.db.models import Q
-from django.contrib.auth import get_user_model
-from django.utils.dateparse import parse_date
+class AdminHeaderAPIView(APIView):
+    permission_classes = [IsAdminUser]
 
-from .models import Sensor
-from .serializers import SensorSerializer
+    def get(self, request):
+        user = request.user
+        if user.user_type == True:
+            return Response({"username": user.username}, status=status.HTTP_200_OK)
+        return Response({"Error": "You are not authorized to view this page."}, status=status.HTTP_403_FORBIDDEN)
+
+
 
 User = get_user_model()
 
 class UserSensorDataView(APIView):
-    # permission_classes = [IsAdminUser]  # Restrict access to admin users only
-    permission_classes = [AllowAny]  # Restrict access to admin users only
+    permission_classes = [IsAdminUser]  # Restrict access to admin users only
+    # permission_classes = [AllowAny]  # Restrict access to admin users only
 
     def post(self, request):
         # Get user parameter from request

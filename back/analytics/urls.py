@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
+	AdminHeaderAPIView,
     SensorViewSet,
     NotificationsAndAlertsView,
     AllSensorDataView,
@@ -19,6 +20,8 @@ urlpatterns = [
     # Additional API endpoints
     path('notifications-and-alerts/', NotificationsAndAlertsView.as_view(), name='notifications-and-alerts'),
     path('all-sensor-data/', AllSensorDataView.as_view(), name='all-sensor-data'),
-    path('admin-user-data/', UserSensorDataView.as_view(), name='admin-user-data'),
     path('header/', HeaderAPIView.as_view(), name='header'),
+	
+    path('admin-user-data/', UserSensorDataView.as_view(), name='admin-user-data'),
+    path('admin-header/', AdminHeaderAPIView.as_view(), name='admin-header'),
 ]

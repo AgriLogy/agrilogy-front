@@ -80,7 +80,61 @@ class SignInAPIView(APIView):
         cache.set(cache_key, attempts + 1, timeout=300)  # Timeout of 5 minutes
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
+from django.core.cache import cache
+from django.contrib.auth import authenticate, login
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.tokens import RefreshToken
+from CustomUser.models import CustomUser
 
+class AdminSignInAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        if not username or not password:
+            return Response({'error': 'Username and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if user exists
+        try:
+            user = CustomUser.objects.get(username=username)
+        except CustomUser.DoesNotExist:
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Ensure user is an admin
+        if user.user_type != 'admin':
+            return Response({'error': 'Access denied. Admins only.'}, status=status.HTTP_403_FORBIDDEN)
+
+        # Implement caching to limit login attempts
+        cache_key = f"login_attempts_{username}"
+        attempts = cache.get(cache_key, 0)
+
+        if attempts >= 5:
+            return Response({'error': 'Too many login attempts. Please try again later.'}, status=status.HTTP_429_TOO_MANY_REQUESTS)
+
+        # Authenticate user
+        authenticated_user = authenticate(request, username=username, password=password)
+
+        if authenticated_user is not None:
+            # Reset failed attempts on successful login
+            cache.delete(cache_key)
+
+            # Generate JWT tokens
+            refresh = RefreshToken.for_user(authenticated_user)
+            login(request, authenticated_user)
+
+            return Response({
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+            }, status=status.HTTP_200_OK)
+
+        # Increment failed login attempts
+        cache.set(cache_key, attempts + 1, timeout=300)  # Timeout of 5 minutes
+        return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 class UserListView(APIView):
     # permission_classes = [IsAdminUser]

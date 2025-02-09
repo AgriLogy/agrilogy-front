@@ -23,7 +23,7 @@ const HeaderAdmin = () => {
 
   useEffect(() => {
     axiosInstance
-      .get("/api/header/")
+      .get("/api/admin-header/")
       .then((response) => {
         const userData = response.data;
         console.log(response.data);
