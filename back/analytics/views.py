@@ -104,13 +104,11 @@ class HeaderAPIView(APIView):
         return Response({"username": user.username}, status=status.HTTP_200_OK)
 
 class AdminHeaderAPIView(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
     def get(self, request):
         user = request.user
-        if user.user_type == 'admin':
-            return Response({"username": user.username}, status=status.HTTP_200_OK)
-        return Response({"Error": "You are not authorized to view this page."}, status=status.HTTP_403_FORBIDDEN)
+        return Response({"username": user.username}, status=status.HTTP_200_OK)
 
 
 

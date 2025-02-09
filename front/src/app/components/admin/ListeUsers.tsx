@@ -16,6 +16,7 @@ import axiosInstance from "@/app/lib/axiosInstance";
 import { ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import "@/app/styles/graphes.css";
+import FloatingButton from "./FloatingButton";
 
 interface User {
   username: string;
@@ -69,6 +70,7 @@ const ListeUsers = () => {
 
   return (
     <div className="container">
+      <FloatingButton/>
       <Box
         className="header"
         bg={bg}

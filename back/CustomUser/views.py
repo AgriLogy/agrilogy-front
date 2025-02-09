@@ -8,7 +8,7 @@ from django.core.cache import cache
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import CustomUser
-from .serializers import AdminModifyUserSerializer, UserSerializer, AdminUserSerializer
+from .serializers import AdminCreateUserSerializer, AdminModifyUserSerializer, UserSerializer, AdminUserSerializer
 from django.core.exceptions import ValidationError
 from rest_framework.exceptions import PermissionDenied
 
@@ -201,6 +201,41 @@ class SignUpAPIView(APIView):
             user = serializer.save()
             user.set_password(password)
             user.save()
+            return Response({'status': 'Account created successfully'}, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.views import APIView
+
+class AdminSignUpAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def post(self, request):
+        serializer = AdminCreateUserSerializer(data=request.data)
+        if serializer.is_valid():
+            username = serializer.validated_data.get('username')
+            email = serializer.validated_data.get('email')
+            password = serializer.validated_data.get('password')
+
+            # Check if username or email already exists
+            if CustomUser.objects.filter(email=email).exists() or CustomUser.objects.filter(username=username).exists():
+                return Response({'error': 'Username or email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Validate password
+            try:
+                validate_password(password)
+            except ValidationError as e:
+                return Response({'password': e.messages}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Create user
+            user = serializer.save()
+            user.set_password(password)
+            user.save()
+
             return Response({'status': 'Account created successfully'}, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

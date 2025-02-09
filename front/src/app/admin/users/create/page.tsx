@@ -1,12 +1,8 @@
 "use client";
 import { Grid, GridItem } from "@chakra-ui/react";
 import React from "react";
-import Header from "../../../components/main/Header";
-import Sidebar from "../../../components/main/Sidebar";
-import { MainContent } from "../../../components/dashboard/MainContent";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 
-import NotificationsMain from "../../../components/notifications/NotificationsMain";
 import CreateUser from "@/app/components/admin/CreateUser";
 import HeaderAdmin from "@/app/components/main/HeaderAdmin";
 import AdminSidebar from "@/app/components/main/AdminSidebar";

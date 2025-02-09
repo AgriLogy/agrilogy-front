@@ -38,7 +38,7 @@ const LoginBox = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await axiosInstance.post('/auth/admin-signin/', {
+      const response = await axiosInstance.post('/auth/signin/', {
         username,
         password,
       });

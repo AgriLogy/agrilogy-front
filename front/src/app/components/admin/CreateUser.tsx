@@ -40,7 +40,7 @@ const CreateUser = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.post("/auth/signup/", formData);
+      const response = await axiosInstance.post("/auth/admin-signup/", formData);
 
       if (response.status === 201) {
         toast({
