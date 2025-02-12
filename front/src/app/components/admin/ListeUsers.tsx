@@ -12,7 +12,7 @@ import {
   Box,
   Link,
 } from "@chakra-ui/react";
-import axiosInstance from "@/app/lib/axiosInstance";
+import axiosInstance from "@/app/lib/api";
 import { ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import "@/app/styles/graphes.css";
@@ -39,7 +39,7 @@ const ListeUsers = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axiosInstance.get<User[]>("/auth/users"); 
+        const response = await axiosInstance.get<User[]>("/auth/users");
         setUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -70,7 +70,7 @@ const ListeUsers = () => {
 
   return (
     <div className="container">
-      <FloatingButton/>
+      <FloatingButton />
       <Box
         className="header"
         bg={bg}
@@ -230,7 +230,9 @@ const ListeUsers = () => {
                   <Td color={textColor}>
                     {user.is_active ? "Active" : "Inactive"}
                   </Td>
-                  <Td color={textColor}>{user.is_staff ? "Admin" : "Regular"}</Td>
+                  <Td color={textColor}>
+                    {user.is_staff ? "Admin" : "Regular"}
+                  </Td>
                   <Td color={textColor}>{user.payement_status}</Td>
                   <Td>
                     <Link

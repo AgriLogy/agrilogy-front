@@ -15,7 +15,7 @@ import {
 import { BellIcon, SettingsIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { FaCog, FaUser } from "react-icons/fa";
 import Image from "next/image";
-import axiosInstance from "@/app/lib/axiosInstance";
+import axiosInstance from "@/app/lib/api";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import logo from "../../public/logo.png";
 
@@ -62,9 +62,7 @@ const BigMenu = () => {
             variant="ghost"
           />
           <MenuList>
-            <MenuItem>
-              Bonjour {username}
-            </MenuItem>
+            <MenuItem>Bonjour {username}</MenuItem>
             <Link href="/settings">
               <Button
                 leftIcon={<FaCog />}

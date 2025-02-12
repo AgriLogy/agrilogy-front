@@ -24,12 +24,19 @@ import {
   MenuList,
 } from "@chakra-ui/react";
 import { HamburgerIcon, MoonIcon, SunIcon, BellIcon } from "@chakra-ui/icons";
-import { FaUser, FaHome, FaComments, FaCog, FaUserFriends, FaLeaf } from "react-icons/fa";
+import {
+  FaUser,
+  FaHome,
+  FaComments,
+  FaCog,
+  FaUserFriends,
+  FaLeaf,
+} from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
 import Image from "next/image";
 import logo from "../../public/logo.png";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import api from "@/app/lib/axiosInstance";
+import api from "@/app/lib/api";
 import { PiSigmaBold } from "react-icons/pi";
 
 const MobileMenu = () => {

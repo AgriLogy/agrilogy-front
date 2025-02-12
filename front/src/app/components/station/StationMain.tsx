@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import "./StationMain.css";
 import { Box, Text } from "@chakra-ui/react";
-import axiosInstance from "@/app/lib/axiosInstance";
+import axiosInstance from "@/app/lib/api";
 
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import LoadingSpinner from "../common/LoadingSpinner";

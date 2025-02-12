@@ -74,6 +74,7 @@ class SignInAPIView(APIView):
             return Response({
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
+                'is_staff' : user.is_staff
             }, status=status.HTTP_200_OK)
 
         # Increment failed login attempts

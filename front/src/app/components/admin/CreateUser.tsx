@@ -13,7 +13,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import axiosInstance from "@/app/lib/axiosInstance";
+import axiosInstance from "@/app/lib/api";
 import "@/app/styles/graphes.css";
 
 const CreateUser = () => {
@@ -27,7 +27,7 @@ const CreateUser = () => {
     email: "",
     phone_number: "",
     password: "",
-    "is_staff": "",
+    is_staff: "",
   });
 
   const handleChange = (
@@ -40,7 +40,10 @@ const CreateUser = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.post("/auth/admin-signup/", formData);
+      const response = await axiosInstance.post(
+        "/auth/admin-signup/",
+        formData
+      );
 
       if (response.status === 201) {
         toast({

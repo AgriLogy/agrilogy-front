@@ -5,7 +5,7 @@ import { Box, Text } from "@chakra-ui/react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import LoadingSpinner from "../common/LoadingSpinner";
 import DateRangePicker from "../analytics/DateRangePicker";
-import axiosInstance from "@/app/lib/axiosInstance";
+import axiosInstance from "@/app/lib/api";
 import FloatingButton from "./FloatingButton";
 import FormModal from "./FormModal";
 

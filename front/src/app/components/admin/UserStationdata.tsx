@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Text } from "@chakra-ui/react";
 import LoadingSpinner from "../common/LoadingSpinner";
-import axiosInstance from "@/app/lib/axiosInstance";
+import axiosInstance from "@/app/lib/api";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import DateRangePicker from "../analytics/DateRangePicker";
 import DataTable from "../station/DataTable";

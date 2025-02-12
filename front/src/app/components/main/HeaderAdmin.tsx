@@ -14,7 +14,7 @@ import { FaUser } from "react-icons/fa";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import logo from "../../public/logo.png";
 import Image from "next/image";
-import axiosInstance from "@/app/lib/axiosInstance";
+import axiosInstance from "@/app/lib/api";
 
 const HeaderAdmin = () => {
   const { bg, toggleColorMode } = useColorModeStyles();

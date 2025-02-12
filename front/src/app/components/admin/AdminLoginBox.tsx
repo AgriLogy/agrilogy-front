@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Box,
@@ -16,16 +16,15 @@ import {
 } from "@chakra-ui/react";
 import { EmailIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useState } from "react";
-import { useRouter } from 'next/navigation'; // Importing useRouter from next/navigation
-import axiosInstance from "../../lib/axiosInstance";
+import { useRouter } from "next/navigation"; // Importing useRouter from next/navigation
+import axiosInstance from "../../lib/api";
 
 const LoginBox = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  
   const handlePasswordVisibility = () => setShowPassword(!showPassword);
 
   const boxBg = useColorModeValue("white", "gray.700");
@@ -38,22 +37,23 @@ const LoginBox = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await axiosInstance.post('/auth/signin/', {
+      const response = await axiosInstance.post("/auth/signin/", {
         username,
         password,
       });
 
       if (response.status === 200) {
         const { access, refresh } = response.data;
-        localStorage.setItem('accessToken', access);
-        localStorage.setItem('refreshToken', refresh);
-        router.push('/admin'); // Redirecting to the home page after successful login
+        localStorage.setItem("accessToken", access);
+        localStorage.setItem("refreshToken", refresh);
+        router.push("/admin"); // Redirecting to the home page after successful login
       }
     } catch (error) {
-      setErrorMessage('Nom d\'utilisateur ou mot de passe incorrect.');
+      setErrorMessage("Nom d'utilisateur ou mot de passe incorrect.");
       toast({
         title: "Erreur",
-        description: "Impossible de se connecter avec ces informations d'identification.",
+        description:
+          "Impossible de se connecter avec ces informations d'identification.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -114,7 +114,9 @@ const LoginBox = () => {
               borderColor={inputBorderColor}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              _placeholder={{ color: useColorModeValue("gray.500", "gray.400") }}
+              _placeholder={{
+                color: useColorModeValue("gray.500", "gray.400"),
+              }}
             />
           </InputGroup>
         </FormControl>
@@ -137,7 +139,9 @@ const LoginBox = () => {
               borderColor={inputBorderColor}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              _placeholder={{ color: useColorModeValue("gray.500", "gray.400") }}
+              _placeholder={{
+                color: useColorModeValue("gray.500", "gray.400"),
+              }}
             />
           </InputGroup>
         </FormControl>
@@ -146,7 +150,12 @@ const LoginBox = () => {
           Mot de passe oublié ?
         </Button>
 
-        <Button colorScheme="teal" size="lg" width="100%" onClick={handleSubmit}>
+        <Button
+          colorScheme="teal"
+          size="lg"
+          width="100%"
+          onClick={handleSubmit}
+        >
           Se connecter
         </Button>
       </Stack>

@@ -10,7 +10,7 @@ import CumulIrrigationGraph from "./CumulIrrigationGraph";
 import TemperatureGraph from "./TemperatureGraph";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import LoadingSpinner from "../common/LoadingSpinner";
-import axiosInstance from "@/app/lib/axiosInstance";
+import axiosInstance from "@/app/lib/api";
 import { SensorData } from "@/app/data/dashboard/data";
 
 const AnalyticsMain: React.FC = () => {

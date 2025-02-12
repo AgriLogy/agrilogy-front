@@ -13,7 +13,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import axiosInstance from "@/app/lib/axiosInstance";
+import axiosInstance from "@/app/lib/api";
 import "@/app/styles/graphes.css";
 
 type Props = {
@@ -30,7 +30,7 @@ const ModifyUser = ({ user }: Props) => {
     lastname: "",
     email: "",
     phone_number: "",
-    "is_staff": "",
+    is_staff: "",
   });
 
   // Fetch user data on component mount

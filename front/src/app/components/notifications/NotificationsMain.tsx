@@ -5,7 +5,7 @@ import { Box, Text, VStack } from "@chakra-ui/react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import LoadingSpinner from "../common/LoadingSpinner";
 import Notification from "../notifications/Notification";
-import axiosInstance from "@/app/lib/axiosInstance";
+import axiosInstance from "@/app/lib/api";
 
 const NotificationsMain: React.FC = () => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
