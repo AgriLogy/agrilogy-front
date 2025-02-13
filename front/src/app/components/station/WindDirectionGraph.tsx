@@ -1,5 +1,5 @@
 "use client";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Spinner, Text } from "@chakra-ui/react";
 import {
   LineChart,
   Line,
@@ -12,13 +12,6 @@ import {
   ReferenceLine,
 } from "recharts";
 import useColorModeStyles from "@/app/utils/useColorModeStyles"; // Import the utility
-
-interface WindDirectionGraphProps {
-  data: {
-    timestamp: string;
-    wind_direction: number;
-  }[];
-}
 
 const CustomLegend = (props: any) => (
   <ul
@@ -62,8 +55,9 @@ const CustomTick = ({ x, y, payload }: any) => (
   </text>
 );
 
-const WindDirectionGraph: React.FC<WindDirectionGraphProps> = ({ data }) => {
+const WindDirectionGraph = ({ data }: { data: any }) => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility for styles
+  if (!data) return <Spinner />;
 
   return (
     <Box
@@ -75,10 +69,10 @@ const WindDirectionGraph: React.FC<WindDirectionGraphProps> = ({ data }) => {
       p={2}
     >
       <Text color={textColor} fontSize="lg" fontWeight="bold" mb={4}>
-        Direction du vent
+        {data.sensor_names?.wind_direction}
       </Text>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data}>
+        <LineChart data={data.sensor_data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} domain={[0, 360]} />

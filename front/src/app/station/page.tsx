@@ -3,7 +3,6 @@ import { Grid, GridItem } from "@chakra-ui/react";
 import React from "react";
 import Header from "../components/main/Header";
 import Navbar from "../components/main/Sidebar";
-import AnalyticsMain from "../components/analytics/AnalyticsMain";
 import useColorModeStyles from "../utils/useColorModeStyles";
 import StationMain from "../components/station/StationMain";
 

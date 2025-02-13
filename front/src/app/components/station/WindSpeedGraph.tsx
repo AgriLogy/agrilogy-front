@@ -1,5 +1,5 @@
 "use client";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Spinner, Text } from "@chakra-ui/react";
 import {
   LineChart,
   Line,
@@ -61,8 +61,9 @@ const CustomTick = ({ x, y, payload }: any) => (
   </text>
 );
 
-const WindSpeedGraph: React.FC<WindSpeedGraphProps> = ({ data }) => {
+const WindSpeedGraph = ({ data }: { data: any }) => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
+  if (!data) return <Spinner />;
 
   return (
     <Box
@@ -74,10 +75,10 @@ const WindSpeedGraph: React.FC<WindSpeedGraphProps> = ({ data }) => {
       p={2}
     >
       <Text color={textColor} fontSize="lg" fontWeight="bold" mb={4}>
-        Vitesse du vent
+        {data.sensor_names?.wind_speed}
       </Text>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data}>
+        <LineChart data={data.sensor_data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />

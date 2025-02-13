@@ -14,7 +14,7 @@ import {
 interface VaporPressureDeficitGraphProps {
   data: {
     timestamp: string;
-    vapor_pressure_deficit: number;
+    pressure_weather: number;
   }[];
 }
 
@@ -83,9 +83,7 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-const VaporPressureDeficitGraph: React.FC<VaporPressureDeficitGraphProps> = ({
-  data,
-}) => {
+const VaporPressureDeficitGraph = ({ data }: { data: any }) => {
   const { colorMode } = useColorMode();
   const chartBg = colorMode === "light" ? "white" : "gray.800";
 
@@ -104,10 +102,10 @@ const VaporPressureDeficitGraph: React.FC<VaporPressureDeficitGraphProps> = ({
         fontWeight="bold"
         mb={4}
       >
-        Déficit de pression de vapeur
+        {data.sensor_names?.et0}
       </Text>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data}>
+        <LineChart data={data.sensor_data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
@@ -115,7 +113,7 @@ const VaporPressureDeficitGraph: React.FC<VaporPressureDeficitGraphProps> = ({
           <Legend content={<CustomLegend />} />
           <Line
             type="monotone"
-            dataKey="vapor_pressure_deficit"
+            dataKey="pressure_weather"
             stroke="rgba(54, 162, 235, 1)"
             name="Vapor Pressure Deficit (kPa)"
           />

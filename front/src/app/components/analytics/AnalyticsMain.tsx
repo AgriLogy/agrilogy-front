@@ -36,7 +36,7 @@ const AnalyticsMain: React.FC = () => {
         console.log("API Response:", response.data); // Log the API response to inspect its structure
 
         // Assuming response.data.sensor_data contains an array of SensorData
-        const sensorData: SensorData[] = response.data.sensor_data || [];
+        const sensorData: SensorData[] = response.data || [];
         setData(sensorData);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
@@ -63,11 +63,11 @@ const AnalyticsMain: React.FC = () => {
       </Box>
 
       <Box bg={bg} className="box wide">
-        <PhGraph data={data} />
+        <PhGraph sensorData={data} />
       </Box>
 
       <Box bg={bg} className="box wide">
-        <ConductivityIrrigationGraph data={data} />
+        <ConductivityIrrigationGraph sensorData={data} />
       </Box>
 
       {/* <Box bg={bg} className="box wide">
@@ -75,7 +75,7 @@ const AnalyticsMain: React.FC = () => {
       </Box> */}
 
       <Box bg={bg} className="box wide">
-        <TemperatureGraph data={data} />
+        <TemperatureGraph sensorData={data} />
       </Box>
     </div>
   );

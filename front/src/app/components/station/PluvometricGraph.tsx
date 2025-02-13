@@ -1,5 +1,5 @@
 "use client";
-import { Box, Text, useColorMode } from "@chakra-ui/react";
+import { Box, Spinner, Text, useColorMode } from "@chakra-ui/react";
 import {
   LineChart,
   Line,
@@ -10,13 +10,6 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-
-interface PluvometricGraphProps {
-  data: {
-    timestamp: string; // Should be formatted timestamp similar to previous graphs
-    pluvometric: number; // The pluvometric data (e.g., rainfall in mm)
-  }[];
-}
 
 const CustomLegend = (props: any) => (
   <ul
@@ -60,9 +53,10 @@ const CustomTick = ({ x, y, payload }: any) => (
   </text>
 );
 
-const PluvometricGraph: React.FC<PluvometricGraphProps> = ({ data }) => {
+const PluvometricGraph = ({ data }: { data: any }) => {
   const { colorMode } = useColorMode();
   const chartBg = colorMode === "light" ? "white" : "gray.800";
+  if (!data) return <Spinner />;
 
   return (
     <Box
@@ -79,10 +73,13 @@ const PluvometricGraph: React.FC<PluvometricGraphProps> = ({ data }) => {
         fontWeight="bold"
         mb={4}
       >
-        Données pluviométriques (Pluies)
+        {/* {data.sensor_names.precipitation_humidity_rate}
+         */}
+        {/* {data.sensor_names?.Pluviometrie} */}
+        hadi khass twli bars
       </Text>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data}>
+        <LineChart data={data.sensor_data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
@@ -91,7 +88,7 @@ const PluvometricGraph: React.FC<PluvometricGraphProps> = ({ data }) => {
           {/* Line for Pluvometric Data */}
           <Line
             type="monotone"
-            dataKey="cumulative_rainfall"
+            dataKey="wind_speed"
             stroke="rgba(75, 192, 192, 1)"
             name="Rainfall (mm)"
           />

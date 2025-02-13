@@ -1,5 +1,5 @@
 "use client";
-import { Box, Text, useColorMode } from "@chakra-ui/react";
+import { Box, Spinner, Text, useColorMode } from "@chakra-ui/react";
 import {
   LineChart,
   Line,
@@ -60,9 +60,10 @@ const CustomTick = ({ x, y, payload }: any) => (
   </text>
 );
 
-const SolarRadiationGraph: React.FC<SolarRadiationGraphProps> = ({ data }) => {
+const SolarRadiationGraph = ({ data }: { data: any }) => {
   const { colorMode } = useColorMode();
   const chartBg = colorMode === "light" ? "white" : "gray.800";
+  if (!data) return <Spinner />;
 
   return (
     <Box
@@ -79,10 +80,11 @@ const SolarRadiationGraph: React.FC<SolarRadiationGraphProps> = ({ data }) => {
         fontWeight="bold"
         mb={4}
       >
-        Rayonnement solaire
+        dqssqd
+        {data.sensor_names?.solar_radiation}
       </Text>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data}>
+        <LineChart data={data.sensor_data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />

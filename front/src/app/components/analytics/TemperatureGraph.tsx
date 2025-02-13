@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Text, useColorMode } from '@chakra-ui/react';
+import { Box, Text, useColorMode } from "@chakra-ui/react";
 import {
   LineChart,
   Line,
@@ -10,7 +10,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from 'recharts';
+} from "recharts";
 
 interface TemperatureData {
   timestamp: string;
@@ -22,10 +22,35 @@ interface TemperatureGraphProps {
 }
 
 const CustomLegend = (props: any) => (
-  <ul style={{ display: "flex", listStyle: "none", padding: 0, flexWrap: "wrap", margin: 0, marginLeft: 60 }}>
+  <ul
+    style={{
+      display: "flex",
+      listStyle: "none",
+      padding: 0,
+      flexWrap: "wrap",
+      margin: 0,
+      marginLeft: 60,
+    }}
+  >
     {props.payload.map((entry: any, index: number) => (
-      <li key={`item-${index}`} style={{ marginRight: "15px", fontSize: "12px", color: entry.color, whiteSpace: "nowrap" }}>
-        <span style={{ marginRight: "5px", backgroundColor: entry.color, width: "10px", height: "10px", display: "inline-block" }} />
+      <li
+        key={`item-${index}`}
+        style={{
+          marginRight: "15px",
+          fontSize: "12px",
+          color: entry.color,
+          whiteSpace: "nowrap",
+        }}
+      >
+        <span
+          style={{
+            marginRight: "5px",
+            backgroundColor: entry.color,
+            width: "10px",
+            height: "10px",
+            display: "inline-block",
+          }}
+        />
         {entry.value}
       </li>
     ))}
@@ -38,26 +63,43 @@ const CustomTick = ({ x, y, payload }: any) => (
   </text>
 );
 
-const TemperatureGraph: React.FC<TemperatureGraphProps> = ({ data }) => {
+const TemperatureGraph = ({ sensorData }: { sensorData: any }) => {
+  if (!sensorData) return <div>Loading...</div>;
+
   const { colorMode } = useColorMode();
   const chartBg = colorMode === "light" ? "white" : "gray.800";
 
-  if (!data.length) return <div>No data available</div>;
-
   return (
-    <Box width="100%" height="100%" bg={chartBg} borderRadius="md" boxShadow="lg" p={2}>
-      <Text color={colorMode === "light" ? "gray.700" : "gray.200"} fontSize="lg" fontWeight="bold" mb={4}>
-        Température
+    <Box
+      width="100%"
+      height="100%"
+      bg={chartBg}
+      borderRadius="md"
+      boxShadow="lg"
+      p={2}
+    >
+      <Text
+        color={colorMode === "light" ? "gray.700" : "gray.200"}
+        fontSize="lg"
+        fontWeight="bold"
+        mb={4}
+      >
+        {sensorData.sensor_names?.soil_temperature }
       </Text>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data}>
+        <LineChart data={sensorData.sensor_data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
           <Tooltip />
           <Legend content={<CustomLegend />} />
-          
-          <Line type="monotone" dataKey="soil_temperature_medium" stroke="rgba(75,192,192,1)" name="Température (°C)" />
+
+          <Line
+            type="monotone"
+            dataKey="soil_temperature_medium"
+            stroke="rgba(75,192,192,1)"
+            name="Température (°C)"
+          />
         </LineChart>
       </ResponsiveContainer>
     </Box>

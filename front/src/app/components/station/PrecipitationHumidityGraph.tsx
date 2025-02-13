@@ -1,5 +1,5 @@
 "use client";
-import { Box, Text, useColorMode } from "@chakra-ui/react";
+import { Box, Spinner, Text, useColorMode } from "@chakra-ui/react";
 import {
   LineChart,
   Line,
@@ -88,34 +88,13 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-const PrecipitationHumidityGraph: React.FC<PrecipitationHumidityGraphProps> = ({
-  data,
-}) => {
+const PrecipitationHumidityGraph= ({ data }: { data: any }) => {
+
   const { colorMode } = useColorMode();
   const chartBg = colorMode === "light" ? "white" : "gray.800";
 
-  // Conditional rendering if there's no data
-  if (!data || data.length === 0) {
-    return (
-      <Box
-        width="100%"
-        height="100%"
-        bg={chartBg}
-        borderRadius="md"
-        boxShadow="lg"
-        p={2}
-      >
-        <Text
-          color={colorMode === "light" ? "gray.700" : "gray.200"}
-          fontSize="lg"
-          fontWeight="bold"
-          mb={4}
-        >
-          No Data Available
-        </Text>
-      </Box>
-    );
-  }
+  if (!data) return <Spinner />;
+ 
 
   return (
     <Box
@@ -132,10 +111,10 @@ const PrecipitationHumidityGraph: React.FC<PrecipitationHumidityGraphProps> = ({
         fontWeight="bold"
         mb={4}
       >
-        Précipitations et humidité
+        {data.sensor_names?.et0}
       </Text>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data}>
+        <LineChart data={data.sensor_data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
@@ -143,7 +122,7 @@ const PrecipitationHumidityGraph: React.FC<PrecipitationHumidityGraphProps> = ({
           <Legend content={<CustomLegend />} />
           <Line
             type="monotone"
-            dataKey="precipitation"
+            dataKey="precipitation_rate"
             stroke="rgba(75, 192, 192, 1)"
             name="Precipitation (mm)"
           />

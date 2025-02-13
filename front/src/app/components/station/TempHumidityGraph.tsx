@@ -1,5 +1,5 @@
 "use client";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Spinner, Text } from "@chakra-ui/react";
 import {
   LineChart,
   Line,
@@ -62,8 +62,9 @@ const CustomTick = ({ x, y, payload }: any) => (
   </text>
 );
 
-const TempHumidityGraph: React.FC<TempHumidityGraphProps> = ({ data }) => {
+const TempHumidityGraph = ({ data }: { data: any }) => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
+  if (!data) return <Spinner/>;
 
   return (
     <Box
@@ -75,10 +76,10 @@ const TempHumidityGraph: React.FC<TempHumidityGraphProps> = ({ data }) => {
       p={2}
     >
       <Text color={textColor} fontSize="lg" fontWeight="bold" mb={4}>
-        Température et humidité
+      {data.sensor_names?.temperature_humidity_weather}
       </Text>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data}>
+        <LineChart data={data.sensor_data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />

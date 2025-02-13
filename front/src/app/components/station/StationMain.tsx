@@ -18,7 +18,7 @@ import PrecipitationHumidityGraph from "./PrecipitationHumidityGraph";
 import DataTable from "./DataTable";
 import { SensorData } from "@/app/data/dashboard/data";
 
-const StationMain: React.FC = () => {
+const StationMain = () => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
   const [data, setData] = useState<any>(null);
   const [startDate, setStartDate] = useState<string>("");
@@ -40,7 +40,7 @@ const StationMain: React.FC = () => {
         console.log("API Response:", response.data); // Log the API response to inspect its structure
 
         // Assuming response.data.sensor_data contains an array of SensorData
-        const sensorData: SensorData[] = response.data.sensor_data || [];
+        const sensorData: SensorData[] = response.data || [];
         setData(sensorData);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
@@ -64,29 +64,29 @@ const StationMain: React.FC = () => {
         <Et0Graph data={data} />
       </Box>
       <Box bg={bg} className="box wide">
-        <TempHumidityGraph data={data} />
-      </Box>
-      <Box bg={bg} className="box wide">
         <WindSpeedGraph data={data} />
       </Box>
       <Box bg={bg} className="box wide">
         <WindDirectionGraph data={data} />
       </Box>
       <Box bg={bg} className="box wide">
+        <TempHumidityGraph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
         <PluvometricGraph data={data} />
       </Box>
-      <Box bg={bg} className="box wide">
-        <SolarRadiationGraph data={data} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <VaporPressureDeficitGraph data={data} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <PrecipitationHumidityGraph data={data} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <DataTable data={data} />
-      </Box>
+                                                                                                                                                                                                                                                                                                              <Box bg={bg} className="box wide">
+                                                                                                                                                                                                                                                                                                                <SolarRadiationGraph data={data} />
+                                                                                                                                                                                                                                                                                                              </Box>
+                                                                                                                                                                                                                                                                                                              <Box bg={bg} className="box wide">
+                                                                                                                                                                                                                                                                                                                <VaporPressureDeficitGraph data={data} />
+                                                                                                                                                                                                                                                                                                              </Box>
+        <Box bg={bg} className="box wide">
+          <PrecipitationHumidityGraph data={data} />
+          </Box>
+      {/* <Box bg={bg} className="box wide">
+        <DataTable data={data.sensor_data} />
+      </Box> */}
     </div>
   );
 };
