@@ -11,13 +11,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-interface SolarRadiationGraphProps {
-  data: {
-    timestamp: string; // Formatted timestamp for the X-axis
-    solar_radiation: number; // Solar radiation data in W/m²
-  }[];
-}
-
 const CustomLegend = (props: any) => (
   <ul
     style={{
@@ -80,7 +73,6 @@ const SolarRadiationGraph = ({ data }: { data: any }) => {
         fontWeight="bold"
         mb={4}
       >
-        dqssqd
         {data.sensor_names?.solar_radiation}
       </Text>
       <ResponsiveContainer width="100%" height={300}>
@@ -94,7 +86,7 @@ const SolarRadiationGraph = ({ data }: { data: any }) => {
           <Line
             type="monotone"
             dataKey="solar_radiation"
-            stroke="rgba(255, 205, 86, 1)"
+            stroke={data.sensor_colors?.solar_radiation_color}
             name="Solar Radiation (W/m²)"
           />
         </LineChart>

@@ -104,7 +104,7 @@ const WindDirectionGraph = ({ data }: { data: any }) => {
           <Line
             type="monotone"
             dataKey="wind_direction"
-            stroke="rgba(255, 159, 64, 1)"
+            stroke={data.sensor_colors?.wind_direction_color}
             name="Wind Direction (°)"
           />
         </LineChart>

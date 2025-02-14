@@ -1,6 +1,6 @@
 "use client";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Spinner, Text } from "@chakra-ui/react";
 import {
   LineChart,
   Line,
@@ -58,11 +58,12 @@ const CustomTick = ({ x, y, payload }: any) => {
   );
 };
 
-const IrrigationGraph = ({ sensorData }: { sensorData: any }) => {
+const IrrigationGraph = ({ data }: { data: any }) => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
   const chartColor = "rgba(75,192,192,1)";
 
-  if (!sensorData) return <div>Loading...</div>; // Ensure sensorData is loaded
+  if (!data) return <Spinner/>;
+
 
   return (
     <Box
@@ -75,10 +76,10 @@ const IrrigationGraph = ({ sensorData }: { sensorData: any }) => {
       overflow="hidden"
     >
       <Text color={textColor} fontSize="lg" fontWeight="bold" mb={4}>
-        {sensorData.sensor_names?.soil_irrigation}
+        {data.sensor_names?.soil_irrigation}
       </Text>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={sensorData.sensor_data}>
+        <LineChart data={data.sensor_data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
@@ -87,22 +88,22 @@ const IrrigationGraph = ({ sensorData }: { sensorData: any }) => {
           <Line
             type="monotone"
             dataKey="soil_moisture_low"
-            stroke={chartColor}
+            stroke={data.sensor_colors?.soil_moisture_low_color}
             name="Humidité 20 cm (%)"
           />
           <Line
             type="monotone"
             dataKey="soil_moisture_medium"
-            stroke="rgba(255,99,132,1)"
+            stroke={data.sensor_colors?.soil_moisture_medium_color}
             name="Humidité 40 cm (%)"
           />
           <Line
             type="monotone"
             dataKey="soil_moisture_high"
-            stroke="rgba(255,206,86,1)"
+            stroke={data.sensor_colors?.soil_moisture_high_color}
             name="Humidité 60 cm (%)"
           />
-          {/* <Line type="monotone" dataKey="irrigation" stroke="rgba(153,102,255,1)" name="Irrigation (L)" /> */}
+          {/* <Line type="monotone" dataKey="irrigation" troke={data.sensor_colors.irrigation_color} name="Irrigation (L)" /> */}
         </LineChart>
       </ResponsiveContainer>
     </Box>

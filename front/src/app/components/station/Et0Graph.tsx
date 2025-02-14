@@ -88,7 +88,7 @@ const Et0Graph = ({ data }: { data: any }) => {
           <Line
             type="monotone"
             dataKey="et0"
-            stroke="rgba(75,192,192,1)"
+            stroke={data.sensor_colors?.et0_color}
             name="ET0"
           />
         </LineChart>

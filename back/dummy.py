@@ -17,16 +17,16 @@ fake = Faker()
 
 # Create 10 users
 users = []
-for _ in range(10):
+for _ in range(1):
     user = get_user_model().objects.create_user(
-        username=fake.user_name(),
+        # username=fake.user_name(),
+        username='user15',
         email=fake.email(),
         # password=fake.password(),
         password=password,
         firstname=fake.first_name(),
         lastname=fake.last_name(),
         phone_number=fake.phone_number(),
-        user_type=random.choice(['admin', 'regular']),
         is_active=True,
         is_staff=False
     )

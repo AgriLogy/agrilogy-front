@@ -1,5 +1,5 @@
 "use client";
-import { Box, Text, useColorMode } from "@chakra-ui/react";
+import { Box, Spinner, Text, useColorMode } from "@chakra-ui/react";
 import {
   LineChart,
   Line,
@@ -10,16 +10,6 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-
-interface ConductivityData {
-  timestamp: string;
-  ec_soil_medium: number;
-  // irrigation: number;
-}
-
-interface ConductivityIrrigationGraphProps {
-  data: ConductivityData[];
-}
 
 const CustomLegend = (props: any) => (
   <ul
@@ -63,8 +53,8 @@ const CustomTick = ({ x, y, payload }: any) => (
   </text>
 );
 
-const ConductivityIrrigationGraph = ({ sensorData }: { sensorData: any }) => {
-  if (!sensorData) return <div>Loading...</div>;
+const ConductivityIrrigationGraph = ({ data }: { data: any }) => {
+  if (!data) return <Spinner/>;
 
   const { colorMode } = useColorMode();
   const chartBg = colorMode === "light" ? "white" : "gray.800";
@@ -84,10 +74,10 @@ const ConductivityIrrigationGraph = ({ sensorData }: { sensorData: any }) => {
         fontWeight="bold"
         mb={4}
       >
-        {sensorData.sensor_names?.soil_conductivity}
+        {data.sensor_names?.soil_conductivity}
       </Text>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={sensorData.sensor_data}>
+        <LineChart data={data.sensor_data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
@@ -96,10 +86,11 @@ const ConductivityIrrigationGraph = ({ sensorData }: { sensorData: any }) => {
           <Line
             type="monotone"
             dataKey="ec_soil_medium"
-            stroke="rgba(75,192,192,1)"
+            stroke={data.sensor_colors?.ec_soil_medium_color}
+
             name="Conductivité (mS/cm)"
           />
-          {/* <Line type="monotone" dataKey="irrigation" stroke="rgba(153,102,255,1)" name="Irrigation (L)" /> */}
+          {/* <Line type="monotone" dataKey="irrigation" stroke={data.sensor_colors?.irrigation_color} name="Irrigation (L)" /> */}
         </LineChart>
       </ResponsiveContainer>
     </Box>

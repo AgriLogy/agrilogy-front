@@ -1,5 +1,5 @@
 "use client";
-import { Box, Text, useColorMode } from "@chakra-ui/react";
+import { Box, Spinner, Text, useColorMode } from "@chakra-ui/react";
 import {
   LineChart,
   Line,
@@ -85,8 +85,10 @@ const CustomTooltip = ({ active, payload }: any) => {
 
 const VaporPressureDeficitGraph = ({ data }: { data: any }) => {
   const { colorMode } = useColorMode();
+
   const chartBg = colorMode === "light" ? "white" : "gray.800";
 
+  if (!data) return <Spinner />;
   return (
     <Box
       width="100%"
@@ -114,7 +116,7 @@ const VaporPressureDeficitGraph = ({ data }: { data: any }) => {
           <Line
             type="monotone"
             dataKey="pressure_weather"
-            stroke="rgba(54, 162, 235, 1)"
+            stroke={data.sensor_colors?.pressure_weather_color}
             name="Vapor Pressure Deficit (kPa)"
           />
         </LineChart>

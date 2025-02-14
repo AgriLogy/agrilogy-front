@@ -1,28 +1,16 @@
-from rest_framework import viewsets, status
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from django.utils.dateparse import parse_date, parse_datetime
-from django.db.models import Q
-from django.shortcuts import get_object_or_404
-from .models import *
-from .serializers import *
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
-from .models import Sensor
-from .serializers import SensorSerializer
-from django.utils.dateparse import parse_date
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser
-from rest_framework import status
 from django.db.models import Q
 from django.contrib.auth import get_user_model
-from django.utils.dateparse import parse_date
+from django.utils.dateparse import parse_date, parse_datetime
 
-from .models import Sensor
-from .serializers import SensorSerializer
+from rest_framework import viewsets, status
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+
+from .models import *
+from .serializers import *
 
 class SensorViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
@@ -92,9 +80,23 @@ class AllSensorDataView(APIView):
         queryset = Sensor.objects.filter(user=self.request.user) 
         queryset = queryset.filter(date_filter)
 
+        try:
+            graph_name = GraphName.objects.get(user=request.user)
+            graph_name_serializer = GraphNameSerializer(graph_name)
+
+            graph_color = SensorColor.objects.get(user=request.user)
+            graph_color_serializer = GraphColorSerializer(graph_color)
+        except GraphName.DoesNotExist:
+            graph_name_serializer = None
+        except SensorColor.DoesNotExist:
+            graph_color_serializer = None
         # Serialize the data
-        serializer = SensorSerializer(queryset, many=True)
-        return Response({"sensor_data": serializer.data})
+        sensor_serializer = SensorSerializer(queryset, many=True)
+        return Response({
+            "sensor_data": sensor_serializer.data,
+            "sensor_names": graph_name_serializer.data if graph_name_serializer else None,
+            "sensor_colors": graph_color_serializer.data if graph_color_serializer else None
+        })
 
 class HeaderAPIView(APIView):
     permission_classes = [IsAuthenticated]

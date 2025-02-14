@@ -59,15 +59,15 @@ const AnalyticsMain: React.FC = () => {
       </Box>
 
       <Box bg={bg} className="box wide">
-        <IrrigationGraph sensorData={data} />
+        <IrrigationGraph data={data} />
       </Box>
 
       <Box bg={bg} className="box wide">
-        <PhGraph sensorData={data} />
+        <PhGraph data={data} />
       </Box>
 
       <Box bg={bg} className="box wide">
-        <ConductivityIrrigationGraph sensorData={data} />
+        <ConductivityIrrigationGraph data={data} />
       </Box>
 
       {/* <Box bg={bg} className="box wide">
@@ -75,7 +75,7 @@ const AnalyticsMain: React.FC = () => {
       </Box> */}
 
       <Box bg={bg} className="box wide">
-        <TemperatureGraph sensorData={data} />
+        <TemperatureGraph data={data} />
       </Box>
     </div>
   );

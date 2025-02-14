@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Text, useColorMode } from "@chakra-ui/react";
+import { Box, Spinner, Text, useColorMode } from "@chakra-ui/react";
 import {
   BarChart,
   Bar,
@@ -69,7 +69,7 @@ const CumulIrrigationGraph: React.FC<CumulIrrigationGraphProps> = ({
   const { colorMode } = useColorMode();
   const chartBg = colorMode === "light" ? "white" : "gray.800";
 
-  if (!data.length) return <div>No data available</div>;
+  if (!data) return <Spinner/>;
 
   return (
     <Box

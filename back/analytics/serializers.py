@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Notification, Alert, NotificationsPerUser, AlertsPerUser, Sensor
+from .models import SensorColor, GraphName, Notification, Alert, NotificationsPerUser, AlertsPerUser, Sensor
 
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -41,4 +41,14 @@ class SensorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Sensor
+        fields = '__all__'
+
+class GraphNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GraphName
+        fields = '__all__'
+
+class GraphColorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SensorColor
         fields = '__all__'

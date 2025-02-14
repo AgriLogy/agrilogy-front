@@ -90,3 +90,66 @@ class Sensor(models.Model):
 
     def __str__(self):
         return f"{self.timestamp} - Sensors for {self.user.username}"
+
+
+class GraphName(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_graph_names')
+    
+    soil_irrigation = models.CharField(max_length=20, default="Irrigation du sol")
+    soil_ph = models.CharField(max_length=20, default="pH du sol")
+    soil_conductivity = models.CharField(max_length=20, default="Conductivité du sol")
+    soil_moisture = models.CharField(max_length=20, default="Humidité du sol")
+    soil_temperature = models.CharField(max_length=20, default="Température du sol")
+    
+    et0 = models.CharField(max_length=20, default="Taux d'évapotranspiration")
+    precipitation_rate = models.CharField(max_length=20, default="Taux de précipitation")
+    wind_speed = models.CharField(max_length=20, default="Vitesse du vent")
+    solar_radiation = models.CharField(max_length=20, default="Rayonnement solaire")
+    pressure_weather = models.CharField(max_length=20, default="Pression atmosphérique")
+    wind_direction = models.CharField(max_length=20, default="Direction du vent")
+    humidity_weather = models.CharField(max_length=20, default="Humidité de l'air")
+    temperature_weather = models.CharField(max_length=20, default="Température de l'air")
+    temperature_humidity_weather = models.CharField(max_length=20, default="Température et humidité de l'air")
+    precipitation_humidity_rate = models.CharField(max_length=20, default="Taux de précipitation et humidité")
+    Pluviometrie = models.CharField(max_length=20, default="Cumule de pluie tombée")
+    data_table = models.CharField(max_length=20, default="Tableau de données")
+
+    def __str__(self):
+        return f"Noms des graphiques pour {self.user.username}"
+    
+class SensorColor(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_sensor_colors')
+    # Weather-related colors
+    precipitation_rate_color = models.CharField(max_length=7, default="#3D8D7A")  # Teal
+    humidity_weather_color = models.CharField(max_length=7, default="#2A6F97")  # Blue
+    wind_speed_color = models.CharField(max_length=7, default="#FFB703")  # Yellow-Orange
+    solar_radiation_color = models.CharField(max_length=7, default="#E63946")  # Red
+    pressure_weather_color = models.CharField(max_length=7, default="#F4A261")  # Light Orange
+    wind_direction_color = models.CharField(max_length=7, default="#6A0572")  # Purple
+    temperature_weather_color = models.CharField(max_length=7, default="#E76F51")  # Warm Red
+
+    # Soil-related colors
+    et0_color = models.CharField(max_length=7, default="#497D74")  # Greenish-Blue
+    ec_soil_medium_color = models.CharField(max_length=7, default="#2A9D8F")  # Greenish-Blue
+    soil_temperature_medium_color = models.CharField(max_length=7, default="#264653")  # Dark Cyan
+    soil_ec_high_color = models.CharField(max_length=7, default="#8A2BE2")  # Blue-Violet
+    ec_soil_low_color = models.CharField(max_length=7, default="#D4A373")  # Earthy Beige
+    soil_moisture_medium_color = models.CharField(max_length=7, default="#6D597A")  # Muted Purple
+    soil_moisture_high_color = models.CharField(max_length=7, default="#C8553D")  # Deep Orange
+    soil_moisture_low_color = models.CharField(max_length=7, default="#457B9D")  # Soft Blue
+    ph_soil_color = models.CharField(max_length=7, default="#023E8A")  # Deep Blue
+    soil_temperature_low_color = models.CharField(max_length=7, default="#8D99AE")  # Soft Gray-Blue
+    soil_temperature_high_color = models.CharField(max_length=7, default="#E9C46A")  # Golden Yellow
+
+    def __str__(self):
+        return f"Graph colors for {self.user.username}"
+
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_graph_names(sender, instance, created, **kwargs):
+    if created:
+        GraphName.objects.create(user=instance)
+        SensorColor.objects.create(user=instance)

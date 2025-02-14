@@ -12,14 +12,6 @@ import {
 } from "recharts";
 import useColorModeStyles from "@/app/utils/useColorModeStyles"; // Import the utility
 
-interface TempHumidityGraphProps {
-  data: {
-    timestamp: string;
-    temperature_weather: number;
-    humidity_weather: number;
-  }[];
-}
-
 const CustomLegend = (props: any) => (
   <ul
     style={{
@@ -89,14 +81,14 @@ const TempHumidityGraph = ({ data }: { data: any }) => {
           <Line
             type="monotone"
             dataKey="temperature_weather"
-            stroke="rgba(255, 159, 64, 1)"
+            stroke={data.sensor_colors?.temperature_weather_color}
             name="Temperature (°C)"
           />
           {/* Line for Humidity */}
           <Line
             type="monotone"
             dataKey="humidity_weather"
-            stroke="rgba(54, 162, 235, 1)"
+            stroke={data.sensor_colors?.humidity_weather_color}
             name="Humidity (%)"
           />
         </LineChart>

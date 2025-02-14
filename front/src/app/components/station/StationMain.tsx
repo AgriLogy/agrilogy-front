@@ -64,29 +64,29 @@ const StationMain = () => {
         <Et0Graph data={data} />
       </Box>
       <Box bg={bg} className="box wide">
+        <TempHumidityGraph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
         <WindSpeedGraph data={data} />
       </Box>
       <Box bg={bg} className="box wide">
         <WindDirectionGraph data={data} />
       </Box>
       <Box bg={bg} className="box wide">
-        <TempHumidityGraph data={data} />
-      </Box>
-      <Box bg={bg} className="box wide">
         <PluvometricGraph data={data} />
       </Box>
-                                                                                                                                                                                                                                                                                                              <Box bg={bg} className="box wide">
-                                                                                                                                                                                                                                                                                                                <SolarRadiationGraph data={data} />
-                                                                                                                                                                                                                                                                                                              </Box>
-                                                                                                                                                                                                                                                                                                              <Box bg={bg} className="box wide">
-                                                                                                                                                                                                                                                                                                                <VaporPressureDeficitGraph data={data} />
-                                                                                                                                                                                                                                                                                                              </Box>
-        <Box bg={bg} className="box wide">
-          <PrecipitationHumidityGraph data={data} />
-          </Box>
-      {/* <Box bg={bg} className="box wide">
-        <DataTable data={data.sensor_data} />
-      </Box> */}
+      <Box bg={bg} className="box wide">
+        <SolarRadiationGraph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <VaporPressureDeficitGraph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <PrecipitationHumidityGraph data={data} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <DataTable data={data} />
+      </Box>
     </div>
   );
 };

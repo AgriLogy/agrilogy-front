@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Text, useColorMode } from "@chakra-ui/react";
+import { Box, Spinner, Text, useColorMode } from "@chakra-ui/react";
 import {
   LineChart,
   Line,
@@ -11,15 +11,6 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-
-interface TemperatureData {
-  timestamp: string;
-  soil_temperature_medium: number;
-}
-
-interface TemperatureGraphProps {
-  data: TemperatureData[];
-}
 
 const CustomLegend = (props: any) => (
   <ul
@@ -63,8 +54,8 @@ const CustomTick = ({ x, y, payload }: any) => (
   </text>
 );
 
-const TemperatureGraph = ({ sensorData }: { sensorData: any }) => {
-  if (!sensorData) return <div>Loading...</div>;
+const TemperatureGraph = ({ data }: { data: any }) => {
+  if (!data) return <Spinner/>;
 
   const { colorMode } = useColorMode();
   const chartBg = colorMode === "light" ? "white" : "gray.800";
@@ -84,10 +75,10 @@ const TemperatureGraph = ({ sensorData }: { sensorData: any }) => {
         fontWeight="bold"
         mb={4}
       >
-        {sensorData.sensor_names?.soil_temperature }
+        {data.sensor_names?.soil_temperature }
       </Text>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={sensorData.sensor_data}>
+        <LineChart data={data.sensor_data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
@@ -97,7 +88,7 @@ const TemperatureGraph = ({ sensorData }: { sensorData: any }) => {
           <Line
             type="monotone"
             dataKey="soil_temperature_medium"
-            stroke="rgba(75,192,192,1)"
+            stroke={data.sensor_colors?.soil_temperature_medium_color}
             name="Température (°C)"
           />
         </LineChart>

@@ -17,62 +17,40 @@ import {
 import { CSVLink } from "react-csv";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 
-interface WeatherData {
-  timestamp: string;
+interface SensorData {
+  id: number;
+  user: string;
   et0: number;
-  temperature: number;
-  humidity: number;
+  timestamp: string;
+  precipitation_rate: number;
+  humidity_weather: number;
   wind_speed: number;
-  wind_direction: number;
-  cumulative_rainfall: number;
   solar_radiation: number;
-  vapor_pressure_deficit: number;
-  precipitation: number;
+  pressure_weather: number;
+  wind_direction: number;
+  temperature_weather: number;
+  ec_soil_medium: number;
+  soil_temperature_medium: number;
+  soil_ec_high: number;
+  ec_soil_low: number;
+  soil_moisture_medium: number;
+  soil_moisture_high: number;
+  soil_moisture_low: number;
+  ph_soil: number;
+  soil_temperature_low: number;
+  soil_temperature_high: number;
 }
 
-interface DataTableProps {
-  data: WeatherData[] | null; // Changed to allow null for loading state
-  // loading: boolean; // Added loading prop
-}
-
-const DataTable: React.FC<DataTableProps> = ({ data }) => {
-  const { bg, textColor } = useColorModeStyles(); // Use the utility
+const DataTable = ({ data }: { data: { sensor_data: SensorData[], sensor_names : any } }) => {
+  const { textColor } = useColorModeStyles();
   const { colorMode } = useColorMode();
 
-  // CSV headers
-  const headers = [
-    { label: "Timestamp", key: "timestamp" },
-    { label: "ET0 (mm)", key: "et0" },
-    { label: "Temperature (°C)", key: "temperature" },
-    { label: "Humidity (%)", key: "humidity" },
-    { label: "Wind Speed (m/s)", key: "wind_speed" },
-    { label: "Wind Direction (°)", key: "wind_direction" },
-    { label: "Cumulative Rainfall (mm)", key: "cumulative_rainfall" },
-    { label: "Solar Radiation (W/m²)", key: "solar_radiation" },
-    { label: "Vapor Pressure Deficit (kPa)", key: "vapor_pressure_deficit" },
-    { label: "Precipitation (mm)", key: "precipitation" },
-  ];
+  if (!data || !data.sensor_data || data.sensor_data.length === 0) return <Spinner />;
 
-  if (!data || data.length === 0) {
-    return (
-      <Box
-        width="100%"
-        p={4}
-        bg={colorMode === "light" ? "white" : "gray.800"}
-        borderRadius="md"
-        boxShadow="lg"
-      >
-        <Text
-          fontSize="lg"
-          fontWeight="bold"
-          mb={4}
-          color={colorMode === "light" ? "gray.700" : "gray.200"}
-        >
-          No Data Available
-        </Text>
-      </Box>
-    );
-  }
+  const headers = Object.keys(data.sensor_data[0] || {}).map((key) => ({
+    label: key.replace(/_/g, " ").toUpperCase(),
+    key: key,
+  }));
 
   return (
     <Box
@@ -83,18 +61,14 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
       boxShadow="lg"
     >
       <HStack justify="space-between">
-        <Text
-          fontSize="lg"
-          fontWeight="bold"
-          mb={4}
-          color={colorMode === "light" ? "gray.700" : "gray.200"}
-        >
-          Weather Data
+        <Text fontSize="lg" fontWeight="bold" mb={4} color={textColor}>
+        {data.sensor_names?.data_table}
+
         </Text>
         <CSVLink
-          data={data}
+          data={data.sensor_data}
           headers={headers}
-          filename="weather_data.csv"
+          filename="sensor_data.csv"
           style={{ textDecoration: "none" }}
         >
           <Button colorScheme="teal" mb={4}>
@@ -105,46 +79,18 @@ const DataTable: React.FC<DataTableProps> = ({ data }) => {
       <Box overflowX="auto" overflowY="auto" maxHeight="400px">
         <Table variant="simple" whiteSpace="nowrap">
           <Thead>
-            <Tr
-              position="sticky"
-              top="0"
-              bg={colorMode === "light" ? "white" : "gray.800"}
-              zIndex={1}
-            >
-              <Th
-                position="sticky"
-                left="0"
-                bg={colorMode === "light" ? "white" : "gray.800"}
-                zIndex={1}
-              >
-                Timestamp
-              </Th>
-              {headers.slice(1).map((header) => (
+            <Tr position="sticky" top="0" bg={colorMode === "light" ? "white" : "gray.800"} zIndex={1}>
+              {headers.map((header) => (
                 <Th key={header.key}>{header.label}</Th>
               ))}
             </Tr>
           </Thead>
           <Tbody>
-            {data.map((row, index) => (
-              <Tr key={index}>
-                <Td
-                  color={textColor}
-                  position="sticky"
-                  left="0"
-                  bg={colorMode === "light" ? "white" : "gray.800"}
-                  zIndex={0}
-                >
-                  {row.timestamp}
-                </Td>
-                <Td color={textColor}>{row.et0}</Td>
-                <Td color={textColor}>{row.temperature}</Td>
-                <Td color={textColor}>{row.humidity}</Td>
-                <Td color={textColor}>{row.wind_speed}</Td>
-                <Td color={textColor}>{row.wind_direction}</Td>
-                <Td color={textColor}>{row.cumulative_rainfall}</Td>
-                <Td color={textColor}>{row.solar_radiation}</Td>
-                <Td color={textColor}>{row.vapor_pressure_deficit}</Td>
-                <Td color={textColor}>{row.precipitation}</Td>
+            {data.sensor_data.map((row) => (
+              <Tr key={row.id}>
+                {headers.map((header) => (
+                  <Td key={header.key} color={textColor}>{row[header.key as keyof SensorData]}</Td>
+                ))}
               </Tr>
             ))}
           </Tbody>

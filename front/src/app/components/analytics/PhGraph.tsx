@@ -1,5 +1,5 @@
 "use client";
-import { Box, Text, useColorMode } from "@chakra-ui/react";
+import { Box, Spinner, Text, useColorMode } from "@chakra-ui/react";
 import {
   LineChart,
   Line,
@@ -53,8 +53,8 @@ const CustomTick = ({ x, y, payload }: any) => (
   </text>
 );
 
-const PhGraph = ({ sensorData }: { sensorData: any }) => {
-  if (!sensorData) return <div>Loading...</div>;
+const PhGraph = ({ data }: { data: any }) => {
+  if (!data) return <Spinner/>;
   const { colorMode } = useColorMode();
   const chartBg = colorMode === "light" ? "white" : "gray.800";
 
@@ -73,10 +73,10 @@ const PhGraph = ({ sensorData }: { sensorData: any }) => {
         fontWeight="bold"
         mb={4}
       >
-        {sensorData.sensor_names?.soil_ph}
+        {data.sensor_names?.soil_ph}
       </Text>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={sensorData.sensor_data}>
+        <LineChart data={data.sensor_data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
@@ -85,7 +85,7 @@ const PhGraph = ({ sensorData }: { sensorData: any }) => {
           <Line
             type="monotone"
             dataKey="ph_soil"
-            stroke="rgba(255,99,132,1)"
+            stroke={data.sensor_colors?.ph_soil_color}
             name="pH du Sol"
           />
         </LineChart>

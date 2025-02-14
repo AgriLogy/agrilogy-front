@@ -88,7 +88,7 @@ const WindSpeedGraph = ({ data }: { data: any }) => {
           <Line
             type="monotone"
             dataKey="wind_speed"
-            stroke="rgba(75, 192, 192, 1)"
+            stroke={data.sensor_colors?.wind_speed_color}
             name="Wind Speed (m/s)"
           />
         </LineChart>

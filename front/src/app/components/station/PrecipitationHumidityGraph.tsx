@@ -81,7 +81,7 @@ const CustomTooltip = ({ active, payload }: any) => {
         </p>
         <p
           style={{ color: "rgba(255, 159, 64, 1)" }}
-        >{`Humidity: ${payload[1].payload.humidity} %`}</p>
+        >{`Humidity: ${payload[1].payload.humidity_weather} %`}</p>
       </div>
     );
   }
@@ -111,7 +111,7 @@ const PrecipitationHumidityGraph= ({ data }: { data: any }) => {
         fontWeight="bold"
         mb={4}
       >
-        {data.sensor_names?.et0}
+        {data.sensor_names?.precipitation_humidity_rate}
       </Text>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data.sensor_data}>
@@ -123,13 +123,13 @@ const PrecipitationHumidityGraph= ({ data }: { data: any }) => {
           <Line
             type="monotone"
             dataKey="precipitation_rate"
-            stroke="rgba(75, 192, 192, 1)"
+            stroke={data.sensor_colors?.precipitation_rate_color}
             name="Precipitation (mm)"
           />
           <Line
             type="monotone"
-            dataKey="humidity"
-            stroke="rgba(255, 159, 64, 1)"
+            dataKey="humidity_weather"
+            stroke={data.sensor_colors?.humidity_weather_color}
             name="Humidity (%)"
           />
         </LineChart>
