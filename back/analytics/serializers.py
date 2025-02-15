@@ -46,9 +46,19 @@ class SensorSerializer(serializers.ModelSerializer):
 class GraphNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = GraphName
-        fields = '__all__'
+        # fields = '__all__'
+        fields = [ 'soil_irrigation','soil_ph','soil_conductivity','soil_moisture','soil_temperature',
+            'et0','precipitation_rate','wind_speed','solar_radiation','pressure_weather','wind_direction',
+            'humidity_weather', 'temperature_weather', 'temperature_humidity_weather', 'precipitation_humidity_rate',
+            'pluviometrie', 'data_table',]
 
-class GraphColorSerializer(serializers.ModelSerializer):
+class SensorColorSerializer(serializers.ModelSerializer):
     class Meta:
         model = SensorColor
-        fields = '__all__'
+        fields = [
+        'precipitation_rate_color','humidity_weather_color','wind_speed_color',
+        'solar_radiation_color','pressure_weather_color','wind_direction_color',
+        'temperature_weather_color','et0_color','ec_soil_medium_color',
+        'soil_temperature_medium_color','soil_ec_high_color','ec_soil_low_color',
+        'soil_moisture_medium_color','soil_moisture_high_color','soil_moisture_low_color',
+        'ph_soil_color','soil_temperature_low_color','soil_temperature_high_color',]

@@ -15,7 +15,7 @@ import {
 import { BellIcon, SettingsIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { FaCog, FaUser } from "react-icons/fa";
 import Image from "next/image";
-import axiosInstance from "@/app/lib/api";
+import api from "@/app/lib/api";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import logo from "../../public/logo.png";
 
@@ -25,7 +25,7 @@ const BigMenu = () => {
   const [username, setUsername] = useState("User");
 
   useEffect(() => {
-    axiosInstance
+    api
       .get("/api/header/")
       .then((response) => setUsername(response.data.username))
       .catch((error) => console.error("Error fetching header data", error));

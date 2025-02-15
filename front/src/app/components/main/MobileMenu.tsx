@@ -51,7 +51,8 @@ const MobileMenu = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await api.get("/api/v1/profile/");
+        const response = await api.get("/api/header/");
+
         setUsername(response.data.first_name);
       } catch (error) {
         console.error("[MobileMenu] Error fetching user data.");

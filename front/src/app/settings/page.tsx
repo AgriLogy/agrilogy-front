@@ -7,7 +7,7 @@ import useColorModeStyles from "../utils/useColorModeStyles";
 import SettingsMain from "../components/settings/SettingsMain";
 
 const Page = () => {
-  const { bg, textColor, navBgColor } = useColorModeStyles();
+  const { textColor, navBgColor } = useColorModeStyles();
 
   return (
     <Grid

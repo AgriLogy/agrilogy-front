@@ -85,7 +85,7 @@ class AllSensorDataView(APIView):
             graph_name_serializer = GraphNameSerializer(graph_name)
 
             graph_color = SensorColor.objects.get(user=request.user)
-            graph_color_serializer = GraphColorSerializer(graph_color)
+            graph_color_serializer = SensorColorSerializer(graph_color)
         except GraphName.DoesNotExist:
             graph_name_serializer = None
         except SensorColor.DoesNotExist:
@@ -150,3 +150,47 @@ class UserSensorDataView(APIView):
         # Serialize the data
         serializer = SensorSerializer(queryset, many=True)
         return Response({"sensor_data": serializer.data}, status=status.HTTP_200_OK)
+
+
+
+
+class GraphNameAPIView(APIView):
+    def get(self, request):
+        try:
+            graph_name = GraphName.objects.get(user_id= request.user.id)
+            serializer = GraphNameSerializer(graph_name)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except GraphName.DoesNotExist:
+            return Response({"error": "GraphName not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request):
+        try:
+            print(request.data)
+            graph_name = GraphName.objects.get(user_id= request.user.id)
+            serializer = GraphNameSerializer(graph_name, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except GraphName.DoesNotExist:
+            return Response({"error": "GraphName not found"}, status=status.HTTP_404_NOT_FOUND)
+
+class SensorColorAPIView(APIView):
+    def get(self, request):
+        try:
+            sensor_color = SensorColor.objects.get(user_id=request.user.id)
+            serializer = SensorColorSerializer(sensor_color)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except SensorColor.DoesNotExist:
+            return Response({"error": "SensorColor not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request):
+        try:
+            sensor_color = SensorColor.objects.get(user_id=request.user.id)
+            serializer = SensorColorSerializer(sensor_color, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except SensorColor.DoesNotExist:
+            return Response({"error": "SensorColor not found"}, status=status.HTTP_404_NOT_FOUND)
