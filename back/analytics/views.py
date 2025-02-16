@@ -165,7 +165,6 @@ class GraphNameAPIView(APIView):
 
     def put(self, request):
         try:
-            print(request.data)
             graph_name = GraphName.objects.get(user_id= request.user.id)
             serializer = GraphNameSerializer(graph_name, data=request.data, partial=True)
             if serializer.is_valid():

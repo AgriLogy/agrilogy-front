@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Table,
+  Text,
   Thead,
   Tbody,
   Tr,
@@ -10,8 +11,10 @@ import {
   Spinner,
   useToast,
   Button,
+  Flex,
 } from "@chakra-ui/react";
 import api from "@/app/lib/api";
+import useColorModeStyles from "@/app/utils/useColorModeStyles";
 
 interface SensorSetting {
   name: string;
@@ -22,6 +25,7 @@ const GraphNameSettings = () => {
   const [settings, setSettings] = useState<SensorSetting[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const toast = useToast();
+  const { textColor } = useColorModeStyles();
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -80,39 +84,45 @@ const GraphNameSettings = () => {
       });
     }
   };
-
   return (
     <div>
       {loading ? (
         <Spinner />
       ) : (
-        <Table>
-          <Thead>
-            <Tr>
-              <Th>Name</Th>
-              <Th>Custom Name</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {settings.map((sensor, index) => (
-              <Tr key={sensor.name}>
-                <Td>{sensor.name}</Td>
-                <Td>
-                  <Input
-                    value={sensor.customName}
-                    onChange={(e) => handleChange(index, e.target.value)}
-                  />
-                </Td>
+        <>
+          <Text color={textColor}>Paramètres du nom du graphique</Text>
+  
+          <Table>
+            <Thead>
+              <Tr>
+                <Th>Name</Th>
+                <Th>Custom Name</Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
+            </Thead>
+            <Tbody>
+              {settings.map((sensor, index) => (
+                <Tr key={sensor.name}>
+                  <Td>{sensor.name}</Td>
+                  <Td>
+                    <Input
+                      value={sensor.customName}
+                      onChange={(e) => handleChange(index, e.target.value)}
+                    />
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+  
+          <Flex justifyContent="center" mt={4}>
+            <Button colorScheme="blue" size="lg" onClick={handleSave}>
+              Mettre à jour
+            </Button>
+          </Flex>
+        </>
       )}
-      <Button colorScheme="blue" size="lg" onClick={handleSave}>
-        Save
-      </Button>
     </div>
-  );
-};
+  );}
+  
 
 export default GraphNameSettings;

@@ -18,7 +18,7 @@ import api from "@/app/lib/api";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 
 const SensorColorSettings = () => {
-  const { textColor } = useColorModeStyles(); // Use the utility
+  const { textColor } = useColorModeStyles();
 
   const [sensorColors, setSensorColors] = useState<Record<
     string,
@@ -77,7 +77,7 @@ const SensorColorSettings = () => {
   return (
     <Box overflowX="auto">
       <Text color={textColor}>Paramètres des couleurs des courbes</Text>
-      <Table variant="simple">
+      <Table variant="simple" >
         <Thead>
           <Tr>
             <Th>Name</Th>
