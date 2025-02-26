@@ -3,12 +3,11 @@ import { Grid, GridItem } from "@chakra-ui/react";
 import React from "react";
 import Header from "../components/main/Header";
 import Navbar from "../components/main/Sidebar";
-import { MainContent } from "../components/dashboard/MainContent";
 import useColorModeStyles from "../utils/useColorModeStyles";
 import NotificationsMain from "../components/notifications/NotificationsMain";
 
 const Page = () => {
-  const { bg, textColor, navBgColor } = useColorModeStyles();
+  const { textColor, navBgColor } = useColorModeStyles();
 
   return (
     <Grid

@@ -137,7 +137,7 @@ const MobileMenu = () => {
                   justifyContent="flex-start"
                   w="full"
                 >
-                  Home
+                  Accueil
                 </Button>
               </Link>
               <Link href="/analytics">
@@ -147,7 +147,7 @@ const MobileMenu = () => {
                   justifyContent="flex-start"
                   w="full"
                 >
-                  Analytics
+                  Données du sol
                 </Button>
               </Link>
               <Link href="/station">
@@ -177,7 +177,7 @@ const MobileMenu = () => {
                 variant="ghost"
                 justifyContent="flex-start"
               >
-                {colorMode === "light" ? "Dark Mode" : "Light Mode"}
+                {colorMode === "light" ? "Mode sombre" : "Mode sombre"}
               </Button>
               <Button
                 leftIcon={<IoLogOut />}

@@ -44,11 +44,11 @@ const Sidebar = () => {
         width="100%"
         height="100%"
       >
-        <Tooltip label="Dashboard" aria-label="Home">
+        <Tooltip label="Accueil" aria-label="Accueil">
           <Link href="/">
             <IconButton
               icon={<FaHome />}
-              aria-label="Home"
+              aria-label="Accueil"
               variant="ghost"
               mb={2}
               _hover={{ color: hoverColor }}
@@ -58,12 +58,12 @@ const Sidebar = () => {
 
         <Box height="1px" width="20px" bg="gray.400" mb={2} />
 
-        <Tooltip label="Analytique" aria-label="Analytics">
+        <Tooltip label="Données du sol" aria-label="Données du sol">
           <Link href="/analytics">
             <IconButton
               icon={<FaLeaf />}
               // icon={<FaChartLine />}
-              aria-label="Analytics"
+              aria-label="Données du sol"
               variant="ghost"
               mb={2}
               _hover={{ color: hoverColor }}

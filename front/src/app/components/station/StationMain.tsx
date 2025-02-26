@@ -5,7 +5,6 @@ import { Box, Text } from "@chakra-ui/react";
 import axiosInstance from "@/app/lib/api";
 
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import LoadingSpinner from "../common/LoadingSpinner";
 import DateRangePicker from "../analytics/DateRangePicker";
 import Et0Graph from "./Et0Graph";
 import TempHumidityGraph from "./TempHumidityGraph";

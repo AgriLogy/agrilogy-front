@@ -87,7 +87,6 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
 
   const chartColor = useColorModeValue("#4A90E2", "#90CDF4");
   const chartBg = useColorModeValue("white", "gray.800");
-  const textColor = useColorModeValue("gray.800", "gray.200");
   const p = useBreakpointValue({ base: 2, md: 4 });
   const { colorMode } = useColorMode();
 
