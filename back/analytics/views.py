@@ -83,20 +83,26 @@ class AllSensorDataView(APIView):
         try:
             graph_name = GraphName.objects.get(user=request.user)
             graph_name_serializer = GraphNameSerializer(graph_name)
+        except GraphName.DoesNotExist:
+            default_name = GraphName.objects.get(id=1)
+            graph_name_serializer = GraphNameSerializer(default_name)
+            # graph_name_serializer = None
 
+        try:
             graph_color = SensorColor.objects.get(user=request.user)
             graph_color_serializer = SensorColorSerializer(graph_color)
-        except GraphName.DoesNotExist:
-            graph_name_serializer = None
         except SensorColor.DoesNotExist:
-            graph_color_serializer = None
+            default_color = SensorColor.objects.get(id=1)
+            graph_color_serializer = SensorColorSerializer(default_color)
+            # graph_color_serializer = None
+
         # Serialize the data
         sensor_serializer = SensorSerializer(queryset, many=True)
         return Response({
             "sensor_data": sensor_serializer.data,
             "sensor_names": graph_name_serializer.data if graph_name_serializer else None,
-            "sensor_colors": graph_color_serializer.data if graph_color_serializer else None
-        })
+            "sensor_colors": graph_color_serializer.data if graph_color_serializer else None,
+        }, status=status.HTTP_200_OK)
 
 class HeaderAPIView(APIView):
     permission_classes = [IsAuthenticated]
