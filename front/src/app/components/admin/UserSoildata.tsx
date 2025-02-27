@@ -7,7 +7,7 @@ import axiosInstance from "@/app/lib/api";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import DateRangePicker from "../analytics/DateRangePicker";
 import TemperatureGraph from "../analytics/TemperatureGraph";
-import IrrigationGraph from "../analytics/IrrigationGraph";
+// import IrrigationGraph from "../analytics/IrrigationGraph";
 import PhGraph from "../analytics/PhGraph";
 import ConductivityIrrigationGraph from "../analytics/ConductivityIrrigationGraph";
 import "@/app/styles/graphes.css";
@@ -79,9 +79,9 @@ const UserAlldata: React.FC<Props> = ({ user }) => {
       <Box bg={bg} className="header" mt={0} mb={0}>
         <DateRangePicker setStartDate={setStartDate} setEndDate={setEndDate} />
       </Box>
-      <Box bg={bg} className="box wide">
-        <IrrigationGraph sensorData={data} />
-      </Box>
+      {/* <Box bg={bg} className="box wide">
+        <IrrigationGraph data={data} />
+      </Box> */}
       <Box bg={bg} className="box wide">
         <PhGraph data={data} />
       </Box>

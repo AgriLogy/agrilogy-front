@@ -1,9 +1,11 @@
 from django.db.models import Q
 from django.contrib.auth import get_user_model
 from django.utils.dateparse import parse_date, parse_datetime
+from django.utils.timezone import now
 
 from rest_framework import viewsets, status
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -11,13 +13,14 @@ from rest_framework import status
 
 from .models import *
 from .serializers import *
+from datetime import timedelta
 
 class SensorViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = SensorSerializer
 
     def get_queryset(self):
-        queryset = Sensor.objects.filter(user=self.request.user) 
+        queryset = Sensor.objects.filter(user=self.request.user)
 
         start_date = self.request.query_params.get('start_date')
         end_date = self.request.query_params.get('end_date')
@@ -35,8 +38,38 @@ class SensorViewSet(viewsets.ModelViewSet):
                     raise ValueError("Invalid date format")
             except ValueError:
                 return queryset.none()
+        else:
+            # Default: Filter only last month's data
+            last_month = now() - timedelta(days=30)
+            queryset = queryset.filter(timestamp__gte=last_month)
 
         return queryset
+    def delete_all(self, request, *args, **kwargs):
+        """
+        Delete all sensor data for the authenticated user.
+        Supports optional filtering by start_date and end_date.
+        """
+        queryset = Sensor.objects.filter(user=request.user)
+
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+
+        if start_date and end_date:
+            try:
+                start_date_parsed = parse_date(start_date)
+                end_date_parsed = parse_date(end_date)
+
+                if start_date_parsed and end_date_parsed:
+                    queryset = queryset.filter(
+                        timestamp__range=[start_date_parsed, end_date_parsed]
+                    )
+                else:
+                    return Response({"error": "Invalid date format"}, status=status.HTTP_400_BAD_REQUEST)
+            except ValueError:
+                return Response({"error": "Invalid date format"}, status=status.HTTP_400_BAD_REQUEST)
+
+        deleted_count, _ = queryset.delete()
+        return Response({"message": f"Deleted {deleted_count} sensor records."}, status=status.HTTP_200_OK)
 
 
 class NotificationsAndAlertsView(APIView):

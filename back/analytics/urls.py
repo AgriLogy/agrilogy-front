@@ -8,7 +8,7 @@ router.register(r'sensors', SensorViewSet, basename='sensor')
 
 urlpatterns = [
     # Include the router URLs for SensorViewSet
-    path('/', include(router.urls)),
+    path('/ad/', include(router.urls)),
     
     # Additional API endpoints
     path('notifications-and-alerts/', NotificationsAndAlertsView.as_view(), name='notifications-and-alerts'),

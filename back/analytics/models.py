@@ -69,7 +69,8 @@ class AlertsPerUser(models.Model):
 
 class Sensor(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_sensors')
-    timestamp = models.DateTimeField(auto_now_add=True, help_text="Timestamp when the sensor data was recorded.")
+    # timestamp = models.DateTimeField(auto_now_add=True, help_text="Timestamp when the sensor data was recorded.")
+    timestamp = models.DateTimeField(help_text="Timestamp when the sensor data was recorded.")
     precipitation_rate = models.FloatField(help_text="Precipitation rate in mm/h.")
     humidity_weather = models.FloatField(help_text="Humidity from the weather sensor as a percentage.")
     wind_speed = models.FloatField(help_text="Wind speed in m/s.")

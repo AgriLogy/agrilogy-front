@@ -14,22 +14,28 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 // Add an interceptor to handle responses
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      // Clear the invalid token and redirect to the login page
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      window.location.href = "/login";
+    if (error.response) {
+      const status = error.response.status;
+
+      if (status >= 100 && status < 200) {
+        // 1xx: Just leave it, no action required
+        return Promise.reject(error);
+      } else if (status >= 400 && status < 500) {
+        // 4xx: Unauthorized or forbidden, redirect to login
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        window.location.href = "/login";
+      } else if (status >= 500) {
+        // 5xx: Server error, redirect to error page
+        window.location.href = "/server-error";
+      }
     }
     return Promise.reject(error);
   }
