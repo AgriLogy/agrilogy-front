@@ -1,7 +1,7 @@
 import os
 import random
 import django
-from datetime import datetime
+from datetime import datetime, timedelta
 from faker import Faker
 
 # Set up Django environment
@@ -11,49 +11,64 @@ django.setup()
 from django.contrib.auth import get_user_model
 from analytics.models import Notification, Alert, NotificationsPerUser, AlertsPerUser, Sensor
 
-password = "Pass123"
 # Initialize Faker
 fake = Faker()
 
-# Create 10 users
+# User credentials
+usernames = ['user1', 'user2', 'user3', 'user4']
+password = "Pass123"
+
+# Define date range for data
+BEGIN_DATE = datetime(2023, 1, 1)  # Change as needed
+END_DATE = datetime(2024, 2, 1)    # Change as needed
+
+def random_date(start, end):
+    """Generate a random datetime between `start` and `end`."""
+    return start + timedelta(seconds=random.randint(0, int((end - start).total_seconds())))
+
+# Create users
 users = []
-for _ in range(1):
-    user = get_user_model().objects.create_user(
-        # username=fake.user_name(),
-        username='user15',
-        email=fake.email(),
-        # password=fake.password(),
-        password=password,
-        firstname=fake.first_name(),
-        lastname=fake.last_name(),
-        phone_number=fake.phone_number(),
-        is_active=True,
-        is_staff=False
+for username in usernames:
+    user, created = get_user_model().objects.get_or_create(
+        username=username,
+        defaults={
+            "email": fake.email(),
+            "password": password,
+            "firstname": fake.first_name(),
+            "lastname": fake.last_name(),
+            "phone_number": fake.phone_number(),
+            "is_active": True,
+            "is_staff": False
+        }
     )
     users.append(user)
 
-# Create 5 notifications and assign them to users
+print(f"✅ Created {len(users)} users.")
+
+# Create notifications
 notifications = []
 for _ in range(5):
     notification = Notification.objects.create(
-        yesterday_temperature=fake.random_number(digits=2),
-        today_temperature=fake.random_number(digits=2),
-        yesterday_humidity=fake.random_number(digits=2),
-        today_humidity=fake.random_number(digits=2),
-        ET0=fake.random_number(digits=3),
-        soil_humidity=fake.random_number(digits=2),
-        soil_temperature=fake.random_number(digits=2),
-        soil_ph=fake.random_number(digits=2),
+        yesterday_temperature=random.randint(10, 40),
+        today_temperature=random.randint(10, 40),
+        yesterday_humidity=random.randint(20, 80),
+        today_humidity=random.randint(20, 80),
+        ET0=random.uniform(0, 10),
+        soil_humidity=random.randint(10, 60),
+        soil_temperature=random.randint(10, 35),
+        soil_ph=random.uniform(5.0, 8.5),
         perfect_irrigation_period=fake.sentence(),
-        last_irrigation_date=fake.date_this_year(),
+        last_irrigation_date=random_date(BEGIN_DATE, END_DATE).date(),
         last_start_irrigation_hour=fake.time(),
         last_finish_irrigation_hour=fake.time(),
-        used_water_irrigation=fake.random_number(digits=3),
-        notification_date=fake.date_this_year()
+        used_water_irrigation=random.randint(100, 500),
+        notification_date=random_date(BEGIN_DATE, END_DATE).date()
     )
     notifications.append(notification)
 
-# Create 3 alerts and assign them to users
+print(f"✅ Created {len(notifications)} notifications.")
+
+# Create alerts
 alerts = []
 for _ in range(3):
     alert = Alert.objects.create(
@@ -63,48 +78,52 @@ for _ in range(3):
     )
     alerts.append(alert)
 
-# Link users to notifications and alerts
+print(f"✅ Created {len(alerts)} alerts.")
+
+# Assign notifications and alerts to users
 for user in users:
-    # Assign random notifications to users
-    for notification in notifications:
+    for notification in random.sample(notifications, k=random.randint(1, len(notifications))):
         NotificationsPerUser.objects.create(
             user=user,
             notification=notification,
             is_read=random.choice([True, False]),
-            read_at=datetime.now() if random.choice([True, False]) else None
+            read_at=random_date(BEGIN_DATE, END_DATE) if random.choice([True, False]) else None
         )
 
-    # Assign random alerts to users
-    for alert in alerts:
+    for alert in random.sample(alerts, k=random.randint(1, len(alerts))):
         AlertsPerUser.objects.create(
             user=user,
             alert=alert,
             is_read=random.choice([True, False]),
-            read_at=datetime.now() if random.choice([True, False]) else None
+            read_at=random_date(BEGIN_DATE, END_DATE) if random.choice([True, False]) else None
         )
 
-# Create random sensor data for each user
+print(f"✅ Assigned notifications and alerts to users.")
+
+# Create sensor data for each user
 for user in users:
-    for _ in range(5):  # 5 sensor records per user
+    for _ in range(5):
         Sensor.objects.create(
             user=user,
-            precipitation_rate=fake.random_number(digits=2),
-            humidity_weather=fake.random_number(digits=2),
-            wind_speed=fake.random_number(digits=2),
-            solar_radiation=fake.random_number(digits=3),
-            pressure_weather=fake.random_number(digits=3),
-            wind_direction=fake.random_number(digits=3),
-            temperature_weather=fake.random_number(digits=2),
-            ec_soil_medium=fake.random_number(digits=2),
-            soil_temperature_medium=fake.random_number(digits=2),
-            soil_ec_high=fake.random_number(digits=2),
-            ec_soil_low=fake.random_number(digits=2),
-            soil_moisture_medium=fake.random_number(digits=2),
-            soil_moisture_high=fake.random_number(digits=2),
-            soil_moisture_low=fake.random_number(digits=2),
-            ph_soil=fake.random_number(digits=2),
-            soil_temperature_low=fake.random_number(digits=2),
-            soil_temperature_high=fake.random_number(digits=2)
+            precipitation_rate=random.uniform(0, 100),
+            humidity_weather=random.randint(20, 100),
+            wind_speed=random.uniform(0, 50),
+            solar_radiation=random.uniform(100, 1000),
+            pressure_weather=random.uniform(900, 1100),
+            wind_direction=random.randint(0, 360),
+            temperature_weather=random.randint(-10, 45),
+            ec_soil_medium=random.uniform(0, 5),
+            soil_temperature_medium=random.randint(5, 30),
+            soil_ec_high=random.uniform(0, 5),
+            ec_soil_low=random.uniform(0, 5),
+            soil_moisture_medium=random.randint(10, 50),
+            soil_moisture_high=random.randint(10, 50),
+            soil_moisture_low=random.randint(10, 50),
+            ph_soil=random.uniform(5.0, 8.5),
+            soil_temperature_low=random.randint(5, 30),
+            soil_temperature_high=random.randint(5, 30)
         )
 
-print('Successfully created 10 users and populated related data!')
+print(f"✅ Created sensor data for users.")
+
+print("🎉 Successfully created users and populated related data!")
