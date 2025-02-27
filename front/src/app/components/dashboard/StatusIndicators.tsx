@@ -57,7 +57,7 @@ const StatusIndicators: React.FC<StatusIndicatorsProps> = ({
       overflowX="auto"
     >
       <Text color={textColor} fontSize="lg" fontWeight="bold" mb={4}>
-        Indicateurs d'état du système
+        Indicateurs d&apos;état du système
       </Text>
       <Box 
         display="flex" 

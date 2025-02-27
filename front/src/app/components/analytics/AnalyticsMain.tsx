@@ -6,7 +6,7 @@ import IrrigationGraph from "./IrrigationGraph";
 import PhGraph from "./PhGraph";
 import DateRangePicker from "./DateRangePicker";
 import ConductivityIrrigationGraph from "./ConductivityIrrigationGraph";
-import CumulIrrigationGraph from "./CumulIrrigationGraph";
+// import CumulIrrigationGraph from "./CumulIrrigationGraph";
 import TemperatureGraph from "./TemperatureGraph";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import LoadingSpinner from "../common/LoadingSpinner";

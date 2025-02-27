@@ -55,9 +55,10 @@ const CustomTick = ({ x, y, payload }: any) => (
 );
 
 const TemperatureGraph = ({ data }: { data: any }) => {
+  const { colorMode } = useColorMode();
   if (!data) return <Spinner/>;
 
-  const { colorMode } = useColorMode();
+
   const chartBg = colorMode === "light" ? "white" : "gray.800";
 
   return (

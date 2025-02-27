@@ -54,8 +54,8 @@ const CustomTick = ({ x, y, payload }: any) => (
 );
 
 const PhGraph = ({ data }: { data: any }) => {
-  if (!data) return <Spinner/>;
   const { colorMode } = useColorMode();
+  if (!data) return <Spinner/>;
   const chartBg = colorMode === "light" ? "white" : "gray.800";
 
   return (

@@ -81,7 +81,6 @@ const LoginBox = () => {
         top: "-20px",
         left: "50%",
         transform: "translateX(-50%)",
-        // backgroundImage: "url('/leaf.png')",
         width: "60px",
         height: "60px",
         backgroundSize: "cover",
@@ -106,7 +105,7 @@ const LoginBox = () => {
 
       <Stack spacing={4}>
         <FormControl id="username">
-          <FormLabel color={textColor}>Nom d'utilisateur</FormLabel>
+          <FormLabel color={textColor}>Nom d&apos;utilisateur</FormLabel>
           <InputGroup>
             <InputLeftElement pointerEvents="none">
               <EmailIcon color="gray.300" />

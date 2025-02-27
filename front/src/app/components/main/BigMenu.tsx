@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Flex,
   IconButton,
@@ -10,9 +10,8 @@ import {
   Link,
   useColorMode,
   Button,
-  Text,
 } from "@chakra-ui/react";
-import { BellIcon, SettingsIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
+import { BellIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { FaCog, FaUser } from "react-icons/fa";
 import Image from "next/image";
 import api from "@/app/lib/api";

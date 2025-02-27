@@ -54,9 +54,8 @@ const CustomTick = ({ x, y, payload }: any) => (
 );
 
 const ConductivityIrrigationGraph = ({ data }: { data: any }) => {
-  if (!data) return <Spinner/>;
-
   const { colorMode } = useColorMode();
+  if (!data) return <Spinner />;
   const chartBg = colorMode === "light" ? "white" : "gray.800";
 
   return (
@@ -87,7 +86,6 @@ const ConductivityIrrigationGraph = ({ data }: { data: any }) => {
             type="monotone"
             dataKey="ec_soil_medium"
             stroke={data.sensor_colors?.ec_soil_medium_color}
-
             name="Conductivité (mS/cm)"
           />
           {/* <Line type="monotone" dataKey="irrigation" stroke={data.sensor_colors?.irrigation_color} name="Irrigation (L)" /> */}

@@ -42,7 +42,7 @@ const StationMain = () => {
         const sensorData: SensorData[] = response.data || [];
         setData(sensorData);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Unknown error");
+        setError(err instanceof Error ? err.message : "Unknown error : "+ error);
       }
     };
 

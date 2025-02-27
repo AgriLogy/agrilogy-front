@@ -7,7 +7,7 @@ import useColorModeStyles from "../utils/useColorModeStyles";
 import AlertMain from "../components/alert/AlertMain";
 
 const Page = () => {
-  const { bg, textColor, navBgColor } = useColorModeStyles();
+  const { textColor, navBgColor } = useColorModeStyles();
 
   return (
     <Grid

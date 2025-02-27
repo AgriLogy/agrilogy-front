@@ -11,13 +11,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-interface VaporPressureDeficitGraphProps {
-  data: {
-    timestamp: string;
-    pressure_weather: number;
-  }[];
-}
-
 // Custom legend component
 const CustomLegend = (props: any) => (
   <ul

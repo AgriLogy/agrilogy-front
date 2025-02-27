@@ -86,7 +86,7 @@ const CumulIrrigationGraph: React.FC<CumulIrrigationGraphProps> = ({
         fontWeight="bold"
         mb={4}
       >
-        Cumul d'Irrigation
+        Cumul d&apos;Irrigation
       </Text>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data}>

@@ -113,7 +113,7 @@ const ModifyUser = ({ user }: Props) => {
         <form onSubmit={handleSubmit}>
           <VStack spacing={4}>
             <FormControl id="username" isReadOnly>
-              <FormLabel>Nom d'utilisateur</FormLabel>
+              <FormLabel>Nom d&apos;utilisateur</FormLabel>
               <Input
                 type="text"
                 name="username"
@@ -168,7 +168,7 @@ const ModifyUser = ({ user }: Props) => {
             </FormControl>
 
             <FormControl id="is_staff" isRequired>
-              <FormLabel>Type d'utilisateur</FormLabel>
+              <FormLabel>Type d&apos;utilisateur</FormLabel>
               <Select
                 name="is_staff"
                 value={formData.is_staff}

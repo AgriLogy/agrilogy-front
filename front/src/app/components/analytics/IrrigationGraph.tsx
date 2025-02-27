@@ -59,11 +59,8 @@ const CustomTick = ({ x, y, payload }: any) => {
 };
 
 const IrrigationGraph = ({ data }: { data: any }) => {
-  const { bg, textColor } = useColorModeStyles(); // Use the utility
-  const chartColor = "rgba(75,192,192,1)";
-
-  if (!data) return <Spinner/>;
-
+  const { bg, textColor } = useColorModeStyles();
+  if (!data) return <Spinner />;
 
   return (
     <Box

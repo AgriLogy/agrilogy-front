@@ -6,10 +6,8 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  Tooltip,
-  Link,
 } from "@chakra-ui/react";
-import { BellIcon, SettingsIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
+import { SettingsIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { FaUser } from "react-icons/fa";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import logo from "../../public/logo.png";
@@ -19,7 +17,6 @@ import axiosInstance from "@/app/lib/api";
 const HeaderAdmin = () => {
   const { bg, toggleColorMode } = useColorModeStyles();
   const [username, setUsername] = useState("User");
-  const { hoverColor } = useColorModeStyles();
 
   useEffect(() => {
     axiosInstance

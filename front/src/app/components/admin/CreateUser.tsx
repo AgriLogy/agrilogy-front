@@ -92,7 +92,7 @@ const CreateUser = () => {
         <form onSubmit={handleSubmit}>
           <VStack spacing={4}>
             <FormControl id="username" isRequired>
-              <FormLabel>Nom d'utilisateur</FormLabel>
+              <FormLabel>Nom d&apos;utilisateur</FormLabel>
               <Input
                 type="text"
                 name="username"
@@ -159,7 +159,7 @@ const CreateUser = () => {
 
             {/* User Type Dropdown */}
             <FormControl id="is_staff" isRequired>
-              <FormLabel>Type d'utilisateur</FormLabel>
+              <FormLabel>Type d&apos;utilisateur</FormLabel>
               <Select
                 name="is_staff"
                 value={formData.is_staff}

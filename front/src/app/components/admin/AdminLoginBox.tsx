@@ -102,7 +102,7 @@ const LoginBox = () => {
 
       <Stack spacing={4}>
         <FormControl id="username">
-          <FormLabel color={textColor}>Nom d'utilisateur</FormLabel>
+          <FormLabel color={textColor}>Nom d&apos;utilisateur</FormLabel>
           <InputGroup>
             <InputLeftElement pointerEvents="none">
               <EmailIcon color="gray.300" />

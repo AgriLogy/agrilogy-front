@@ -12,13 +12,6 @@ import {
 } from "recharts";
 import useColorModeStyles from "@/app/utils/useColorModeStyles"; // Import the utility
 
-interface WindSpeedGraphProps {
-  data: {
-    timestamp: string;
-    wind_speed: number;
-  }[];
-}
-
 const CustomLegend = (props: any) => (
   <ul
     style={{

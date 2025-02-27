@@ -7,7 +7,7 @@ import AdminSidebar from "@/app/components/main/AdminSidebar";
 import ListeZones from "@/app/components/admin/ListeZones";
 
 const Page = () => {
-  const { bg, textColor, navBgColor } = useColorModeStyles();
+  const { textColor, navBgColor } = useColorModeStyles();
 
   return (
     <Grid

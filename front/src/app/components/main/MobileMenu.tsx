@@ -24,14 +24,7 @@ import {
   MenuList,
 } from "@chakra-ui/react";
 import { HamburgerIcon, MoonIcon, SunIcon, BellIcon } from "@chakra-ui/icons";
-import {
-  FaUser,
-  FaHome,
-  FaComments,
-  FaCog,
-  FaUserFriends,
-  FaLeaf,
-} from "react-icons/fa";
+import { FaUser, FaHome, FaCog, FaLeaf } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
 import Image from "next/image";
 import logo from "../../public/logo.png";
@@ -60,9 +53,6 @@ const MobileMenu = () => {
     };
     fetchUser();
   }, []);
-  const [isOpen, setIsOpen] = useState(false);
-
-  const onOpen = () => setIsOpen(true);
 
   return (
     <Flex
@@ -102,7 +92,7 @@ const MobileMenu = () => {
               <Link href="/Notifications">Notifications</Link>
             </MenuItem>
             <MenuItem
-              onClick={onOpen}
+              onClick={() => setIsLogoutOpen(true)}
               icon={<IoLogOut style={{ transform: "scaleX(-1)" }} />}
             >
               Log Out

@@ -11,14 +11,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-interface PrecipitationHumidityGraphProps {
-  data: {
-    timestamp: string; // Formatted timestamp
-    precipitation: number; // Precipitation data (in mm)
-    humidity: number; // Humidity data (in %)
-  }[];
-}
-
 // Custom legend component
 const CustomLegend = (props: any) => (
   <ul

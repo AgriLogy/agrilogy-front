@@ -9,9 +9,9 @@ type Params = {
   user: string;
 };
 
-const page = ({ params }: { params: Params }) => {
-  const { user } = params;
+const ModifyUserpage = ({ params }: { params: Params }) => {
   const { textColor, navBgColor } = useColorModeStyles();
+  const { user } = params;
 
   const [isMounted, setIsMounted] = useState(false);
 
@@ -60,4 +60,4 @@ const page = ({ params }: { params: Params }) => {
   );
 };
 
-export default page;
+export default ModifyUserpage;

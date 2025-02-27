@@ -9,7 +9,7 @@ type Params = {
   user: string;
 };
 
-const page = ({ params }: { params: Params }) => {
+const SoilDatapage = ({ params }: { params: Params }) => {
   const { user } = params;
   const { textColor, navBgColor } = useColorModeStyles();
 
@@ -60,4 +60,4 @@ const page = ({ params }: { params: Params }) => {
   );
 };
 
-export default page;
+export default SoilDatapage;

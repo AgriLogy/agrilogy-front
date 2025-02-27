@@ -1,6 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Button, HStack, Input, Text, useBreakpointValue } from "@chakra-ui/react";
+import {
+  Button,
+  HStack,
+  Input,
+  Text,
+  useBreakpointValue,
+} from "@chakra-ui/react";
 import { subDays, subWeeks, subMonths, subYears, format } from "date-fns";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 
@@ -9,7 +15,10 @@ interface DateRangePickerProps {
   setEndDate: (date: string) => void;
 }
 
-const DateRangePicker: React.FC<DateRangePickerProps> = ({ setStartDate, setEndDate }) => {
+const DateRangePicker: React.FC<DateRangePickerProps> = ({
+  setStartDate,
+  setEndDate,
+}) => {
   const { textColor } = useColorModeStyles();
   const today = new Date();
   const formattedToday = format(today, "yyyy-MM-dd");
@@ -57,25 +66,43 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({ setStartDate, setEndD
       justifyContent="space-between"
       width="100%"
     >
-      <HStack >
+      <HStack>
         <Button onClick={() => handleDateRangeClick(1)}>1d</Button>
         <Button onClick={() => handleDateRangeClick(3)}>3d</Button>
         <Button onClick={() => handleWeeksClick(1)}>1 w</Button>
         <Button onClick={() => handleWeeksClick(2)}>2 w</Button>
         <Button onClick={() => handleMonthsClick(1)}>1 m</Button>
-        {showManualDatePicker && <Button onClick={() => handleMonthsClick(3)}>3 m</Button>}
-        {showManualDatePicker && <Button onClick={() => handleMonthsClick(6)}>6 m</Button>}
-        {showManualDatePicker && <Button onClick={() => handleYearsClick(1)}>1 y</Button>}
+        {showManualDatePicker && (
+          <Button onClick={() => handleMonthsClick(3)}>3 m</Button>
+        )}
+        {showManualDatePicker && (
+          <Button onClick={() => handleMonthsClick(6)}>6 m</Button>
+        )}
+        {showManualDatePicker && (
+          <Button onClick={() => handleYearsClick(1)}>1 y</Button>
+        )}
       </HStack>
 
       {showManualDatePicker && (
         <HStack alignItems="center" gap="1" ml="auto" mr={2}>
           <Text color={textColor}>From:</Text>
-          <Input color={textColor} type="date" value={manualStartDate} onChange={(e) => setManualStartDate(e.target.value)} />
+          <Input
+            color={textColor}
+            type="date"
+            value={manualStartDate}
+            onChange={(e) => setManualStartDate(e.target.value)}
+          />
           <Text color={textColor}>To:</Text>
-          <Input color={textColor} type="date" value={manualEndDate} onChange={(e) => setManualEndDate(e.target.value)} />
+          <Input
+            color={textColor}
+            type="date"
+            value={manualEndDate}
+            onChange={(e) => setManualEndDate(e.target.value)}
+          />
           <Button onClick={handleManualDateSelection}>
-            <Text color={textColor} padding={2}>Apply</Text>
+            <Text color={textColor} padding={2}>
+              Apply
+            </Text>
           </Button>
         </HStack>
       )}

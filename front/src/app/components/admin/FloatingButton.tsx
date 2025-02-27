@@ -2,9 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { 
-  Box, Button, IconButton, Modal, ModalOverlay, ModalContent, 
-  ModalHeader, ModalBody, ModalFooter, Text 
+import {
+  Button,
+  IconButton,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Text,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 
@@ -36,7 +43,10 @@ const FloatingButton = () => {
             <Text>Voulez-vous créer un nouvel utilisateur ?</Text>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" onClick={() => router.push("/admin/users/create")}>
+            <Button
+              colorScheme="blue"
+              onClick={() => router.push("/admin/users/create")}
+            >
               Oui
             </Button>
             <Button variant="ghost" ml={3} onClick={() => setIsOpen(false)}>

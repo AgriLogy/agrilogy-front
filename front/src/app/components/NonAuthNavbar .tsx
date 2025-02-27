@@ -3,7 +3,6 @@ import {
   IconButton,
   useColorMode,
   Spacer,
-  useBreakpointValue,
   Drawer,
   DrawerBody,
   DrawerContent,
@@ -15,14 +14,10 @@ import { MoonIcon, SunIcon, HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import Image from "next/image";
 import logo from "../public/logo.png";
 import { useState } from "react";
-import Sidebar from "./main/Sidebar";
 
 const NonAuthNavbar = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  // Determine if the sidebar should be visible or a burger menu should be used
-  const isSidebarVisible = useBreakpointValue({ base: false, md: true });
 
   const handleDrawerOpen = () => setIsDrawerOpen(true);
   const handleDrawerClose = () => setIsDrawerOpen(false);

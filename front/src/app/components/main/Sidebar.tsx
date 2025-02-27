@@ -15,7 +15,7 @@ import {
   AlertDialogOverlay,
   Button,
 } from "@chakra-ui/react";
-import { FaHome, FaChartLine, FaLeaf, FaCog } from "react-icons/fa";
+import { FaHome, FaLeaf, FaCog } from "react-icons/fa";
 import { PiSigmaBold } from "react-icons/pi";
 import { IoLogOut } from "react-icons/io5";
 import { FaBell } from "react-icons/fa"; // Import the notification icon
@@ -62,7 +62,6 @@ const Sidebar = () => {
           <Link href="/analytics">
             <IconButton
               icon={<FaLeaf />}
-              // icon={<FaChartLine />}
               aria-label="Données du sol"
               variant="ghost"
               mb={2}

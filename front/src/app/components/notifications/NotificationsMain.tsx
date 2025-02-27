@@ -10,7 +10,7 @@ import axiosInstance from "@/app/lib/api";
 const NotificationsMain: React.FC = () => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
   const [notifications, setNotifications] = useState<any[]>([]);
-  const [alerts, setAlerts] = useState<any[]>([]);
+  // const [alerts, setAlerts] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   // Fetch notifications and alerts
@@ -21,10 +21,7 @@ const NotificationsMain: React.FC = () => {
           "/api/notifications-and-alerts/"
         );
         setNotifications(response.data.notifications);
-        setAlerts(response.data.alerts);
-        console.log("===============================");
-        console.log(response.data);
-        console.log("===============================");
+        // setAlerts(response.data.alerts);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -46,9 +43,8 @@ const NotificationsMain: React.FC = () => {
       {/* Render Notifications */}
       <VStack spacing={4} align="stretch">
         {notifications.map((notification) => (
-          <Box className="box" height="100%" gridColumn="span 2;">
+          <Box key={notification.id} className="box" height="100%" gridColumn="span 2;">
             <Notification
-              key={notification.id}
               id={notification.id}
               notification={notification.notification}
               is_read={notification.is_read}

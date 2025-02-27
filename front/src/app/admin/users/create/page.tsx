@@ -8,7 +8,7 @@ import HeaderAdmin from "@/app/components/main/HeaderAdmin";
 import AdminSidebar from "@/app/components/main/AdminSidebar";
 
 const Page = () => {
-  const { bg, textColor, navBgColor } = useColorModeStyles();
+  const { textColor, navBgColor } = useColorModeStyles();
 
   return (
     <Grid
@@ -35,9 +35,15 @@ const Page = () => {
       >
         <AdminSidebar />
       </GridItem>
-      <GridItem pl="2" bg={navBgColor} area={"main"} overflowY="auto" height="100%">
+      <GridItem
+        pl="2"
+        bg={navBgColor}
+        area={"main"}
+        overflowY="auto"
+        height="100%"
+      >
         {/* <CreateUser /> */}
-        <CreateUser/>
+        <CreateUser />
       </GridItem>
     </Grid>
   );

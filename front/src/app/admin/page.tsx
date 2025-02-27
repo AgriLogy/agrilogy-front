@@ -7,7 +7,7 @@ import AdminSidebar from "@/app/components/main/AdminSidebar";
 import MainAdmin from "../components/admin/MainAdmin";
 
 const Page = () => {
-  const { bg, textColor, navBgColor } = useColorModeStyles();
+  const { textColor, navBgColor } = useColorModeStyles();
 
   return (
     <Grid
@@ -41,7 +41,7 @@ const Page = () => {
         overflowY="auto"
         height="100%"
       >
-        <MainAdmin/>
+        <MainAdmin />
       </GridItem>
     </Grid>
   );

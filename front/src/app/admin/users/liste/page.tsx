@@ -1,18 +1,13 @@
 "use client";
 import { Grid, GridItem } from "@chakra-ui/react";
 import React from "react";
-import Header from "../../../components/main/Header";
-import Sidebar from "../../../components/main/Sidebar";
-import { MainContent } from "../../../components/dashboard/MainContent";
 import useColorModeStyles from "../../../utils/useColorModeStyles";
-import NotificationsMain from "../../../components/notifications/NotificationsMain";
-import CreateUser from "@/app/components/admin/CreateUser";
 import ListeUsers from "@/app/components/admin/ListeUsers";
 import HeaderAdmin from "@/app/components/main/HeaderAdmin";
 import AdminSidebar from "@/app/components/main/AdminSidebar";
 
 const Page = () => {
-  const { bg, textColor, navBgColor } = useColorModeStyles();
+  const { textColor, navBgColor } = useColorModeStyles();
 
   return (
     <Grid

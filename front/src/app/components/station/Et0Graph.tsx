@@ -12,13 +12,6 @@ import {
 } from "recharts";
 import useColorModeStyles from "@/app/utils/useColorModeStyles"; // Import the utility
 
-interface Et0GraphProps {
-  data: {
-    timestamp: string;
-    et0: number;
-  }[];
-}
-
 const CustomLegend = (props: any) => (
   <ul
     style={{
