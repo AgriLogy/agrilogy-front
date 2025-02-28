@@ -35,32 +35,6 @@ const NonAuthNavbar = () => {
       zIndex={10}
     >
       <Image src={logo} alt="Logo" height={50} />
-      <>
-        <IconButton
-          aria-label="Open Menu"
-          icon={<HamburgerIcon />}
-          onClick={handleDrawerOpen}
-          variant="ghost"
-          display={{ base: "inline-flex", md: "none" }}
-        />
-        <Drawer
-          isOpen={isDrawerOpen}
-          placement="left"
-          onClose={handleDrawerClose}
-        >
-          <DrawerOverlay />
-          <DrawerContent>
-            <DrawerHeader>
-              <Flex justify="space-between" align="center">
-                <Button variant="ghost" onClick={handleDrawerClose}>
-                  <CloseIcon />
-                </Button>
-              </Flex>
-            </DrawerHeader>
-            <DrawerBody></DrawerBody>
-          </DrawerContent>
-        </Drawer>
-      </>
 
       <Spacer />
       <IconButton

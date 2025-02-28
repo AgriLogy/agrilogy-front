@@ -22,6 +22,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { HamburgerIcon, MoonIcon, SunIcon, BellIcon } from "@chakra-ui/icons";
 import { FaUser, FaHome, FaCog, FaLeaf } from "react-icons/fa";
@@ -31,15 +32,22 @@ import logo from "../../public/logo.png";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import api from "@/app/lib/api";
 import { PiSigmaBold } from "react-icons/pi";
+import { useRouter } from "next/navigation";
 
 const MobileMenu = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { bg } = useColorModeStyles();
-
+  const cancelRef = useRef(null);
   const [username, setUsername] = useState("User");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isLogoutOpen, setIsLogoutOpen] = useState(false);
-  const cancelRef = useRef<HTMLButtonElement>(null);
+  const router = useRouter();
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const handleLogout = () => {
+    localStorage.clear();
+    onClose();
+    router.push("/login");
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -85,14 +93,14 @@ const MobileMenu = () => {
           />
           <MenuList>
             <MenuItem>Bonjour {username}</MenuItem>
-            <MenuItem icon={<FaUser />}>
-              <Link href="/profile">Profile</Link>
-            </MenuItem>
-            <MenuItem icon={<BellIcon />}>
-              <Link href="/Notifications">Notifications</Link>
-            </MenuItem>
+            <Link href="/profile">
+              <MenuItem icon={<FaUser />}>Profile</MenuItem>
+            </Link>
+            <Link href="/notifications">
+              <MenuItem icon={<BellIcon />}>Notifications</MenuItem>
+            </Link>
             <MenuItem
-              onClick={() => setIsLogoutOpen(true)}
+              onClick={onOpen}
               icon={<IoLogOut style={{ transform: "scaleX(-1)" }} />}
             >
               Log Out
@@ -172,7 +180,8 @@ const MobileMenu = () => {
               <Button
                 leftIcon={<IoLogOut />}
                 colorScheme="red"
-                onClick={() => setIsLogoutOpen(true)}
+                onClick={onClose}
+                ref={cancelRef}
                 variant="ghost"
                 justifyContent="flex-start"
               >
@@ -185,26 +194,26 @@ const MobileMenu = () => {
 
       {/* Logout Confirmation Dialog */}
       <AlertDialog
-        isOpen={isLogoutOpen}
-        onClose={() => setIsLogoutOpen(false)}
+        isOpen={isOpen}
         leastDestructiveRef={cancelRef}
+        onClose={onClose}
       >
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Confirm Logout
+              Confirmer la déconnexion
             </AlertDialogHeader>
-            <AlertDialogBody>Are you sure you want to log out?</AlertDialogBody>
+
+            <AlertDialogBody>
+              Êtes-vous sûr de vouloir vous déconnecter ?
+            </AlertDialogBody>
+
             <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={() => setIsLogoutOpen(false)}>
-                Cancel
+              <Button ref={cancelRef} onClick={onClose}>
+                Annuler
               </Button>
-              <Button
-                colorScheme="red"
-                onClick={() => setIsLogoutOpen(false)}
-                ml={3}
-              >
-                Log Out
+              <Button colorScheme="red" onClick={handleLogout} ml={3}>
+                Se déconnecter
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>
