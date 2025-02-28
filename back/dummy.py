@@ -11,7 +11,7 @@ django.setup()
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import get_user_model
 from CustomUser.models import CustomUser
-from analytics.models import Sensor
+from analytics.models import Sensor, Notification, Alert, NotificationsPerUser, AlertsPerUser
 
 # Initialize Faker
 fake = Faker()
@@ -29,14 +29,14 @@ except ObjectDoesNotExist:
 
 print(f"✅ Found user: {user.username}")
 
-# Generate one Sensor record for each day
+# Generate Sensor, Notification, and Alert records
 current_date = BEGIN_DATE
 while current_date <= END_DATE:
-    # Ensure timestamp format
-    formatted_timestamp = current_date.strftime("%Y-%m-%d %H:%M:%S.%f")  # String representation
-    formatted_timestamp = datetime.strptime(formatted_timestamp, "%Y-%m-%d %H:%M:%S.%f")  # Convert back to datetime
+    formatted_timestamp = current_date.strftime("%Y-%m-%d %H:%M:%S.%f")  
+    formatted_timestamp = datetime.strptime(formatted_timestamp, "%Y-%m-%d %H:%M:%S.%f")  
 
-    Sensor.objects.create(
+    # Generate sensor data
+    sensor = Sensor.objects.create(
         user=user,
         precipitation_rate=random.uniform(0, 100),
         humidity_weather=random.randint(20, 100),
@@ -55,8 +55,65 @@ while current_date <= END_DATE:
         ph_soil=random.uniform(5.0, 8.5),
         soil_temperature_low=random.randint(5, 30),
         soil_temperature_high=random.randint(5, 30),
-        timestamp=formatted_timestamp  # Assign correctly formatted timestamp
+        timestamp=formatted_timestamp
     )
-    current_date += timedelta(days=1)  # Move to the next day
 
-print(f"🎉 Successfully created {((END_DATE - BEGIN_DATE).days) + 1} sensor records for {user.username}!")
+    # Generate Notification
+    notification = Notification.objects.create(
+        yesterday_temperature=random.uniform(-10, 45),
+        today_temperature=sensor.temperature_weather,
+        yesterday_humidity=random.uniform(20, 100),
+        today_humidity=sensor.humidity_weather,
+        ET0=random.uniform(0, 10),
+        soil_humidity=random.uniform(10, 50),
+        soil_temperature=sensor.soil_temperature_medium,
+        soil_ph=sensor.ph_soil,
+        perfect_irrigation_period="Morning (6 AM - 9 AM)" if sensor.temperature_weather > 20 else "Evening (6 PM - 9 PM)",
+        last_irrigation_date=(current_date - timedelta(days=random.randint(1, 7))),
+        last_start_irrigation_hour=fake.time(),
+        last_finish_irrigation_hour=fake.time(),
+        used_water_irrigation=random.uniform(100, 5000),
+        notification_date=formatted_timestamp
+    )
+
+    NotificationsPerUser.objects.create(
+        user=user,
+        notification=notification,
+        is_read=False
+    )
+
+    # Generate Alert based on conditions
+    alert = None
+    danger_level = "Low"
+
+    if sensor.temperature_weather > 40:
+        danger_level = "High"
+        title = "Extreme Heat Alert"
+        description = f"Temperature reached {sensor.temperature_weather}°C. High risk of crop damage!"
+    
+    elif sensor.soil_moisture_low < 15:
+        danger_level = "Medium"
+        title = "Low Soil Moisture Alert"
+        description = f"Soil moisture dropped to {sensor.soil_moisture_low}%. Consider irrigating soon."
+    
+    elif sensor.wind_speed > 30:
+        danger_level = "Medium"
+        title = "Strong Wind Alert"
+        description = f"Wind speed is {sensor.wind_speed} m/s. Risk of soil erosion and crop damage."
+
+    if danger_level != "Low":
+        alert = Alert.objects.create(
+            title=title,
+            description=description,
+            danger_level=danger_level
+        )
+
+        AlertsPerUser.objects.create(
+            user=user,
+            alert=alert,
+            is_read=False
+        )
+
+    current_date += timedelta(days=1)
+
+print(f"🎉 Successfully created sensor records, notifications, and alerts for {user.username}!")

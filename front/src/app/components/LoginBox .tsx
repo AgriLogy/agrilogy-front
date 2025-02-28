@@ -12,11 +12,9 @@ import {
   Stack,
   Text,
   useColorModeValue,
-  useToast,
 } from "@chakra-ui/react";
 import { EmailIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // Importing useRouter from next/navigation
 import axiosInstance from "../lib/api";
 
 const LoginBox = () => {
@@ -24,6 +22,7 @@ const LoginBox = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false); // Added loading state
 
   const handlePasswordVisibility = () => setShowPassword(!showPassword);
 
@@ -32,39 +31,31 @@ const LoginBox = () => {
   const inputBorderColor = useColorModeValue("gray.300", "gray.500");
   const textColor = useColorModeValue("gray.800", "white");
 
-  const router = useRouter(); // Use Next.js router for redirection
-  const toast = useToast();
-
   const handleSubmit = async () => {
+    setLoading(true); // Set loading to true when submitting
     try {
       const response = await axiosInstance.post("/auth/signin/", {
         username,
         password,
       });
-
-      if (response.status === 200) {
+  
+      if (response.status >= 200 && response.status < 300) {
         const { access, refresh, is_staff } = response.data;
         localStorage.setItem("accessToken", access);
         localStorage.setItem("refreshToken", refresh);
-        if (is_staff) {
-          router.push("/admin");
-        } else {
-          router.push("/");
-        }
+  
       }
     } catch (error) {
       setErrorMessage("Nom d'utilisateur ou mot de passe incorrect.");
-      toast({
-        title: "Erreur",
-        description:
-          "Impossible de se connecter avec ces informations d'identification.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+      // Clear error message after 5 seconds
+    } finally {
+      setTimeout(() => {
+        setErrorMessage(""); // Clear error message after 5 seconds
+      }, 10000);
+      setLoading(false); // Set loading to false after the request is done
     }
   };
-
+  
   return (
     <Box
       maxWidth="500px"
@@ -149,15 +140,17 @@ const LoginBox = () => {
           </InputGroup>
         </FormControl>
 
-        <Button variant="link" colorScheme="teal" textAlign="left">
+        {/* <Button variant="link" colorScheme="teal" textAlign="left">
           Mot de passe oublié ?
-        </Button>
+        </Button> */}
 
         <Button
           colorScheme="teal"
           size="lg"
           width="100%"
           onClick={handleSubmit}
+          isLoading={loading} // Show spinner when loading
+          loadingText="Connexion..."
         >
           Se connecter
         </Button>
