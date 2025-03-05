@@ -12,7 +12,6 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  Switch,
   Button,
   VStack,
   useToast,
@@ -25,7 +24,6 @@ const LowPressure: React.FC = () => {
     alertType: "Pressure - Low",
     percentage: 1,
     description: "",
-    sendAction: false,
   });
 
   const toast = useToast();
@@ -63,12 +61,11 @@ const LowPressure: React.FC = () => {
         alertType: "Pressure - Low",
         percentage: 1,
         description: "",
-        sendAction: false,
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to create wind speed alert.",
+        description: "Failed to create pressure alert.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -124,21 +121,6 @@ const LowPressure: React.FC = () => {
             placeholder="Enter description"
             value={formData.description}
             onChange={handleChange}
-          />
-        </FormControl>
-
-        {/* Send Action */}
-        <FormControl display="flex" alignItems="center">
-          <FormLabel mb="0">Send Notification</FormLabel>
-          <Switch
-            name="sendAction"
-            isChecked={formData.sendAction}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                sendAction: e.target.checked,
-              }))
-            }
           />
         </FormControl>
 

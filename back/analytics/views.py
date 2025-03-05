@@ -80,15 +80,12 @@ class NotificationsAndAlertsView(APIView):
 
         # Fetch user-specific notifications and alerts
         user_notifications = NotificationsPerUser.objects.filter(user=user)
-        user_alerts = AlertsPerUser.objects.filter(user=user)
 
         # Serialize the data
         notifications_serializer = NotificationsPerUserSerializer(user_notifications, many=True)
-        alerts_serializer = AlertsPerUserSerializer(user_alerts, many=True)
 
         return Response({
             "notifications": notifications_serializer.data,
-            "alerts": alerts_serializer.data
         })
 
 class AllSensorDataView(APIView):
@@ -232,3 +229,23 @@ class SensorColorAPIView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except SensorColor.DoesNotExist:
             return Response({"error": "SensorColor not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+class AlertsAPIView(APIView):
+    permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
+
+    def get(self, request):
+        alerts = Alert.objects.filter(user=request.user)
+        serializer = AlertSerializer(alerts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        # Manually add the user to the request data before validation
+        data = request.data.copy()  # Make a copy of the request data
+        data['user'] = request.user.id  # Assign the authenticated user's ID
+
+        # Pass the updated data to the serializer
+        serializer = AlertSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

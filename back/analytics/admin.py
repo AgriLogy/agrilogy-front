@@ -13,9 +13,6 @@ class AlertAdmin(admin.ModelAdmin):
 class NotificationsPerUserAdmin(admin.ModelAdmin):
     pass
 
-@admin.register(AlertsPerUser)
-class AlertsPerUserAdmin(admin.ModelAdmin):
-    pass
 
 @admin.register(Sensor)
 class SensorDataAdmin(admin.ModelAdmin):

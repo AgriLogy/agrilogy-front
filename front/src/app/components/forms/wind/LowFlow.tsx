@@ -25,7 +25,6 @@ const LowFlow: React.FC = () => {
     alertType: "Water Flow - Low",
     percentage: 1,
     description: "",
-    sendAction: false,
   });
 
   const toast = useToast();
@@ -63,7 +62,6 @@ const LowFlow: React.FC = () => {
         alertType: "Water Flow - Low",
         percentage: 1,
         description: "",
-        sendAction: false,
       });
     } catch (error) {
       toast({
@@ -124,21 +122,6 @@ const LowFlow: React.FC = () => {
             placeholder="Enter description"
             value={formData.description}
             onChange={handleChange}
-          />
-        </FormControl>
-
-        {/* Send Action */}
-        <FormControl display="flex" alignItems="center">
-          <FormLabel mb="0">Send Notification</FormLabel>
-          <Switch
-            name="sendAction"
-            isChecked={formData.sendAction}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                sendAction: e.target.checked,
-              }))
-            }
           />
         </FormControl>
 

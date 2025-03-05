@@ -85,14 +85,14 @@ const AdminDateRangePicker: React.FC<AdminDateRangePickerProps> = ({
 
       {showManualDatePicker && (
         <HStack alignItems="center" gap="1" ml="auto" mr={2}>
-          <Text color={textColor}>From:</Text>
+          <Text color={textColor}>De:</Text>
           <Input
             color={textColor}
             type="date"
             value={manualStartDate}
             onChange={(e) => setManualStartDate(e.target.value)}
           />
-          <Text color={textColor}>To:</Text>
+          <Text color={textColor}>à:</Text>
           <Input
             color={textColor}
             type="date"
@@ -100,8 +100,8 @@ const AdminDateRangePicker: React.FC<AdminDateRangePickerProps> = ({
             onChange={(e) => setManualEndDate(e.target.value)}
           />
           <Button onClick={handleManualDateSelection}>
-            <Text color={textColor} padding={2}>
-              Apply
+            <Text color={textColor} px={10}>
+            Appliquer
             </Text>
           </Button>
         </HStack>

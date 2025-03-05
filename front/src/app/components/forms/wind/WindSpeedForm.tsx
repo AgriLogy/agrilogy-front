@@ -12,63 +12,68 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  Switch,
   Button,
   VStack,
+  Flex,
+  Select,
   useToast,
 } from "@chakra-ui/react";
-import axios from "axios";
+import api from "@/app/lib/api";
 
 const WindSpeedForm: React.FC = () => {
   const [formData, setFormData] = useState({
-    alertName: "",
-    alertType: "wind speed",
-    percentage: 1,
+    name: "",
+    type: "Wind Speed",
+    condition: ">",
+    threshold: 1,
     description: "",
-    sendAction: false,
   });
 
   const toast = useToast();
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value, type } = e.target;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]:
-        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+      [name]: value,
     }));
   };
 
-  const handlePercentageChange = (valueAsNumber: number) => {
+  const handleConditionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFormData((prev) => ({
       ...prev,
-      percentage: valueAsNumber,
+      condition: e.target.value,
+    }));
+  };
+
+  const handleThresholdChange = (valueAsNumber: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      threshold: valueAsNumber,
     }));
   };
 
   const handleSubmit = async () => {
     try {
-      await axios.post("/api/alerts/windspeed", formData);
+      await api.post("/api/alert/", formData);
       toast({
-        title: "Alert Created",
-        description: "Wind speed alert successfully added.",
+        title: "Alerte créée",
+        description: "Alerte de vitesse du vent ajoutée avec succès.",
         status: "success",
         duration: 3000,
         isClosable: true,
       });
       setFormData({
-        alertName: "",
-        alertType: "wind speed",
-        percentage: 1,
+        name: "",
+        type: "Wind Speed",
+        condition: ">",
+        threshold: 1,
         description: "",
-        sendAction: false,
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to create wind speed alert.",
+        title: "Erreur",
+        description: "Échec de la création de l'alerte de vitesse du vent.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -79,41 +84,54 @@ const WindSpeedForm: React.FC = () => {
   return (
     <Box w="100%" p={4} borderRadius="md" overflowY="auto">
       <VStack spacing={4} align="stretch">
-        {/* Alert Name */}
+        {/* Nom de l'alerte */}
         <FormControl isRequired>
-          <FormLabel>Alert Name</FormLabel>
+          <FormLabel>Nom de l'alerte</FormLabel>
           <Input
-            name="alertName"
-            placeholder="Enter alert name"
-            value={formData.alertName}
+            name="name"
+            placeholder="Entrez le nom de l'alerte"
+            value={formData.name}
             onChange={handleChange}
           />
         </FormControl>
 
-        {/* Alert Type */}
+        {/* Type d'alerte */}
         <FormControl isReadOnly>
-          <FormLabel>Alert Type</FormLabel>
-          <Input name="alertType" value={formData.alertType} isReadOnly />
+          <FormLabel>Type d'alerte</FormLabel>
+          <Input name="type" value={formData.type} isReadOnly />
         </FormControl>
 
-        {/* Percentage */}
+        {/* Condition and Threshold */}
         <FormControl isRequired>
-          <FormLabel>Percentage [m/s]</FormLabel>
-          <NumberInput
-            defaultValue={1}
-            min={1}
-            max={100}
-            value={formData.percentage}
-            onChange={(_, valueAsNumber) =>
-              handlePercentageChange(valueAsNumber)
-            }
-          >
-            <NumberInputField name="percentage" />
-            <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
-            </NumberInputStepper>
-          </NumberInput>
+          <FormLabel>Condition</FormLabel>
+          <Flex direction="row" align="center" gap={4}>
+            {/* Dropdown for condition */}
+            <Select
+              name="condition"
+              value={formData.condition}
+              onChange={handleConditionChange}
+              w="auto"
+            >
+              <option value=">">Supérieur à</option>
+              <option value="<">Inférieur à</option>
+              <option value="=">Égal à</option>
+            </Select>
+
+            {/* Numeric input for threshold */}
+            <NumberInput
+              min={1}
+              max={100}
+              value={formData.threshold}
+              onChange={(_, valueAsNumber) => handleThresholdChange(valueAsNumber)}
+              w="100px"
+            >
+              <NumberInputField name="threshold" />
+              <NumberInputStepper>
+                <NumberIncrementStepper />
+                <NumberDecrementStepper />
+              </NumberInputStepper>
+            </NumberInput>
+          </Flex>
         </FormControl>
 
         {/* Description */}
@@ -121,30 +139,15 @@ const WindSpeedForm: React.FC = () => {
           <FormLabel>Description</FormLabel>
           <Textarea
             name="description"
-            placeholder="Enter description"
+            placeholder="Entrez la description"
             value={formData.description}
             onChange={handleChange}
           />
         </FormControl>
 
-        {/* Send Action */}
-        <FormControl display="flex" alignItems="center">
-          <FormLabel mb="0">Send Notification</FormLabel>
-          <Switch
-            name="sendAction"
-            isChecked={formData.sendAction}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                sendAction: e.target.checked,
-              }))
-            }
-          />
-        </FormControl>
-
-        {/* Submit Button */}
+        {/* Bouton de soumission */}
         <Button colorScheme="blue" onClick={handleSubmit} w="full">
-          Submit
+          Soumettre
         </Button>
       </VStack>
     </Box>

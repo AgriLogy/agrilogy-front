@@ -140,10 +140,6 @@ const LoginBox = () => {
           </InputGroup>
         </FormControl>
 
-        {/* <Button variant="link" colorScheme="teal" textAlign="left">
-          Mot de passe oublié ?
-        </Button> */}
-
         <Button
           colorScheme="teal"
           size="lg"

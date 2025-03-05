@@ -11,7 +11,7 @@ django.setup()
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import get_user_model
 from CustomUser.models import CustomUser
-from analytics.models import Sensor, Notification, Alert, NotificationsPerUser, AlertsPerUser
+from analytics.models import Sensor, Notification, Alert, NotificationsPerUser
 
 # Initialize Faker
 fake = Faker()
@@ -108,11 +108,6 @@ while current_date <= END_DATE:
             danger_level=danger_level
         )
 
-        AlertsPerUser.objects.create(
-            user=user,
-            alert=alert,
-            is_read=False
-        )
 
     current_date += timedelta(days=1)
 

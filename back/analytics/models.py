@@ -23,28 +23,81 @@ class Notification(models.Model):
     def __str__(self):
         return f"Alert on {self.last_irrigation_date} (Notification sent on {self.notification_date})"
 
+from django.db import models
+from django.db import models
+from django.db import models
+from django.conf import settings
+from django.db import models
+from django.conf import settings
+
+from django.db import models
+from django.conf import settings
 
 class Alert(models.Model):
-    LOW = 'Low'
-    MEDIUM = 'Medium'
-    HIGH = 'High'
-    DANGER_LEVEL_CHOICES = [
-        (LOW, 'Low'),
-        (MEDIUM, 'Medium'),
-        (HIGH, 'High'),
+    # Condition Choices
+    GREATER_THAN = '>'
+    LESS_THAN = '<'
+    EQUAL_TO = '='
+    
+    CONDITION_CHOICES = [
+        (GREATER_THAN, 'Greater Than'),
+        (LESS_THAN, 'Less Than'),
+        (EQUAL_TO, 'Equal To'),
+    ]
+    
+    # Alert Type Choices
+    A_P = "Pressure"
+    A_F = "Flow"
+    A_WT = "Weather Temperature"
+    A_WS = "Wind Speed"
+    A_RF = "Rain Fall"
+    A_EC = "EC (Electrical Conductivity)"
+    A_PH = "pH Level"
+    A_H = "Humidity"
+    A_ST = "Soil Temperature"
+    A_PM = "Periodic maintenance"
+
+
+    ALERT_CHOICES = [
+        (A_P, "Pressure"),
+        (A_F, "Flow"),
+        (A_WT, "Weather Temperature"),
+        (A_WS, "Wind Speed"),
+        (A_RF, "Rain Fall"),
+        (A_PM, "Periodic maintenance"),
+        (A_EC, "EC (Electrical Conductivity)"),
+        (A_PH, "pH Level"),
+        (A_H, "Humidity"),
+        (A_ST, "Soil Temperature"),
     ]
 
-    title = models.CharField(max_length=200, help_text="A brief title for the alert.")
+    # Fields for the Alert
+    name = models.CharField(max_length=200, help_text="A brief name for the alert.")
+    type = models.CharField(
+        max_length=50,
+        choices=ALERT_CHOICES,
+    )
     description = models.TextField(help_text="Detailed description of the alert.")
-    danger_level = models.CharField(
-        max_length=6,
-        choices=DANGER_LEVEL_CHOICES,
-        default=LOW,
-        help_text="Indicates the severity of the alert (Low, Medium, High)."
+    
+    # Adding condition field
+    condition = models.CharField(
+        max_length=1,
+        choices=CONDITION_CHOICES,
+        help_text="The condition for this alert (>, <, =)"
+    )
+    
+    # ForeignKey for User (optional)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='user_alerts',
+        null=True, blank=True  # Optional field to associate the alert with a user
     )
 
     def __str__(self):
-        return f"{self.title} - {self.danger_level}"
+        return f"{self.name} - {self.condition}"
+
+
 
 
 class NotificationsPerUser(models.Model):
@@ -55,17 +108,6 @@ class NotificationsPerUser(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - Notification on {self.notification.notification_date}"
-
-
-class AlertsPerUser(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_alerts')
-    alert = models.ForeignKey(Alert, on_delete=models.CASCADE)
-    is_read = models.BooleanField(default=False, help_text="Whether the user has read this alert")
-    read_at = models.DateTimeField(null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.user.username} - Alert: {self.alert.title}"
-
 
 class Sensor(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_sensors')

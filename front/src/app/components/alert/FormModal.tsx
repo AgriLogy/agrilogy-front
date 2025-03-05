@@ -24,15 +24,15 @@ import HighTemperature from "../forms/wind/HighTemperature";
 import LowPressure from "../forms/wind/LowPressure";
 import HighPressure from "../forms/wind/HighPressure";
 
-// Define the components for each alert type
-const AlertType1: React.FC = () => <WindSpeedForm />;
-const AlertType2: React.FC = () => <RainFallForm />;
-const AlertType3: React.FC = () => <LowTemperature/>;
-const AlertType4: React.FC = () => <HighTemperature/>;
-const AlertType5: React.FC = () => <div>High Flow - High Water Usage</div>;
-const AlertType6: React.FC = () => <div>Low Flow - Low Water Usage</div>;
-const AlertType7: React.FC = () => <HighPressure/>;
-const AlertType8: React.FC = () => <LowPressure/>;
+// Alert type components
+const AlertWindSpeed: React.FC = () => <WindSpeedForm />;
+const AlertRainFall: React.FC = () => <RainFallForm />;
+const AlertLowTemp: React.FC = () => <LowTemperature />;
+const AlertHighTemp: React.FC = () => <HighTemperature />;
+const AlertHighFlow: React.FC = () => <div>Débit élevé - Forte consommation d'eau</div>;
+const AlertLowFlow: React.FC = () => <div>Débit faible - Faible consommation d'eau</div>;
+const AlertHighPressure: React.FC = () => <HighPressure />;
+const AlertLowPressure: React.FC = () => <LowPressure />;
 
 interface FormModalProps {
   isOpen: boolean;
@@ -42,16 +42,16 @@ interface FormModalProps {
 const FormModal: React.FC<FormModalProps> = ({ isOpen, onClose }) => {
   const [selectedAlert, setSelectedAlert] = useState<string | null>(null);
 
-  // Map alert types to their respective components
+  // Mapping alert types to components with French translations
   const alertComponents: Record<string, React.FC> = {
-    "High Flow -  High Water Usage": AlertType5,
-    "Low  Flow -  Low Water Usage": AlertType6,
-    "Weather Temperature - Low": AlertType3,
-    "Weather Temperature - High": AlertType4,
-    "Pressure  -  High": AlertType7,
-    "Pressure  -  Low": AlertType8,
-    "Wind Speed": AlertType1,
-    "Rain Fall": AlertType2,
+    "Débit élevé - Forte consommation d'eau": AlertHighFlow,
+    "Débit faible - Faible consommation d'eau": AlertLowFlow,
+    "Température basse": AlertLowTemp,
+    "Température élevée": AlertHighTemp,
+    "Pression élevée": AlertHighPressure,
+    "Pression basse": AlertLowPressure,
+    "Vitesse du vent": AlertWindSpeed,
+    "Précipitations": AlertRainFall,
   };
 
   const handleAlertClick = (type: string) => {
@@ -79,7 +79,7 @@ const FormModal: React.FC<FormModalProps> = ({ isOpen, onClose }) => {
                 mr={2}
               />
             )}
-            <Text>{selectedAlert ? selectedAlert : "Available Alerts"}</Text>
+            <Text>{selectedAlert ? selectedAlert : "Alertes disponibles"}</Text>
           </Flex>
         </ModalHeader>
         <ModalCloseButton />
@@ -104,7 +104,7 @@ const FormModal: React.FC<FormModalProps> = ({ isOpen, onClose }) => {
         </ModalBody>
         <ModalFooter>
           <Button variant="ghost" onClick={onClose}>
-            Close
+            Fermer
           </Button>
         </ModalFooter>
       </ModalContent>

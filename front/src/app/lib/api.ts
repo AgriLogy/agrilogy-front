@@ -19,21 +19,32 @@ api.interceptors.request.use(
 
 // Add an interceptor to handle responses
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (response.status === 200 && response.data?.access) {
+      localStorage.setItem("accessToken", response.data.access);
+      localStorage.setItem("refreshToken", response.data.refresh);
+
+      if (response.data.is_staff) {
+        window.location.href = "/admin";
+      } else {
+        window.location.href = "/";
+      }
+    }
+    return response;
+  },
   (error) => {
     if (error.response) {
       const status = error.response.status;
 
       if (status >= 100 && status < 200) {
-        // 1xx: Just leave it, no action required
         return Promise.reject(error);
-      } else if (status >= 400 && status < 500) {
-        // 4xx: Unauthorized or forbidden, redirect to login
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        window.location.href = "/login";
-      } else if (status >= 500) {
-        // 5xx: Server error, redirect to error page
+      }
+      //  else if (status >= 400 && status < 500) {
+      //   localStorage.removeItem("accessToken");
+      //   localStorage.removeItem("refreshToken");
+      //   window.location.href = "/login";
+      // } 
+      else if (status >= 500) {
         window.location.href = "/server-error";
       }
     }
