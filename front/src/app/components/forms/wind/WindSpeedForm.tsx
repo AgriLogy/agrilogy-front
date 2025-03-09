@@ -25,8 +25,8 @@ const WindSpeedForm: React.FC = () => {
     name: "",
     type: "Wind Speed",
     condition: ">",
-    threshold: 1,
     description: "",
+    condition_nbr : 0,
   });
 
   const toast = useToast();
@@ -46,10 +46,10 @@ const WindSpeedForm: React.FC = () => {
     }));
   };
 
-  const handleThresholdChange = (valueAsNumber: number) => {
+  const handlecondition_nbrChange = (valueAsNumber: number) => {
     setFormData((prev) => ({
       ...prev,
-      threshold: valueAsNumber,
+      condition_nbr: valueAsNumber,
     }));
   };
 
@@ -67,8 +67,8 @@ const WindSpeedForm: React.FC = () => {
         name: "",
         type: "Wind Speed",
         condition: ">",
-        threshold: 1,
         description: "",
+        condition_nbr: 0,
       });
     } catch (error) {
       toast({
@@ -101,7 +101,7 @@ const WindSpeedForm: React.FC = () => {
           <Input name="type" value={formData.type} isReadOnly />
         </FormControl>
 
-        {/* Condition and Threshold */}
+        {/* Condition and condition_nbr */}
         <FormControl isRequired>
           <FormLabel>Condition</FormLabel>
           <Flex direction="row" align="center" gap={4}>
@@ -117,15 +117,16 @@ const WindSpeedForm: React.FC = () => {
               <option value="=">Égal à</option>
             </Select>
 
-            {/* Numeric input for threshold */}
+            {/* Numeric input for condition_nbr */}
             <NumberInput
+              name="condition_nbr"
               min={1}
               max={100}
-              value={formData.threshold}
-              onChange={(_, valueAsNumber) => handleThresholdChange(valueAsNumber)}
+              value={formData.condition_nbr}
+              onChange={(_, valueAsNumber) => handlecondition_nbrChange(valueAsNumber)}
               w="100px"
             >
-              <NumberInputField name="threshold" />
+              <NumberInputField name="condition_nbr" />
               <NumberInputStepper>
                 <NumberIncrementStepper />
                 <NumberDecrementStepper />

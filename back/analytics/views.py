@@ -4,7 +4,7 @@ from django.utils.dateparse import parse_date, parse_datetime
 from django.utils.timezone import now
 
 from rest_framework import viewsets, status
-from rest_framework import viewsets
+
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
@@ -234,7 +234,7 @@ class AlertsAPIView(APIView):
     permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
 
     def get(self, request):
-        alerts = Alert.objects.filter(user=request.user)
+        alerts = Alert.objects.filter(user=request.user).order_by('-id')
         serializer = AlertSerializer(alerts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -249,3 +249,15 @@ class AlertsAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class AlertViewSet(viewsets.ModelViewSet):
+    serializer_class = AlertSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Filter alerts so users only access their own
+        return Alert.objects.filter(user=self.request.user).order_by('-id')
+
+    def perform_create(self, serializer):
+        # Automatically assign the logged-in user on create
+        serializer.save(user=self.request.user)

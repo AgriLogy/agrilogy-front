@@ -85,7 +85,7 @@ class Alert(models.Model):
         choices=CONDITION_CHOICES,
         help_text="The condition for this alert (>, <, =)"
     )
-    
+    condition_nbr = models.DecimalField(max_digits=7, decimal_places=0)
     # ForeignKey for User (optional)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,

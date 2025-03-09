@@ -7,7 +7,7 @@ import useColorModeStyles from "../utils/useColorModeStyles";
 import AlertMain from "../components/alert/AlertMain";
 
 const Page = () => {
-  const { textColor, navBgColor } = useColorModeStyles();
+  const { navBgColor } = useColorModeStyles();
 
   return (
     <Grid
@@ -21,7 +21,7 @@ const Page = () => {
       gridTemplateColumns={{ base: "1fr", md: "50px 1fr" }}
       height="100vh"
       gap="0.5"
-      color={textColor}
+      color="blackAlpha.700"
       fontWeight="bold"
     >
       <GridItem area={"header"}>
@@ -34,7 +34,8 @@ const Page = () => {
       >
         <Navbar />
       </GridItem>
-      <GridItem pl="2" bg={navBgColor} area={"main"}>
+      <GridItem pl="2" bg={navBgColor} area={"main"} overflowY="auto" height="100%">
+        {/* <AnalyticsMain /> */}
         <AlertMain />
       </GridItem>
     </Grid>

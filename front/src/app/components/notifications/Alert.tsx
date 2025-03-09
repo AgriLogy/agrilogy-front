@@ -1,63 +1,80 @@
-// components/Alert.tsx
 import React from "react";
 import { Box, Text, Badge, Divider } from "@chakra-ui/react";
+import { ALERT_CHOICES } from "@/app/utils/alertChoices";
+import useColorModeStyles from "@/app/utils/useColorModeStyles"; // import the custom hook
+import "../../styles/style.css";
 
-// Define types for the alert data
 interface AlertProps {
   id: number;
   name: string;
   type: string;
   description: string;
   condition: string;
+  condition_nbr: number;
+  onClick?: () => void; // optional click handler
 }
 
-const Alert: React.FC<AlertProps> = ({ id, name, type, description, condition }) => {
+const Alert: React.FC<AlertProps> = ({
+  id,
+  name,
+  type,
+  description,
+  condition,
+  condition_nbr,
+  onClick,
+}) => {
+  const { textColor, bg, hoverColor } = useColorModeStyles(); // Use the custom hook for theme-based styles
+  const typeLabels = ALERT_CHOICES.find((alert) => alert.value === type)?.label;
+
   return (
     <Box
+	    border="1px solid #ccc"
       p={6}
       key={id}
       borderWidth={1}
       width="100%"
       borderRadius="md"
       overflowY="auto"
-      bg="white"
+      bg={bg} // Background color changes based on the color mode
       boxShadow="lg"
+      cursor="pointer"
+      onClick={onClick} // Make it clickable
       transition="transform 0.3s ease, box-shadow 0.3s ease"
       _hover={{
         transform: "translateY(-4px)",
         boxShadow: "xl",
+        // bg: hoverColor, // Hover color changes based on the color mode
       }}
     >
-      {/* Alert Name and Type */}
+      {/* Name and Type */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Text fontWeight="bold" fontSize="xl" color="gray.800">
+        <Text fontWeight="bold" fontSize="xl" color={textColor}>
           {name}
         </Text>
         <Badge colorScheme="blue" fontSize="sm" p={2}>
-          {type}
+          {typeLabels || type}
         </Badge>
       </Box>
 
-      {/* Condition Section */}
+      {/* Condition Box */}
       <Box mt={4} p={3} bg="gray.50" borderRadius="md">
         <Text fontSize="lg" fontWeight="bold" color="gray.700">
           ⚡ Condition
         </Text>
         <Text color="gray.600">
-          <strong>Condition:</strong> {condition}
+          <strong>Condition:</strong>{" "}
+          {condition == ">" ? "Supérieur" : condition == "<" ? "Inférieur" : "Égal"}{" "}
+          à {condition_nbr}
         </Text>
       </Box>
 
-      {/* Description Section */}
+      {/* Description Box */}
       <Box mt={4} p={3} bg="gray.50" borderRadius="md">
         <Text fontSize="lg" fontWeight="bold" color="gray.700">
           📜 Description
         </Text>
         <Text color="gray.600">{description}</Text>
       </Box>
-
-      {/* Divider */}
-      <Divider mt={4} borderColor="gray.200" />
     </Box>
   );
 };

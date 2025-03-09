@@ -72,7 +72,7 @@ const DataTable = ({ data }: { data: { sensor_data: SensorData[], sensor_names :
           style={{ textDecoration: "none" }}
         >
           <Button colorScheme="teal" mb={4}>
-            Download CSV
+            Exporter CSV
           </Button>
         </CSVLink>
       </HStack>
