@@ -29,7 +29,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     payement_status = models.CharField(
-        max_length=10,
+        max_length=100,
         choices=[('actif', 'Actif'), ('suspended', 'Suspended')],
         default='actif'
     )
