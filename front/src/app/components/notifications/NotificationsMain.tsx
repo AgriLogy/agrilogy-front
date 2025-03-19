@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import "./NotificationsMain.css";
-import { Box, Text, VStack } from "@chakra-ui/react";
+import { Box, Text, VStack, SimpleGrid } from "@chakra-ui/react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import LoadingSpinner from "../common/LoadingSpinner";
 import Notification from "../notifications/Notification";
@@ -41,7 +41,14 @@ const NotificationsMain: React.FC = () => {
 
       {/* <Box bg={bg} className="   wide"> */}
       {/* Render Notifications */}
-      <VStack spacing={4} align="stretch">
+      {/* <VStack spacing={4} align="stretch"> */}
+      <SimpleGrid
+          p={1}
+          columns={{ base: 1, sm: 1, md: 2, lg: 2 }}
+          spacing={4}
+          w="100%"
+        >
+
         {notifications.map((notification) => (
           <Box key={notification.id} className="box" height="100%" gridColumn="span 2;">
             <Notification
@@ -49,10 +56,11 @@ const NotificationsMain: React.FC = () => {
               notification={notification.notification}
               is_read={notification.is_read}
               read_at={notification.read_at}
-            />
+              />
           </Box>
         ))}
-      </VStack>
+      </SimpleGrid>
+      {/* </VStack> */}
       {/* </Box> */}
     </div>
   );
