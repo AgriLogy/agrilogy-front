@@ -16,6 +16,8 @@ import {
 import { EmailIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 import axiosInstance from "../lib/api";
+import { useRouter } from "next/navigation"; // Importing useRouter from next/navigation
+
 
 const LoginBox = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,6 +32,8 @@ const LoginBox = () => {
   const inputBg = useColorModeValue("gray.100", "gray.600");
   const inputBorderColor = useColorModeValue("gray.300", "gray.500");
   const textColor = useColorModeValue("gray.800", "white");
+  const router = useRouter(); // Use Next.js router for redirection
+
 
   const handleSubmit = async () => {
     setLoading(true); // Set loading to true when submitting
@@ -43,7 +47,7 @@ const LoginBox = () => {
         const { access, refresh, is_staff } = response.data;
         localStorage.setItem("accessToken", access);
         localStorage.setItem("refreshToken", refresh);
-  
+        is_staff ? router.push("/admin") : router.push("/");
       }
     } catch (error) {
       setErrorMessage("Nom d'utilisateur ou mot de passe incorrect.");

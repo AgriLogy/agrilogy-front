@@ -17,39 +17,55 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Add an interceptor to handle responses
 api.interceptors.response.use(
   (response) => {
-    if (response.status === 200 && response.data?.access) {
-      localStorage.setItem("accessToken", response.data.access);
-      localStorage.setItem("refreshToken", response.data.refresh);
-
-      if (response.data.is_staff) {
-        window.location.href = "/admin";
-      } else {
-        window.location.href = "/";
-      }
-    }
     return response;
   },
   (error) => {
-    if (error.response) {
-      const status = error.response.status;
-
-      if (status >= 100 && status < 200) {
-        return Promise.reject(error);
-      }
-      //  else if (status >= 400 && status < 500) {
-      //   localStorage.removeItem("accessToken");
-      //   localStorage.removeItem("refreshToken");
-      //   window.location.href = "/login";
-      // } 
-      else if (status >= 500) {
-        window.location.href = "/server-error";
-      }
+    if (error.response && error.response.status === 401) {
+      // Clear the invalid token and redirect to the login page
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      // window.location.href = "/login";
     }
     return Promise.reject(error);
   }
 );
+
+
+// Add an interceptor to handle responses
+// api.interceptors.response.use(
+//   (response) => {
+//     if (response.status === 200 && response.data?.access) {
+//       localStorage.setItem("accessToken", response.data.access);
+//       localStorage.setItem("refreshToken", response.data.refresh);
+
+//       if (response.data.is_staff) {
+//         window.location.href = "/admin";
+//       } else {
+//         window.location.href = "/";
+//       }
+//     }
+//     return response;
+//   },
+//   (error) => {
+//     if (error.response) {
+//       const status = error.response.status;
+
+//       if (status >= 100 && status < 200) {
+//         return Promise.reject(error);
+//       }
+//       //  else if (status >= 400 && status < 500) {
+//       //   localStorage.removeItem("accessToken");
+//       //   localStorage.removeItem("refreshToken");
+//       //   window.location.href = "/login";
+//       // } 
+//       else if (status >= 500) {
+//         window.location.href = "/server-error";
+//       }
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
 export default api;
