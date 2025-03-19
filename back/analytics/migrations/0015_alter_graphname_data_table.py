@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='graphname',
             name='data_table',
-            field=models.CharField(default='Tableau de données', max_length=20),
+            field=models.CharField(default='Tableau de données', max_length=200),
         ),
     ]

@@ -13,11 +13,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='graphname',
             name='precipitation_humidity_rate',
-            field=models.CharField(default='Taux de précipitation et humidité', max_length=20),
+            field=models.CharField(default='Taux de précipitation et humidité', max_length=200),
         ),
         migrations.AddField(
             model_name='graphname',
             name='temperature_humidity_weather',
-            field=models.CharField(default="Température et humidité de l'air", max_length=20),
+            field=models.CharField(default="Température et humidité de l'air", max_length=200),
         ),
     ]

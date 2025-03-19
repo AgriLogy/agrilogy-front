@@ -13,56 +13,56 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='graphname',
             name='humidity_weather',
-            field=models.CharField(default="Humidité de l'air", max_length=20),
+            field=models.CharField(default="Humidité de l'air", max_length=200),
         ),
         migrations.AlterField(
             model_name='graphname',
             name='precipitation_rate',
-            field=models.CharField(default='Taux de précipitation', max_length=20),
+            field=models.CharField(default='Taux de précipitation', max_length=200),
         ),
         migrations.AlterField(
             model_name='graphname',
             name='pressure_weather',
-            field=models.CharField(default='Pression atmosphérique', max_length=20),
+            field=models.CharField(default='Pression atmosphérique', max_length=200),
         ),
         migrations.AlterField(
             model_name='graphname',
             name='soil_conductivity',
-            field=models.CharField(default='Conductivité du sol', max_length=20),
+            field=models.CharField(default='Conductivité du sol', max_length=200),
         ),
         migrations.AlterField(
             model_name='graphname',
             name='soil_irrigation',
-            field=models.CharField(default='Irrigation du sol', max_length=20),
+            field=models.CharField(default='Irrigation du sol', max_length=200),
         ),
         migrations.AlterField(
             model_name='graphname',
             name='soil_moisture',
-            field=models.CharField(default='Humidité du sol', max_length=20),
+            field=models.CharField(default='Humidité du sol', max_length=200),
         ),
         migrations.AlterField(
             model_name='graphname',
             name='soil_ph',
-            field=models.CharField(default='pH du sol', max_length=20),
+            field=models.CharField(default='pH du sol', max_length=200),
         ),
         migrations.AlterField(
             model_name='graphname',
             name='solar_radiation',
-            field=models.CharField(default='Rayonnement solaire', max_length=20),
+            field=models.CharField(default='Rayonnement solaire', max_length=200),
         ),
         migrations.AlterField(
             model_name='graphname',
             name='temperature_weather',
-            field=models.CharField(default="Température de l'air", max_length=20),
+            field=models.CharField(default="Température de l'air", max_length=200),
         ),
         migrations.AlterField(
             model_name='graphname',
             name='wind_direction',
-            field=models.CharField(default='Direction du vent', max_length=20),
+            field=models.CharField(default='Direction du vent', max_length=200),
         ),
         migrations.AlterField(
             model_name='graphname',
             name='wind_speed',
-            field=models.CharField(default='Vitesse du vent', max_length=20),
+            field=models.CharField(default='Vitesse du vent', max_length=200),
         ),
     ]

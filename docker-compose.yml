@@ -7,6 +7,7 @@ services:
     container_name: agroserver
     volumes:
       - data_devops:/app
+      - shared_data:/shared
     networks:
       - agro
     restart: unless-stopped
@@ -18,6 +19,7 @@ services:
     container_name: agrybackend
     volumes:
       - ./back:/code
+      - shared_data:/shared
     depends_on:
       - agrydata
     networks:
@@ -63,7 +65,7 @@ services:
     image: frontend
     container_name: agryfrontend
     ports:
-      - "3000:3000"               # Next.js dev server runs on 3000 by default
+      - "3000:3000"
     depends_on:
       - agrybackend
     volumes:
@@ -84,3 +86,5 @@ networks:
 volumes:
   data_database:
   data_devops:
+  shared_data:
+
