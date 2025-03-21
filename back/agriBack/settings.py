@@ -25,6 +25,8 @@ CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=['http://localho
 # Application definition
 
 INSTALLED_APPS = [
+    'django_cron',
+    'django_crontab',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -32,7 +34,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'django_cron',
     'analytics',
     'corsheaders',
     'CustomUser',
@@ -212,8 +213,10 @@ CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=['http://localho
 
 
 CRONJOBS = [
-    ('0 * * * *', 'agriBack.cron.SendDataCronJob.do')  # Run the cron job every hour (at minute 0)
+    ('* * * * *', 'agriBack.cron.send_data.SendDataCronJob', '>> /var/log/cron.log 2>&1'),
+    ('* * * * *', 'agriBack.cron.send', '>> /var/log/cron2.log 2>&1'),
 ]
+
 
 
 LOGGING = {
@@ -232,7 +235,7 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
-        'django_cron': {
+        'django_crontab': {
             'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': True,

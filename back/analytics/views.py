@@ -44,6 +44,27 @@ class SensorViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(timestamp__gte=last_month)
 
         return queryset
+    
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new Sensor record.
+        If authenticated, assign the user; if not, leave user null (or handle as needed).
+        """
+        data = request.data.copy()
+
+        # Optional: If the user is authenticated, attach them.
+        if request.user.is_authenticated:
+            data['user'] = request.user.id
+        else:
+            data['user'] = None  # or remove this line if 'user' isn't required
+
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        
     def delete_all(self, request, *args, **kwargs):
         """
         Delete all sensor data for the authenticated user.

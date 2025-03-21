@@ -4,15 +4,21 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /code
 
-COPY . /code/
-
+# Install cron + mariadb-client + any other dependencies you need
 RUN apt-get update && apt-get install -y \
     mariadb-client \
+    cron \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip
-RUN chmod +x run.sh
+# Copy your app
+COPY . /code/
 
+# Install Python dependencies
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
+# Give permission to run.sh
+RUN chmod +x run.sh
+
+# Start cron and Django
 CMD ["bash", "run.sh"]
