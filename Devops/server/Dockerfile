@@ -5,6 +5,7 @@ WORKDIR /app
 COPY server.py /app/server.py
 
 COPY requests.json /shared/requests.json
+COPY send.py /shared/send.py
 
 VOLUME /shared
 

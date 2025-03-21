@@ -20,33 +20,33 @@ services:
     volumes:
       - ./back:/code
       - shared_data:/shared
-    depends_on:
-      - agrydata
+    # depends_on:
+    #   - agrydata
     networks:
       - agro
     restart: unless-stopped
   
-  agrydata:
-    container_name: agrydata
-    image: postgres
-    volumes:
-      - data_database:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
-      interval: 1s
-      timeout: 5s
-      retries: 10
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_DB: agrydata_db
-      POSTGRES_USER: agry_admin
-      POSTGRES_PASSWORD: Str0ngP@ssw0rd!
-      POSTGRES_HOST: agrydata
-      POSTGRES_PORT: 5432
-    networks:
-      - agro
-    restart: unless-stopped
+  # agrydata:
+  #   container_name: agrydata
+  #   image: postgres
+  #   volumes:
+  #     - data_database:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready"]
+  #     interval: 1s
+  #     timeout: 5s
+  #     retries: 10
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     POSTGRES_DB: agrydata_db
+  #     POSTGRES_USER: agry_admin
+  #     POSTGRES_PASSWORD: Str0ngP@ssw0rd!
+  #     POSTGRES_HOST: agrydata
+  #     POSTGRES_PORT: 5432
+  #   networks:
+  #     - agro
+  #   restart: unless-stopped
 
 
   agryadminer:

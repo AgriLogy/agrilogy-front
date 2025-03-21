@@ -71,25 +71,37 @@ TEMPLATES = [
 WSGI_APPLICATION = 'agriBack.wsgi.application'
 
 # sqlite
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 # postgres
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('POSTGRES_DB', default='agrydata_db'),
-        'USER': env('POSTGRES_USER', default='agry_admin'),
-        'PASSWORD': env('POSTGRES_PASSWORD', default='Str0ngP@ssw0rd!'),
-        'HOST': env('POSTGRES_HOST', default='agrydata'),
-        'PORT': env('POSTGRES_PORT', default='5432'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': env('POSTGRES_DB', default='agrydata_db'),
+#         'USER': env('POSTGRES_USER', default='agry_admin'),
+#         'PASSWORD': env('POSTGRES_PASSWORD', default='Str0ngP@ssw0rd!'),
+#         'HOST': env('POSTGRES_HOST', default='agrydata'),
+#         'PORT': env('POSTGRES_PORT', default='5432'),
+#     }
+# }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': env('POSTGRES_DB', default='agrydata_db'),
+#         'USER': env('POSTGRES_USER', default='agry_admin'),
+#         'PASSWORD': env('POSTGRES_PASSWORD', default='Str0ngP@ssw0rd!'),
+#         'HOST': env('POSTGRES_HOST', default='agrydata'),
+#         'PORT': env('POSTGRES_PORT', default='5432'),
+#     }
+# }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
