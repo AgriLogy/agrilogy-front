@@ -224,9 +224,14 @@ SESSION_COOKIE_SAMESITE = "Lax"
 CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=['http://localhost:3000'])
 
 
+# CRONJOBS = [
+#     ('* * * * *', 'agriBack.cron.send_data.SendDataCronJob', '>> /var/log/cron.log 2>&1'),
+#     ('* * * * *', 'agriBack.cron.send', '>> /var/log/cron2.log 2>&1'),
+# ]
+
+
 CRONJOBS = [
-    ('* * * * *', 'agriBack.cron.send_data.SendDataCronJob', '>> /var/log/cron.log 2>&1'),
-    ('* * * * *', 'agriBack.cron.send', '>> /var/log/cron2.log 2>&1'),
+    ('* * * * *', 'agriBack.scripts.log_time')  # Run every minute
 ]
 
 

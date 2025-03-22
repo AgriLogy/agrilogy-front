@@ -1,30 +1,17 @@
 
 services:
-  agrydevops:
-    build: ./Devops/server
-    ports:
-      - "9090:9090"
-    container_name: agroserver
-    volumes:
-      - data_devops:/app
-      - shared_data:/shared
-    networks:
-      - agro
-    restart: unless-stopped
+  # agrydevops:
+  #   build: ./Devops/server
+  #   ports:
+  #     - "9090:9090"
+  #   container_name: agroserver
+  #   volumes:
+  #     - data_devops:/app
+  #     # - shared_data:/shared
+  #   networks:
+  #     - agro
+  #   restart: unless-stopped
 
-  agrybackend:
-    build: ./back
-    ports:
-      - "8000:8000"
-    container_name: agrybackend
-    volumes:
-      - ./back:/code
-      - shared_data:/shared
-    # depends_on:
-    #   - agrydata
-    networks:
-      - agro
-    restart: unless-stopped
   
   # agrydata:
   #   container_name: agrydata
@@ -49,42 +36,55 @@ services:
   #   restart: unless-stopped
 
 
-  agryadminer:
-    container_name: agryadminer
-    image: adminer
-    ports:
-      - "8080:8080"
-    networks:
-      - agro
-    restart: unless-stopped
+  # agryadminer:
+  #   container_name: agryadminer
+  #   image: adminer
+  #   ports:
+  #     - "8080:8080"
+  #   networks:
+  #     - agro
+  #   restart: unless-stopped
   
-  agryfrontend:
-    build:
-      context: ./front
-      dockerfile: Dockerfile
-    image: frontend
-    container_name: agryfrontend
+  # agryfrontend:
+  #   build:
+  #     context: ./front
+  #     dockerfile: Dockerfile
+  #   image: frontend
+  #   container_name: agryfrontend
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - agrybackend
+  #   volumes:
+  #     - ./front:/app
+  #     - /app/node_modules
+  #   environment:
+  #     - HOST=0.0.0.0
+  #     - CHOKIDAR_USEPOLLING=true 
+  #   command: npm run dev
+  #   networks:
+  #     - agro
+  #   restart: unless-stopped
+
+  agrybackend:
+    build: ./back
     ports:
-      - "3000:3000"
-    depends_on:
-      - agrybackend
+      - "8000:8000"
+    container_name: agrybackend
     volumes:
-      - ./front:/app
-      - /app/node_modules
-    environment:
-      - HOST=0.0.0.0
-      - CHOKIDAR_USEPOLLING=true 
-    command: npm run dev
+      - ./back:/code
+      - shared_data:/shared
+    # depends_on:
+    #   - agrydata
     networks:
       - agro
     restart: unless-stopped
-
 
 networks:
   agro:
 
 volumes:
-  data_database:
-  data_devops:
+  # data_database:
+  # data_devops:
   shared_data:
 
