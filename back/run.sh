@@ -13,7 +13,7 @@ python manage.py migrate
 
 # Add crontab jobs (this writes them into the crontab file)
 # Uncomment if you want to dynamically add cron jobs from Django
-python manage.py crontab add
+# python manage.py crontab add
 
 # Start cron in the background
 # echo "Starting cron..."

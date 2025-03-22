@@ -1,33 +1,36 @@
 FROM python:3.9
 
-ENV PYTHONUNBUFFERED 1
-
+ENV PYTHONUNBUFFERED=1
 WORKDIR /code
-RUN mkdir -p /var/log && chmod -R 777 /var/log
 
-# Install dependencies
-RUN apt-get update && apt-get install -y \
-    cron \
-    && rm -rf /var/lib/apt/lists/*
+# Install system packages
+RUN apt-get update && apt-get install -y cron && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
+# Copy and install Python packages
 COPY requirements.txt /code/
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Install django-crontab
-RUN pip install django-crontab
-
-# Copy the app and crontab files
+# Copy project files
 COPY . /code/
 
-RUN mkdir -p /shared && chmod -R 777 /shared
+# Install django-crontab (if not in requirements.txt)
+RUN pip install django-crontab
 
-# Set up cron jobs using django-crontab
-RUN python manage.py crontab add
+# Add a crontab file to /etc/cron.d/
+RUN echo "* * * * * cd /code && python manage.py runcrons >> /var/log/cron.log 2>&1" > /etc/cron.d/django-cron
 
-# Give permission to run.sh
-RUN chmod +x run.sh
+# Give execution rights on the cron job
+RUN chmod 0644 /etc/cron.d/django-cron
 
-# Start cron and Django
-CMD ["bash", "run.sh"]
+# Apply cron job
+RUN crontab /etc/cron.d/django-cron
+
+# Create the log file to be able to run tail
+RUN touch /var/log/cron.log
+
+# Entrypoint script
+COPY run.sh /run.sh
+RUN chmod +x /run.sh
+
+CMD ["bash", "/run.sh"]

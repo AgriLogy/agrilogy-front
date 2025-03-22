@@ -25,14 +25,13 @@ CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=['http://localho
 # Application definition
 
 INSTALLED_APPS = [
-    'django_cron',
-    'django_crontab',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_cron',
     'rest_framework',
     'analytics',
     'corsheaders',
@@ -230,9 +229,9 @@ CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=['http://localho
 # ]
 
 
-CRONJOBS = [
-    ('* * * * *', 'agriBack.scripts.log_time')  # Run every minute
-]
+# CRONJOBS = [
+#     ('* * * * *', 'agriBack.scripts.log_time')  # Run every minute
+# ]
 
 
 
@@ -259,3 +258,7 @@ CRONJOBS = [
 #         },
 #     },
 # }
+
+CRON_CLASSES = [
+    "agriBack.cron.job.MyCronJob",
+]
