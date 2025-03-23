@@ -1,8 +1,8 @@
 [{
-	"user": "zak",
+	"user": "user1",
 	"precipitation_rate": 15,
 	"humidity_weather": 70.0,
-	"wind_speed": 35.42,
+	"wind_speed": 40.42,
 	"solar_radiation": 420.2580178017637,
 	"pressure_weather": 900.0986914504062,
 	"wind_direction": 40.0,
@@ -17,14 +17,14 @@
 	"ph_soil": 8.996640124427866,
 	"soil_temperature_low": 18.0,
 	"soil_temperature_high": 20.0,
-	"timestamp" : "2025-03-15 00:05:08.066"
+	"timestamp" : "2025-03-15 00:08:08.066"
 },
 
 {
-	"user": "zak",
+	"user": "user1",
 	"precipitation_rate": 15,
 	"humidity_weather": 70.0,
-	"wind_speed": 35.42,
+	"wind_speed": 50.42,
 	"solar_radiation": 420.2580178017637,
 	"pressure_weather": 900.0986914504062,
 	"wind_direction": 40.0,
@@ -39,6 +39,6 @@
 	"ph_soil": 8.996640124427866,
 	"soil_temperature_low": 18.0,
 	"soil_temperature_high": 20.0,
-	"timestamp" : "2025-03-15 00:05:28.066"
+	"timestamp" : "2025-03-15 00:08:28.066"
 }
 ]
