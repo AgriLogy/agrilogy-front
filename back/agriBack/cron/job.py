@@ -21,7 +21,7 @@ class MyCronJob(CronJobBase):
 
     def do(self):
         try:
-            LOG_FILE_PATH = '/home/zak/agrilogy/back/send_script.log'
+            LOG_FILE_PATH = '/shared/send_script.log'
             os.makedirs(os.path.dirname(LOG_FILE_PATH), exist_ok=True)
 
             logging.basicConfig(
@@ -30,7 +30,7 @@ class MyCronJob(CronJobBase):
                 format='%(asctime)s [%(levelname)s]: %(message)s',
             )
 
-            json_file_path = './requests.json'
+            json_file_path = '/shared/requests.json'
 
             try:
                 with open(json_file_path, 'r') as f:
@@ -50,7 +50,7 @@ class MyCronJob(CronJobBase):
                 except ObjectDoesNotExist:
                     msg = f"❌ User with username '{username}' does not exist. Skipping."
                     logging.warning(msg)
-                    continue  # Important!
+                    # continue  # Important!
 
                 # Parse timestamp with fallback
                 timestamp_str = data.get('timestamp')

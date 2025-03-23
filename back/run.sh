@@ -4,6 +4,13 @@
 # touch /var/log/cron.log
 # tail -f /var/log/cron.log &  # Uncomment this line for debugging
 
+# Start cron service
+service cron start
+
+# Tail the cron log in the background (optional but useful for debugging)
+touch /var/log/cron.log
+tail -f /var/log/cron.log &
+
 # Run database migrations
 python manage.py makemigrations
 python manage.py migrate

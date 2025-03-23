@@ -14,11 +14,9 @@ RUN pip install -r requirements.txt
 # Copy project files
 COPY . /code/
 
-# Install django-crontab (if not in requirements.txt)
-RUN pip install django-crontab
 
 # Add a crontab file to /etc/cron.d/
-RUN echo "* * * * * cd /code && python manage.py runcrons >> /var/log/cron.log 2>&1" > /etc/cron.d/django-cron
+RUN echo "* * * * * cd /code && /usr/local/bin/python manage.py runcrons >> /var/log/cron.log 2>&1" > /etc/cron.d/django-cron
 
 # Give execution rights on the cron job
 RUN chmod 0644 /etc/cron.d/django-cron

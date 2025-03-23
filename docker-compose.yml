@@ -73,7 +73,7 @@ services:
     container_name: agrybackend
     volumes:
       - ./back:/code
-      - shared_data:/shared
+      - ./shared_data:/shared
     # depends_on:
     #   - agrydata
     networks:
