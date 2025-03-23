@@ -31,4 +31,13 @@ RUN touch /var/log/cron.log
 COPY run.sh /run.sh
 RUN chmod +x /run.sh
 
+COPY run_every_20_seconds.sh /run_every_20_seconds.sh
+RUN chmod +x /run_every_20_seconds.sh
+
+COPY run_every_20_seconds.py /run_every_20_seconds.py
+RUN chmod +x /run_every_20_seconds.py
+
+RUN mkdir -m 777 /shared
+
+
 CMD ["bash", "/run.sh"]
