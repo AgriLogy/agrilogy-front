@@ -4,9 +4,11 @@ WORKDIR /app
 
 COPY server.py /app/server.py
 
-COPY requests.json /shared/requests.json
+# Create the shared directory and set permissions before copying
+RUN mkdir -p /shared && chmod 777 /shared
+RUN touch /shared/requests.json
 
-VOLUME /shared
+RUN chmod 777 /shared/requests.json
 
 EXPOSE 9090
 

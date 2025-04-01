@@ -1,44 +1,77 @@
-[{
-	"user": "user1",
-	"precipitation_rate": 15,
-	"humidity_weather": 70.0,
-	"wind_speed": 40.42,
-	"solar_radiation": 420.2580178017637,
-	"pressure_weather": 900.0986914504062,
-	"wind_direction": 40.0,
-	"temperature_weather": 10,
-	"ec_soil_medium": 21.135386931863543,
-	"soil_temperature_medium": 18.0,
-	"soil_ec_high": 15.7041199760665933,
-	"ec_soil_low": 7.7191243493748917,
-	"soil_moisture_medium": 25.0,
-	"soil_moisture_high": 30.0,
-	"soil_moisture_low": 55.0,
-	"ph_soil": 8.996640124427866,
-	"soil_temperature_low": 18.0,
-	"soil_temperature_high": 20.0,
-	"timestamp" : "2025-03-15 00:08:08.066"
-},
-
-{
-	"user": "user1",
-	"precipitation_rate": 15,
-	"humidity_weather": 70.0,
-	"wind_speed": 50.42,
-	"solar_radiation": 420.2580178017637,
-	"pressure_weather": 900.0986914504062,
-	"wind_direction": 40.0,
-	"temperature_weather": 10,
-	"ec_soil_medium": 21.135386931863543,
-	"soil_temperature_medium": 18.0,
-	"soil_ec_high": 15.7041199760665933,
-	"ec_soil_low": 7.7191243493748917,
-	"soil_moisture_medium": 25.0,
-	"soil_moisture_high": 30.0,
-	"soil_moisture_low": 55.0,
-	"ph_soil": 8.996640124427866,
-	"soil_temperature_low": 18.0,
-	"soil_temperature_high": 20.0,
-	"timestamp" : "2025-03-15 00:08:28.066"
-}
+[
+    {
+        "key1": "value1",
+        "key2": "value2",
+        "timestamp": "2025-04-01T11:27:07.156560"
+    },
+    {
+        "key1": "value1",
+        "key2": "value2",
+        "timestamp": "2025-04-01T11:27:08.283700"
+    },
+    {
+        "key1": "value1",
+        "key2": "value2",
+        "timestamp": "2025-04-01T11:27:08.937024"
+    },
+    {
+        "key1": "value1",
+        "key2": "value2",
+        "timestamp": "2025-04-01T11:27:09.370065"
+    },
+    {
+        "key1": "value1",
+        "key2": "value2",
+        "timestamp": "2025-04-01T11:27:09.754740"
+    },
+    {
+        "key1": "value1",
+        "key2": "value2",
+        "timestamp": "2025-04-01T11:27:10.154304"
+    },
+    {
+        "key1": "value1",
+        "key2": "value2",
+        "timestamp": "2025-04-01T11:27:10.537893"
+    },
+    {
+        "key1": "value1",
+        "key2": "value2",
+        "timestamp": "2025-04-01T11:27:10.946074"
+    },
+    {
+        "key1": "value1",
+        "key2": "value2",
+        "timestamp": "2025-04-01T11:27:11.363106"
+    },
+    {
+        "key1": "value1",
+        "key2": "value2",
+        "timestamp": "2025-04-01T11:27:11.763142"
+    },
+    {
+        "key1": "value1",
+        "key2": "value2",
+        "timestamp": "2025-04-01T11:27:12.169223"
+    },
+    {
+        "key1": "value1",
+        "key2": "value2",
+        "timestamp": "2025-04-01T11:27:12.547728"
+    },
+    {
+        "key1": "value1",
+        "key2": "value2",
+        "timestamp": "2025-04-01T11:27:12.936338"
+    },
+    {
+        "key1": "value1",
+        "key2": "value2",
+        "timestamp": "2025-04-01T11:27:13.378748"
+    },
+    {
+        "key1": "value1",
+        "key2": "value2",
+        "timestamp": "2025-04-01T11:27:14.504680"
+    }
 ]

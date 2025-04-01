@@ -1,87 +1,92 @@
-
 services:
-  # agrydevops:
-  #   build: ./Devops/server
-  #   ports:
-  #     - "9090:9090"
-  #   container_name: agroserver
-  #   volumes:
-  #     - data_devops:/app
-  #     # - shared_data:/shared
-  #   networks:
-  #     - agro
-  #   restart: unless-stopped
-
-  
-
-
-  agryadminer:
-    container_name: agryadminer
-    image: adminer
+  agrydevops:
+    build: ./Devops/server
     ports:
-      - "8080:8080"
-    networks:
-      - agro
-    restart: unless-stopped
-  
-  agryfrontend:
-    build:
-      context: ./front
-      dockerfile: Dockerfile
-    image: frontend
-    container_name: agryfrontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - agrybackend
+      - "9090:9090"
+    container_name: agroserver
     volumes:
-      - ./front:/app
-      - /app/node_modules
-    environment:
-      - HOST=0.0.0.0
-      - CHOKIDAR_USEPOLLING=true 
-    command: npm run dev
+      - ./shared_data:/shared  # Ensuring requests.json is shared
     networks:
       - agro
     restart: unless-stopped
-
-  agrydata:
-      container_name: agrydata
-      image: postgres:17
-      volumes:
-        - data_database:/var/lib/postgresql/data
-      env_file: ./back/.env                # Make sure this file exists!
-      healthcheck:
-        test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
-        interval: 1s
-        timeout: 5s
-        retries: 10
-      ports:
-        - "5432:5432"
-      networks:
-        - agro
-      restart: unless-stopped
-
-  agrybackend:
-      build: ./back
-      ports:
-        - "8000:8000"
-      container_name: agrybackend
-      volumes:
-        - ./back:/code
-        - ./shared_data:/shared
-      depends_on:
-        agrydata:
-          condition: service_healthy    # Wait for Postgres to be ready!
-      env_file: back/.env               # Pass DB creds to Django
-      networks:
-        - agro
-      restart: unless-stopped
 
 networks:
   agro:
 
 volumes:
-  data_database:
   shared_data:
+
+
+
+
+
+  # agryadminer:
+  #   container_name: agryadminer
+  #   image: adminer
+  #   ports:
+  #     - "8080:8080"
+  #   networks:
+  #     - agro
+  #   restart: unless-stopped
+  
+  # agryfrontend:
+  #   build:
+  #     context: ./front
+  #     dockerfile: Dockerfile
+  #   image: frontend
+  #   container_name: agryfrontend
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - agrybackend
+  #   volumes:
+  #     - ./front:/app
+  #     - /app/node_modules
+  #   environment:
+  #     - HOST=0.0.0.0
+  #     - CHOKIDAR_USEPOLLING=true 
+  #   command: npm run dev
+  #   networks:
+  #     - agro
+  #   restart: unless-stopped
+
+  # agrydata:
+  #     container_name: agrydata
+  #     image: postgres:17
+  #     volumes:
+  #       - data_database:/var/lib/postgresql/data
+  #     env_file: ./back/.env                # Make sure this file exists!
+  #     healthcheck:
+  #       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+  #       interval: 1s
+  #       timeout: 5s
+  #       retries: 10
+  #     ports:
+  #       - "5432:5432"
+  #     networks:
+  #       - agro
+  #     restart: unless-stopped
+
+  # agrybackend:
+  #     build: ./back
+  #     ports:
+  #       - "8000:8000"
+  #     container_name: agrybackend
+  #     volumes:
+  #       - ./back:/code
+  #       - ./shared_data:/shared
+  #     depends_on:
+  #       agrydata:
+  #         condition: service_healthy    # Wait for Postgres to be ready!
+  #     env_file: back/.env               # Pass DB creds to Django
+  #     networks:
+  #       - agro
+  #     restart: unless-stopped
+
+# networks:
+#   agro:
+
+# volumes:
+#   data_database:
+#   shared_data:
 
