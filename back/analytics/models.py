@@ -1,8 +1,13 @@
-from django.db import models
-from django.conf import settings
+
 from datetime import datetime
 
-# User table remains as it is in your CustomUser.models module.
+from django.db.models.signals import post_save
+from django.db import models
+from django.conf import settings
+from django.dispatch import receiver
+
+
+
 
 class Notification(models.Model):
     yesterday_temperature = models.DecimalField(max_digits=5, decimal_places=2, help_text="Temperature recorded yesterday in Celsius.")
@@ -22,16 +27,6 @@ class Notification(models.Model):
     
     def __str__(self):
         return f"Alert on {self.last_irrigation_date} (Notification sent on {self.notification_date})"
-
-from django.db import models
-from django.db import models
-from django.db import models
-from django.conf import settings
-from django.db import models
-from django.conf import settings
-
-from django.db import models
-from django.conf import settings
 
 class Alert(models.Model):
     # Condition Choices
@@ -109,9 +104,38 @@ class NotificationsPerUser(models.Model):
     def __str__(self):
         return f"{self.user.username} - Notification on {self.notification.notification_date}"
 
-class Sensor(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_sensors')
-    # timestamp = models.DateTimeField(auto_now_add=True, help_text="Timestamp when the sensor data was recorded.")
+
+class Zone(models.Model):
+    # Basic fields
+    name = models.CharField(max_length=100)  # Example: "zone1", "zone2", etc.
+    location = models.CharField(max_length=255, blank=True, null=True)  # You can use this for additional info about the zone
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="zones")
+
+    # Additional fields
+    space = models.FloatField(help_text="The area of the zone in square meters.")  # Size of the zone
+    kc = models.FloatField(help_text="The crop coefficient (kc) for the zone.")  # Crop coefficient (used in irrigation calculations)
+    soil_type = models.CharField(max_length=50, choices=[('clay', 'Clay'), ('loamy', 'Loamy'), ('sandy', 'Sandy'), ('others', 'Others')], default='loamy', help_text="Type of soil in the zone.")
+    critical_moisture_threshold = models.FloatField(help_text="Critical soil moisture threshold in percentage.")
+
+    def __str__(self):
+        return f"Zone {self.name} for {self.user.username}"
+
+
+
+    def __str__(self):
+        return f"Zone {self.name} for {self.user.username}"
+
+
+class ZonePerUser(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"Zone {self.zone.name} assigned to {self.user.username}"
+
+
+class Captor(models.Model):
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="captors")
     timestamp = models.DateTimeField(help_text="Timestamp when the sensor data was recorded.")
     precipitation_rate = models.FloatField(help_text="Precipitation rate in mm/h.")
     humidity_weather = models.FloatField(help_text="Humidity from the weather sensor as a percentage.")
@@ -132,7 +156,7 @@ class Sensor(models.Model):
     soil_temperature_high = models.FloatField(help_text="Soil temperature at high depth in Celsius.")
 
     def __str__(self):
-        return f"{self.timestamp} - Sensors for {self.user.username}"
+        return f"Sensor data for Zone {self.zone.name} at {self.timestamp}"
 
 
 class GraphName(models.Model):
@@ -186,10 +210,6 @@ class SensorColor(models.Model):
 
     def __str__(self):
         return f"Graph colors for {self.user.username}"
-
-
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_graph_names(sender, instance, created, **kwargs):
