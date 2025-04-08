@@ -1,21 +1,35 @@
 "use client";
-import { Grid, GridItem } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
+import { Grid, GridItem } from "@chakra-ui/react";
+import ModifyUser from "@/app/components/admin/ModifyUser";
 import HeaderAdmin from "@/app/components/main/HeaderAdmin";
 import AdminSidebar from "@/app/components/main/AdminSidebar";
 import ListeZones from "@/app/components/admin/ListeZones";
+type Params = {
+  user: string;
+};
 
-const Page = () => {
+const ModifyUserpage = ({ params }: { params: Params }) => {
   const { textColor, navBgColor } = useColorModeStyles();
+  const { user } = params;
 
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
   return (
     <Grid
       templateAreas={{
         base: `"header"
-               "main"`,
+				   "main"`,
         md: `"header header"
-             "nav main"`,
+				 "nav main"`,
       }}
       gridTemplateRows={{ base: "auto 1fr", md: "50px 1fr" }}
       gridTemplateColumns={{ base: "1fr", md: "50px 1fr" }}
@@ -41,10 +55,11 @@ const Page = () => {
         overflowY="auto"
         height="100%"
       >
-        <ListeZones />
+        {/* <ModifyUser user={user} /> */}
+        <ListeZones user={user}/>
       </GridItem>
     </Grid>
   );
 };
 
-export default Page;
+export default ModifyUserpage;

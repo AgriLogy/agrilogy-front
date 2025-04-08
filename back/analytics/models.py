@@ -108,7 +108,7 @@ class NotificationsPerUser(models.Model):
 class Zone(models.Model):
     # Basic fields
     name = models.CharField(max_length=100)  # Example: "zone1", "zone2", etc.
-    location = models.CharField(max_length=255, blank=True, null=True)  # You can use this for additional info about the zone
+    # location = models.CharField(max_length=255, blank=True, null=True)  # You can use this for additional info about the zone
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="zones")
 
     # Additional fields
@@ -134,8 +134,8 @@ class ZonePerUser(models.Model):
         return f"Zone {self.zone.name} assigned to {self.user.username}"
 
 
-class Captor(models.Model):
-    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="captors")
+class Sensor(models.Model):
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="Sensors")
     timestamp = models.DateTimeField(help_text="Timestamp when the sensor data was recorded.")
     precipitation_rate = models.FloatField(help_text="Precipitation rate in mm/h.")
     humidity_weather = models.FloatField(help_text="Humidity from the weather sensor as a percentage.")

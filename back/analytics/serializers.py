@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import SensorColor, GraphName, Notification, Alert, NotificationsPerUser, Sensor
+from .models import SensorColor, GraphName, Notification, Alert, NotificationsPerUser, Sensor, Zone, ZonePerUser
 
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,10 +24,10 @@ class NotificationsPerUserSerializer(serializers.ModelSerializer):
 class SensorSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
     et0 = serializers.SerializerMethodField()
-    timestamp = serializers.DateTimeField(format="%d-%m-%Y")  # Format the timestamp
+    timestamp = serializers.DateTimeField(format="%d-%m-%Y")   
 
     def get_et0(self, obj):
-        et0 = obj.ec_soil_medium * (obj.soil_moisture_medium / 100)  # Example formula
+        et0 = obj.ec_soil_medium * (obj.soil_moisture_medium / 100)  
         return et0
 
     class Meta:
@@ -53,3 +53,14 @@ class SensorColorSerializer(serializers.ModelSerializer):
         'soil_temperature_medium_color','soil_ec_high_color','ec_soil_low_color',
         'soil_moisture_medium_color','soil_moisture_high_color','soil_moisture_low_color',
         'ph_soil_color','soil_temperature_low_color','soil_temperature_high_color',]
+
+
+class ZoneSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Zone
+        fields = '__all__'
+
+class ZonePerUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ZonePerUser
+        fields = '__all__'

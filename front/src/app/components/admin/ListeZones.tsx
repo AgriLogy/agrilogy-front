@@ -16,6 +16,8 @@ import axiosInstance from "@/app/lib/api";
 import { ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import "@/app/styles/graphes.css";
+import FloatingButton from "./FloatingButton";
+import AddZoneFloatingButton from "./AddZoneFloatingButton";
 
 interface User {
   username: string;
@@ -24,8 +26,11 @@ interface User {
   is_staff: string;
   payement_status: string;
 }
+type Props = {
+  user: string;
+};
 
-const ListeZones = () => {
+const ListeZones = ({ user }: Props) => {
   const [users, setUsers] = useState<User[]>([]);
   const [sortConfig, setSortConfig] = useState<{
     key: keyof User | null;
@@ -38,7 +43,7 @@ const ListeZones = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axiosInstance.get<User[]>("/auth/users"); // Replace with your actual endpoint
+        const response = await axiosInstance.get<User[]>("/auth/users");
         setUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -69,6 +74,7 @@ const ListeZones = () => {
 
   return (
     <div className="container">
+      <AddZoneFloatingButton user={user} />
       <Box
         className="header"
         bg={bg}
@@ -78,182 +84,10 @@ const ListeZones = () => {
         boxShadow="sm"
       >
         <Text fontSize="2xl" fontWeight="bold" color={textColor}>
-          Liste des zones
+          {`Liste des zones de ${user}`}
         </Text>
       </Box>
-      <Box bg={bg} className="wide admin-register">
-        <TableContainer bg={navBgColor} borderRadius="lg" boxShadow="md">
-          <Table
-            variant="striped"
-            sx={{
-              border: "1px solid",
-              borderColor: textColor,
-              th: {
-                borderBottom: "2px solid",
-                borderColor: textColor,
-                textAlign: "left",
-              },
-              tr: {
-                borderBottom: "2px solid",
-                borderColor: textColor,
-                textAlign: "left",
-              },
-              td: {
-                borderBottom: "1px solid",
-                borderColor: textColor,
-                textAlign: "left",
-              },
-              tbody: { tr: { "&:nth-of-type(odd)": { bg: tableStripeClore } } },
-            }}
-          >
-            <Thead>
-              <Tr>
-                <Th color={textColor}>
-                  <Button
-                    fontWeight={700}
-                    variant="ghost"
-                    onClick={() => sortUsers("username")}
-                    color={textColor}
-                    _hover={{ color: hoverColor }}
-                    rightIcon={
-                      sortConfig.key === "username" &&
-                      sortConfig.direction === "asc" ? (
-                        <ChevronUpIcon />
-                      ) : sortConfig.key === "username" ? (
-                        <ChevronDownIcon />
-                      ) : undefined
-                    }
-                  >
-                    Username
-                  </Button>
-                </Th>
-                <Th color={textColor}>
-                  <Button
-                    fontWeight={700}
-                    variant="ghost"
-                    onClick={() => sortUsers("email")}
-                    color={textColor}
-                    _hover={{ color: hoverColor }}
-                    rightIcon={
-                      sortConfig.key === "email" &&
-                      sortConfig.direction === "asc" ? (
-                        <ChevronUpIcon />
-                      ) : sortConfig.key === "email" ? (
-                        <ChevronDownIcon />
-                      ) : undefined
-                    }
-                  >
-                    Email
-                  </Button>
-                </Th>
-                <Th color={textColor}>
-                  <Button
-                    fontWeight={700}
-                    variant="ghost"
-                    onClick={() => sortUsers("is_active")}
-                    color={textColor}
-                    _hover={{ color: hoverColor }}
-                    rightIcon={
-                      sortConfig.key === "is_active" &&
-                      sortConfig.direction === "asc" ? (
-                        <ChevronUpIcon />
-                      ) : sortConfig.key === "is_active" ? (
-                        <ChevronDownIcon />
-                      ) : undefined
-                    }
-                  >
-                    Status
-                  </Button>
-                </Th>
-                <Th color={textColor}>
-                  <Button
-                    fontWeight={700}
-                    variant="ghost"
-                    onClick={() => sortUsers("is_staff")}
-                    color={textColor}
-                    _hover={{ color: hoverColor }}
-                    rightIcon={
-                      sortConfig.key === "is_staff" &&
-                      sortConfig.direction === "asc" ? (
-                        <ChevronUpIcon />
-                      ) : sortConfig.key === "is_staff" ? (
-                        <ChevronDownIcon />
-                      ) : undefined
-                    }
-                  >
-                    Type
-                  </Button>
-                </Th>
-                <Th color={textColor}>
-                  <Button
-                    fontWeight={700}
-                    variant="ghost"
-                    onClick={() => sortUsers("payement_status")}
-                    color={textColor}
-                    _hover={{ color: hoverColor }}
-                    rightIcon={
-                      sortConfig.key === "payement_status" &&
-                      sortConfig.direction === "asc" ? (
-                        <ChevronUpIcon />
-                      ) : sortConfig.key === "payement_status" ? (
-                        <ChevronDownIcon />
-                      ) : undefined
-                    }
-                  >
-                    Payment
-                  </Button>
-                </Th>
-                <Th color={textColor}>
-                  <Button> Soil </Button>
-                </Th>
-                <Th color={textColor}>
-                  <Button> Station </Button>
-                </Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {users.map((user, index) => (
-                <Tr key={index}>
-                  <Td color={textColor}>
-                    {" "}
-                    <Link
-                      href={`/admin/users/modify/${user.username}`}
-                      color={hoverColor}
-                      textDecoration="underline"
-                    >
-                      {user.username}
-                    </Link>
-                  </Td>
-                  <Td color={textColor}>{user.email}</Td>
-                  <Td color={textColor}>
-                    {user.is_active ? "Active" : "Inactive"}
-                  </Td>
-                  <Td color={textColor}>{user.is_staff}</Td>
-                  <Td color={textColor}>{user.payement_status}</Td>
-                  <Td>
-                    <Link
-                      href={`/admin/users/data/soil/${user.username}`}
-                      color={hoverColor}
-                      textDecoration="underline"
-                    >
-                      View
-                    </Link>
-                  </Td>
-                  <Td>
-                    <Link
-                      href={`/admin/users/data/station/${user.username}`}
-                      color={hoverColor}
-                      textDecoration="underline"
-                    >
-                      View
-                    </Link>
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </TableContainer>
-      </Box>
+      <Box bg={bg} className="wide admin-register"></Box>
     </div>
   );
 };

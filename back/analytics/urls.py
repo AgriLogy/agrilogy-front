@@ -20,5 +20,6 @@ urlpatterns = [
     # path('alert/', AlertsAPIView.as_view(), name='user-alert'),
     path('admin-user-data/', UserSensorDataView.as_view(), name='admin-user-data'),
     path('admin-header/', AdminHeaderAPIView.as_view(), name='admin-header'),
+	path('/api/zones/', include(router.urls)
 	
 ]

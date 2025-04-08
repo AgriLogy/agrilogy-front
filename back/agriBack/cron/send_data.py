@@ -5,7 +5,6 @@ import json
 import django
 from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
-from django_cron import CronJobBase, Schedule
 
 # Initialize Django settings
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'agriBack.settings')

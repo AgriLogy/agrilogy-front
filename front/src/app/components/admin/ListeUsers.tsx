@@ -211,6 +211,9 @@ const ListeUsers = () => {
                 <Th color={textColor}>
                   <Button> Station </Button>
                 </Th>
+                <Th color={textColor}>
+                  <Button> Zones </Button>
+                </Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -246,6 +249,15 @@ const ListeUsers = () => {
                   <Td>
                     <Link
                       href={`/admin/users/data/station/${user.username}`}
+                      color={hoverColor}
+                      textDecoration="underline"
+                    >
+                      Voire
+                    </Link>
+                  </Td>{" "}
+                  <Td>
+                    <Link
+                      href={`/admin/zone-per-user/${user.username}`}
                       color={hoverColor}
                       textDecoration="underline"
                     >
