@@ -16,6 +16,9 @@ from .serializers import *
 from datetime import timedelta
 
 
+User = get_user_model()
+
+
 class SensorViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = SensorSerializer
@@ -285,92 +288,77 @@ class AlertViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-# views.py
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.contrib.auth import get_user_model
-from .models import Zone, ZonePerUser
-from .serializers import ZonePerUserSerializer
-
-User = get_user_model()
-
 class ZonePerUserAPIView(APIView):
+    """
+    Manage Zones for a specific User.
+    """
 
-    def post(self, request):
+    def post(self, request, username):
         """
-        Assign a Zone to a User
+        Create a new Zone and assign it to the user.
         """
-        user = request.data.get('user')
-        # zone_id = request.data.get('zone_id')
-
-        if not (user):
-            return Response({'detail': 'user_id and zone_id are required'}, status=status.HTTP_400_BAD_REQUEST)
-
         try:
-            user = User.objects.get(username=user)
+            user = User.objects.get(username=username)
         except User.DoesNotExist:
             return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-        # except Zone.DoesNotExist:
-        #     return Response({'detail': 'Zone not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        obj, created = ZonePerUser.objects.get_or_create(user=user, zone=zone)
-        serializer = ZonePerUserSerializer(obj)
-        return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+        zone_data = request.data
+        serializer = ZoneSerializer(data=zone_data)
 
-    def get(self, request):
+        if serializer.is_valid():
+            zone = serializer.save()
+            ZonePerUser.objects.create(user=user, zone=zone)
+            return Response(ZonePerUserSerializer(ZonePerUser.objects.get(user=user, zone=zone)).data,
+                            status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, username):
         """
-        List zones assigned to a user
+        List all Zones assigned to the user.
         """
-        user_id = request.query_params.get('user_id')
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        if not user_id:
-            return Response({'detail': 'user_id is required'}, status=status.HTTP_400_BAD_REQUEST)
-
-        assignments = ZonePerUser.objects.filter(user__id=user_id)
+        assignments = ZonePerUser.objects.filter(user=user)
         serializer = ZonePerUserSerializer(assignments, many=True)
         return Response(serializer.data)
 
-    def put(self, request):
+class ModZonePerUserAPIView(APIView):
+    def put(self, request, username, zone_id):
         """
-        Modify the zone assigned to a user (e.g., change zone_id)
+        Modify one of the user's Zones (update Zone fields).
         """
-        user_id = request.data.get('user_id')
-        old_zone_id = request.data.get('old_zone_id')
-        new_zone_id = request.data.get('new_zone_id')
-
-        if not all([user_id, old_zone_id, new_zone_id]):
-            return Response({'detail': 'user_id, old_zone_id, and new_zone_id are required'},
-                            status=status.HTTP_400_BAD_REQUEST)
-
         try:
-            obj = ZonePerUser.objects.get(user__id=user_id, zone__id=old_zone_id)
-        except ZonePerUser.DoesNotExist:
-            return Response({'detail': 'Original assignment not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        try:
-            new_zone = Zone.objects.get(id=new_zone_id)
+            user = User.objects.get(username=username)
+            zone = Zone.objects.get(id=zone_id, zoneperuser__user=user)
+        except User.DoesNotExist:
+            return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         except Zone.DoesNotExist:
-            return Response({'detail': 'New zone not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail': 'Zone not found or not assigned to this user'}, status=status.HTTP_404_NOT_FOUND)
 
-        obj.zone = new_zone
-        obj.save()
-        return Response(ZonePerUserSerializer(obj).data)
+        serializer = ZoneSerializer(zone, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request):
+    def delete(self, request, username, zone_id):
         """
-        Delete a zone-user assignment
+        Delete a specific Zone from the user's assigned Zones.
         """
-        user_id = request.data.get('user_id')
-        zone_id = request.data.get('zone_id')
-
-        if not (user_id and zone_id):
-            return Response({'detail': 'user_id and zone_id are required'}, status=status.HTTP_400_BAD_REQUEST)
-
         try:
-            obj = ZonePerUser.objects.get(user__id=user_id, zone__id=zone_id)
-            obj.delete()
-            return Response({'detail': 'Assignment deleted'}, status=status.HTTP_204_NO_CONTENT)
-        except ZonePerUser.DoesNotExist:
-            return Response({'detail': 'Assignment not found'}, status=status.HTTP_404_NOT_FOUND)
+            user = User.objects.get(username=username)
+            zone = Zone.objects.get(id=zone_id, zoneperuser__user=user)
+        except User.DoesNotExist:
+            return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Zone.DoesNotExist:
+            return Response({'detail': 'Zone not found or not assigned to this user'}, status=status.HTTP_404_NOT_FOUND)
 
+        # Remove the assignment
+        ZonePerUser.objects.filter(user=user, zone=zone).delete()
+        # Optionally delete the zone itself
+        zone.delete()
+
+        return Response({'detail': 'Zone deleted'}, status=status.HTTP_204_NO_CONTENT)

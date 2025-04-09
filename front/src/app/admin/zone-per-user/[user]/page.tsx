@@ -2,10 +2,9 @@
 import React, { useEffect, useState } from "react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import { Grid, GridItem } from "@chakra-ui/react";
-import ModifyUser from "@/app/components/admin/ModifyUser";
 import HeaderAdmin from "@/app/components/main/HeaderAdmin";
 import AdminSidebar from "@/app/components/main/AdminSidebar";
-import ListeZones from "@/app/components/admin/ListeZones";
+import ZoneMain from "@/app/components/admin/ZoneMain";
 type Params = {
   user: string;
 };
@@ -56,7 +55,7 @@ const ModifyUserpage = ({ params }: { params: Params }) => {
         height="100%"
       >
         {/* <ModifyUser user={user} /> */}
-        <ListeZones user={user}/>
+        <ZoneMain user={user}/>
       </GridItem>
     </Grid>
   );

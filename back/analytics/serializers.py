@@ -61,6 +61,9 @@ class ZoneSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ZonePerUserSerializer(serializers.ModelSerializer):
+    zone = ZoneSerializer(read_only=True)  # Replace zone ID with full zone data
+
     class Meta:
         model = ZonePerUser
         fields = '__all__'
+
