@@ -106,32 +106,33 @@ class NotificationsPerUser(models.Model):
 
 
 class Zone(models.Model):
-    # Basic fields
-    name = models.CharField(max_length=100)  # Example: "zone1", "zone2", etc.
-    # location = models.CharField(max_length=255, blank=True, null=True)  # You can use this for additional info about the zone
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="zones")
+        # Basic fields
+        name = models.CharField(max_length=100)  # Example: "zone1", "zone2", etc.
+        # location = models.CharField(max_length=255, blank=True, null=True)  # You can use this for additional info about the zone
+        user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="zones")
 
-    # Additional fields
-    space = models.FloatField(help_text="The area of the zone in square meters.")  # Size of the zone
-    kc = models.FloatField(help_text="The crop coefficient (kc) for the zone.")  # Crop coefficient (used in irrigation calculations)
-    soil_type = models.CharField(max_length=50, choices=[('clay', 'Clay'), ('loamy', 'Loamy'), ('sandy', 'Sandy'), ('others', 'Others')], default='loamy', help_text="Type of soil in the zone.")
-    critical_moisture_threshold = models.FloatField(help_text="Critical soil moisture threshold in percentage.")
+        # Additional fields
+        space = models.FloatField(help_text="The area of the zone in square meters.")  # Size of the zone
+        kc = models.FloatField(help_text="The crop coefficient (kc) for the zone.")  # Crop coefficient (used in irrigation calculations)
+        soil_type = models.CharField(max_length=50, choices=[('clay', 'Clay'), ('loamy', 'Loamy'), ('sandy', 'Sandy'), ('others', 'Others')], default='loamy', help_text="Type of soil in the zone.")
+        critical_moisture_threshold = models.FloatField(help_text="Critical soil moisture threshold in percentage.")
+        # flow_rate = models.FloatField(help_text="Flow rate of water in liters per second.")
 
-    def __str__(self):
-        return f"Zone {self.name} for {self.user.username}"
+        def __str__(self):
+            return f"Zone {self.name} for {self.user.username}"
 
 
 
-    def __str__(self):
-        return f"Zone {self.name} for {self.user.username}"
+        def __str__(self):
+            return f"Zone {self.name} for {self.user.username}"
 
 
 class ZonePerUser(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    zone = models.ForeignKey(Zone, on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return f"Zone {self.zone.name} assigned to {self.user.username}"
+        user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+        zone = models.ForeignKey(Zone, on_delete=models.CASCADE)
+        
+        def __str__(self):
+            return f"Zone {self.zone.name} assigned to {self.user.username}"
 
 
 class Sensor(models.Model):
@@ -154,6 +155,7 @@ class Sensor(models.Model):
     ph_soil = models.FloatField(help_text="Soil pH level.")
     soil_temperature_low = models.FloatField(help_text="Soil temperature at low depth in Celsius.")
     soil_temperature_high = models.FloatField(help_text="Soil temperature at high depth in Celsius.")
+    # water_flow_sensor = models.FloatField(help_text="Water flow sensor reading in liters per second.")
 
     def __str__(self):
         return f"Sensor data for Zone {self.zone.name} at {self.timestamp}"

@@ -11,7 +11,6 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Text,
   Input,
   Select,
   useToast,

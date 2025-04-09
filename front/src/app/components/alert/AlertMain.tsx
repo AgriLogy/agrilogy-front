@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Text, VStack, useToast } from "@chakra-ui/react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import LoadingSpinner from "../common/LoadingSpinner";
-import axiosInstance from "@/app/lib/api";
+import api from "@/app/lib/api";
 import FloatingButton from "./FloatingButton";
 import FormModalUpdate from "./FormModalUpdate";
 import FormModalCreate from "./FormModalCreate";
@@ -56,7 +56,7 @@ const AlertMain = () => {
 
   const fetchAlerts = async () => {
     try {
-      const response = await axiosInstance.get("/api/alert/");
+      const response = await api.get("/api/alert/");
       setAlerts(response.data);
     } catch (error) {
       console.error("Error fetching alerts:", error);
@@ -71,7 +71,7 @@ const AlertMain = () => {
 
   const handleDeleteAlert = async (alertId: number) => {
     try {
-      await axiosInstance.delete(`/api/alert/${alertId}/`);
+      await api.delete(`/api/alert/${alertId}/`);
       toast({
         title: "Alerte supprimée",
         status: "success",

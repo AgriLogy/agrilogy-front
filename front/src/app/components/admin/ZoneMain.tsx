@@ -6,6 +6,7 @@ import axiosInstance from "@/app/lib/api";
 import ZoneCard from "./ZoneCard";
 import ZoneEditModal from "./ZoneEditModal"; // Import ZoneEditModal
 import { Zone, ZoneWrapper } from "@/app/types";
+import ZoneAddFloatingButton from "./ZoneAddFloatingButton";
 
 type Props = {
   user: string;
@@ -48,16 +49,25 @@ const ZoneMain = ({ user }: Props) => {
   if (error) return <LoadingSpinner />;
 
   return (
-    <div className="container">
-      <Box bg={bg} className="header">
+    <div className="container" >
+      <Box
+        className="header wide"
+        bg={bg}
+        p={4}
+        mb={4}
+        margin={1}
+        mt={2}
+        borderRadius="md"
+        boxShadow="sm"
+      >
         <Text color={textColor}>Liste des zones pour {user} </Text>
       </Box>
-      <VStack mt={4} spacing={4} align="stretch" className="wide">
+      <VStack mt={4} spacing={4} align="stretch" className=" header wide">
         {zones.map((zoneWrapper) => (
-          <ZoneCard
+          <ZoneCard 
             key={zoneWrapper.zone.id}
             zone={zoneWrapper.zone}
-            onClick={() => handleZoneClick(zoneWrapper.zone)} // Trigger the modal on click
+            onClick={() => handleZoneClick(zoneWrapper.zone)}
           />
         ))}
       </VStack>
@@ -72,6 +82,7 @@ const ZoneMain = ({ user }: Props) => {
           onUpdate={handleUpdateZone} // Pass the update function
         />
       )}
+      <ZoneAddFloatingButton user={user} />
     </div>
   );
 };

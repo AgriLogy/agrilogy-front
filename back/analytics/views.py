@@ -1,12 +1,14 @@
 from django.db.models import Q
 from django.contrib.auth import get_user_model
+from django.views.decorators.csrf import csrf_exempt
 from django.utils.dateparse import parse_date, parse_datetime
+from django.utils.decorators import method_decorator
 from django.utils.timezone import now
 
 from rest_framework import viewsets, status
 
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -179,7 +181,6 @@ User = get_user_model()
 
 class UserSensorDataView(APIView):
     permission_classes = [IsAdminUser]  # Restrict access to admin users only
-    # permission_classes = [AllowAny]  # Restrict access to admin users only
 
     def post(self, request):
         # Get user parameter from request
@@ -287,29 +288,34 @@ class AlertViewSet(viewsets.ModelViewSet):
         # Automatically assign the logged-in user on create
         serializer.save(user=self.request.user)
 
-
+# @method_decorator(csrf_exempt, name='dispatch')
 class ZonePerUserAPIView(APIView):
+    # authentication_classes = [JWTAuthentication]
+    permission_classes = [AllowAny]
     """
     Manage Zones for a specific User.
     """
 
     def post(self, request, username):
-        """
-        Create a new Zone and assign it to the user.
-        """
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
             return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        zone_data = request.data
+        # Remove user from incoming data if it exists
+        zone_data = request.data.copy()
+        zone_data.pop('user', None)  # <- this line is important
+
         serializer = ZoneSerializer(data=zone_data)
 
         if serializer.is_valid():
-            zone = serializer.save()
+            zone = serializer.save(user=user)
             ZonePerUser.objects.create(user=user, zone=zone)
-            return Response(ZonePerUserSerializer(ZonePerUser.objects.get(user=user, zone=zone)).data,
-                            status=status.HTTP_201_CREATED)
+            return Response(
+                ZonePerUserSerializer(ZonePerUser.objects.get(user=user, zone=zone)).data,
+                status=status.HTTP_201_CREATED
+            )
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, username):
@@ -325,6 +331,7 @@ class ZonePerUserAPIView(APIView):
         serializer = ZonePerUserSerializer(assignments, many=True)
         return Response(serializer.data)
 
+@method_decorator(csrf_exempt, name='dispatch')
 class ModZonePerUserAPIView(APIView):
     def put(self, request, username, zone_id):
         """

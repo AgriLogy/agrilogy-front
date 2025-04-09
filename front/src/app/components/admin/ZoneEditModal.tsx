@@ -33,13 +33,7 @@ interface Props {
   onUpdate: (zone: Zone) => void;
 }
 
-const ZoneEditModal: React.FC<Props> = ({
-  isOpen,
-  onClose,
-  zone,
-  username,
-  onUpdate,
-}) => {
+const ZoneEditModal = ({ isOpen, onClose, zone, username, onUpdate }: Props) => {
   const [formData, setFormData] = useState<Zone>(zone);
   const toast = useToast();
 

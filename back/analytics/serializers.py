@@ -59,6 +59,8 @@ class ZoneSerializer(serializers.ModelSerializer):
     class Meta:
         model = Zone
         fields = '__all__'
+        read_only_fields = ['user']  # 👈 this fixes your issue
+
 
 class ZonePerUserSerializer(serializers.ModelSerializer):
     zone = ZoneSerializer(read_only=True)  # Replace zone ID with full zone data
