@@ -13,19 +13,18 @@ load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY', '+@*@loo#%*ay6*m8w1xy7)l2+$iueppj)ns(nj0r6^@+@ujokd')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-# ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '0.0.0.0,0.0.0.0,0.0.0.0,192.168.1.184,192.168.1.184:3000,http://0.0.0.0:3000, agrybackend, agryfrontend').split(',')
 
 ALLOWED_HOSTS = ['*']
 
 # === CORS CONFIG ===
 # CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://0.0.0.0:3000').split(',')
 
-CORS_ALLOW_ALL_ORIGINS = True
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
-#     "http://0.0.0.0:3000",
-#     "http://agryfrontend:3000"
-# ]
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost",
+    "http://0.0.0.0",
+    "http://157.245.43.196"
+]
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_METHODS = (
