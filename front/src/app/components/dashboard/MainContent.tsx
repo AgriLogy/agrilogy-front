@@ -41,7 +41,9 @@ const MainContent = () => {
     return <LoadingSpinner />;
   }
 
-  if (error) {
+  if (error ) {
+    if (error === "Network Error")
+        window.location.href = "/login";
     return <Text color="red.500">Error: {error}</Text>;
   }
 
