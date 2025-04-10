@@ -9,9 +9,9 @@ import ConductivityIrrigationGraph from "./ConductivityIrrigationGraph";
 // import CumulIrrigationGraph from "./CumulIrrigationGraph";
 import TemperatureGraph from "./TemperatureGraph";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import LoadingSpinner from "../common/LoadingSpinner";
 import axiosInstance from "@/app/lib/api";
 import { SensorData } from "@/app/data/dashboard/data";
+import EmptyBox from "../common/EmptyBox";
 
 const AnalyticsMain: React.FC = () => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
@@ -46,7 +46,7 @@ const AnalyticsMain: React.FC = () => {
     fetchData();
   }, [startDate, endDate]);
 
-  if (error) return <LoadingSpinner />;
+  if (error) return <EmptyBox />;
 
   return (
     <div className="container">

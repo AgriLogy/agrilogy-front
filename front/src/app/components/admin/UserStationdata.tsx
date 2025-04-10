@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Box, Text } from "@chakra-ui/react";
-import LoadingSpinner from "../common/LoadingSpinner";
 import axiosInstance from "@/app/lib/api";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import DateRangePicker from "../analytics/DateRangePicker";
@@ -17,6 +16,7 @@ import WindSpeedGraph from "../station/WindSpeedGraph";
 import "@/app/styles/graphes.css";
 
 import "./style.css";
+import EmptyBox from "../common/EmptyBox";
 
 type Props = {
   user: string;
@@ -62,7 +62,7 @@ const UserStationdata: React.FC<Props> = ({ user }) => {
   }
 
   if (!data.length) {
-    return <LoadingSpinner />;
+    return <EmptyBox />;
   }
 
   return (

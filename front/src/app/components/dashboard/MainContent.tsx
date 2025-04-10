@@ -8,9 +8,9 @@ import StatusIndicators from "./StatusIndicators"; // Import the new component
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import { SensorData } from "@/app/data/dashboard/data";
 import GoogleMapWeather from "../GoogleMapWeather";
-import LoadingSpinner from "../common/LoadingSpinner";
 // import axiosInstance from "@/app/lib/axiosInstance";
 import axiosInstance from "@/app/lib/api";
+import EmptyBox from "../common/EmptyBox";
 
 const MainContent = () => {
   const { bg, textColor } = useColorModeStyles();
@@ -37,9 +37,8 @@ const MainContent = () => {
     fetchData();
   }, []);
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+  if (loading) return <EmptyBox/>;
+
 
   if (error ) {
     if (error === "Network Error")

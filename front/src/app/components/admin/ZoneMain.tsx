@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Box, Text, VStack } from "@chakra-ui/react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import LoadingSpinner from "../common/LoadingSpinner";
 import axiosInstance from "@/app/lib/api";
 import ZoneCard from "./ZoneCard";
 import ZoneEditModal from "./ZoneEditModal"; // Import ZoneEditModal
 import { Zone, ZoneWrapper } from "@/app/types";
 import ZoneAddFloatingButton from "./ZoneAddFloatingButton";
+import EmptyBox from "../common/EmptyBox";
 
 type Props = {
   user: string;
@@ -46,10 +46,10 @@ const ZoneMain = ({ user }: Props) => {
     );
   };
 
-  if (error) return <LoadingSpinner />;
+  if (error) return <EmptyBox />;
 
   return (
-    <div className="container" >
+    <div className="container">
       <Box
         className="header wide"
         bg={bg}
@@ -64,7 +64,7 @@ const ZoneMain = ({ user }: Props) => {
       </Box>
       <VStack mt={4} spacing={4} align="stretch" className=" header wide">
         {zones.map((zoneWrapper) => (
-          <ZoneCard 
+          <ZoneCard
             key={zoneWrapper.zone.id}
             zone={zoneWrapper.zone}
             onClick={() => handleZoneClick(zoneWrapper.zone)}

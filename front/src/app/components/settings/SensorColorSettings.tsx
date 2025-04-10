@@ -11,11 +11,11 @@ import {
   Th,
   Td,
   Input,
-  Spinner,
   useToast,
 } from "@chakra-ui/react";
 import api from "@/app/lib/api";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
+import EmptyBox from "../common/EmptyBox";
 
 const SensorColorSettings = () => {
   const { textColor } = useColorModeStyles();
@@ -72,7 +72,7 @@ const SensorColorSettings = () => {
     }
   };
 
-  if (loading) return <Spinner size="xl" />;
+  if (loading) return <EmptyBox/>;
 
   return (
     <Box overflowX="auto">

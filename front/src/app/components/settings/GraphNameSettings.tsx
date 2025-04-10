@@ -15,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import api from "@/app/lib/api";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
+import EmptyBox from "../common/EmptyBox";
 
 interface SensorSetting {
   name: string;
@@ -87,7 +88,7 @@ const GraphNameSettings = () => {
   return (
     <div>
       {loading ? (
-        <Spinner />
+        <EmptyBox />
       ) : (
         <>
           <Text color={textColor}>Paramètres du nom du graphique</Text>

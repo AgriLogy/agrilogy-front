@@ -16,6 +16,7 @@ import VaporPressureDeficitGraph from "./VaporPressureDeficitGraph";
 import PrecipitationHumidityGraph from "./PrecipitationHumidityGraph";
 import DataTable from "./DataTable";
 import { SensorData } from "@/app/data/dashboard/data";
+import EmptyBox from "../common/EmptyBox";
 
 const StationMain = () => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
@@ -49,7 +50,7 @@ const StationMain = () => {
     fetchData();
   }, [startDate, endDate]);
 
-  // if (!data) return <LoadingSpinner/>;
+  if (!data) return <EmptyBox/>;
 
   return (
     <div className="container">

@@ -1,4 +1,3 @@
-services:
   # agrydevops:
   #   build: ./Devops/server
   #   ports:
@@ -38,6 +37,7 @@ services:
   #       - agro
   #     restart: unless-stopped
 
+services:
   agryfrontend:
     build:
       context: ./front

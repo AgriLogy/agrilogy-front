@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Box, Text, VStack, useToast } from "@chakra-ui/react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import LoadingSpinner from "../common/LoadingSpinner";
 import api from "@/app/lib/api";
 import FloatingButton from "./FloatingButton";
 import FormModalUpdate from "./FormModalUpdate";
 import FormModalCreate from "./FormModalCreate";
 import Alert from "../notifications/Alert";
-import "../../styles/style.css"
+import "../../styles/style.css";
+import EmptyBox from "../common/EmptyBox";
 
 interface AlertData {
   id: number;
@@ -91,7 +91,7 @@ const AlertMain = () => {
     }
   };
 
-  if (loading) return <LoadingSpinner />;
+  if (loading) return <EmptyBox />;
 
   return (
     <div className="container">
