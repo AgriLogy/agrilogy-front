@@ -1,4 +1,4 @@
-curl -X POST https://localhost:9090/ \
+curl -X POST https://0.0.0.0:9090/ \
      -H "Content-Type: application/json" \
      -d '{
 			"user": "user1",

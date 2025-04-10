@@ -331,8 +331,9 @@ class ZonePerUserAPIView(APIView):
             return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
         # Remove user from incoming data if it exists
+        print(request.data)
         zone_data = request.data.copy()
-        zone_data.pop('user', None)  # <- this line is important atttttention
+        # zone_data.pop('user', None)  # <- this line is important atttttention
 
         serializer = ZoneSerializer(data=zone_data)
 
@@ -343,6 +344,8 @@ class ZonePerUserAPIView(APIView):
                 ZonePerUserSerializer(ZonePerUser.objects.get(user=user, zone=zone)).data,
                 status=status.HTTP_201_CREATED
             )
+        else:
+            print(serializer.errors)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

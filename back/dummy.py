@@ -18,14 +18,14 @@ from django.utils.timezone import make_aware
 fake = Faker()
 
 # Define date range for data
-BEGIN_DATE = datetime(year=2025, month=3, day=18)
-END_DATE = datetime(year=2025, month=3, day=19)
+BEGIN_DATE = datetime(year=2024, month=3, day=18)
+END_DATE = datetime(year=2025, month=4, day=10)
 
 # Get specific user
 try:
-    user = CustomUser.objects.get(username='user1')
+    user = CustomUser.objects.get(username='user3')
 except ObjectDoesNotExist:
-    print("❌ User with username 'user1' does not exist.")
+    print("❌ User with username 'user3' does not exist.")
     exit()
 
 print(f"✅ Found user: {user.username}")

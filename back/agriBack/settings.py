@@ -13,13 +13,13 @@ load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY', '+@*@loo#%*ay6*m8w1xy7)l2+$iueppj)ns(nj0r6^@+@ujokd')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0,192.168.1.184,192.168.1.184:3000,http://localhost:3000').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '0.0.0.0,0.0.0.0,0.0.0.0,192.168.1.184,192.168.1.184:3000,http://0.0.0.0:3000, agrybackend, agryfrontend').split(',')
 
 # === CORS CONFIG ===
-# CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
+# CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://0.0.0.0:3000').split(',')
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "http://0.0.0.0:3000",
+    "http://0.0.0.0:3000",
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
@@ -43,19 +43,19 @@ CORS_ALLOW_HEADERS = (
 )
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "http://0.0.0.0:3000",
+    "http://0.0.0.0:3000",
     "http://0.0.0.0:3000",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "http://0.0.0.0:3000",
+    "http://0.0.0.0:3000",
 ]
 
 
 # === CSRF CONFIG ===
-# CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:3000,http://192.168.1.1:3000').split(',')
+# CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://0.0.0.0:3000,http://192.168.1.1:3000').split(',')
 # CSRF_COOKIE_HTTPONLY = False
 # CSRF_COOKIE_SECURE = False
 # CSRF_COOKIE_SAMESITE = "Lax"
@@ -110,26 +110,26 @@ TEMPLATES = [
 WSGI_APPLICATION = 'agriBack.wsgi.application'
 
 # === DATABASE CONFIG ===
-USE_POSTGRES = os.getenv('USE_POSTGRES', 'True') == 'True'
+# USE_POSTGRES = os.getenv('USE_POSTGRES', 'True') == 'True'
 
-if USE_POSTGRES:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('POSTGRES_DB', 'agrydata_db'),
-            'USER': os.getenv('POSTGRES_USER', 'agry_admin'),
-            'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'Str0ngP@ssw0rd!'),
-            'HOST': os.getenv('POSTGRES_HOST', 'agrydata'),
-            'PORT': int(os.getenv('POSTGRES_PORT', 5432)),
-        }
+# if USE_POSTGRES:
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('POSTGRES_DB', 'agrydata_db'),
+#         'USER': os.getenv('POSTGRES_USER', 'agry_admin'),
+#         'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'Str0ngP@ssw0rd!'),
+#         'HOST': os.getenv('POSTGRES_HOST', 'agrydata'),
+#         'PORT': int(os.getenv('POSTGRES_PORT', 5432)),
+#     }
+# }
+# else:
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
 
 # === PASSWORD VALIDATORS ===
 AUTH_PASSWORD_VALIDATORS = [

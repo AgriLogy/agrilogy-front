@@ -12,14 +12,14 @@ import { FaUser } from "react-icons/fa";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import logo from "../../public/logo.png";
 import Image from "next/image";
-import axiosInstance from "@/app/lib/api";
+import api from "@/app/lib/api";
 
 const HeaderAdmin = () => {
   const { bg, toggleColorMode } = useColorModeStyles();
   const [username, setUsername] = useState("User");
 
   useEffect(() => {
-    axiosInstance
+    api
       .get("/api/admin-header/")
       .then((response) => {
         const userData = response.data;

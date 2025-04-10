@@ -12,7 +12,7 @@ import {
   Box,
   Link,
 } from "@chakra-ui/react";
-import axiosInstance from "@/app/lib/api";
+import api from "@/app/lib/api";
 import { ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import "@/app/styles/graphes.css";
@@ -39,7 +39,7 @@ const ListeUsers = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axiosInstance.get<User[]>("/auth/users");
+        const response = await api.get<User[]>("/auth/users");
         setUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);

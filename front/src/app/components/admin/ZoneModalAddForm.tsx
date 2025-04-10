@@ -29,6 +29,7 @@ const ZoneModalAddForm = ({ isOpen, onClose, user }: ZoneModalAddForm) => {
   const [space, setSpace] = useState("");
   const [kc, setKc] = useState("");
   const [soilType, setSoilType] = useState("loamy");
+  const [flow_rate, setFlow_rate] = useState("");
   const [criticalMoistureThreshold, setCriticalMoistureThreshold] =
     useState("");
   const [loading, setLoading] = useState(false);
@@ -55,6 +56,7 @@ const ZoneModalAddForm = ({ isOpen, onClose, user }: ZoneModalAddForm) => {
         kc: parseFloat(kc),
         soil_type: soilType,
         critical_moisture_threshold: parseFloat(criticalMoistureThreshold),
+        flow_rate: flow_rate,
       };
 
       await axios
@@ -146,6 +148,14 @@ const ZoneModalAddForm = ({ isOpen, onClose, user }: ZoneModalAddForm) => {
               onChange={(e) => setCriticalMoistureThreshold(e.target.value)}
             />
           </FormControl>
+          <FormControl>
+                <FormLabel>Débit d'aeau (L/s)</FormLabel>
+                <Input
+                  type="number"
+                  value={flow_rate}
+                  onChange={(e) => setFlow_rate(e.target.value)}
+                />
+              </FormControl>
         </ModalBody>
 
         <ModalFooter>

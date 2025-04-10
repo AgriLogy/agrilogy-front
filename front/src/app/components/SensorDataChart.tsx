@@ -6,6 +6,7 @@ import {
   useColorModeValue,
   useBreakpointValue,
   useColorMode,
+  Spinner,
 } from "@chakra-ui/react";
 import {
   LineChart,
@@ -17,7 +18,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { SensorData } from "../data/dashboard/data"; 
+import { SensorData } from "../data/dashboard/data";
+import EmptyBox from "./common/EmptyBox";
 // import { calculateET0 } from "../data/dashboard/calculateET0";
 
 interface SensorDataChartProps {
@@ -72,7 +74,6 @@ const CustomTick = ({ x, y, payload }: any) => {
 };
 
 const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
-
   console.log("okay : ", data);
   // Ensure data is an array and not empty
   const validData = Array.isArray(data) && data.length > 0 ? data : [];
@@ -92,19 +93,21 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
 
   if (validData.length === 0) {
     return (
-      <Box
-        width="100%"
-        height="100%"
-        bg={chartBg}
-        borderRadius="md"
-        boxShadow="lg"
-        p={p}
-        overflow="hidden"
-      >
-        <Text color={colorMode === "light" ? "gray.700" : "gray.200"} fontSize="lg" fontWeight="bold" mb={4}>
-          No data available for the chart
-        </Text>
-      </Box>
+      // <Box
+      //   width="100%"
+      //   height="100%"
+      //   bg={chartBg}
+      //   borderRadius="md"
+      //   boxShadow="lg"
+      //   p={p}
+      //   overflow="hidden"
+      //   display="flex"
+      //   alignItems="center"
+      //   justifyContent="center"
+      // >
+      //   <Spinner size="xl" color="green.500" />
+      // </Box>
+      <EmptyBox/>
     );
   }
 
@@ -118,7 +121,12 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
       p={p}
       overflow="hidden"
     >
-      <Text color={colorMode === "light" ? "gray.700" : "gray.200"} fontSize="lg" fontWeight="bold" mb={4}>
+      <Text
+        color={colorMode === "light" ? "gray.700" : "gray.200"}
+        fontSize="lg"
+        fontWeight="bold"
+        mb={4}
+      >
         ET0 / H
       </Text>
       <ResponsiveContainer width="100%" height={300}>
@@ -140,12 +148,7 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
             stroke="#82ca9d"
             name="Rayonnement Solaire"
           />
-          <Line
-            type="monotone"
-            dataKey="et0"
-            stroke="#ffc658"
-            name="ET0"
-          />
+          <Line type="monotone" dataKey="et0" stroke="#ffc658" name="ET0" />
         </LineChart>
       </ResponsiveContainer>
     </Box>

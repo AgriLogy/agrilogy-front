@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import useColorModeStyles from "../utils/useColorModeStyles";
 import { SensorData } from "../data/dashboard/data";
+import EmptyBox from "./common/EmptyBox";
 
 interface SensorDataTableProps {
   data: SensorData[];
@@ -27,19 +28,7 @@ const SensorDataTable: React.FC<SensorDataTableProps> = ({ data }) => {
 
   if (lastRecords.length === 0) {
     return (
-      <Box
-        width="100%"
-        height="100%"
-        bg={bg}
-        borderRadius="md"
-        boxShadow="lg"
-        p={p}
-        overflowX="auto"
-      >
-        <Text color={textColor} fontSize="lg" fontWeight="bold" mb={4}>
-          No sensor data available
-        </Text>
-      </Box>
+      <EmptyBox/>
     );
   }
 

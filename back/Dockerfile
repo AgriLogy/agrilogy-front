@@ -14,19 +14,6 @@ RUN pip install -r requirements.txt
 # Copy project files
 COPY . /code/
 
-
-# Add a crontab file to /etc/cron.d/
-RUN echo "* * * * * cd /code && /usr/local/bin/python manage.py runcrons >> /var/log/cron.log 2>&1" > /etc/cron.d/django-cron
-
-# Give execution rights on the cron job
-RUN chmod 0644 /etc/cron.d/django-cron
-
-# Apply cron job
-RUN crontab /etc/cron.d/django-cron
-
-# Create the log file to be able to run tail
-RUN touch /var/log/cron.log
-
 # Entrypoint script
 COPY run.sh /run.sh
 RUN chmod +x /run.sh

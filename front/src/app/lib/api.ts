@@ -1,10 +1,10 @@
 import axios from "axios";
 
-export const API_URL = "http://127.0.0.1:8000/";
+export const API_URL = "http://agrybackend:8000/";
 
 const api = axios.create({
   baseURL: API_URL,
-  withCredentials: true, // This prevents sending cookies like CSRF token
+  withCredentials: false, // This prevents sending cookies like CSRF token
 });
 
 // Add an interceptor to include the access token in every request
