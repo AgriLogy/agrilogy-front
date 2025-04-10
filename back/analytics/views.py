@@ -134,6 +134,7 @@ class AllSensorDataView(APIView):
                 return Response({"error": "Invalid date format"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Fetch and filter sensor data
+        user = request.user
         queryset = Sensor.objects.filter(user=self.request.user) 
         queryset = queryset.filter(date_filter)
 
@@ -288,13 +289,40 @@ class AlertViewSet(viewsets.ModelViewSet):
         # Automatically assign the logged-in user on create
         serializer.save(user=self.request.user)
 
-# @method_decorator(csrf_exempt, name='dispatch')
+class AuthZonePerUserAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        """
+        List all Zones assigned to the authenticated user.
+        """
+        user = request.user
+        print(user)
+
+        assignments = ZonePerUser.objects.filter(user=user)
+        serializer = ZonePerUserSerializer(assignments, many=True)
+        
+        return Response(serializer.data)
+
+
 class ZonePerUserAPIView(APIView):
     # authentication_classes = [JWTAuthentication]
     permission_classes = [AllowAny]
     """
     Manage Zones for a specific User.
     """
+    def get(self, request, username):
+        """
+        List all Zones assigned to the user.
+        """
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        assignments = ZonePerUser.objects.filter(user=user)
+        serializer = ZonePerUserSerializer(assignments, many=True)
+        return Response(serializer.data)
 
     def post(self, request, username):
         try:
@@ -304,7 +332,7 @@ class ZonePerUserAPIView(APIView):
 
         # Remove user from incoming data if it exists
         zone_data = request.data.copy()
-        zone_data.pop('user', None)  # <- this line is important
+        zone_data.pop('user', None)  # <- this line is important atttttention
 
         serializer = ZoneSerializer(data=zone_data)
 
@@ -318,18 +346,6 @@ class ZonePerUserAPIView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request, username):
-        """
-        List all Zones assigned to the user.
-        """
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        assignments = ZonePerUser.objects.filter(user=user)
-        serializer = ZonePerUserSerializer(assignments, many=True)
-        return Response(serializer.data)
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ModZonePerUserAPIView(APIView):

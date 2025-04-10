@@ -7,7 +7,7 @@ from django.conf import settings
 from django.dispatch import receiver
 
 
-
+User = settings.AUTH_USER_MODEL
 
 class Notification(models.Model):
     yesterday_temperature = models.DecimalField(max_digits=5, decimal_places=2, help_text="Temperature recorded yesterday in Celsius.")
@@ -83,7 +83,7 @@ class Alert(models.Model):
     condition_nbr = models.DecimalField(max_digits=7, decimal_places=0)
     # ForeignKey for User (optional)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        User,
         on_delete=models.CASCADE,
         related_name='user_alerts',
         null=True, blank=True  # Optional field to associate the alert with a user
@@ -96,7 +96,7 @@ class Alert(models.Model):
 
 
 class NotificationsPerUser(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_notifications')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_notifications')
     notification = models.ForeignKey(Notification, on_delete=models.CASCADE)
     is_read = models.BooleanField(default=False, help_text="Whether the user has read this notification")
     read_at = models.DateTimeField(null=True, blank=True)
@@ -109,14 +109,14 @@ class Zone(models.Model):
         # Basic fields
         name = models.CharField(max_length=100)  # Example: "zone1", "zone2", etc.
         # location = models.CharField(max_length=255, blank=True, null=True)  # You can use this for additional info about the zone
-        user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="zones")
+        user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="zones")
 
         # Additional fields
         space = models.FloatField(help_text="The area of the zone in square meters.")  # Size of the zone
         kc = models.FloatField(help_text="The crop coefficient (kc) for the zone.")  # Crop coefficient (used in irrigation calculations)
         soil_type = models.CharField(max_length=50, choices=[('clay', 'Clay'), ('loamy', 'Loamy'), ('sandy', 'Sandy'), ('others', 'Others')], default='loamy', help_text="Type of soil in the zone.")
         critical_moisture_threshold = models.FloatField(help_text="Critical soil moisture threshold in percentage.")
-        # flow_rate = models.FloatField(help_text="Flow rate of water in liters per second.")
+        flow_rate = models.FloatField(help_text="Flow rate of water in liters per second.")
 
         def __str__(self):
             return f"Zone {self.name} for {self.user.username}"
@@ -126,9 +126,33 @@ class Zone(models.Model):
         def __str__(self):
             return f"Zone {self.name} for {self.user.username}"
 
+class Kc(models.Model):
+    plant_name= models.CharField(max_length=100)
+    kc_january = models.FloatField(help_text="Crop coefficient for the plant.")
+    kc_january = models.FloatField(help_text="Crop coefficient for January.")
+    kc_february = models.FloatField(help_text="Crop coefficient for February.")
+    kc_march = models.FloatField(help_text="Crop coefficient for March.")
+    kc_april = models.FloatField(help_text="Crop coefficient for April.")
+    kc_may = models.FloatField(help_text="Crop coefficient for May.")
+    kc_june = models.FloatField(help_text="Crop coefficient for June.")
+    kc_july = models.FloatField(help_text="Crop coefficient for July.")
+    kc_august = models.FloatField(help_text="Crop coefficient for August.")
+    kc_september = models.FloatField(help_text="Crop coefficient for September.")
+    kc_october = models.FloatField(help_text="Crop coefficient for October.")
+    kc_november = models.FloatField(help_text="Crop coefficient for November.")
+    kc_december = models.FloatField(help_text="Crop coefficient for December.")
+    def __str__(self):
+        return f"KC for {self.plant_name}"
+
+class Kc_per_user_per_zone(models.Model):
+    kc = models.ForeignKey(Kc, on_delete=models.CASCADE)
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    def __str__(self):
+        return f"KC for in {self.zone.name} zone {self.username}" 
 
 class ZonePerUser(models.Model):
-        user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+        user = models.ForeignKey(User, on_delete=models.CASCADE)
         zone = models.ForeignKey(Zone, on_delete=models.CASCADE)
         
         def __str__(self):
@@ -137,6 +161,7 @@ class ZonePerUser(models.Model):
 
 class Sensor(models.Model):
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="Sensors")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Sensors_per_user")
     timestamp = models.DateTimeField(help_text="Timestamp when the sensor data was recorded.")
     precipitation_rate = models.FloatField(help_text="Precipitation rate in mm/h.")
     humidity_weather = models.FloatField(help_text="Humidity from the weather sensor as a percentage.")
@@ -155,14 +180,14 @@ class Sensor(models.Model):
     ph_soil = models.FloatField(help_text="Soil pH level.")
     soil_temperature_low = models.FloatField(help_text="Soil temperature at low depth in Celsius.")
     soil_temperature_high = models.FloatField(help_text="Soil temperature at high depth in Celsius.")
-    # water_flow_sensor = models.FloatField(help_text="Water flow sensor reading in liters per second.")
+    water_flow_sensor = models.FloatField(null=True, blank=True, help_text="Water flow sensor reading in liters per second.")
 
     def __str__(self):
         return f"Sensor data for Zone {self.zone.name} at {self.timestamp}"
 
 
 class GraphName(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_graph_names')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_graph_names')
     
     soil_irrigation = models.CharField(max_length=40, default="Irrigation du sol")
     soil_ph = models.CharField(max_length=40, default="pH du sol")
@@ -187,7 +212,7 @@ class GraphName(models.Model):
         return f"Noms des graphiques pour {self.user.username}"
     
 class SensorColor(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_sensor_colors')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_sensor_colors')
     # Weather-related colors
     precipitation_rate_color = models.CharField(max_length=7, default="#3D8D7A")  # Teal
     humidity_weather_color = models.CharField(max_length=7, default="#2A6F97")  # Blue
@@ -213,7 +238,7 @@ class SensorColor(models.Model):
     def __str__(self):
         return f"Graph colors for {self.user.username}"
 
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+@receiver(post_save, sender=User)
 def create_graph_names(sender, instance, created, **kwargs):
     if created:
         GraphName.objects.create(user=instance)
