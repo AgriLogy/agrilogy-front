@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y nano
 WORKDIR /app
 
 # Copy dependencies definition files
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json ./ 
 
 # Install app dependencies
 RUN npm install
@@ -15,9 +15,11 @@ RUN npm install
 # Copy the rest of your app's source code
 COPY . .
 
+# Build the Next.js app
+RUN npm run build
+
 # Expose port Next.js runs on
 EXPOSE 3000
 
-RUN npm run build
-# Run the dev server
-CMD ["npm", "start"]
+# Start the production server (after the build)
+CMD ["npm", "run", "start"]
