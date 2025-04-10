@@ -1,12 +1,12 @@
 # Django config
 SECRET_KEY=+@*@loo#%*ay6*m8w1xy7)l2+$iueppj)ns(nj0r6^@+@ujokd
 DEBUG=True
-ALLOWED_HOSTS=0.0.0.0,0.0.0.0,0.0.0.0,192.168.1.184,192.168.1.184:3000
-CORS_ALLOWED_ORIGINS=http://0.0.0.0:3000
-CSRF_TRUSTED_ORIGINS=http://0.0.0.0:3000,http://192.168.1.1:3000
+ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0,192.168.1.184,192.168.1.184:3000
+CORS_ALLOWED_ORIGINS=http://localhost:3000
+CSRF_TRUSTED_ORIGINS=http://localhost:3000,http://192.168.1.1:3000
 
 # Database config
-USE_POSTGRES=True
+USE_POSTGRES=False
 POSTGRES_DB=agrydata_db
 POSTGRES_USER=agry_admin
 POSTGRES_PASSWORD=Str0ngP@ssw0rd!
