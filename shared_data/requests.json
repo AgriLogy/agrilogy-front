@@ -73,5 +73,29 @@
         "key1": "value1",
         "key2": "value2",
         "timestamp": "2025-04-01T11:27:14.504680"
+    },
+    {
+        "name": "zone de marichage",
+        "space": 1750,
+        "kc": 15,
+        "critical_moisture_threshold": 18,
+        "user": 2,
+        "timestamp": "2025-04-15T08:46:58.452326"
+    },
+    {
+        "name": "zone de marichage",
+        "space": 1750,
+        "kc": 15,
+        "critical_moisture_threshold": 18,
+        "user": 2,
+        "timestamp": "2025-04-15T08:47:10.538719"
+    },
+    {
+        "name": "zone de marichage-2",
+        "space": 1120,
+        "kc": 125,
+        "critical_moisture_threshold": 1.2,
+        "user": 2,
+        "timestamp": "2025-04-15T08:50:06.387631"
     }
 ]

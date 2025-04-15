@@ -1,13 +1,3 @@
-  # agrydevops:
-  #   build: ./Devops/server
-  #   ports:
-  #     - "9090:9090"
-  #   container_name: agroserver
-  #   volumes:
-  #     - ./shared_data:/shared  # Ensuring requests.json is shared
-  #   networks:
-  #     - agro
-  #   restart: unless-stopped
 
   # agryadminer:
   #   container_name: agryadminer
@@ -37,6 +27,16 @@
   #       - agro
   #     restart: unless-stopped
 services:
+  agrydevops:
+    build: ./Devops/server
+    ports:
+      - "9090:9090"
+    container_name: agroserver
+    volumes:
+      - ./shared_data:/shared  # Ensuring requests.json is shared
+    networks:
+      - agro
+    restart: unless-stopped
   agryfrontend:
     build:
       context: ./front
