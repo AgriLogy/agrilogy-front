@@ -2,6 +2,11 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
+// Use the shared volume path
+const sharedDir = '/shared';
+const jsonFilePath = path.join(sharedDir, 'requests.json');
+const logFilePath = path.join(__dirname, '.logs');
+
 const server = http.createServer((req, res) => {
     let body = '';
 
@@ -11,8 +16,6 @@ const server = http.createServer((req, res) => {
 
     req.on('end', () => {
         const timestamp = new Date().toISOString();
-        const logFilePath = path.join(__dirname, '.logs');
-
         let logEntry = `${timestamp} | `;
 
         let newData;
@@ -28,7 +31,6 @@ const server = http.createServer((req, res) => {
         }
 
         // Valid JSON
-        const jsonFilePath = path.join(__dirname, 'requests.json');
         let existingData = [];
 
         if (fs.existsSync(jsonFilePath)) {
@@ -36,7 +38,8 @@ const server = http.createServer((req, res) => {
                 const rawData = fs.readFileSync(jsonFilePath);
                 existingData = JSON.parse(rawData);
             } catch (error) {
-                // Do nothing, keep existingData as empty array
+                // If JSON is malformed, start fresh
+                existingData = [];
             }
         }
 
@@ -52,7 +55,5 @@ const server = http.createServer((req, res) => {
 });
 
 const PORT = 9090;
-const HOST = "157.245.43.196";
-server.listen(PORT, () => {
-    // No console log on startup
-});
+const HOST = "0.0.0.0"; // Accept connections from other containers and outside
+server.listen(PORT, HOST);
