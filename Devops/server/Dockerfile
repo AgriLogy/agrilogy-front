@@ -1,15 +1,13 @@
-FROM python:3.9-slim
+FROM node:18-slim
 
 WORKDIR /app
 
-COPY server.py /app/server.py
+COPY server.js /app/server.js
 
-# Create the shared directory and set permissions before copying
-RUN mkdir -p /shared && chmod 777 /shared
-RUN touch /shared/requests.json
+# Create the shared directory and set permissions
+RUN mkdir -p /shared && chmod 777 /shared && \
+    touch /shared/requests.json && chmod 777 /shared/requests.json
 
-RUN chmod 777 /shared/requests.json
+EXPOSE 3000
 
-EXPOSE 9090
-
-CMD ["python", "server.py"]
+CMD ["node", "server.js"]

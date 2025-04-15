@@ -1,31 +1,58 @@
-
 const http = require('http');
+const fs = require('fs');
+const path = require('path');
 
-// 创建一个 HTTP 服务器
 const server = http.createServer((req, res) => {
-    // 打印接收到的请求方法和 URL
-    console.log(`Request Method: ${req.method}`);
-    console.log(`Request URL: ${req.url}`);
-
-    // 输出接收到的数据
     let body = '';
 
-    // 监听请求数据
     req.on('data', chunk => {
-        body += chunk.toString(); // 将 Buffer 转换为字符串
+        body += chunk.toString();
     });
 
-    // 当数据接收完毕时
     req.on('end', () => {
-        console.log(`Request Body: ${body}`);
-        // 发送响应
-        res.writeHead(200, {'Content-Type': 'text/plain'});
-        res.end('Received your data!');
+        const timestamp = new Date().toISOString();
+        const logFilePath = path.join(__dirname, '.logs');
+
+        let logEntry = `${timestamp} | `;
+
+        let newData;
+        try {
+            newData = JSON.parse(body);
+        } catch (error) {
+            // Invalid JSON
+            logEntry += `INVALID | ${body}\n`;
+            fs.appendFileSync(logFilePath, logEntry);
+            res.writeHead(400, { 'Content-Type': 'text/plain' });
+            res.end('Invalid JSON');
+            return;
+        }
+
+        // Valid JSON
+        const jsonFilePath = path.join(__dirname, 'requests.json');
+        let existingData = [];
+
+        if (fs.existsSync(jsonFilePath)) {
+            try {
+                const rawData = fs.readFileSync(jsonFilePath);
+                existingData = JSON.parse(rawData);
+            } catch (error) {
+                // Do nothing, keep existingData as empty array
+            }
+        }
+
+        existingData.push(newData);
+        fs.writeFileSync(jsonFilePath, JSON.stringify(existingData, null, 2));
+
+        logEntry += `VALID | ${JSON.stringify(newData)}\n`;
+        fs.appendFileSync(logFilePath, logEntry);
+
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('Valid JSON saved.');
     });
 });
 
-// 服务器监听 3000 端口
-const PORT = 3000;
+const PORT = 9090;
+const HOST = "157.245.43.196";
 server.listen(PORT, () => {
-    console.log(`Server is running at http://192.168.1.221:${PORT}`);
+    // No console log on startup
 });
