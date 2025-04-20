@@ -23,7 +23,7 @@ urlpatterns = [
     path('admin-header/', AdminHeaderAPIView.as_view(), name='admin-header'),
 	path('zone-per-user/<str:username>/', csrf_exempt(ZonePerUserAPIView.as_view()), name='zone-per-user'),
     path('mod-zone-per-user/<str:username>/<int:zone_id>/', ModZonePerUserAPIView.as_view(), name='zone-per-user'),
-    path('sensor-activation/<str:username>/', ActiveSensorPerUserView.as_view(), name='sensor-activation-admin'),
+    path('sensor-activation/<str:username>/', ActiveGraphPerUserView.as_view(), name='sensor-activation-admin'),
     #zone urls : user
 	
 ]

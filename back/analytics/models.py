@@ -185,32 +185,29 @@ class Sensor(models.Model):
     def __str__(self):
         return f"Sensor data for Zone {self.zone.name} at {self.timestamp}"
     
-class ActiveSensor(models.Model):
-    precipitation_rate = models.BooleanField(default=True)
-    humidity_weather = models.BooleanField(default=True)
-    wind_speed = models.BooleanField(default=True)
-    solar_radiation = models.BooleanField(default=True)
-    pressure_weather = models.BooleanField(default=True)
-    wind_direction = models.BooleanField(default=True)
-    temperature_weather = models.BooleanField(default=True)
-    ec_soil_medium = models.BooleanField(default=True)
-    soil_temperature_medium = models.BooleanField(default=True)
-    soil_ec_high = models.BooleanField(default=True)
-    ec_soil_low = models.BooleanField(default=True)
-    soil_moisture_medium = models.BooleanField(default=True)
-    soil_moisture_high = models.BooleanField(default=True)
-    soil_moisture_low = models.BooleanField(default=True)
-    ph_soil = models.BooleanField(default=True)
-    soil_temperature_low = models.BooleanField(default=True)
-    soil_temperature_high = models.BooleanField(default=True)
-    water_flow_sensor = models.BooleanField(default=True)
+class ActiveGraph(models.Model):
+    # soil
+    irrigation_status = models.BooleanField(default=True)
+    ph_status = models.BooleanField(default=True)
+    wind_speed_status = models.BooleanField(default=True)
+    conductivity_status = models.BooleanField(default=True)
+    temperature_status = models.BooleanField(default=True)
+    # meteo
+    et0_status = models.BooleanField(default=True)
+    temperature_humidity_status = models.BooleanField(default=True)
+    wind_status = models.BooleanField(default=True)
+    wind_direction_status = models.BooleanField(default=True)
+    rainfall_status = models.BooleanField(default=True)
+    solar_radiation_status = models.BooleanField(default=True)
+    evapotranspiration_status = models.BooleanField(default=True)
+    rainfall_humidity_status = models.BooleanField(default=True)
 
     def __str__(self):
         return f"Default Sensor Activation Settings (ID: {self.id})"
 
-class ActiveSensorPerUser(models.Model):
+class ActiveGraphPerUser(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="active_sensor_settings")
-    active_sensor = models.OneToOneField(ActiveSensor, on_delete=models.CASCADE)
+    active_sensor = models.OneToOneField(ActiveGraph, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Sensor visibility settings for {self.user.username}"

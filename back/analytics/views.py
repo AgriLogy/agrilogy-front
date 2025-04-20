@@ -57,14 +57,23 @@ class AllSensorDataView(APIView):
         except SensorColor.DoesNotExist:
             default_color = SensorColor.objects.get(id=1)
             graph_color_serializer = SensorColorSerializer(default_color)
-            # graph_color_serializer = None
 
+        try:
+            graph_color = ActiveGraphPerUser.objects.get(user=request.user)
+            graph_status_serializer = ActiveGraphPerUserSerializer(graph_color)
+        except ActiveGraphPerUser.DoesNotExist:
+            default_color = ActiveGraphPerUser.objects.get(id=1)
+            graph_status_serializer = ActiveGraphPerUserSerializer(default_color)
+
+        
+        
         # Serialize the data
         sensor_serializer = SensorSerializer(queryset, many=True)
         return Response({
             "sensor_data": sensor_serializer.data,
             "sensor_names": graph_name_serializer.data if graph_name_serializer else None,
             "sensor_colors": graph_color_serializer.data if graph_color_serializer else None,
+            "sensor_status": graph_status_serializer.data if graph_status_serializer else None,
         }, status=status.HTTP_200_OK)
 
 class NotificationsAndAlertsView(APIView):

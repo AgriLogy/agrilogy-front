@@ -146,11 +146,11 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import ActiveSensor, ActiveSensorPerUser
-from .serializers import ActiveSensorSerializer
+from .models import ActiveGraph, ActiveGraphPerUser
+from .serializers import ActiveGraphSerializer
 
 
-class ActiveSensorPerUserView(APIView):
+class ActiveGraphPerUserView(APIView):
     permission_classes = [IsAdminUser]
 
     def get_object(self, username):
@@ -160,9 +160,9 @@ class ActiveSensorPerUserView(APIView):
             return None
 
         # Try to get or create the link
-        active_sensor_per_user, created = ActiveSensorPerUser.objects.get_or_create(
+        active_sensor_per_user, created = ActiveGraphPerUser.objects.get_or_create(
             user=user,
-            defaults={'active_sensor': ActiveSensor.objects.create()}
+            defaults={'active_sensor': ActiveGraph.objects.create()}
         )
         return active_sensor_per_user.active_sensor
 
@@ -171,7 +171,7 @@ class ActiveSensorPerUserView(APIView):
         if not active_sensor:
             return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ActiveSensorSerializer(active_sensor)
+        serializer = ActiveGraphSerializer(active_sensor)
         return Response(serializer.data)
 
     def put(self, request, username):
@@ -179,7 +179,7 @@ class ActiveSensorPerUserView(APIView):
         if not active_sensor:
             return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ActiveSensorSerializer(active_sensor, data=request.data, partial=True)
+        serializer = ActiveGraphSerializer(active_sensor, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

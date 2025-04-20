@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import SensorColor, GraphName, Notification, Alert, NotificationsPerUser, Sensor, Zone, ZonePerUser
-from .models import ActiveSensor
+from .models import ActiveGraph, ActiveGraphPerUser
 
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -72,7 +72,13 @@ class ZonePerUserSerializer(serializers.ModelSerializer):
 
 
 # Admin
-class ActiveSensorSerializer(serializers.ModelSerializer):
+class ActiveGraphSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ActiveSensor
+        model = ActiveGraph
+        exclude = ['id']
+
+class ActiveGraphPerUserSerializer(serializers.ModelSerializer):
+    active_sensor = ActiveGraphSerializer()
+    class Meta:
+        model = ActiveGraphPerUser
         exclude = ['id']
