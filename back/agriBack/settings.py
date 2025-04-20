@@ -35,7 +35,7 @@ CSRF_COOKIE_SECURE = False    # True if HTTPS
 CSRF_COOKIE_HTTPONLY = False  # So JS can read token if needed
 
 ALLOWED_HOSTS = [
-    '157.245.43.196',  # Your DigitalOcean droplet's public IP
+    '157.245.43.196',
     'localhost',
     '127.0.0.1',
 ]
@@ -127,7 +127,7 @@ WSGI_APPLICATION = 'agriBack.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db1.sqlite3',
     }
 }
 

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import SensorColor, GraphName, Notification, Alert, NotificationsPerUser, Sensor, Zone, ZonePerUser
+from .models import ActiveSensor
 
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -69,3 +70,9 @@ class ZonePerUserSerializer(serializers.ModelSerializer):
         model = ZonePerUser
         fields = '__all__'
 
+
+# Admin
+class ActiveSensorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ActiveSensor
+        exclude = ['id']
