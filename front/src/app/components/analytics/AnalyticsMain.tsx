@@ -10,12 +10,15 @@ import ConductivityIrrigationGraph from "./ConductivityIrrigationGraph";
 import TemperatureGraph from "./TemperatureGraph";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import axiosInstance from "@/app/lib/api";
-import { SensorData } from "@/app/data/dashboard/data";
+import { SensorData, StatusData } from "@/app/data/dashboard/data";
 import EmptyBox from "../common/EmptyBox";
 
 const AnalyticsMain: React.FC = () => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
   const [data, setData] = useState<SensorData[]>([]);
+  // const [statusdata, setStatusData] = useState<StatusData[]>([]);
+  const [statusdata, setStatusData] = useState<StatusData | null>(null);
+
   const [error, setError] = useState<string | null>(null);
 
   const [startDate, setStartDate] = useState<string>("");
@@ -34,10 +37,19 @@ const AnalyticsMain: React.FC = () => {
           params,
         });
         console.log("API Response:", response.data); // Log the API response to inspect its structure
+        console.log(
+          "API Sensor Status  Response:",
+          response.data.sensor_status
+        ); // Log the API response to inspect its structure
 
         // Assuming response.data.sensor_data contains an array of SensorData
         const sensorData: SensorData[] = response.data || [];
+        const sensorStatusData: StatusData =
+          response.data.sensor_status.active_sensor;
+
         setData(sensorData);
+        setStatusData(sensorStatusData);
+        console.log("Status : ", sensorStatusData);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
       }
@@ -58,10 +70,11 @@ const AnalyticsMain: React.FC = () => {
         <DateRangePicker setStartDate={setStartDate} setEndDate={setEndDate} />
       </Box>
 
-      <Box bg={bg} className="box wide">
-        <IrrigationGraph data={data} />
-      </Box>
-
+      {statusdata?.soil_irrigation_status && (
+        <Box bg={bg} className="box wide">
+          <IrrigationGraph data={data} />
+        </Box>
+      )}
       <Box bg={bg} className="box wide">
         <PhGraph data={data} />
       </Box>

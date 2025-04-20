@@ -187,20 +187,26 @@ class Sensor(models.Model):
     
 class ActiveGraph(models.Model):
     # soil
-    irrigation_status = models.BooleanField(default=True)
-    ph_status = models.BooleanField(default=True)
-    wind_speed_status = models.BooleanField(default=True)
-    conductivity_status = models.BooleanField(default=True)
-    temperature_status = models.BooleanField(default=True)
+    soil_irrigation_status =  models.BooleanField(default=True, help_text="Irrigation du sol")
+    soil_ph_status =  models.BooleanField(default=True, help_text="pH du sol")
+    soil_conductivity_status =  models.BooleanField(default=True, help_text="Conductivité du sol")
+    soil_moisture_status =  models.BooleanField(default=True, help_text="Humidité du sol")
+    soil_temperature_status =  models.BooleanField(default=True, help_text="Température du sol")
+    
     # meteo
-    et0_status = models.BooleanField(default=True)
-    temperature_humidity_status = models.BooleanField(default=True)
-    wind_status = models.BooleanField(default=True)
-    wind_direction_status = models.BooleanField(default=True)
-    rainfall_status = models.BooleanField(default=True)
-    solar_radiation_status = models.BooleanField(default=True)
-    evapotranspiration_status = models.BooleanField(default=True)
-    rainfall_humidity_status = models.BooleanField(default=True)
+    et0_status =  models.BooleanField(default=True, help_text="Taux d'évapotranspiration")
+    precipitation_rate_status =  models.BooleanField(default=True, help_text="Taux de précipitation")
+    wind_speed_status =  models.BooleanField(default=True, help_text="Vitesse du vent")
+    solar_radiation_status =  models.BooleanField(default=True, help_text="Rayonnement solaire")
+    pressure_weather_status =  models.BooleanField(default=True, help_text="Pression atmosphérique")
+    wind_direction_status =  models.BooleanField(default=True, help_text="Direction du vent")
+    humidity_weather_status =  models.BooleanField(default=True, help_text="Humidité de l'air")
+    temperature_weather_status =  models.BooleanField(default=True, help_text="Température de l'air")
+    temperature_humidity_weather_status =  models.BooleanField(default=True, help_text="Température et humidité de l'air")
+    precipitation_humidity_rate_status =  models.BooleanField(default=True, help_text="Taux de précipitation et humidité")
+    pluviometrie_status =  models.BooleanField(default=True, help_text="Cumule de pluie tombée")
+    data_table_status =  models.BooleanField(default=True, help_text="Tableau de données")
+
 
     def __str__(self):
         return f"Default Sensor Activation Settings (ID: {self.id})"
