@@ -18,7 +18,7 @@ fake = Faker()
 
 # Define date range for data
 BEGIN_DATE = datetime(year=2024, month=1, day=1)  # Change as needed
-END_DATE = datetime(year=2025, month=4, day=20)    # Change as needed
+END_DATE = datetime(year=2025, month=4, day=21)    # Change as needed
 
 # Get specific user
 try:
