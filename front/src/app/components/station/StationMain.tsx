@@ -15,12 +15,14 @@ import SolarRadiationGraph from "./SolarRadiationGraph";
 import VaporPressureDeficitGraph from "./VaporPressureDeficitGraph";
 import PrecipitationHumidityGraph from "./PrecipitationHumidityGraph";
 import DataTable from "./DataTable";
-import { SensorData } from "@/app/data/dashboard/data";
+import { SensorData, StatusData } from "@/app/data/dashboard/data";
 import EmptyBox from "../common/EmptyBox";
 
 const StationMain = () => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
+
   const [data, setData] = useState<any>(null);
+  const [statusdata, setStatusData] = useState<StatusData | null>(null);
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>(
     new Date().toISOString().split("T")[0]
@@ -41,16 +43,23 @@ const StationMain = () => {
 
         // Assuming response.data.sensor_data contains an array of SensorData
         const sensorData: SensorData[] = response.data || [];
+        const sensorStatusData: StatusData =
+          response.data.sensor_status.active_sensor;
+
         setData(sensorData);
+        setStatusData(sensorStatusData);
+        console.log("Status : ", sensorStatusData);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Unknown error : "+ error);
+        setError(
+          err instanceof Error ? err.message : "Unknown error : " + error
+        );
       }
     };
 
     fetchData();
   }, [startDate, endDate]);
 
-  if (!data) return <EmptyBox/>;
+  if (!data) return <EmptyBox />;
 
   return (
     <div className="container">
@@ -60,33 +69,52 @@ const StationMain = () => {
       <Box bg={bg} className="header" mt={0} mb={0}>
         <DateRangePicker setStartDate={setStartDate} setEndDate={setEndDate} />
       </Box>
-      <Box bg={bg} className="box wide">
-        <Et0Graph data={data} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <TempHumidityGraph data={data} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <WindSpeedGraph data={data} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <WindDirectionGraph data={data} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <PluvometricGraph data={data} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <SolarRadiationGraph data={data} />
-      </Box>
-      <Box bg={bg} className="box wide">
+      {statusdata?.et0_status && (
+        <Box bg={bg} className="box wide">
+          <Et0Graph data={data} />
+        </Box>
+      )}
+      {statusdata?.temperature_humidity_weather_status && (
+        <Box bg={bg} className="box wide">
+          <TempHumidityGraph data={data} />
+        </Box>
+      )}
+      {statusdata?.wind_speed_status && (
+        <Box bg={bg} className="box wide">
+          <WindSpeedGraph data={data} />
+        </Box>
+      )}
+      {statusdata?.wind_direction_status && (
+        <Box bg={bg} className="box wide">
+          <WindDirectionGraph data={data} />
+        </Box>
+      )}
+      {statusdata?.pluviometrie_status && (
+        <Box bg={bg} className="box wide">
+          <PluvometricGraph data={data} />
+        </Box>
+      )}
+      {statusdata?.solar_radiation_status && (
+        <Box bg={bg} className="box wide">
+          <SolarRadiationGraph data={data} />
+        </Box>
+      )}
+      {/* {statusdata?.data_table_status&& (
+
+        <Box bg={bg} className="box wide">
         <VaporPressureDeficitGraph data={data} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <PrecipitationHumidityGraph data={data} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <DataTable data={data} />
-      </Box>
+        </Box>
+      )} */}
+      {statusdata?.data_table_status && (
+        <Box bg={bg} className="box wide">
+          <PrecipitationHumidityGraph data={data} />
+        </Box>
+      )}
+      {statusdata?.precipitation_humidity_rate_status && (
+        <Box bg={bg} className="box wide">
+          <DataTable data={data} />
+        </Box>
+      )}
     </div>
   );
 };

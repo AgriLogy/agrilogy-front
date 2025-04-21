@@ -59,14 +59,17 @@ class AllSensorDataView(APIView):
             graph_color_serializer = SensorColorSerializer(default_color)
 
         try:
-            graph_color = ActiveGraphPerUser.objects.get(user=request.user)
-            graph_status_serializer = ActiveGraphPerUserSerializer(graph_color)
-        except ActiveGraphPerUser.DoesNotExist:
-            default_color = ActiveGraphPerUser.objects.get(id=1)
-            graph_status_serializer = ActiveGraphPerUserSerializer(default_color)
+            graph_status_per_user, created = ActiveGraphPerUser.objects.get_or_create(
+                user=request.user,
+                defaults={'active_sensor': ActiveGraph.objects.create()}
+            )
+        except ActiveGraphPerUser.MultipleObjectsReturned:
+            # À gérer au cas où il y aurait un bug de base de données
+            graph_status_per_user = ActiveGraphPerUser.objects.filter(user=request.user).first()
 
-        
-        
+        graph_status_serializer = ActiveGraphPerUserSerializer(graph_status_per_user)
+
+                
         # Serialize the data
         sensor_serializer = SensorSerializer(queryset, many=True)
         return Response({

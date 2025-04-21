@@ -12,6 +12,7 @@ import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import axiosInstance from "@/app/lib/api";
 import { SensorData, StatusData } from "@/app/data/dashboard/data";
 import EmptyBox from "../common/EmptyBox";
+import CumulIrrigationGraph from "./CumulIrrigationGraph";
 
 const AnalyticsMain: React.FC = () => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
@@ -75,21 +76,27 @@ const AnalyticsMain: React.FC = () => {
           <IrrigationGraph data={data} />
         </Box>
       )}
-      <Box bg={bg} className="box wide">
-        <PhGraph data={data} />
-      </Box>
-
-      <Box bg={bg} className="box wide">
-        <ConductivityIrrigationGraph data={data} />
-      </Box>
-
-      {/* <Box bg={bg} className="box wide">
+      {statusdata?.soil_ph_status && (
+        <Box bg={bg} className="box wide">
+          <PhGraph data={data} />
+        </Box>
+      )}
+      {statusdata?.soil_conductivity_status && (
+        <Box bg={bg} className="box wide">
+          <ConductivityIrrigationGraph data={data} />
+        </Box>
+      )}
+      {/* {statusdata?.precipitation_rate_status &&
+        
+          <Box bg={bg} className="box wide">
         <CumulIrrigationGraph data={data} />
-      </Box> */}
-
-      <Box bg={bg} className="box wide">
-        <TemperatureGraph data={data} />
-      </Box>
+        </Box> 
+        } */}
+      {statusdata?.soil_temperature_status && (
+        <Box bg={bg} className="box wide">
+          <TemperatureGraph data={data} />
+        </Box>
+      )}
     </div>
   );
 };
