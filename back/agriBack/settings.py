@@ -13,8 +13,9 @@ load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY', '+@*@loo#%*ay6*m8w1xy7)l2+$iueppj)ns(nj0r6^@+@ujokd')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-
 # === CORS CONFIG ===
+from corsheaders.defaults import default_headers
+
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
@@ -27,23 +28,30 @@ CORS_ALLOW_METHODS = (
     "PUT",
 )
 
-CORS_ALLOW_HEADERS = (
-    "*"
-)
+CORS_ALLOW_HEADERS = list(default_headers)
+
+CSRF_COOKIE_SAMESITE = 'Lax'  # or 'None' if cross-site and using HTTPS
+CSRF_COOKIE_SECURE = False    # True if HTTPS
+CSRF_COOKIE_HTTPONLY = False  # So JS can read token if needed
+
+ALLOWED_HOSTS = [
+    '157.245.43.196',
+    'localhost',
+    '127.0.0.1',
+]
+
 
 # === CSRF CONFIG ===
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://0.0.0.0:3000",
-    "http://157.245.43.196:3000"
+    "http://157.245.43.196:3000",
     "http://localhost:80",
     "http://127.0.0.1:80",
     "http://0.0.0.0:80",
     "http://157.245.43.196:80"
 ]
-
-
 
 
 # === CSRF CONFIG ===
@@ -119,7 +127,7 @@ WSGI_APPLICATION = 'agriBack.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db1.sqlite3',
     }
 }
 
