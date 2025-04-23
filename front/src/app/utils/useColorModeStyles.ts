@@ -6,7 +6,7 @@ const useColorModeStyles = () => {
   const bg = useColorModeValue('white', 'gray.800');
   const textColor = useColorModeValue('gray.800', 'gray.200');
   const hoverColor = useColorModeValue('blue.500', 'blue.300');
-  const bgColor = useColorModeValue('green.500', 'green.300');
+  // const bgColor = useColorModeValue('green.500', 'green.300');
   const navBgColor = useColorModeValue('gray.100', 'gray.600');
   const tableStripeClore = useColorModeValue('gray.400', 'gray.800');
 
@@ -29,6 +29,10 @@ const useColorModeStyles = () => {
     green: useColorModeValue('green.500', 'green.300'),
   };
 
+    const bgColor = useColorModeValue("white", "gray.700");
+    const thBg = useColorModeValue("gray.100", "gray.800");
+    const borderColor = useColorModeValue("gray.200", "gray.600");
+
   return {
     bg,
     textColor,
@@ -40,6 +44,8 @@ const useColorModeStyles = () => {
     solarRadiationColors,
     solarPanelVoltageColors,
     tableStripeClore,
+    thBg,
+    borderColor,
   };
 };
 
