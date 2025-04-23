@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import { Grid, GridItem } from "@chakra-ui/react";
-import HeaderAdmin from "@/app/components/main/HeaderAdmin";
+import HeaderAdmin from "@/app/components/main/AdminHeader";
 import AdminSidebar from "@/app/components/main/AdminSidebar";
 import GraphStatusMain from "@/app/components/admin/GraphStatusMain";
 type Params = {
@@ -55,7 +55,7 @@ const ModifyUserpage = ({ params }: { params: Params }) => {
         height="100%"
       >
         {/* <ModifyUser user={user} /> */}
-        <GraphStatusMain user={user}/>
+        <GraphStatusMain user={user} />
       </GridItem>
     </Grid>
   );

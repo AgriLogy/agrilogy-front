@@ -4,7 +4,7 @@ import React from "react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 
 import CreateUser from "@/app/components/admin/CreateUser";
-import HeaderAdmin from "@/app/components/main/HeaderAdmin";
+import HeaderAdmin from "@/app/components/main/AdminHeader";
 import AdminSidebar from "@/app/components/main/AdminSidebar";
 
 const Page = () => {

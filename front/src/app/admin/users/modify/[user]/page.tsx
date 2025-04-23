@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import { Grid, GridItem } from "@chakra-ui/react";
 import ModifyUser from "@/app/components/admin/ModifyUser";
-import HeaderAdmin from "@/app/components/main/HeaderAdmin";
+import HeaderAdmin from "@/app/components/main/AdminHeader";
 import AdminSidebar from "@/app/components/main/AdminSidebar";
 type Params = {
   user: string;

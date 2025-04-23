@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import { Grid, GridItem } from "@chakra-ui/react";
 import UserSoildata from "@/app/components/admin/UserSoildata";
-import HeaderAdmin from "@/app/components/main/HeaderAdmin";
+import HeaderAdmin from "@/app/components/main/AdminHeader";
 import AdminSidebar from "@/app/components/main/AdminSidebar";
 type Params = {
   user: string;
@@ -24,19 +24,19 @@ const SoilDatapage = ({ params }: { params: Params }) => {
   }
   return (
     <Grid
-          templateAreas={{
-            base: `"header"
+      templateAreas={{
+        base: `"header"
                    "main"`,
-            md: `"header header"
+        md: `"header header"
                  "nav main"`,
-          }}
-          gridTemplateRows={{ base: "auto 1fr", md: "50px 1fr" }}
-          gridTemplateColumns={{ base: "1fr", md: "50px 1fr" }}
-          height="100vh"
-          gap="0.5"
-          color={textColor}
-          fontWeight="bold"
-        >
+      }}
+      gridTemplateRows={{ base: "auto 1fr", md: "50px 1fr" }}
+      gridTemplateColumns={{ base: "1fr", md: "50px 1fr" }}
+      height="100vh"
+      gap="0.5"
+      color={textColor}
+      fontWeight="bold"
+    >
       <GridItem area={"header"} bg={navBgColor}>
         <HeaderAdmin />
       </GridItem>

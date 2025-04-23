@@ -2,9 +2,9 @@
 import { Grid, GridItem } from "@chakra-ui/react";
 import React from "react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import HeaderAdmin from "@/app/components/main/HeaderAdmin";
+import ListeUsers from "@/app/components/admin/ListeUsers";
+import HeaderAdmin from "@/app/components/main/AdminHeader";
 import AdminSidebar from "@/app/components/main/AdminSidebar";
-import MainAdmin from "../components/admin/MainAdmin";
 
 const Page = () => {
   const { textColor, navBgColor } = useColorModeStyles();
@@ -41,7 +41,7 @@ const Page = () => {
         overflowY="auto"
         height="100%"
       >
-        <MainAdmin />
+        <ListeUsers />
       </GridItem>
     </Grid>
   );
