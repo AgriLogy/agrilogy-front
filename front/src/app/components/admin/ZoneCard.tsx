@@ -27,6 +27,7 @@ const ZoneCard: React.FC<Props> = ({ zone, onClick }) => {
       borderWidth="1px"
       borderRadius="xl"
       boxShadow="md"
+      className="wide"
       _hover={{ cursor: "pointer", borderColor: hoverColor }}
       onClick={onClick}
     >

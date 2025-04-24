@@ -73,6 +73,7 @@ const ZoneModalAddForm = ({ isOpen, onClose, user }: ZoneModalAddForm) => {
         duration: 3000,
         isClosable: true,
       });
+      window.location.reload();
 
       onClose();
       setName("");

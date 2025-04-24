@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Text, VStack } from "@chakra-ui/react";
+import { Box, Text, SimpleGrid } from "@chakra-ui/react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import axiosInstance from "@/app/lib/api";
 import ZoneCard from "./ZoneCard";
@@ -7,7 +7,6 @@ import ZoneEditModal from "./ZoneEditModal"; // Import ZoneEditModal
 import { Zone, ZoneWrapper } from "@/app/types";
 import ZoneAddFloatingButton from "./ZoneAddFloatingButton";
 import EmptyBox from "../common/EmptyBox";
-import "@/app/styles/graphes.css";
 
 type Props = {
   user: string;
@@ -51,29 +50,31 @@ const ZoneMain = ({ user }: Props) => {
   if (error) return <EmptyBox />;
 
   return (
-    <div className="container">
+    <>
       <Box
-        className="header"
+        className="header "
         bg={bg}
         p={4}
+        m={2}
         mb={4}
         borderRadius="md"
         boxShadow="sm"
+        border="1px solid"
       >
         <Text fontSize="2xl" fontWeight="bold" color={textColor}>
           Liste des zones pour {user}{" "}
         </Text>
       </Box>
-      {zones.length > 0 && (
-        <VStack mt={4} spacing={4} align="stretch" className="header wide">
-          {zones.map((zoneWrapper) => (
-            <ZoneCard
-              key={zoneWrapper.zone.id}
-              zone={zoneWrapper.zone}
-              onClick={() => handleZoneClick(zoneWrapper.zone)}
-            />
-          ))}
-        </VStack>
+      {zones.length > 0 && ( <Box m={2}>
+        <SimpleGrid mt={4} spacing={4} columns={{ base: 1, sm: 2, md: 3 }}>
+        {zones.map((zoneWrapper) => (
+          <ZoneCard
+            key={zoneWrapper.zone.id}
+            zone={zoneWrapper.zone}
+            onClick={() => handleZoneClick(zoneWrapper.zone)}
+          />
+        ))}
+      </SimpleGrid></Box>
       )}{" "}
       {/* ZoneEditModal will open when a zone is selected */}
       {selectedZone && (
@@ -86,7 +87,7 @@ const ZoneMain = ({ user }: Props) => {
         />
       )}
       <ZoneAddFloatingButton user={user} />
-    </div>
+    </>
   );
 };
 

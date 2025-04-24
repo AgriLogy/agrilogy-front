@@ -119,7 +119,6 @@ const GraphStatusMain = ({ user }: Props) => {
         mb={4}
         borderRadius="md"
         boxShadow="sm"
-        border={"1px solid"}
       >
         <Text fontSize="2xl" fontWeight="bold" color={textColor}>
           Liste des Graphiques pour {user}
@@ -135,7 +134,7 @@ const GraphStatusMain = ({ user }: Props) => {
         mt={2}
         borderRadius="md"
         boxShadow="sm"
-        border={"1px solid"}
+        // border={"1px solid"}
 
       >
         {loading ? (
