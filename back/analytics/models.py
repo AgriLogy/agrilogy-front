@@ -195,13 +195,13 @@ class ActiveGraph(models.Model):
     
     # meteo
     et0_status =  models.BooleanField(default=True, help_text="Taux d'évapotranspiration")
-    precipitation_rate_status =  models.BooleanField(default=True, help_text="Taux de précipitation")
+    # precipitation_rate_status =  models.BooleanField(default=True, help_text="Taux de précipitation")
     wind_speed_status =  models.BooleanField(default=True, help_text="Vitesse du vent")
     solar_radiation_status =  models.BooleanField(default=True, help_text="Rayonnement solaire")
-    pressure_weather_status =  models.BooleanField(default=True, help_text="Pression atmosphérique")
+    # pressure_weather_status =  models.BooleanField(default=True, help_text="Pression atmosphérique")
     wind_direction_status =  models.BooleanField(default=True, help_text="Direction du vent")
-    humidity_weather_status =  models.BooleanField(default=True, help_text="Humidité de l'air")
-    temperature_weather_status =  models.BooleanField(default=True, help_text="Température de l'air")
+    # humidity_weather_status =  models.BooleanField(default=True, help_text="Humidité de l'air")
+    # temperature_weather_status =  models.BooleanField(default=True, help_text="Température de l'air")
     temperature_humidity_weather_status =  models.BooleanField(default=True, help_text="Température et humidité de l'air")
     precipitation_humidity_rate_status =  models.BooleanField(default=True, help_text="Taux de précipitation et humidité")
     pluviometrie_status =  models.BooleanField(default=True, help_text="Cumule de pluie tombée")

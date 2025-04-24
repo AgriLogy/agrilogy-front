@@ -105,12 +105,12 @@ const StationMain = () => {
         <VaporPressureDeficitGraph data={data} />
         </Box>
       )} */}
-      {statusdata?.data_table_status && (
+      {statusdata?.precipitation_humidity_rate_status && (
         <Box bg={bg} className="box wide">
           <PrecipitationHumidityGraph data={data} />
         </Box>
       )}
-      {statusdata?.precipitation_humidity_rate_status && (
+      {statusdata?.data_table_status && (
         <Box bg={bg} className="box wide">
           <DataTable data={data} />
         </Box>

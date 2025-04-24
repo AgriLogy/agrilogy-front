@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import axiosInstance from "@/app/lib/api";
+import "@/app/styles/graphes.css";
 
 type Props = {
   user: string;
@@ -26,19 +27,15 @@ const soilFields = [
   "soil_irrigation_status",
   "soil_ph_status",
   "soil_conductivity_status",
-  "soil_moisture_status",
+  // "soil_moisture_status",
   "soil_temperature_status",
 ];
 
 const meteoFields = [
   "et0_status",
-  "precipitation_rate_status",
   "wind_speed_status",
   "solar_radiation_status",
-  "pressure_weather_status",
   "wind_direction_status",
-  "humidity_weather_status",
-  "temperature_weather_status",
   "temperature_humidity_weather_status",
   "precipitation_humidity_rate_status",
   "pluviometrie_status",
@@ -116,22 +113,21 @@ const GraphStatusMain = ({ user }: Props) => {
   return (
     <div className="container">
       <Box
-        className="header wide"
+        className="header"
         bg={bg}
-        p={2}
-        // mb={4}
-        margin={1}
-        mt={1}
+        p={4}
+        mb={4}
         borderRadius="md"
         boxShadow="sm"
+        border={"1px solid"}
       >
-        <Text color={textColor} fontSize="xl" mb={4}>
+        <Text fontSize="2xl" fontWeight="bold" color={textColor}>
           Liste des Graphiques pour {user}
         </Text>
       </Box>
 
       <Box
-        className="header wide"
+        className="wide "
         bg={bg}
         p={4}
         mb={4}
@@ -139,6 +135,8 @@ const GraphStatusMain = ({ user }: Props) => {
         mt={2}
         borderRadius="md"
         boxShadow="sm"
+        border={"1px solid"}
+
       >
         {loading ? (
           <Spinner />

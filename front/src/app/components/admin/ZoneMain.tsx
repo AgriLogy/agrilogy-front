@@ -7,6 +7,7 @@ import ZoneEditModal from "./ZoneEditModal"; // Import ZoneEditModal
 import { Zone, ZoneWrapper } from "@/app/types";
 import ZoneAddFloatingButton from "./ZoneAddFloatingButton";
 import EmptyBox from "../common/EmptyBox";
+import "@/app/styles/graphes.css";
 
 type Props = {
   user: string;
@@ -15,6 +16,7 @@ type Props = {
 const ZoneMain = ({ user }: Props) => {
   const { bg, textColor } = useColorModeStyles();
   const [zones, setZones] = useState<ZoneWrapper[]>([]);
+  const [data, setData] = useState<[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal open state
   const [selectedZone, setSelectedZone] = useState<Zone | null>(null); // Selected zone for editing
@@ -51,27 +53,28 @@ const ZoneMain = ({ user }: Props) => {
   return (
     <div className="container">
       <Box
-        className="header wide"
+        className="header"
         bg={bg}
         p={4}
         mb={4}
-        margin={1}
-        mt={2}
         borderRadius="md"
         boxShadow="sm"
       >
-        <Text color={textColor}>Liste des zones pour {user} </Text>
+        <Text fontSize="2xl" fontWeight="bold" color={textColor}>
+          Liste des zones pour {user}{" "}
+        </Text>
       </Box>
-      <VStack mt={4} spacing={4} align="stretch" className=" header wide">
-        {zones.map((zoneWrapper) => (
-          <ZoneCard
-            key={zoneWrapper.zone.id}
-            zone={zoneWrapper.zone}
-            onClick={() => handleZoneClick(zoneWrapper.zone)}
-          />
-        ))}
-      </VStack>
-
+      {zones.length > 0 && (
+        <VStack mt={4} spacing={4} align="stretch" className="header wide">
+          {zones.map((zoneWrapper) => (
+            <ZoneCard
+              key={zoneWrapper.zone.id}
+              zone={zoneWrapper.zone}
+              onClick={() => handleZoneClick(zoneWrapper.zone)}
+            />
+          ))}
+        </VStack>
+      )}{" "}
       {/* ZoneEditModal will open when a zone is selected */}
       {selectedZone && (
         <ZoneEditModal
