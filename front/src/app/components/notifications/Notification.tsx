@@ -1,6 +1,6 @@
 import React from "react";
-import { Text, Box } from "@chakra-ui/react"; // Import Chakra UI components
-import "./Notification.css"; // Ensure that you have the necessary CSS file
+import { Text, Box } from "@chakra-ui/react";
+import useColorModeStyles from "@/app/utils/useColorModeStyles";
 
 interface NotificationProps {
   id: number;
@@ -25,58 +25,53 @@ interface NotificationProps {
 }
 
 const Notification: React.FC<NotificationProps> = ({ notification, is_read }) => {
-  // Parse and format the notification date
+  const { bg, textColor, hoverColor } = useColorModeStyles();
   const notificationDate = new Date(notification.notification_date);
   const formattedDate = notificationDate.toLocaleString();
 
   return (
-    <Box  p={4} borderWidth={1} width="100%">
-      {/* Status */}
-      <Box className="status">
-        <Text fontWeight="bold">{is_read ? "Read" : "Unread"}</Text>
+    <Box
+      bg={bg}
+      p={4}
+      borderWidth="1px"
+      borderRadius="xl"
+      boxShadow="md"
+      className="wide"
+      _hover={{ borderColor: hoverColor }}
+      color={textColor}
+    >
+      <Text fontWeight="bold">{is_read ? "✅ Read" : "📩 Unread"}</Text>
+      <Text fontSize="sm" mt={2}>📅 {formattedDate}</Text>
+
+      <Box mt={4}>
+        <Text fontWeight="bold" fontSize="md">🌡️ Temperature</Text>
+        <Text>• Yesterday: {notification.yesterday_temperature}°C</Text>
+        <Text>• Today: {notification.today_temperature}°C</Text>
       </Box>
 
-      {/* Notification Date */}
-      
-      <Box className="section notification-date" mt={4}>
-        <Text fontWeight="bold">Notification Date 📅</Text>
-        <Text>{formattedDate}</Text>
+      <Box mt={3}>
+        <Text fontWeight="bold" fontSize="md">💧 Humidity</Text>
+        <Text>• Yesterday: {notification.yesterday_humidity}%</Text>
+        <Text>• Today: {notification.today_humidity}%</Text>
       </Box>
 
-      {/* Temperature Section */}
-      <Box className="section temperature" mt={4}>
-        <Text fontSize="lg" fontWeight="bold">🌡️ <strong>Temperatures</strong></Text>
-        <Text><strong>Yesterday:</strong> {notification.yesterday_temperature}°C</Text>
-        <Text><strong>Today:</strong> {notification.today_temperature}°C</Text>
+      <Box mt={3}>
+        <Text fontWeight="bold" fontSize="md">🔎 ET0</Text>
+        <Text>{notification.ET0} mm</Text>
       </Box>
 
-      {/* Humidity Section */}
-      <Box className="section humidity" mt={4}>
-        <Text fontSize="lg" fontWeight="bold">💧 <strong>Humidity</strong></Text>
-        <Text><strong>Yesterday:</strong> {notification.yesterday_humidity}%</Text>
-        <Text><strong>Today:</strong> {notification.today_humidity}%</Text>
+      <Box mt={3}>
+        <Text fontWeight="bold" fontSize="md">🌱 Soil</Text>
+        <Text>• Humidity: {notification.soil_humidity}%</Text>
+        <Text>• Temperature: {notification.soil_temperature}°C</Text>
+        <Text>• pH: {notification.soil_ph}</Text>
       </Box>
 
-      {/* ET0 Section */}
-      <Box className="section et0" mt={4}>
-        <Text fontSize="lg" fontWeight="bold">💧 <strong>ET0</strong></Text>
-        <Text><strong>ET0:</strong> {notification.ET0} mm</Text>
-      </Box>
-
-      {/* Soil Conditions Section */}
-      <Box className="section soil-conditions" mt={4}>
-        <Text fontSize="lg" fontWeight="bold">🌱 <strong>Soil Conditions</strong></Text>
-        <Text><strong>Soil Humidity:</strong> {notification.soil_humidity}%</Text>
-        <Text><strong>Soil Temperature:</strong> {notification.soil_temperature}°C</Text>
-        <Text><strong>Soil pH:</strong> {notification.soil_ph}</Text>
-      </Box>
-
-      {/* Irrigation Details Section */}
-      <Box className="section irrigation" mt={4}>
-        <Text fontSize="lg" fontWeight="bold">🚰 <strong>Irrigation Details</strong></Text>
-        <Text><strong>Perfect Irrigation Period:</strong> {notification.perfect_irrigation_period}</Text>
-        <Text><strong>Last Irrigation Date:</strong> {notification.last_irrigation_date}</Text>
-        <Text><strong>Water Used in Irrigation:</strong> {notification.used_water_irrigation} liters</Text>
+      <Box mt={3}>
+        <Text fontWeight="bold" fontSize="md">🚰 Irrigation</Text>
+        <Text>• Period: {notification.perfect_irrigation_period}</Text>
+        <Text>• Last Date: {notification.last_irrigation_date}</Text>
+        <Text>• Water Used: {notification.used_water_irrigation} liters</Text>
       </Box>
     </Box>
   );

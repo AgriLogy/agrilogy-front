@@ -10,10 +10,8 @@ import EmptyBox from "../common/EmptyBox";
 const NotificationsMain: React.FC = () => {
   const { bg, textColor } = useColorModeStyles(); // Use the utility
   const [notifications, setNotifications] = useState<any[]>([]);
-  // const [alerts, setAlerts] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Fetch notifications and alerts
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -21,7 +19,6 @@ const NotificationsMain: React.FC = () => {
           "/api/notifications-and-alerts/"
         );
         setNotifications(response.data.notifications);
-        // setAlerts(response.data.alerts);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -34,27 +31,14 @@ const NotificationsMain: React.FC = () => {
   if (loading) return <EmptyBox />;
 
   return (
-    <div className="container">
+    <>
       <Box bg={bg} className="header">
         <Text color={textColor}>Notifications</Text>
       </Box>
 
-      {/* <Box bg={bg} className="   wide"> */}
-      {/* Render Notifications */}
-      {/* <VStack spacing={4} align="stretch"> */}
-      <SimpleGrid
-        p={1}
-        columns={{ base: 1, sm: 1, md: 2, lg: 2 }}
-        spacing={4}
-        w="100%"
-      >
+      <SimpleGrid m={1} mt={4} spacing={4} columns={{ base: 1, sm: 2, md: 3, lg: 4 }}>
         {notifications.map((notification) => (
-          <Box
-            key={notification.id}
-            className="box"
-            height="100%"
-            gridColumn="span 2;"
-          >
+          <Box >
             <Notification
               id={notification.id}
               notification={notification.notification}
@@ -64,9 +48,7 @@ const NotificationsMain: React.FC = () => {
           </Box>
         ))}
       </SimpleGrid>
-      {/* </VStack> */}
-      {/* </Box> */}
-    </div>
+    </>
   );
 };
 

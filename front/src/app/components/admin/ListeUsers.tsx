@@ -191,6 +191,7 @@ const ListeUsers: React.FC = () => {
         mb={4}
         borderRadius="md"
         boxShadow="sm"
+        border="solid 1px"
       >
         <Text fontSize="2xl" fontWeight="bold" color={textColor}>
           Liste des utilisateurs
