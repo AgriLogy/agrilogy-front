@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'analytics',
+    'captor',
     'corsheaders',
     'CustomUser',
 ]
