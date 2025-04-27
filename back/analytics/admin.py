@@ -14,10 +14,6 @@ class NotificationsPerUserAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(Sensor)
-class SensorDataAdmin(admin.ModelAdmin):
-    pass
-
-# @admin.register(Achievement)
-# class AchievementAdmin(admin.ModelAdmin):
+# @admin.register(Sensor)
+# class SensorDataAdmin(admin.ModelAdmin):
 #     pass

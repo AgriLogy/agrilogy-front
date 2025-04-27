@@ -63,15 +63,21 @@ CSRF_TRUSTED_ORIGINS = [
 
 # === APPLICATIONS ===
 INSTALLED_APPS = [
+    # Django apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	
+    # Third-party apps
+    'drf_yasg',
     'rest_framework',
+	'django_extensions',
+	
+    # My apps
     'analytics',
-    'captor',
     'corsheaders',
     'CustomUser',
 ]
@@ -128,7 +134,7 @@ WSGI_APPLICATION = 'agriBack.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db1.sqlite3',
+        'NAME': BASE_DIR / 'db3.sqlite3',
     }
 }
 
