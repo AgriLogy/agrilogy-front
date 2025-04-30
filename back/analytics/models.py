@@ -27,6 +27,11 @@ class Notification(models.Model):
     last_finish_irrigation_hour = models.TimeField(help_text="Finish time of the last irrigation.")
     used_water_irrigation = models.DecimalField(max_digits=7, decimal_places=2, help_text="Water used in the last irrigation in liters.")
     notification_date = models.DateTimeField(default=datetime.now, help_text="Date and time when the notification was created.")
+    user = models.ForeignKey(User,
+        on_delete=models.CASCADE,
+        related_name='user_notifications',
+        null=True, blank=True  
+    )
     
     def __str__(self):
         return f"Alert on {self.last_irrigation_date} (Notification sent on {self.notification_date})"
@@ -97,19 +102,6 @@ class Alert(models.Model):
         return f"{self.name} - {self.condition}"
 
 
-
-# 
-class NotificationsPerUser(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_notifications')
-    notification = models.ForeignKey(Notification, on_delete=models.CASCADE)
-    is_read = models.BooleanField(default=False, help_text="Whether the user has read this notification")
-    read_at = models.DateTimeField(null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.user.username} - Notification on {self.notification.notification_date}"
-
-
-
 class Zone(models.Model):
     name = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="zones")
@@ -164,14 +156,6 @@ class KcPeriodAssignment(models.Model):
 
     def __str__(self):
         return f"Assignment of Period '{self.period.period_name}' to KC '{self.kc.name}'"
-
-
-class ZonePerUser(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    zone = models.ForeignKey(Zone, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"Zone {self.zone.name} assigned to {self.user.username}"
 
 
 class PrecipitationRate(models.Model):

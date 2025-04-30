@@ -23,89 +23,89 @@ from rest_framework import status
 
 User = get_user_model()
 
-class ZonePerUserAPIView(APIView):
-    # authentication_classes = [JWTAuthentication]
-    permission_classes = [AllowAny]
-    """
-    Manage Zones for a specific User.
-    """
-    def get(self, request, username):
-        """
-        List all Zones assigned to the user.
-        """
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+# class ZonePerUserAPIView(APIView):
+#     # authentication_classes = [JWTAuthentication]
+#     permission_classes = [AllowAny]
+#     """
+#     Manage Zones for a specific User.
+#     """
+#     def get(self, request, username):
+#         """
+#         List all Zones assigned to the user.
+#         """
+#         try:
+#             user = User.objects.get(username=username)
+#         except User.DoesNotExist:
+#             return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        assignments = ZonePerUser.objects.filter(user=user)
-        serializer = ZonePerUserSerializer(assignments, many=True)
-        return Response(serializer.data)
+#         assignments = ZonePerUser.objects.filter(user=user)
+#         serializer = ZonePerUserSerializer(assignments, many=True)
+#         return Response(serializer.data)
 
-    def post(self, request, username):
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+#     def post(self, request, username):
+#         try:
+#             user = User.objects.get(username=username)
+#         except User.DoesNotExist:
+#             return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Remove user from incoming data if it exists
-        print(request.data)
-        zone_data = request.data.copy()
-        # zone_data.pop('user', None)  # <- this line is important atttttention
+#         # Remove user from incoming data if it exists
+#         print(request.data)
+#         zone_data = request.data.copy()
+#         # zone_data.pop('user', None)  # <- this line is important atttttention
 
-        serializer = ZoneSerializer(data=zone_data)
+#         serializer = ZoneSerializer(data=zone_data)
 
-        if serializer.is_valid():
-            zone = serializer.save(user=user)
-            ZonePerUser.objects.create(user=user, zone=zone)
-            return Response(
-                ZonePerUserSerializer(ZonePerUser.objects.get(user=user, zone=zone)).data,
-                status=status.HTTP_201_CREATED
-            )
-        else:
-            print(serializer.errors)
+#         if serializer.is_valid():
+#             zone = serializer.save(user=user)
+#             ZonePerUser.objects.create(user=user, zone=zone)
+#             return Response(
+#                 ZonePerUserSerializer(ZonePerUser.objects.get(user=user, zone=zone)).data,
+#                 status=status.HTTP_201_CREATED
+#             )
+#         else:
+#             print(serializer.errors)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class ModZonePerUserAPIView(APIView):
-    def put(self, request, username, zone_id):
-        """
-        Modify one of the user's Zones (update Zone fields).
-        """
-        try:
-            user = User.objects.get(username=username)
-            zone = Zone.objects.get(id=zone_id, zoneperuser__user=user)
-        except User.DoesNotExist:
-            return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-        except Zone.DoesNotExist:
-            return Response({'detail': 'Zone not found or not assigned to this user'}, status=status.HTTP_404_NOT_FOUND)
+# @method_decorator(csrf_exempt, name='dispatch')
+# class ModZonePerUserAPIView(APIView):
+#     def put(self, request, username, zone_id):
+#         """
+#         Modify one of the user's Zones (update Zone fields).
+#         """
+#         try:
+#             user = User.objects.get(username=username)
+#             zone = Zone.objects.get(id=zone_id, zoneperuser__user=user)
+#         except User.DoesNotExist:
+#             return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+#         except Zone.DoesNotExist:
+#             return Response({'detail': 'Zone not found or not assigned to this user'}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ZoneSerializer(zone, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#         serializer = ZoneSerializer(zone, data=request.data, partial=True)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, username, zone_id):
-        """
-        Delete a specific Zone from the user's assigned Zones.
-        """
-        try:
-            user = User.objects.get(username=username)
-            zone = Zone.objects.get(id=zone_id, zoneperuser__user=user)
-        except User.DoesNotExist:
-            return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-        except Zone.DoesNotExist:
-            return Response({'detail': 'Zone not found or not assigned to this user'}, status=status.HTTP_404_NOT_FOUND)
+#     def delete(self, request, username, zone_id):
+#         """
+#         Delete a specific Zone from the user's assigned Zones.
+#         """
+#         try:
+#             user = User.objects.get(username=username)
+#             zone = Zone.objects.get(id=zone_id, zoneperuser__user=user)
+#         except User.DoesNotExist:
+#             return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+#         except Zone.DoesNotExist:
+#             return Response({'detail': 'Zone not found or not assigned to this user'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Remove the assignment
-        ZonePerUser.objects.filter(user=user, zone=zone).delete()
-        # Optionally delete the zone itself
-        zone.delete()
+#         # Remove the assignment
+#         ZonePerUser.objects.filter(user=user, zone=zone).delete()
+#         # Optionally delete the zone itself
+#         zone.delete()
 
-        return Response({'detail': 'Zone deleted'}, status=status.HTTP_204_NO_CONTENT)
+#         return Response({'detail': 'Zone deleted'}, status=status.HTTP_204_NO_CONTENT)
 
 
 class AdminHeaderAPIView(APIView):
@@ -151,37 +151,37 @@ class AdminHeaderAPIView(APIView):
 
 
 
-class ActiveGraphPerUserView(APIView):
-    permission_classes = [IsAdminUser]
+# class ActiveGraphPerUserView(APIView):
+#     permission_classes = [IsAdminUser]
 
-    def get_object(self, username):
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return None
+#     def get_object(self, username):
+#         try:
+#             user = User.objects.get(username=username)
+#         except User.DoesNotExist:
+#             return None
 
-        # Try to get or create the link
-        active_sensor_per_user, created = ActiveGraphPerUser.objects.get_or_create(
-            user=user,
-            defaults={'active_sensor': ActiveGraph.objects.create()}
-        )
-        return active_sensor_per_user.active_sensor
+#         # Try to get or create the link
+#         active_sensor_per_user, created = ActiveGraphPerUser.objects.get_or_create(
+#             user=user,
+#             defaults={'active_sensor': ActiveGraph.objects.create()}
+#         )
+#         return active_sensor_per_user.active_sensor
 
-    def get(self, request, username):
-        active_sensor = self.get_object(username)
-        if not active_sensor:
-            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+#     def get(self, request, username):
+#         active_sensor = self.get_object(username)
+#         if not active_sensor:
+#             return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ActiveGraphSerializer(active_sensor)
-        return Response(serializer.data)
+#         serializer = ActiveGraphSerializer(active_sensor)
+#         return Response(serializer.data)
 
-    def put(self, request, username):
-        active_sensor = self.get_object(username)
-        if not active_sensor:
-            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+#     def put(self, request, username):
+#         active_sensor = self.get_object(username)
+#         if not active_sensor:
+#             return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ActiveGraphSerializer(active_sensor, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#         serializer = ActiveGraphSerializer(active_sensor, data=request.data, partial=True)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

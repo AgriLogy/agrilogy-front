@@ -1,6 +1,6 @@
 from rest_framework import serializers
-# from .models import SensorColor, GraphName, Notification, Alert, NotificationsPerUser, Sensor, Zone, ZonePerUser
 from .models import *
+
 
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,71 +14,365 @@ class AlertSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class NotificationsPerUserSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField()
-    notification = NotificationSerializer()
-
-    class Meta:
-        model = NotificationsPerUser
-        fields = '__all__'
-
-# class SensorSerializer(serializers.ModelSerializer):
-#     user = serializers.StringRelatedField()
-#     et0 = serializers.SerializerMethodField()
-#     timestamp = serializers.DateTimeField(format="%d-%m-%Y")   
-
-#     def get_et0(self, obj):
-#         et0 = obj.ec_soil_medium * (obj.soil_moisture_medium / 100)  
-#         return et0
-
-#     class Meta:
-#         model = Sensor
-#         fields = '__all__'
-
-# class GraphNameSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = GraphName
-#         # fields = '__all__'
-#         fields = [ 'soil_irrigation','soil_ph','soil_conductivity','soil_moisture','soil_temperature',
-#             'et0','precipitation_rate','wind_speed','solar_radiation','pressure_weather','wind_direction',
-#             'humidity_weather', 'temperature_weather', 'temperature_humidity_weather', 'precipitation_humidity_rate',
-#             'pluviometrie', 'data_table',]
-
-# class SensorColorSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = SensorColor
-#         fields = [
-#         'precipitation_rate_color','humidity_weather_color','wind_speed_color',
-#         'solar_radiation_color','pressure_weather_color','wind_direction_color',
-#         'temperature_weather_color','et0_color','ec_soil_medium_color',
-#         'soil_temperature_medium_color','soil_ec_high_color','ec_soil_low_color',
-#         'soil_moisture_medium_color','soil_moisture_high_color','soil_moisture_low_color',
-#         'ph_soil_color','soil_temperature_low_color','soil_temperature_high_color',]
-
-
 class ZoneSerializer(serializers.ModelSerializer):
     class Meta:
         model = Zone
         fields = '__all__'
-        read_only_fields = ['user']  # 👈 this fixes your issue
 
 
-class ZonePerUserSerializer(serializers.ModelSerializer):
-    zone = ZoneSerializer(read_only=True)  # Replace zone ID with full zone data
-
+class KcPeriodSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ZonePerUser
+        model = KcPeriod
         fields = '__all__'
 
 
-# Admin
-# class ActiveGraphSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = ActiveGraph
-#         exclude = ['id']
+class KcSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Kc
+        fields = '__all__'
 
-# class ActiveGraphPerUserSerializer(serializers.ModelSerializer):
-#     active_sensor = ActiveGraphSerializer()
-#     class Meta:
-#         model = ActiveGraphPerUser
-#         exclude = ['id']
+
+class KcPeriodAssignmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = KcPeriodAssignment
+        fields = '__all__'
+
+
+class PrecipitationRateSerializer(serializers.ModelSerializer):
+    default_unit = serializers.CharField(source='default_unit', read_only=True)
+    available_units = serializers.ListField(child=serializers.CharField(), source='available_units', read_only=True)
+
+    class Meta:
+        model = PrecipitationRate
+        fields = [
+            'id', 'name', 'courbe_color', 'longitude', 'latitude', 'value',
+            'zone', 'user', 'timestamp', 'default_unit', 'available_units',
+        ]
+
+
+class HumidityWeatherSerializer(serializers.ModelSerializer):
+    default_unit = serializers.CharField(source='default_unit', read_only=True)
+    available_units = serializers.ListField(child=serializers.CharField(), source='available_units', read_only=True)
+
+    class Meta:
+        model = HumidityWeather
+        fields = [
+            'id', 'name', 'courbe_color', 'longitude', 'latitude', 'value',
+            'zone', 'user', 'timestamp', 'default_unit', 'available_units',
+        ]
+
+
+class WindSpeedSerializer(serializers.ModelSerializer):
+    default_unit = serializers.CharField(source='default_unit', read_only=True)
+    available_units = serializers.ListField(child=serializers.CharField(), source='available_units', read_only=True)
+
+    class Meta:
+        model = WindSpeed
+        fields = [
+            'id', 'name', 'courbe_color', 'longitude', 'latitude', 'value',
+            'zone', 'user', 'timestamp', 'default_unit', 'available_units',
+        ]
+
+
+class SolarRadiationSerializer(serializers.ModelSerializer):
+    default_unit = serializers.CharField(source='default_unit', read_only=True)
+    available_units = serializers.ListField(child=serializers.CharField(), source='available_units', read_only=True)
+
+    class Meta:
+        model = SolarRadiation
+        fields = [
+            'id', 'name', 'courbe_color', 'longitude', 'latitude', 'value',
+            'zone', 'user', 'timestamp', 'default_unit', 'available_units',
+        ]
+
+
+class PressureWeatherSerializer(serializers.ModelSerializer):
+    default_unit = serializers.CharField(source='default_unit', read_only=True)
+    available_units = serializers.ListField(child=serializers.CharField(), source='available_units', read_only=True)
+
+    class Meta:
+        model = PressureWeather
+        fields = [
+            'id', 'name', 'courbe_color', 'longitude', 'latitude', 'value',
+            'zone', 'user', 'timestamp', 'default_unit', 'available_units',
+        ]
+
+
+class WindDirectionSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = WindDirection
+        fields = '__all__'
+
+
+class TemperatureWeatherSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = TemperatureWeather
+        fields = '__all__'
+
+
+class ECSoilMediumSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = ECSoilMedium
+        fields = '__all__'
+
+
+class SoilTemperatureMediumSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = SoilTemperatureMedium
+        fields = '__all__'
+
+
+class SoilECHighSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = SoilECHigh
+        fields = '__all__'
+
+
+class ECSoilLowSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = ECSoilLow
+        fields = '__all__'
+
+
+from rest_framework import serializers
+from .models import (
+    WindDirection,
+    TemperatureWeather,
+    ECSoilMedium,
+    SoilTemperatureMedium,
+    SoilECHigh,
+    ECSoilLow,
+)
+
+class WindDirectionSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = WindDirection
+        fields = '__all__'
+
+
+class TemperatureWeatherSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = TemperatureWeather
+        fields = '__all__'
+
+
+class ECSoilMediumSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = ECSoilMedium
+        fields = '__all__'
+
+
+class SoilTemperatureMediumSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = SoilTemperatureMedium
+        fields = '__all__'
+
+
+class SoilECHighSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = SoilECHigh
+        fields = '__all__'
+
+
+class ECSoilLowSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = ECSoilLow
+        fields = '__all__'
+
+
+class SoilMoistureMediumSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = SoilMoistureMedium
+        fields = '__all__'
+
+
+class SoilMoistureHighSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = SoilMoistureHigh
+        fields = '__all__'
+
+
+class SoilMoistureLowSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = SoilMoistureLow
+        fields = '__all__'
+
+
+class PhSoilSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = PhSoil
+        fields = '__all__'
+
+
+class SoilTemperatureLowSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = SoilTemperatureLow
+        fields = '__all__'
+
+
+class SoilTemperatureHighSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = SoilTemperatureHigh
+        fields = '__all__'
+
+
+class WaterFlowSensorSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = WaterFlowSensor
+        fields = '__all__'
+
+
+class WaterECSensorSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = WaterECSensor
+        fields = '__all__'
+
+
+class PhWaterSensorSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = PhWaterSensor
+        fields = '__all__'
+
+
+class ElectricityConsumptionSensorSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = ElectricityConsumptionSensor
+        fields = '__all__'
+
+
+class LeafMoistureSensorSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = LeafMoistureSensor
+        fields = '__all__'
+
+
+class MultiDepthSoilMoistureSensorSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = MultiDepthSoilMoistureSensor
+        fields = '__all__'
+
+
+class LargeFruitDiameterSensorSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = LargeFruitDiameterSensor
+        fields = '__all__'
+
+
+class WaterLevelSensorSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = WaterLevelSensor
+        fields = '__all__'
+
+
+class SoilSalinityConductivityIntegratedSensorSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = SoilSalinityConductivityIntegratedSensor
+        fields = '__all__'
+
+
+class NpkSensorSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = NpkSensor
+        fields = '__all__'
+
+
+class FruitSizeSensorSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = FruitSizeSensor
+        fields = '__all__'
+
+
+class EcSalinitySensorSerializer(serializers.ModelSerializer):
+    default_unit = serializers.ReadOnlyField()
+    available_units = serializers.ReadOnlyField()
+
+    class Meta:
+        model = EcSalinitySensor
+        fields = '__all__'

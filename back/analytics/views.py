@@ -1,4 +1,4 @@
-from django.db.models import Q
+# from django.db.models import Q
 from django.contrib.auth import get_user_model
 # from django.views.decorators.csrf import csrf_exempt
 # from django.utils.dateparse import parse_date, parse_datetime
@@ -11,7 +11,7 @@ from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status
+# from rest_framework import status
 
 from .models import *
 from .serializers import *
@@ -79,21 +79,21 @@ User = get_user_model()
 #             "sensor_status": graph_status_serializer.data if graph_status_serializer else None,
 #         }, status=status.HTTP_200_OK)
 
-class NotificationsAndAlertsView(APIView):
-    permission_classes = [IsAuthenticated]
+# class NotificationsAndAlertsView(APIView):
+#     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        user = request.user
+#     def get(self, request):
+#         user = request.user
 
-        # Fetch user-specific notifications and alerts
-        user_notifications = NotificationsPerUser.objects.filter(user=user)
+#         # Fetch user-specific notifications and alerts
+#         user_notifications = NotificationsPerUser.objects.filter(user=user)
 
-        # Serialize the data
-        notifications_serializer = NotificationsPerUserSerializer(user_notifications, many=True)
+#         # Serialize the data
+#         notifications_serializer = NotificationsPerUserSerializer(user_notifications, many=True)
 
-        return Response({
-            "notifications": notifications_serializer.data,
-        })
+#         return Response({
+#             "notifications": notifications_serializer.data,
+#         })
 
 class HeaderAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -142,50 +142,50 @@ class HeaderAPIView(APIView):
 #         except SensorColor.DoesNotExist:
 #             return Response({"error": "SensorColor not found"}, status=status.HTTP_404_NOT_FOUND)
         
-class AlertsAPIView(APIView):
-    permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
+# class AlertsAPIView(APIView):
+#     permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
 
-    def get(self, request):
-        alerts = Alert.objects.filter(user=request.user).order_by('-id')
-        serializer = AlertSerializer(alerts, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+#     def get(self, request):
+#         alerts = Alert.objects.filter(user=request.user).order_by('-id')
+#         serializer = AlertSerializer(alerts, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request):
-        # Manually add the user to the request data before validation
-        data = request.data.copy()  # Make a copy of the request data
-        data['user'] = request.user.id  # Assign the authenticated user's ID
+#     def post(self, request):
+#         # Manually add the user to the request data before validation
+#         data = request.data.copy()  # Make a copy of the request data
+#         data['user'] = request.user.id  # Assign the authenticated user's ID
 
-        # Pass the updated data to the serializer
-        serializer = AlertSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#         # Pass the updated data to the serializer
+#         serializer = AlertSerializer(data=data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class AlertViewSet(viewsets.ModelViewSet):
-    serializer_class = AlertSerializer
-    permission_classes = [IsAuthenticated]
+# class AlertViewSet(viewsets.ModelViewSet):
+#     serializer_class = AlertSerializer
+#     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        # Filter alerts so users only access their own
-        return Alert.objects.filter(user=self.request.user).order_by('-id')
+#     def get_queryset(self):
+#         # Filter alerts so users only access their own
+#         return Alert.objects.filter(user=self.request.user).order_by('-id')
 
-    def perform_create(self, serializer):
-        # Automatically assign the logged-in user on create
-        serializer.save(user=self.request.user)
+#     def perform_create(self, serializer):
+#         # Automatically assign the logged-in user on create
+#         serializer.save(user=self.request.user)
 
-class AuthZonePerUserAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+# class AuthZonePerUserAPIView(APIView):
+#     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        """
-        List all Zones assigned to the authenticated user.
-        """
-        user = request.user
-        print(user)
+#     def get(self, request):
+#         """
+#         List all Zones assigned to the authenticated user.
+#         """
+#         user = request.user
+#         print(user)
 
-        assignments = ZonePerUser.objects.filter(user=user)
-        serializer = ZonePerUserSerializer(assignments, many=True)
+#         assignments = ZonePerUser.objects.filter(user=user)
+#         serializer = ZonePerUserSerializer(assignments, many=True)
         
-        return Response(serializer.data)
+#         return Response(serializer.data)
 
