@@ -594,34 +594,6 @@ class EcSalinitySensor(models.Model):
     def available_units(self) -> list[str]:
         return ["μS/cm", "dS/m"]
 
-
-class GraphName(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_graph_names')
-    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="zone_graph_names")
-
-    
-    soil_irrigation = models.CharField(max_length=40, default="Irrigation du sol")
-    soil_ph = models.CharField(max_length=40, default="pH du sol")
-    soil_conductivity = models.CharField(max_length=40, default="Conductivité du sol")
-    soil_moisture = models.CharField(max_length=40, default="Humidité du sol")
-    soil_temperature = models.CharField(max_length=40, default="Température du sol")
-    
-    et0 = models.CharField(max_length=40, default="Taux d'évapotranspiration")
-    precipitation_rate = models.CharField(max_length=40, default="Taux de précipitation")
-    wind_speed = models.CharField(max_length=40, default="Vitesse du vent")
-    solar_radiation = models.CharField(max_length=40, default="Rayonnement solaire")
-    pressure_weather = models.CharField(max_length=40, default="Pression atmosphérique")
-    wind_direction = models.CharField(max_length=40, default="Direction du vent")
-    humidity_weather = models.CharField(max_length=40, default="Humidité de l'air")
-    temperature_weather = models.CharField(max_length=40, default="Température de l'air")
-    temperature_humidity_weather = models.CharField(max_length=40, default="Température et humidité de l'air")
-    precipitation_humidity_rate = models.CharField(max_length=40, default="Taux de précipitation et humidité")
-    pluviometrie = models.CharField(max_length=40, default="Cumule de pluie tombée")
-    data_table = models.CharField(max_length=40, default="Tableau de données")
-
-    def __str__(self):
-        return f"Noms des graphiques pour {self.user.username}"
-
  
 class SensorColor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_sensor_colors')
@@ -720,3 +692,59 @@ class SensorLocation(models.Model):
 
     def __str__(self):
         return f"Sensor locations for {self.user.username} in {self.zone.name}"
+
+
+
+
+class GraphName(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_graph_names')
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="zone_graph_names")
+
+    
+    soil_irrigation = models.CharField(max_length=40, default="Irrigation du sol")
+    soil_ph = models.CharField(max_length=40, default="pH du sol")
+    soil_conductivity = models.CharField(max_length=40, default="Conductivité du sol")
+    soil_moisture = models.CharField(max_length=40, default="Humidité du sol")
+    soil_temperature = models.CharField(max_length=40, default="Température du sol")
+    
+    et0 = models.CharField(max_length=40, default="Taux d'évapotranspiration")
+    precipitation_rate = models.CharField(max_length=40, default="Taux de précipitation")
+    wind_speed = models.CharField(max_length=40, default="Vitesse du vent")
+    solar_radiation = models.CharField(max_length=40, default="Rayonnement solaire")
+    pressure_weather = models.CharField(max_length=40, default="Pression atmosphérique")
+    wind_direction = models.CharField(max_length=40, default="Direction du vent")
+    humidity_weather = models.CharField(max_length=40, default="Humidité de l'air")
+    temperature_weather = models.CharField(max_length=40, default="Température de l'air")
+    temperature_humidity_weather = models.CharField(max_length=40, default="Température et humidité de l'air")
+    precipitation_humidity_rate = models.CharField(max_length=40, default="Taux de précipitation et humidité")
+    pluviometrie = models.CharField(max_length=40, default="Cumule de pluie tombée")
+    data_table = models.CharField(max_length=40, default="Tableau de données")
+
+    def __str__(self):
+        return f"Noms des graphiques pour {self.user.username}"
+
+
+class ActiveGraph(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_active_graph')
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="zone_active_graph")
+
+    # soil
+    soil_irrigation_status =  models.BooleanField(default=True, help_text="Irrigation du sol")
+    soil_ph_status =  models.BooleanField(default=True, help_text="pH du sol")
+    soil_conductivity_status =  models.BooleanField(default=True, help_text="Conductivité du sol")
+    soil_moisture_status =  models.BooleanField(default=True, help_text="Humidité du sol")
+    soil_temperature_status =  models.BooleanField(default=True, help_text="Température du sol")
+    
+    # meteo
+    et0_status =  models.BooleanField(default=True, help_text="Taux d'évapotranspiration")
+    wind_speed_status =  models.BooleanField(default=True, help_text="Vitesse du vent")
+    solar_radiation_status =  models.BooleanField(default=True, help_text="Rayonnement solaire")
+    wind_direction_status =  models.BooleanField(default=True, help_text="Direction du vent")
+    temperature_humidity_weather_status =  models.BooleanField(default=True, help_text="Température et humidité de l'air")
+    precipitation_humidity_rate_status =  models.BooleanField(default=True, help_text="Taux de précipitation et humidité")
+    pluviometrie_status =  models.BooleanField(default=True, help_text="Cumule de pluie tombée")
+    data_table_status =  models.BooleanField(default=True, help_text="Tableau de données")
+
+
+    def __str__(self):
+        return f"Default Sensor Activation Settings (ID: {self.id})"

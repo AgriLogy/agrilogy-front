@@ -156,3 +156,8 @@ class SensorColorSerializer(serializers.ModelSerializer):
     class Meta:
         model = SensorColor
         fields = '__all__'
+
+class ActiveGraphSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ActiveGraph
+        exclude = ['id']
