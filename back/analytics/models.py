@@ -103,30 +103,23 @@ class Alert(models.Model):
 
 
 class Zone(models.Model):
-    name = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="zones")
 
+    name = models.CharField(max_length=100)
     space = models.FloatField(help_text="Area in square meters.")
-    soil_param_1 = models.FloatField(help_text="First soil identification parameter.", default=50)
-    soil_param_2 = models.FloatField(help_text="Second soil identification parameter.", default=50)
-    soil_param_3 = models.FloatField(help_text="Third soil identification parameter.", default=50)
-    critical_moisture_threshold = models.FloatField(help_text="Critical soil moisture threshold in %.")  
+
+    # soil parameters
+    soil_param_TAW = models.FloatField(help_text="Total Available Water (TAW) in mm.", default=50)
+    soil_param_FC = models.FloatField(help_text="Field Capacity (FC) in %.", default=50)
+    soil_param_WP = models.FloatField(help_text="Wilting Point (WP) in %.", default=50)
+    soil_param_RAW = models.FloatField(help_text="Readily Available Water (RAW) in mm.", default=50)
+
+    critical_moisture_threshold = models.FloatField(help_text="Critical soil moisture threshold in %.")
+    
+    # irrigation parameters [pomp flow rate auto or manual ?????]
     pomp_flow_rate = models.FloatField(help_text="Pump flow rate in liters per second.", default=100)
     irrigation_water_quantity = models.FloatField(help_text="Irrigation water quantity in liters.", default=100)
 
-    def __str__(self):
-        return f"Zone {self.name} for {self.user.username}"
-
-    def identify_soil_type(self):
-        if self.soil_param_1 > 70:
-            return 'clay'
-        elif self.soil_param_2 > 50:
-            return 'loamy'
-        elif self.soil_param_3 > 60:
-            return 'sandy'
-        else:
-            return 'others'
-        
 
 class KcPeriod(models.Model):
     period_name = models.CharField(max_length=100)
