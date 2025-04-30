@@ -159,13 +159,9 @@ class KcPeriodAssignment(models.Model):
 
 
 class PrecipitationRate(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(help_text="Precipitation rate in mm/h.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="precipitation_rates")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="precipitation_rates_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="precipitation_rates_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Precipitation rate in mm/h.")
     timestamp = models.DateTimeField(help_text="Timestamp when the sensor data was recorded.")
 
     @property
@@ -178,13 +174,9 @@ class PrecipitationRate(models.Model):
 
 
 class HumidityWeather(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(help_text="Humidity from the weather sensor as a percentage.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="humidity_weather")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="humidity_weather_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="humidity_weather_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Humidity from the weather sensor as a percentage.")
     timestamp = models.DateTimeField()
 
     @property
@@ -197,13 +189,9 @@ class HumidityWeather(models.Model):
 
 
 class WindSpeed(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(help_text="Wind speed in m/s.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="wind_speeds")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="wind_speeds_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="wind_speeds_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Wind speed in m/s.")
     timestamp = models.DateTimeField()
 
     @property
@@ -216,13 +204,9 @@ class WindSpeed(models.Model):
 
 
 class SolarRadiation(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(help_text="Solar radiation in W/m².")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="solar_radiations")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="solar_radiations_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="solar_radiations_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Solar radiation in W/m².")
     timestamp = models.DateTimeField()
 
     @property
@@ -235,13 +219,9 @@ class SolarRadiation(models.Model):
 
 
 class PressureWeather(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(help_text="Atmospheric pressure in hPa.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="pressure_weather")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="pressure_weather_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="pressure_weather_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Atmospheric pressure in hPa.")
     timestamp = models.DateTimeField()
 
     @property
@@ -254,13 +234,9 @@ class PressureWeather(models.Model):
 
 
 class WindDirection(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(help_text="Wind direction in degrees.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="wind_directions")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="wind_directions_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="wind_directions_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Wind direction in degrees.")
     timestamp = models.DateTimeField()
 
     @property
@@ -273,13 +249,9 @@ class WindDirection(models.Model):
 
 
 class TemperatureWeather(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(help_text="Air temperature in Celsius.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="temperature_weather")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="temperature_weather_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="temperature_weather_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Air temperature in Celsius.")
     timestamp = models.DateTimeField()
 
     @property
@@ -292,13 +264,9 @@ class TemperatureWeather(models.Model):
 
 
 class ECSoilMedium(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(help_text="Electrical conductivity of soil at medium depth in dS/m.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="ec_soil_medium")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ec_soil_medium_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ec_soil_medium_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Electrical conductivity of soil at medium depth in dS/m.")
     timestamp = models.DateTimeField()
 
     @property
@@ -311,13 +279,9 @@ class ECSoilMedium(models.Model):
 
 
 class SoilTemperatureMedium(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(help_text="Soil temperature at medium depth in Celsius.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="soil_temperature_medium")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_temperature_medium_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_temperature_medium_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Soil temperature at medium depth in Celsius.")
     timestamp = models.DateTimeField()
 
     @property
@@ -330,13 +294,9 @@ class SoilTemperatureMedium(models.Model):
 
 
 class SoilECHigh(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(help_text="Electrical conductivity of soil at high depth in dS/m.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="soil_ec_high")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_ec_high_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_ec_high_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Electrical conductivity of soil at high depth in dS/m.")
     timestamp = models.DateTimeField()
 
     @property
@@ -349,13 +309,9 @@ class SoilECHigh(models.Model):
 
 
 class ECSoilLow(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(help_text="Electrical conductivity of soil at low depth in dS/m.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="ec_soil_low")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ec_soil_low_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ec_soil_low_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Electrical conductivity of soil at low depth in dS/m.")
     timestamp = models.DateTimeField()
 
     @property
@@ -368,13 +324,9 @@ class ECSoilLow(models.Model):
 
 
 class SoilMoistureMedium(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(help_text="Soil moisture at medium depth in percentage.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="soil_moisture_medium")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_moisture_medium_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_moisture_medium_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Soil moisture at medium depth in percentage.")
     timestamp = models.DateTimeField()
 
     @property
@@ -387,13 +339,10 @@ class SoilMoistureMedium(models.Model):
 
 
 class SoilMoistureHigh(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(help_text="Soil moisture at high depth in percentage.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="soil_moisture_high")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_moisture_high_per_user")
+   
+    value = models.FloatField(null=True, blank=True, help_text="Soil moisture at high depth in percentage.")
     timestamp = models.DateTimeField()
 
     @property
@@ -406,13 +355,9 @@ class SoilMoistureHigh(models.Model):
 
 
 class SoilMoistureLow(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(help_text="Soil moisture at low depth in percentage.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="soil_moisture_low")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_moisture_low_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_moisture_low_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Soil moisture at low depth in percentage.")
     timestamp = models.DateTimeField()
 
     @property
@@ -425,13 +370,9 @@ class SoilMoistureLow(models.Model):
 
 
 class PhSoil(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(help_text="Soil pH level.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="ph_soil")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ph_soil_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ph_soil_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Soil pH level.")
     timestamp = models.DateTimeField()
 
     @property
@@ -444,13 +385,9 @@ class PhSoil(models.Model):
 
 
 class SoilTemperatureLow(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(help_text="Soil temperature at low depth in Celsius.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="soil_temperature_low")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_temperature_low_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_temperature_low_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Soil temperature at low depth in Celsius.")
     timestamp = models.DateTimeField()
 
     @property
@@ -463,13 +400,9 @@ class SoilTemperatureLow(models.Model):
 
 
 class SoilTemperatureHigh(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(help_text="Soil temperature at high depth in Celsius.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="soil_temperature_high")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_temperature_high_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_temperature_high_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Soil temperature at high depth in Celsius.")
     timestamp = models.DateTimeField()
 
     @property
@@ -482,13 +415,9 @@ class SoilTemperatureHigh(models.Model):
 
 
 class WaterFlowSensor(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(null=True, blank=True, help_text="Water flow sensor reading in liters per second.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="water_flow_sensors")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="water_flow_sensors_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="water_flow_sensors_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Water flow sensor reading in liters per second.")
     timestamp = models.DateTimeField()
 
     @property
@@ -502,13 +431,9 @@ class WaterFlowSensor(models.Model):
 
 
 class WaterECSensor(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(null=True, blank=True, help_text="Water EC sensor reading in μS/cm.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="water_ec_sensors")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="water_ec_sensors_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="water_ec_sensors_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Water EC sensor reading in μS/cm.")
     timestamp = models.DateTimeField()
 
     @property
@@ -521,13 +446,9 @@ class WaterECSensor(models.Model):
 
 
 class PhWaterSensor(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(null=True, blank=True, help_text="pH level of water.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="ph_water_sensors")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ph_water_sensors_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ph_water_sensors_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="pH level of water.")
     timestamp = models.DateTimeField()
 
     @property
@@ -540,13 +461,9 @@ class PhWaterSensor(models.Model):
 
 
 class ElectricityConsumptionSensor(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(null=True, blank=True, help_text="Electricity consumption reading.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="electricity_consumption_sensors")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="electricity_consumption_sensors_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="electricity_consumption_sensors_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Electricity consumption reading.")
     timestamp = models.DateTimeField()
 
     @property
@@ -559,13 +476,9 @@ class ElectricityConsumptionSensor(models.Model):
 
 
 class LeafMoistureSensor(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(null=True, blank=True, help_text="Leaf moisture percentage.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="leaf_moisture_sensors")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="leaf_moisture_sensors_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="leaf_moisture_sensors_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Leaf moisture percentage.")
     timestamp = models.DateTimeField()
 
     @property
@@ -578,13 +491,9 @@ class LeafMoistureSensor(models.Model):
 
 
 class MultiDepthSoilMoistureSensor(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(null=True, blank=True, help_text="Multi-depth soil moisture percentage.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="multi_depth_soil_moisture_sensors")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="multi_depth_soil_moisture_sensors_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="multi_depth_soil_moisture_sensors_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Multi-depth soil moisture percentage.")
     timestamp = models.DateTimeField()
 
     @property
@@ -597,13 +506,9 @@ class MultiDepthSoilMoistureSensor(models.Model):
 
 
 class LargeFruitDiameterSensor(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(null=True, blank=True, help_text="Large fruit diameter size.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="large_fruit_diameter_sensors")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="large_fruit_diameter_sensors_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="large_fruit_diameter_sensors_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Large fruit diameter size.")
     timestamp = models.DateTimeField()
 
     @property
@@ -616,13 +521,9 @@ class LargeFruitDiameterSensor(models.Model):
 
 
 class WaterLevelSensor(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(null=True, blank=True, help_text="Water level in the tank or river.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="water_level_sensors")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="water_level_sensors_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="water_level_sensors_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Water level in the tank or river.")
     timestamp = models.DateTimeField()
 
     @property
@@ -635,13 +536,9 @@ class WaterLevelSensor(models.Model):
 
 
 class SoilSalinityConductivityIntegratedSensor(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(null=True, blank=True, help_text="Soil salinity conductivity value.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="soil_salinity_conductivity_integrated_sensors")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_salinity_conductivity_integrated_sensors_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_salinity_conductivity_integrated_sensors_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Soil salinity conductivity value.")
     timestamp = models.DateTimeField()
 
     @property
@@ -654,13 +551,9 @@ class SoilSalinityConductivityIntegratedSensor(models.Model):
 
 
 class NpkSensor(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(null=True, blank=True, help_text="Soil nutrient NPK reading.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="npk_sensors")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="npk_sensors_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="npk_sensors_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Soil nutrient NPK reading.")
     timestamp = models.DateTimeField()
 
     @property
@@ -673,13 +566,9 @@ class NpkSensor(models.Model):
 
 
 class FruitSizeSensor(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(null=True, blank=True, help_text="Fruit size measurement.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="fruit_size_sensors")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="fruit_size_sensors_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="fruit_size_sensors_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Fruit size measurement.")
     timestamp = models.DateTimeField()
 
     @property
@@ -692,13 +581,9 @@ class FruitSizeSensor(models.Model):
 
 
 class EcSalinitySensor(models.Model):
-    name = models.CharField(max_length=255, default="")
-    courbe_color = models.CharField(max_length=100, default="#000000")
-    longitude = models.FloatField()
-    latitude = models.FloatField()
-    value = models.FloatField(null=True, blank=True, help_text="EC and salinity measurement.")
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="ec_salinity_sensors")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ec_salinity_sensors_per_user")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ec_salinity_sensors_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="EC and salinity measurement.")
     timestamp = models.DateTimeField()
 
     @property
@@ -708,3 +593,130 @@ class EcSalinitySensor(models.Model):
     @property
     def available_units(self) -> list[str]:
         return ["μS/cm", "dS/m"]
+
+
+class GraphName(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_graph_names')
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="zone_graph_names")
+
+    
+    soil_irrigation = models.CharField(max_length=40, default="Irrigation du sol")
+    soil_ph = models.CharField(max_length=40, default="pH du sol")
+    soil_conductivity = models.CharField(max_length=40, default="Conductivité du sol")
+    soil_moisture = models.CharField(max_length=40, default="Humidité du sol")
+    soil_temperature = models.CharField(max_length=40, default="Température du sol")
+    
+    et0 = models.CharField(max_length=40, default="Taux d'évapotranspiration")
+    precipitation_rate = models.CharField(max_length=40, default="Taux de précipitation")
+    wind_speed = models.CharField(max_length=40, default="Vitesse du vent")
+    solar_radiation = models.CharField(max_length=40, default="Rayonnement solaire")
+    pressure_weather = models.CharField(max_length=40, default="Pression atmosphérique")
+    wind_direction = models.CharField(max_length=40, default="Direction du vent")
+    humidity_weather = models.CharField(max_length=40, default="Humidité de l'air")
+    temperature_weather = models.CharField(max_length=40, default="Température de l'air")
+    temperature_humidity_weather = models.CharField(max_length=40, default="Température et humidité de l'air")
+    precipitation_humidity_rate = models.CharField(max_length=40, default="Taux de précipitation et humidité")
+    pluviometrie = models.CharField(max_length=40, default="Cumule de pluie tombée")
+    data_table = models.CharField(max_length=40, default="Tableau de données")
+
+    def __str__(self):
+        return f"Noms des graphiques pour {self.user.username}"
+
+ 
+class SensorColor(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_sensor_colors')
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="zone_sensor_colors")
+
+    # Weather-related colors
+    precipitation_rate_color = models.CharField(max_length=7, default="#3D8D7A")  # Teal
+    humidity_weather_color = models.CharField(max_length=7, default="#2A6F97")  # Blue
+    wind_speed_color = models.CharField(max_length=7, default="#FFB703")  # Yellow-Orange
+    solar_radiation_color = models.CharField(max_length=7, default="#E63946")  # Red
+    pressure_weather_color = models.CharField(max_length=7, default="#F4A261")  # Light Orange
+    wind_direction_color = models.CharField(max_length=7, default="#6A0572")  # Purple
+    temperature_weather_color = models.CharField(max_length=7, default="#E76F51")  # Warm Red
+
+    # Soil-related colors
+    et0_color = models.CharField(max_length=7, default="#497D74")  # Greenish-Blue
+    ec_soil_medium_color = models.CharField(max_length=7, default="#2A9D8F")  # Greenish-Blue
+    soil_temperature_medium_color = models.CharField(max_length=7, default="#264653")  # Dark Cyan
+    soil_ec_high_color = models.CharField(max_length=7, default="#8A2BE2")  # Blue-Violet
+    ec_soil_low_color = models.CharField(max_length=7, default="#D4A373")  # Earthy Beige
+    soil_moisture_medium_color = models.CharField(max_length=7, default="#6D597A")  # Muted Purple
+    soil_moisture_high_color = models.CharField(max_length=7, default="#C8553D")  # Deep Orange
+    soil_moisture_low_color = models.CharField(max_length=7, default="#457B9D")  # Soft Blue
+    ph_soil_color = models.CharField(max_length=7, default="#023E8A")  # Deep Blue
+    soil_temperature_low_color = models.CharField(max_length=7, default="#8D99AE")  # Soft Gray-Blue
+    soil_temperature_high_color = models.CharField(max_length=7, default="#E9C46A")  # Golden Yellow
+
+    def __str__(self):
+        return f"Graph colors for {self.user.username}"
+
+@receiver(post_save, sender=User)
+def create_graph_names(sender, instance, created, **kwargs):
+    if created:
+        GraphName.objects.create(user=instance)
+        SensorColor.objects.create(user=instance)
+
+class SensorLocation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_sensor_locations')
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name='zone_sensor_locations')
+
+    # Weather-related sensor locations
+    precipitation_rate_longitude = models.FloatField()
+    precipitation_rate_latitude = models.FloatField()
+
+    humidity_weather_longitude = models.FloatField()
+    humidity_weather_latitude = models.FloatField()
+
+    wind_speed_longitude = models.FloatField()
+    wind_speed_latitude = models.FloatField()
+
+    solar_radiation_longitude = models.FloatField()
+    solar_radiation_latitude = models.FloatField()
+
+    pressure_weather_longitude = models.FloatField()
+    pressure_weather_latitude = models.FloatField()
+
+    wind_direction_longitude = models.FloatField()
+    wind_direction_latitude = models.FloatField()
+
+    temperature_weather_longitude = models.FloatField()
+    temperature_weather_latitude = models.FloatField()
+
+    # Soil-related sensor locations
+    et0_longitude = models.FloatField()
+    et0_latitude = models.FloatField()
+
+    ec_soil_medium_longitude = models.FloatField()
+    ec_soil_medium_latitude = models.FloatField()
+
+    soil_temperature_medium_longitude = models.FloatField()
+    soil_temperature_medium_latitude = models.FloatField()
+
+    soil_ec_high_longitude = models.FloatField()
+    soil_ec_high_latitude = models.FloatField()
+
+    ec_soil_low_longitude = models.FloatField()
+    ec_soil_low_latitude = models.FloatField()
+
+    soil_moisture_medium_longitude = models.FloatField()
+    soil_moisture_medium_latitude = models.FloatField()
+
+    soil_moisture_high_longitude = models.FloatField()
+    soil_moisture_high_latitude = models.FloatField()
+
+    soil_moisture_low_longitude = models.FloatField()
+    soil_moisture_low_latitude = models.FloatField()
+
+    ph_soil_longitude = models.FloatField()
+    ph_soil_latitude = models.FloatField()
+
+    soil_temperature_low_longitude = models.FloatField()
+    soil_temperature_low_latitude = models.FloatField()
+
+    soil_temperature_high_longitude = models.FloatField()
+    soil_temperature_high_latitude = models.FloatField()
+
+    def __str__(self):
+        return f"Sensor locations for {self.user.username} in {self.zone.name}"

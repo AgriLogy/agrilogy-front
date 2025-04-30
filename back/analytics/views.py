@@ -18,14 +18,86 @@ from .serializers import *
 from datetime import timedelta
 
 
-User = get_user_model()
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.utils.dateparse import parse_datetime
+from django.db.models import Q
+
+class AllSensorDataView(APIView):
+    def get(self, request):
+        user = request.user
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+        zone = request.query_params.get('zone')
+
+        filter_kwargs = Q(user=user)
+
+        if zone:
+            filter_kwargs &= Q(zone_id=zone)
+        if start_date:
+            filter_kwargs &= Q(timestamp__gte=parse_datetime(start_date))
+        if end_date:
+            filter_kwargs &= Q(timestamp__lte=parse_datetime(end_date))
+
+        def get_latest(model, serializer):
+            queryset = model.objects.filter(filter_kwargs).order_by('-timestamp')
+            return serializer(queryset.first()).data if queryset.exists() else {}
+
+        sensor_data = {
+            "PrecipitationRate": get_latest(PrecipitationRate, PrecipitationRateSerializer),
+            "HumidityWeather": get_latest(HumidityWeather, HumidityWeatherSerializer),
+            "WindSpeed": get_latest(WindSpeed, WindSpeedSerializer),
+            "SolarRadiation": get_latest(SolarRadiation, SolarRadiationSerializer),
+            "PressureWeather": get_latest(PressureWeather, PressureWeatherSerializer),
+            "WindDirection": get_latest(WindDirection, WindDirectionSerializer),
+            "TemperatureWeather": get_latest(TemperatureWeather, TemperatureWeatherSerializer),
+            "ECSoilMedium": get_latest(ECSoilMedium, ECSoilMediumSerializer),
+            "SoilTemperatureMedium": get_latest(SoilTemperatureMedium, SoilTemperatureMediumSerializer),
+            "SoilECHigh": get_latest(SoilECHigh, SoilECHighSerializer),
+            "ECSoilLow": get_latest(ECSoilLow, ECSoilLowSerializer),
+            "SoilMoistureMedium": get_latest(SoilMoistureMedium, SoilMoistureMediumSerializer),
+            "SoilMoistureHigh": get_latest(SoilMoistureHigh, SoilMoistureHighSerializer),
+            "SoilMoistureLow": get_latest(SoilMoistureLow, SoilMoistureLowSerializer),
+            "PhSoil": get_latest(PhSoil, PhSoilSerializer),
+            "SoilTemperatureLow": get_latest(SoilTemperatureLow, SoilTemperatureLowSerializer),
+            "SoilTemperatureHigh": get_latest(SoilTemperatureHigh, SoilTemperatureHighSerializer),
+            "WaterFlowSensor": get_latest(WaterFlowSensor, WaterFlowSensorSerializer),
+            "WaterECSensor": get_latest(WaterECSensor, WaterECSensorSerializer),
+            "PhWaterSensor": get_latest(PhWaterSensor, PhWaterSensorSerializer),
+            "ElectricityConsumptionSensor": get_latest(ElectricityConsumptionSensor, ElectricityConsumptionSensorSerializer),
+            "LeafMoistureSensor": get_latest(LeafMoistureSensor, LeafMoistureSensorSerializer),
+            "MultiDepthSoilMoistureSensor": get_latest(MultiDepthSoilMoistureSensor, MultiDepthSoilMoistureSensorSerializer),
+            "LargeFruitDiameterSensor": get_latest(LargeFruitDiameterSensor, LargeFruitDiameterSensorSerializer),
+            "WaterLevelSensor": get_latest(WaterLevelSensor, WaterLevelSensorSerializer),
+            "SoilSalinityConductivityIntegratedSensor": get_latest(SoilSalinityConductivityIntegratedSensor, SoilSalinityConductivityIntegratedSensorSerializer),
+            "NpkSensor": get_latest(NpkSensor, NpkSensorSerializer),
+            "FruitSizeSensor": get_latest(FruitSizeSensor, FruitSizeSensorSerializer),
+            "EcSalinitySensor": get_latest(EcSalinitySensor, EcSalinitySensorSerializer),
+        }
+        sensor_names = None
+        # sensor_names = get_latest(GraphName, GraphNameSerializer),
+        sensor_colors = None
+        sensor_status = None
+
+
+        return Response({
+            "sensor_data": sensor_data,
+            "sensor_names" : sensor_names,
+            "sensor_colors" : sensor_colors,
+            "sensor_status" : sensor_status,
+            })
+
+
+
+# User = get_user_model()
 
 # class AllSensorDataView(APIView):
 #     permission_classes = [IsAuthenticated]
 
-#     def get(self, request):
-#         start_date = request.query_params.get('start_date')
-#         end_date = request.query_params.get('end_date')
+    # def get(self, request):
+    #     start_date = request.query_params.get('start_date')
+    #     end_date = request.query_params.get('end_date')
+    #     zone = request.query_params.get('zone')
 
 #         date_filter = Q()
 #         if start_date and end_date:
