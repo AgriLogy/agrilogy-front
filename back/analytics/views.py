@@ -40,47 +40,48 @@ class AllSensorDataView(APIView):
             filter_kwargs &= Q(timestamp__lte=parse_datetime(end_date))
 
         def get_data(model, serializer):
-            queryset = model.objects.filter(filter_kwargs)
+            queryset = model.objects.all()
             return serializer(queryset.first()).data if queryset.exists() else {}
 
         def get_latest_data(model, serializer):
             queryset = model.objects.filter(filter_kwargs).order_by('-timestamp')
-            return serializer(queryset.first()).data if queryset.exists() else {}
+            # return serializer(queryset.first()).data if queryset.exists() else {}
+            return serializer(queryset, many=True).data if queryset.exists() else {}
 
         sensor_data = {
-            "PrecipitationRate": get_latest_data(PrecipitationRate, PrecipitationRateSerializer),
-            "HumidityWeather": get_latest_data(HumidityWeather, HumidityWeatherSerializer),
-            "WindSpeed": get_latest_data(WindSpeed, WindSpeedSerializer),
-            "SolarRadiation": get_latest_data(SolarRadiation, SolarRadiationSerializer),
-            "PressureWeather": get_latest_data(PressureWeather, PressureWeatherSerializer),
-            "WindDirection": get_latest_data(WindDirection, WindDirectionSerializer),
-            "TemperatureWeather": get_latest_data(TemperatureWeather, TemperatureWeatherSerializer),
-            "ECSoilMedium": get_latest_data(ECSoilMedium, ECSoilMediumSerializer),
-            "SoilTemperatureMedium": get_latest_data(SoilTemperatureMedium, SoilTemperatureMediumSerializer),
-            "SoilECHigh": get_latest_data(SoilECHigh, SoilECHighSerializer),
-            "ECSoilLow": get_latest_data(ECSoilLow, ECSoilLowSerializer),
-            "SoilMoistureMedium": get_latest_data(SoilMoistureMedium, SoilMoistureMediumSerializer),
-            "SoilMoistureHigh": get_latest_data(SoilMoistureHigh, SoilMoistureHighSerializer),
-            "SoilMoistureLow": get_latest_data(SoilMoistureLow, SoilMoistureLowSerializer),
-            "PhSoil": get_latest_data(PhSoil, PhSoilSerializer),
-            "SoilTemperatureLow": get_latest_data(SoilTemperatureLow, SoilTemperatureLowSerializer),
-            "SoilTemperatureHigh": get_latest_data(SoilTemperatureHigh, SoilTemperatureHighSerializer),
-            "WaterFlowSensor": get_latest_data(WaterFlowSensor, WaterFlowSensorSerializer),
-            "WaterECSensor": get_latest_data(WaterECSensor, WaterECSensorSerializer),
-            "PhWaterSensor": get_latest_data(PhWaterSensor, PhWaterSensorSerializer),
-            "ElectricityConsumptionSensor": get_latest_data(ElectricityConsumptionSensor, ElectricityConsumptionSensorSerializer),
-            "LeafMoistureSensor": get_latest_data(LeafMoistureSensor, LeafMoistureSensorSerializer),
-            "MultiDepthSoilMoistureSensor": get_latest_data(MultiDepthSoilMoistureSensor, MultiDepthSoilMoistureSensorSerializer),
-            "LargeFruitDiameterSensor": get_latest_data(LargeFruitDiameterSensor, LargeFruitDiameterSensorSerializer),
-            "WaterLevelSensor": get_latest_data(WaterLevelSensor, WaterLevelSensorSerializer),
-            "SoilSalinityConductivityIntegratedSensor": get_latest_data(SoilSalinityConductivityIntegratedSensor, SoilSalinityConductivityIntegratedSensorSerializer),
-            "NpkSensor": get_latest_data(NpkSensor, NpkSensorSerializer),
-            "FruitSizeSensor": get_latest_data(FruitSizeSensor, FruitSizeSensorSerializer),
-            "EcSalinitySensor": get_latest_data(EcSalinitySensor, EcSalinitySensorSerializer),
+            # "PrecipitationRate": get_latest_data(PrecipitationRate, PrecipitationRateSerializer),
+            # "HumidityWeather": get_latest_data(HumidityWeather, HumidityWeatherSerializer),
+            # "WindSpeed": get_latest_data(WindSpeed, WindSpeedSerializer),
+            # "SolarRadiation": get_latest_data(SolarRadiation, SolarRadiationSerializer),
+            # "PressureWeather": get_latest_data(PressureWeather, PressureWeatherSerializer),
+            # "WindDirection": get_latest_data(WindDirection, WindDirectionSerializer),
+            # "TemperatureWeather": get_latest_data(TemperatureWeather, TemperatureWeatherSerializer),
+            # "ECSoilMedium": get_latest_data(ECSoilMedium, ECSoilMediumSerializer),
+            "soil_temperature_medium": get_latest_data(SoilTemperatureMedium, SoilTemperatureMediumSerializer),
+            # "SoilECHigh": get_latest_data(SoilECHigh, SoilECHighSerializer),
+            # "ECSoilLow": get_latest_data(ECSoilLow, ECSoilLowSerializer),
+            # "SoilMoistureMedium": get_latest_data(SoilMoistureMedium, SoilMoistureMediumSerializer),
+            # "SoilMoistureHigh": get_latest_data(SoilMoistureHigh, SoilMoistureHighSerializer),
+            # "SoilMoistureLow": get_latest_data(SoilMoistureLow, SoilMoistureLowSerializer),
+            # "PhSoil": get_latest_data(PhSoil, PhSoilSerializer),
+            # "SoilTemperatureLow": get_latest_data(SoilTemperatureLow, SoilTemperatureLowSerializer),
+            # "SoilTemperatureHigh": get_latest_data(SoilTemperatureHigh, SoilTemperatureHighSerializer),
+            # "WaterFlowSensor": get_latest_data(WaterFlowSensor, WaterFlowSensorSerializer),
+            # "WaterECSensor": get_latest_data(WaterECSensor, WaterECSensorSerializer),
+            # "PhWaterSensor": get_latest_data(PhWaterSensor, PhWaterSensorSerializer),
+            # "ElectricityConsumptionSensor": get_latest_data(ElectricityConsumptionSensor, ElectricityConsumptionSensorSerializer),
+            # "LeafMoistureSensor": get_latest_data(LeafMoistureSensor, LeafMoistureSensorSerializer),
+            # "MultiDepthSoilMoistureSensor": get_latest_data(MultiDepthSoilMoistureSensor, MultiDepthSoilMoistureSensorSerializer),
+            # "LargeFruitDiameterSensor": get_latest_data(LargeFruitDiameterSensor, LargeFruitDiameterSensorSerializer),
+            # "WaterLevelSensor": get_latest_data(WaterLevelSensor, WaterLevelSensorSerializer),
+            # "SoilSalinityConductivityIntegratedSensor": get_latest_data(SoilSalinityConductivityIntegratedSensor, SoilSalinityConductivityIntegratedSensorSerializer),
+            # "NpkSensor": get_latest_data(NpkSensor, NpkSensorSerializer),
+            # "FruitSizeSensor": get_latest_data(FruitSizeSensor, FruitSizeSensorSerializer),
+            # "EcSalinitySensor": get_latest_data(EcSalinitySensor, EcSalinitySensorSerializer),
         }
         sensor_names = get_data(GraphName, GraphNameSerializer),
         sensor_colors = get_data(SensorColor, SensorColorSerializer),
-        sensor_status = None
+        sensor_status = get_data(ActiveGraph, ActiveGraphSerializer),
 
 
         return Response({

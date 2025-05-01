@@ -590,7 +590,9 @@ class EcSalinitySensor(models.Model):
  
 class SensorColor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_sensor_colors')
-    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="zone_sensor_colors")
+    # zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="zone_sensor_colors")
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="_graph_names", null=True, blank=True)
+
 
     # Weather-related colors
     precipitation_rate_color = models.CharField(max_length=7, default="#3D8D7A")  # Teal
@@ -691,7 +693,9 @@ class SensorLocation(models.Model):
 
 class GraphName(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_graph_names')
-    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="zone_graph_names")
+    # zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="zone_graph_names")
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="zone_graph_names", null=True, blank=True)
+
 
     
     soil_irrigation = models.CharField(max_length=40, default="Irrigation du sol")

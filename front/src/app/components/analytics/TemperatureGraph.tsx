@@ -56,8 +56,7 @@ const CustomTick = ({ x, y, payload }: any) => (
 
 const TemperatureGraph = ({ data }: { data: any }) => {
   const { colorMode } = useColorMode();
-  if (!data) return <Spinner/>;
-
+  if (!data) return <Spinner />;
 
   const chartBg = colorMode === "light" ? "white" : "gray.800";
 
@@ -76,20 +75,19 @@ const TemperatureGraph = ({ data }: { data: any }) => {
         fontWeight="bold"
         mb={4}
       >
-        {data.sensor_names?.soil_temperature }
+        {data.sensor_names?.soil_temperature || "Température du sol--"}
       </Text>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data.sensor_data}>
+        <LineChart data={data.sensor_data?.soil_temperature_medium || []}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
           <Tooltip />
           <Legend content={<CustomLegend />} />
-
           <Line
             type="monotone"
-            dataKey="soil_temperature_medium"
-            stroke={data.sensor_colors?.soil_temperature_medium_color}
+            dataKey="value"
+            stroke={data.sensor_colors?.soil_temperature_medium_color || "#000"}
             name="Température (°C)"
           />
         </LineChart>
