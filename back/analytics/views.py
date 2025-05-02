@@ -39,9 +39,14 @@ class AllSensorDataView(APIView):
         if end_date:
             filter_kwargs &= Q(timestamp__lte=parse_datetime(end_date))
 
+        # def get_data(model, serializer):
+        #     queryset = model.objects.all()
+        #     return serializer(queryset.first(), many=False).data if queryset.exists() else {}
+
         def get_data(model, serializer):
             queryset = model.objects.all()
-            return serializer(queryset.first()).data if queryset.exists() else {}
+            return serializer(queryset.first(), many=False).data if queryset.exists() else {}
+
 
         def get_latest_data(model, serializer):
             queryset = model.objects.filter(filter_kwargs).order_by('-timestamp')
@@ -49,6 +54,12 @@ class AllSensorDataView(APIView):
             return serializer(queryset, many=True).data if queryset.exists() else {}
 
         sensor_data = {
+            "soil_moisture_low": get_latest_data(SoilMoistureLow, SoilMoistureLowSerializer),
+            "soil_moisture_medium": get_latest_data(SoilMoistureMedium, SoilMoistureMediumSerializer),
+            "soil_moisture_high": get_latest_data(SoilMoistureHigh, SoilMoistureHighSerializer),
+            "soil_temperature_medium": get_latest_data(SoilTemperatureMedium, SoilTemperatureMediumSerializer),
+            "ph_soil": get_latest_data(PhSoil, PhSoilSerializer),
+            "ec_soil_medium": get_latest_data(ECSoilMedium, ECSoilMediumSerializer),
             # "PrecipitationRate": get_latest_data(PrecipitationRate, PrecipitationRateSerializer),
             # "HumidityWeather": get_latest_data(HumidityWeather, HumidityWeatherSerializer),
             # "WindSpeed": get_latest_data(WindSpeed, WindSpeedSerializer),
@@ -56,14 +67,8 @@ class AllSensorDataView(APIView):
             # "PressureWeather": get_latest_data(PressureWeather, PressureWeatherSerializer),
             # "WindDirection": get_latest_data(WindDirection, WindDirectionSerializer),
             # "TemperatureWeather": get_latest_data(TemperatureWeather, TemperatureWeatherSerializer),
-            # "ECSoilMedium": get_latest_data(ECSoilMedium, ECSoilMediumSerializer),
-            "soil_temperature_medium": get_latest_data(SoilTemperatureMedium, SoilTemperatureMediumSerializer),
             # "SoilECHigh": get_latest_data(SoilECHigh, SoilECHighSerializer),
             # "ECSoilLow": get_latest_data(ECSoilLow, ECSoilLowSerializer),
-            # "SoilMoistureMedium": get_latest_data(SoilMoistureMedium, SoilMoistureMediumSerializer),
-            # "SoilMoistureHigh": get_latest_data(SoilMoistureHigh, SoilMoistureHighSerializer),
-            # "SoilMoistureLow": get_latest_data(SoilMoistureLow, SoilMoistureLowSerializer),
-            # "PhSoil": get_latest_data(PhSoil, PhSoilSerializer),
             # "SoilTemperatureLow": get_latest_data(SoilTemperatureLow, SoilTemperatureLowSerializer),
             # "SoilTemperatureHigh": get_latest_data(SoilTemperatureHigh, SoilTemperatureHighSerializer),
             # "WaterFlowSensor": get_latest_data(WaterFlowSensor, WaterFlowSensorSerializer),
@@ -79,16 +84,16 @@ class AllSensorDataView(APIView):
             # "FruitSizeSensor": get_latest_data(FruitSizeSensor, FruitSizeSensorSerializer),
             # "EcSalinitySensor": get_latest_data(EcSalinitySensor, EcSalinitySensorSerializer),
         }
-        sensor_names = get_data(GraphName, GraphNameSerializer),
-        sensor_colors = get_data(SensorColor, SensorColorSerializer),
-        sensor_status = get_data(ActiveGraph, ActiveGraphSerializer),
+        sensor_names = get_data(GraphName, GraphNameSerializer)
+        sensor_colors = get_data(SensorColor, SensorColorSerializer)
+        sensor_status = get_data(ActiveGraph, ActiveGraphSerializer)
 
 
         return Response({
             "sensor_data": sensor_data,
             "sensor_names" : sensor_names,
             "sensor_colors" : sensor_colors,
-            "sensor_status" : sensor_status,
+            "sensor_status" : sensor_status
             })
 
 
