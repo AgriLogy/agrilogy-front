@@ -1,0 +1,5 @@
+dateRangePicke : need to introduce filter by zone
+	+ get all the zone names for the auth user
+	+ when clicked refetch the data accordingly
+cumulIrrigationData : need to define the graph structure
+	
