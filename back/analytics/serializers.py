@@ -219,3 +219,8 @@ class ActiveGraphSerializer(serializers.ModelSerializer):
     class Meta:
         model = ActiveGraph
         exclude = ['id']
+
+class ZonesNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Zone
+        fields = ['id', 'name']

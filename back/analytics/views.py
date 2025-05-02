@@ -23,6 +23,13 @@ from rest_framework.response import Response
 from django.utils.dateparse import parse_datetime
 from django.db.models import Q
 
+class ZonesNames(APIView):
+    def get(self, request):
+        user = request.user
+        zone = Zone.objects.all().filter(user_id = user.id)
+        serialised_data = ZonesNameSerializer(zone, many = True)
+        return Response({"zones " : serialised_data.data}, status=status.HTTP_200_OK)
+
 class AllSensorDataView(APIView):
     def get(self, request):
         user = request.user

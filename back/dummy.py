@@ -49,7 +49,7 @@ print(f"✅ Found user: {user.username}")
 
 zone, _ = Zone.objects.get_or_create(
     user=user,
-    name="zone de marichage 3",
+    name="zone de marichage 2",
     space= 1750.0,
     defaults={
         "space": 1750.0,
@@ -246,10 +246,10 @@ zone, _ = Zone.objects.get_or_create(
 #     current_date += timedelta(days=1)
 
 
-_ActiveGraph = ActiveGraph.objects.get_or_create(
-    user=user,
-    zone=zone,
+# _ActiveGraph = ActiveGraph.objects.get_or_create(
+#     user=user,
+#     zone=zone,
 
-)
+# )
 
 print(f"🎉 Successfully created sensor records for {user.username}!")
