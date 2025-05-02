@@ -55,7 +55,7 @@ const CustomTick = ({ x, y, payload }: any) => (
 
 const PhGraph = ({ data }: { data: any }) => {
   const { colorMode } = useColorMode();
-  if (!data) return <Spinner/>;
+  if (!data) return <Spinner />;
   const chartBg = colorMode === "light" ? "white" : "gray.800";
 
   return (
@@ -73,10 +73,10 @@ const PhGraph = ({ data }: { data: any }) => {
         fontWeight="bold"
         mb={4}
       >
-        {data.sensor_names?.soil_ph}
+        {data.sensor_names?.soil_ph || "Ph du sol."}
       </Text>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data.sensor_data}>
+        <LineChart data={data.sensor_data?.ph_soil || []}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
@@ -84,9 +84,9 @@ const PhGraph = ({ data }: { data: any }) => {
           <Legend content={<CustomLegend />} />
           <Line
             type="monotone"
-            dataKey="ph_soil"
-            stroke={data.sensor_colors?.ph_soil_color}
-            name="pH du Sol"
+            dataKey="value"
+            stroke={data.sensor_colors?.ph_soil_color || "#000"}
+            name="PH"
           />
         </LineChart>
       </ResponsiveContainer>

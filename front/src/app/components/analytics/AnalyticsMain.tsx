@@ -38,11 +38,10 @@ const AnalyticsMain: React.FC = () => {
           params,
         });
         console.log("API Response:", response.data); // Log the API response to inspect its structure
-
+        console.log("Irrigation stsatus", statusdata?.soil_ph_status);
         // Assuming response.data.sensor_data contains an array of SensorData
         const sensorData: SensorData[] = response.data || [];
-        const sensorStatusData: StatusData =
-          response.data.sensor_status.sensor_status;
+        const sensorStatusData: StatusData = response.data.sensor_status;
 
         setData(sensorData);
         setStatusData(sensorStatusData);
@@ -65,12 +64,12 @@ const AnalyticsMain: React.FC = () => {
         <DateRangePicker setStartDate={setStartDate} setEndDate={setEndDate} />
       </Box>
 
-      {/* {statusdata?.soil_irrigation_status && (
+      {statusdata?.soil_irrigation_status && (
         <Box bg={bg} className="box wide">
           <IrrigationGraph data={data} />
         </Box>
-      )} */}
-      {/* {statusdata?.soil_ph_status && (
+      )}
+      {statusdata?.soil_ph_status && (
         <Box bg={bg} className="box wide">
           <PhGraph data={data} />
         </Box>
@@ -79,23 +78,18 @@ const AnalyticsMain: React.FC = () => {
         <Box bg={bg} className="box wide">
           <ConductivityIrrigationGraph data={data} />
         </Box>
-      )} */}
+      )}
       {/* {statusdata?.precipitation_rate_status &&
         
           <Box bg={bg} className="box wide">
         <CumulIrrigationGraph data={data} />
         </Box> 
         } */}
-      {/* {statusdata?.soil_temperature_status && (
+      {statusdata?.soil_temperature_status && (
         <Box bg={bg} className="box wide">
           <TemperatureGraph data={data} />
         </Box>
       )}
-       */}
-        <Box bg={bg} className="box wide">
-          <TemperatureGraph data={data} />
-        </Box>
-      
     </div>
   );
 };

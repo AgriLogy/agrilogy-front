@@ -60,6 +60,9 @@ const TemperatureGraph = ({ data }: { data: any }) => {
 
   const chartBg = colorMode === "light" ? "white" : "gray.800";
 
+  {
+    console.log("[TemperatureGraph] data:", data); // Log the API response to inspect its structure
+  }
   return (
     <Box
       width="100%"

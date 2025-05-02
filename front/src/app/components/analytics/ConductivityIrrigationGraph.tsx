@@ -73,10 +73,11 @@ const ConductivityIrrigationGraph = ({ data }: { data: any }) => {
         fontWeight="bold"
         mb={4}
       >
-        {data.sensor_names?.soil_conductivity}
+        {data.sensor_names?.soil_conductivity || "Conductivité du sol."}
+
       </Text>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data.sensor_data}>
+        <LineChart data={data.sensor_data?.ec_soil_medium || []}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
@@ -84,9 +85,9 @@ const ConductivityIrrigationGraph = ({ data }: { data: any }) => {
           <Legend content={<CustomLegend />} />
           <Line
             type="monotone"
-            dataKey="ec_soil_medium"
-            stroke={data.sensor_colors?.ec_soil_medium_color}
-            name="Conductivité (mS/cm)"
+            dataKey="value"
+            stroke={data.sensor_colors?.ph_soil_color || "#000"}
+            name="PH"
           />
           {/* <Line type="monotone" dataKey="irrigation" stroke={data.sensor_colors?.irrigation_color} name="Irrigation (L)" /> */}
         </LineChart>
