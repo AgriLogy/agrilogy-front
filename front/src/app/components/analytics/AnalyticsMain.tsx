@@ -13,8 +13,12 @@ import axiosInstance from "@/app/lib/api";
 import { SensorData, StatusData } from "@/app/data/dashboard/data";
 import EmptyBox from "../common/EmptyBox";
 import CumulIrrigationGraph from "./CumulIrrigationGraph";
+import api from "@/app/lib/api";
 
 const AnalyticsMain: React.FC = () => {
+  const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
+  const [selectedZone, setSelectedZone] = useState<number | null>(null);
+
   const { bg, textColor } = useColorModeStyles(); // Use the utility
   const [data, setData] = useState<SensorData[]>([]);
   // const [statusdata, setStatusData] = useState<StatusData[]>([]);
@@ -26,6 +30,18 @@ const AnalyticsMain: React.FC = () => {
   const [endDate, setEndDate] = useState<string>(
     new Date().toISOString().split("T")[0]
   );
+  useEffect(() => {
+    const fetchZones = async () => {
+      try {
+        const res = await api.get("/api/zones-names-per-user/");
+        setZones(res.data || []);
+        if (res.data.length > 0) setSelectedZone(res.data[0].id); // default selection
+      } catch (error) {
+        console.error("Failed to fetch zones", error);
+      }
+    };
+    fetchZones();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,6 +49,7 @@ const AnalyticsMain: React.FC = () => {
         const params = {
           start_date: startDate,
           end_date: endDate,
+          ...(selectedZone && { zone_id: selectedZone }),
         };
         const response = await axiosInstance.get("/api/all-sensor-data/", {
           params,
@@ -50,7 +67,7 @@ const AnalyticsMain: React.FC = () => {
       }
     };
     fetchData();
-  }, [startDate, endDate]);
+  }, [startDate, endDate, selectedZone]);
 
   if (error) return <EmptyBox />;
 
@@ -60,8 +77,28 @@ const AnalyticsMain: React.FC = () => {
         <Text color={textColor}>Données sur le sol</Text>
       </Box>
 
+      <Box bg={bg} className="header" mt={0} mb={2}>
+        <Text color={textColor}>Sélectionnez une zone :</Text>
+        <select
+          value={selectedZone ?? ""}
+          onChange={(e) => setSelectedZone(Number(e.target.value))}
+          style={{ padding: "8px", borderRadius: "8px", marginTop: "5px" }}
+        >
+          {zones.map((zone) => (
+            <option key={zone.id} value={zone.id}>
+              {zone.name}
+            </option>
+          ))}
+        </select>
+      </Box>
       <Box bg={bg} className="header" mt={0} mb={0}>
-        <DateRangePicker setStartDate={setStartDate} setEndDate={setEndDate} />
+        <DateRangePicker
+          setStartDate={setStartDate}
+          setEndDate={setEndDate}
+          zones={zones}
+          selectedZone={selectedZone}
+          setSelectedZone={setSelectedZone}
+        />
       </Box>
 
       {statusdata?.soil_irrigation_status && (

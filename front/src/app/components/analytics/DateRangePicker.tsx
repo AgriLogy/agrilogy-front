@@ -13,11 +13,17 @@ import useColorModeStyles from "@/app/utils/useColorModeStyles";
 interface DateRangePickerProps {
   setStartDate: (date: string) => void;
   setEndDate: (date: string) => void;
+  zones: { id: number; name: string }[];
+  selectedZone: number | null;
+  setSelectedZone: (id: number) => void;
 }
 
 const DateRangePicker: React.FC<DateRangePickerProps> = ({
   setStartDate,
   setEndDate,
+  zones,
+  selectedZone,
+  setSelectedZone,
 }) => {
   const { textColor } = useColorModeStyles();
   const today = new Date();
@@ -81,6 +87,17 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
         {showManualDatePicker && (
           <Button onClick={() => handleYearsClick(1)}>1 y</Button>
         )}
+        <select
+          value={selectedZone ?? ""}
+          onChange={(e) => setSelectedZone(Number(e.target.value))}
+          style={{ padding: "8px", borderRadius: "8px", marginRight: "8px" }}
+        >
+          {zones.map((zone) => (
+            <option key={zone.id} value={zone.id}>
+              {zone.name}
+            </option>
+          ))}
+        </select>
       </HStack>
 
       {showManualDatePicker && (

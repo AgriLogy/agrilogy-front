@@ -28,7 +28,7 @@ class ZonesNames(APIView):
         user = request.user
         zone = Zone.objects.all().filter(user_id = user.id)
         serialised_data = ZonesNameSerializer(zone, many = True)
-        return Response({"zones " : serialised_data.data}, status=status.HTTP_200_OK)
+        return Response( serialised_data.data, status=status.HTTP_200_OK)
 
 class AllSensorDataView(APIView):
     def get(self, request):
@@ -57,8 +57,13 @@ class AllSensorDataView(APIView):
 
         def get_latest_data(model, serializer):
             queryset = model.objects.filter(filter_kwargs).order_by('-timestamp')
-            # return serializer(queryset.first()).data if queryset.exists() else {}
             return serializer(queryset, many=True).data if queryset.exists() else {}
+
+
+        # def get_latest_data(model, serializer):
+        #     queryset = model.objects.filter(filter_kwargs).order_by('-timestamp')
+        #     # return serializer(queryset.first()).data if queryset.exists() else {}
+        #     return serializer(queryset, many=True).data if queryset.exists() else {}
 
         sensor_data = {
             "soil_moisture_low": get_latest_data(SoilMoistureLow, SoilMoistureLowSerializer),
