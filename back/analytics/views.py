@@ -35,11 +35,11 @@ class AllSensorDataView(APIView):
         user = request.user
         start_date = request.query_params.get('start_date')
         end_date = request.query_params.get('end_date')
-        zone = request.query_params.get('zone')
+        zone = request.query_params.get('zone_id')
 
         filter_kwargs = Q(user=user)
 
-        if zone:
+        if zone and zone != -1:
             filter_kwargs &= Q(zone_id=zone)
         if start_date:
             filter_kwargs &= Q(timestamp__gte=parse_datetime(start_date))
@@ -57,21 +57,25 @@ class AllSensorDataView(APIView):
 
         def get_latest_data(model, serializer):
             queryset = model.objects.filter(filter_kwargs).order_by('-timestamp')
+            # queryset = model.objects.filter(filter_kwargs).order_by('-timestamp')
             return serializer(queryset, many=True).data if queryset.exists() else {}
 
 
-        # def get_latest_data(model, serializer):
-        #     queryset = model.objects.filter(filter_kwargs).order_by('-timestamp')
-        #     # return serializer(queryset.first()).data if queryset.exists() else {}
-        #     return serializer(queryset, many=True).data if queryset.exists() else {}
 
         sensor_data = {
+            # irrigation graph
             "soil_moisture_low": get_latest_data(SoilMoistureLow, SoilMoistureLowSerializer),
             "soil_moisture_medium": get_latest_data(SoilMoistureMedium, SoilMoistureMediumSerializer),
             "soil_moisture_high": get_latest_data(SoilMoistureHigh, SoilMoistureHighSerializer),
-            "soil_temperature_medium": get_latest_data(SoilTemperatureMedium, SoilTemperatureMediumSerializer),
+
+            # ph graph
             "ph_soil": get_latest_data(PhSoil, PhSoilSerializer),
+            
+            # soil conductivity graph
             "ec_soil_medium": get_latest_data(ECSoilMedium, ECSoilMediumSerializer),
+            
+            # soil temperature graph
+            "soil_temperature_medium": get_latest_data(SoilTemperatureMedium, SoilTemperatureMediumSerializer),
             # "PrecipitationRate": get_latest_data(PrecipitationRate, PrecipitationRateSerializer),
             # "HumidityWeather": get_latest_data(HumidityWeather, HumidityWeatherSerializer),
             # "WindSpeed": get_latest_data(WindSpeed, WindSpeedSerializer),

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import "./AnalyticsMain.css";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, HStack, Text } from "@chakra-ui/react";
 import IrrigationGraph from "./IrrigationGraph";
 import PhGraph from "./PhGraph";
 import DateRangePicker from "./DateRangePicker";
@@ -15,13 +15,12 @@ import EmptyBox from "../common/EmptyBox";
 import CumulIrrigationGraph from "./CumulIrrigationGraph";
 import api from "@/app/lib/api";
 
-const AnalyticsMain: React.FC = () => {
+const AnalyticsMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
   const [selectedZone, setSelectedZone] = useState<number | null>(null);
 
-  const { bg, textColor } = useColorModeStyles(); // Use the utility
+  const { bg, textColor } = useColorModeStyles();
   const [data, setData] = useState<SensorData[]>([]);
-  // const [statusdata, setStatusData] = useState<StatusData[]>([]);
   const [statusdata, setStatusData] = useState<StatusData | null>(null);
 
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +34,7 @@ const AnalyticsMain: React.FC = () => {
       try {
         const res = await api.get("/api/zones-names-per-user/");
         setZones(res.data || []);
-        if (res.data.length > 0) setSelectedZone(res.data[0].id); // default selection
+        if (res.data.length > 0) setSelectedZone(res.data[0].id);
       } catch (error) {
         console.error("Failed to fetch zones", error);
       }
@@ -54,9 +53,6 @@ const AnalyticsMain: React.FC = () => {
         const response = await axiosInstance.get("/api/all-sensor-data/", {
           params,
         });
-        console.log("API Response:", response.data); // Log the API response to inspect its structure
-        console.log("Irrigation stsatus", statusdata?.soil_ph_status);
-        // Assuming response.data.sensor_data contains an array of SensorData
         const sensorData: SensorData[] = response.data || [];
         const sensorStatusData: StatusData = response.data.sensor_status;
 
@@ -74,23 +70,27 @@ const AnalyticsMain: React.FC = () => {
   return (
     <div className="container">
       <Box bg={bg} className="header">
-        <Text color={textColor}>Données sur le sol</Text>
+        <HStack>
+          <Text color={textColor}>Données sur le sol du </Text>
+          <select
+            value={selectedZone ?? ""}
+            onChange={(e) => setSelectedZone(Number(e.target.value))}
+            style={{
+              borderRadius: "2px",
+              color: textColor, // 'gray.800' in light mode, 'gray.200' in dark mode
+              border: `1px solid ${bg}`, // Optional: ensure border is visible
+            }}
+          >
+            {zones.map((zone) => (
+              
+              <option key={zone.id} value={zone.id}>
+                {zone.name}
+              </option>
+            ))}
+          </select>
+        </HStack>
       </Box>
 
-      <Box bg={bg} className="header" mt={0} mb={2}>
-        <Text color={textColor}>Sélectionnez une zone :</Text>
-        <select
-          value={selectedZone ?? ""}
-          onChange={(e) => setSelectedZone(Number(e.target.value))}
-          style={{ padding: "8px", borderRadius: "8px", marginTop: "5px" }}
-        >
-          {zones.map((zone) => (
-            <option key={zone.id} value={zone.id}>
-              {zone.name}
-            </option>
-          ))}
-        </select>
-      </Box>
       <Box bg={bg} className="header" mt={0} mb={0}>
         <DateRangePicker
           setStartDate={setStartDate}
@@ -101,11 +101,11 @@ const AnalyticsMain: React.FC = () => {
         />
       </Box>
 
-      {statusdata?.soil_irrigation_status && (
+      {/* {statusdata?.soil_irrigation_status && (
         <Box bg={bg} className="box wide">
           <IrrigationGraph data={data} />
         </Box>
-      )}
+      )} */}
       {statusdata?.soil_ph_status && (
         <Box bg={bg} className="box wide">
           <PhGraph data={data} />

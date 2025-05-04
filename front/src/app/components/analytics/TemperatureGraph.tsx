@@ -11,6 +11,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import NoDataBox from "../common/NoDataBox";
 
 const CustomLegend = (props: any) => (
   <ul
@@ -56,13 +57,17 @@ const CustomTick = ({ x, y, payload }: any) => (
 
 const TemperatureGraph = ({ data }: { data: any }) => {
   const { colorMode } = useColorMode();
-  if (!data) return <Spinner />;
 
   const chartBg = colorMode === "light" ? "white" : "gray.800";
 
   {
-    console.log("[TemperatureGraph] data:", data); // Log the API response to inspect its structure
+    console.log("[TemperatureGraph] data:", data);
   }
+  const temperatureData = data.sensor_data?.soil_temperature_medium || [];
+  if (!Array.isArray(temperatureData) || temperatureData.length === 0) {
+    return <NoDataBox name={data.sensor_names?.soil_temperature || "Température du sol"} />;
+  }
+  
   return (
     <Box
       width="100%"

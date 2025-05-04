@@ -87,17 +87,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
         {showManualDatePicker && (
           <Button onClick={() => handleYearsClick(1)}>1 y</Button>
         )}
-        <select
-          value={selectedZone ?? ""}
-          onChange={(e) => setSelectedZone(Number(e.target.value))}
-          style={{ padding: "8px", borderRadius: "8px", marginRight: "8px" }}
-        >
-          {zones.map((zone) => (
-            <option key={zone.id} value={zone.id}>
-              {zone.name}
-            </option>
-          ))}
-        </select>
+
       </HStack>
 
       {showManualDatePicker && (

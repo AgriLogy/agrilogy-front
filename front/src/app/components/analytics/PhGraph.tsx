@@ -10,6 +10,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import NoDataBox from "../common/NoDataBox";
 
 const CustomLegend = (props: any) => (
   <ul
@@ -55,8 +56,13 @@ const CustomTick = ({ x, y, payload }: any) => (
 
 const PhGraph = ({ data }: { data: any }) => {
   const { colorMode } = useColorMode();
-  if (!data) return <Spinner />;
   const chartBg = colorMode === "light" ? "white" : "gray.800";
+  
+  
+  const phSoilData = data.sensor_data?.ph_soil;
+  if (!Array.isArray(phSoilData) || phSoilData.length === 0) {
+    return <NoDataBox name={data.sensor_names?.soil_ph || "Ph du sol"} />;
+  }
 
   return (
     <Box

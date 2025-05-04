@@ -80,13 +80,30 @@ const mergeSensorData = (data: any) => {
     (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
   );
 };
-
 const IrrigationGraph = ({ data }: { data: any }) => {
   const { bg, textColor } = useColorModeStyles();
 
   if (!data || !data.sensor_data) return <Spinner />;
 
   const chartData = mergeSensorData(data.sensor_data);
+
+  if (chartData.length === 0) {
+    return (
+      <Box
+        width="100%"
+        height="100%"
+        bg={bg}
+        borderRadius="md"
+        boxShadow="lg"
+        p={4}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Text color={textColor}>Aucune donnée disponible</Text>
+      </Box>
+    );
+  }
 
   return (
     <Box

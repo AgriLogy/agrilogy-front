@@ -10,6 +10,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import NoDataBox from "../common/NoDataBox";
 
 const CustomLegend = (props: any) => (
   <ul
@@ -58,6 +59,14 @@ const ConductivityIrrigationGraph = ({ data }: { data: any }) => {
   if (!data) return <Spinner />;
   const chartBg = colorMode === "light" ? "white" : "gray.800";
 
+  const ecSoilData = data.sensor_data?.ec_soil_medium;
+  if (!Array.isArray(ecSoilData) || ecSoilData.length === 0) {
+    return (
+      <NoDataBox
+        name={data.sensor_names?.soil_conductivity || "Conductivité du sol"}
+      />
+    );
+  }
   return (
     <Box
       width="100%"
