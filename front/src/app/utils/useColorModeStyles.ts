@@ -5,6 +5,7 @@ const useColorModeStyles = () => {
   const { toggleColorMode } = useColorMode();
   const bg = useColorModeValue('white', 'gray.800');
   const textColor = useColorModeValue('gray.800', 'gray.200');
+  const zoneColor = useColorModeValue('gray.500', 'gray.500');
   const hoverColor = useColorModeValue('blue.500', 'blue.300');
   // const bgColor = useColorModeValue('green.500', 'green.300');
   const navBgColor = useColorModeValue('gray.100', 'gray.600');
@@ -36,6 +37,7 @@ const useColorModeStyles = () => {
   return {
     bg,
     textColor,
+    zoneColor,
     toggleColorMode,
     hoverColor,
     bgColor,

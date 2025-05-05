@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import "./AnalyticsMain.css";
-import { Box, HStack, Text } from "@chakra-ui/react";
+import { Box, HStack, Text, useColorModeValue } from "@chakra-ui/react";
 import IrrigationGraph from "./IrrigationGraph";
 import PhGraph from "./PhGraph";
 import DateRangePicker from "./DateRangePicker";
@@ -19,7 +19,7 @@ const AnalyticsMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
   const [selectedZone, setSelectedZone] = useState<number | null>(null);
 
-  const { bg, textColor } = useColorModeStyles();
+  const { bg, textColor, zoneColor } = useColorModeStyles();
   const [data, setData] = useState<SensorData[]>([]);
   const [statusdata, setStatusData] = useState<StatusData | null>(null);
 
@@ -77,8 +77,9 @@ const AnalyticsMain = () => {
             onChange={(e) => setSelectedZone(Number(e.target.value))}
             style={{
               borderRadius: "2px",
-              color: textColor, // 'gray.800' in light mode, 'gray.200' in dark mode
-              border: `1px solid ${bg}`, // Optional: ensure border is visible
+              padding: "4px",
+              color: useColorModeValue("black", "white"), // 'gray.800' in light mode, 'gray.200' in dark mode
+              border: `1px solid ${useColorModeValue("black", "white")}`, // Optional: ensure border is visible
             }}
           >
             {zones.map((zone) => (
