@@ -156,7 +156,8 @@ class PrecipitationRate(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="precipitation_rates_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Precipitation rate in mm/h.")
     timestamp = models.DateTimeField(help_text="Timestamp when the sensor data was recorded.")
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "mm/h"
@@ -171,7 +172,8 @@ class HumidityWeather(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="humidity_weather_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Humidity from the weather sensor as a percentage.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "%"
@@ -186,7 +188,8 @@ class WindSpeed(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="wind_speeds_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Wind speed in m/s.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "m/s"
@@ -201,7 +204,8 @@ class SolarRadiation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="solar_radiations_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Solar radiation in W/m².")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "W/m²"
@@ -216,7 +220,8 @@ class PressureWeather(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="pressure_weather_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Atmospheric pressure in hPa.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "hPa"
@@ -231,7 +236,8 @@ class WindDirection(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="wind_directions_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Wind direction in degrees.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "°"
@@ -246,7 +252,8 @@ class TemperatureWeather(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="temperature_weather_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Air temperature in Celsius.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "°C"
@@ -261,7 +268,8 @@ class ECSoilMedium(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ec_soil_medium_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Electrical conductivity of soil at medium depth in dS/m.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "dS/m"
@@ -276,7 +284,8 @@ class SoilTemperatureMedium(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_temperature_medium_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Soil temperature at medium depth in Celsius.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "°C"
@@ -291,7 +300,8 @@ class SoilECHigh(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_ec_high_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Electrical conductivity of soil at high depth in dS/m.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "dS/m"
@@ -306,7 +316,8 @@ class ECSoilLow(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ec_soil_low_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Electrical conductivity of soil at low depth in dS/m.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "dS/m"
@@ -321,7 +332,8 @@ class SoilMoistureMedium(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_moisture_medium_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Soil moisture at medium depth in percentage.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "%"
@@ -334,10 +346,10 @@ class SoilMoistureMedium(models.Model):
 class SoilMoistureHigh(models.Model):
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="soil_moisture_high")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_moisture_high_per_user")
-   
     value = models.FloatField(null=True, blank=True, help_text="Soil moisture at high depth in percentage.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "%"
@@ -352,7 +364,8 @@ class SoilMoistureLow(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_moisture_low_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Soil moisture at low depth in percentage.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "%"
@@ -367,7 +380,8 @@ class PhSoil(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ph_soil_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Soil pH level.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "pH"
@@ -382,7 +396,8 @@ class SoilTemperatureLow(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_temperature_low_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Soil temperature at low depth in Celsius.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "°C"
@@ -397,7 +412,8 @@ class SoilTemperatureHigh(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_temperature_high_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Soil temperature at high depth in Celsius.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "°C"
@@ -412,7 +428,8 @@ class WaterFlowSensor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="water_flow_sensors_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Water flow sensor reading in liters per second.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "L/s"
@@ -428,7 +445,8 @@ class WaterECSensor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="water_ec_sensors_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Water EC sensor reading in μS/cm.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "μS/cm"
@@ -443,7 +461,8 @@ class PhWaterSensor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ph_water_sensors_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="pH level of water.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "pH"
@@ -458,7 +477,8 @@ class ElectricityConsumptionSensor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="electricity_consumption_sensors_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Electricity consumption reading.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "kWh"
@@ -473,7 +493,8 @@ class LeafMoistureSensor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="leaf_moisture_sensors_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Leaf moisture percentage.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "%"
@@ -488,7 +509,8 @@ class MultiDepthSoilMoistureSensor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="multi_depth_soil_moisture_sensors_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Multi-depth soil moisture percentage.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "%"
@@ -503,7 +525,8 @@ class LargeFruitDiameterSensor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="large_fruit_diameter_sensors_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Large fruit diameter size.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "mm"
@@ -518,7 +541,8 @@ class WaterLevelSensor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="water_level_sensors_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Water level in the tank or river.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "cm"
@@ -533,7 +557,8 @@ class SoilSalinityConductivityIntegratedSensor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_salinity_conductivity_integrated_sensors_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Soil salinity conductivity value.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "μS/cm"
@@ -548,7 +573,8 @@ class NpkSensor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="npk_sensors_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Soil nutrient NPK reading.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "mg/kg"
@@ -563,7 +589,8 @@ class FruitSizeSensor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="fruit_size_sensors_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Fruit size measurement.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "mm"
@@ -578,7 +605,8 @@ class EcSalinitySensor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ec_salinity_sensors_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="EC and salinity measurement.")
     timestamp = models.DateTimeField()
-
+    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    
     @property
     def default_unit(self) -> str:
         return "μS/cm"
