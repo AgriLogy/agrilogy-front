@@ -59,197 +59,31 @@ zone, _ = Zone.objects.get_or_create(
 )
 
 
-# # Generate Sensor, Notification, and Alert records
-# current_date = BEGIN_DATE
-# while current_date <= END_DATE:
-#     formatted_timestamp = current_date.strftime("%Y-%m-%d %H:%M:%S.%f")  
-#     formatted_timestamp = datetime.strptime(formatted_timestamp, "%Y-%m-%d %H:%M:%S.%f")  
 
+print(f"✅ Found or created zone: {zone.name}")
 
+# Generate dummy FruitSizeSensor data
+print("📊 Generating FruitSizeSensor data...")
 
-#     _PrecipitationRate = PrecipitationRate.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#     )
-#     _HumidityWeather = HumidityWeather.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _WindSpeed = WindSpeed.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _SolarRadiation = SolarRadiation.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _PressureWeather = PressureWeather.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _WindDirection = WindDirection.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _TemperatureWeather = TemperatureWeather.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _ECSoilMedium = ECSoilMedium.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _SoilTemperatureMedium = SoilTemperatureMedium.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _SoilECHigh = SoilECHigh.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _ECSoilLow = ECSoilLow.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _SoilMoistureMedium = SoilMoistureMedium.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _SoilMoistureHigh = SoilMoistureHigh.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _SoilMoistureLow = SoilMoistureLow.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _PhSoil = PhSoil.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _SoilTemperatureLow = SoilTemperatureLow.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _SoilTemperatureHigh = SoilTemperatureHigh.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _WaterFlowSensor = WaterFlowSensor.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _WaterECSensor = WaterECSensor.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _PhWaterSensor = PhWaterSensor.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _ElectricityConsumptionSensor = ElectricityConsumptionSensor.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _LeafMoistureSensor = LeafMoistureSensor.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _MultiDepthSoilMoistureSensor = MultiDepthSoilMoistureSensor.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _LargeFruitDiameterSensor = LargeFruitDiameterSensor.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _WaterLevelSensor = WaterLevelSensor.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _SoilSalinityConductivityIntegratedSensor = SoilSalinityConductivityIntegratedSensor.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _NpkSensor = NpkSensor.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _FruitSizeSensor = FruitSizeSensor.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
-#     _EcSalinitySensor = EcSalinitySensor.objects.create(
-#         user=user,
-#         zone=zone,
-#         value=random.uniform(0,100),
-#         timestamp=formatted_timestamp
-#         )
+def generate_random_datetimes(start: datetime, end: datetime, count: int):
+    """Return a list of evenly spaced datetime points between start and end."""
+    delta = (end - start) / count
+    return [start + i * delta for i in range(count)]
 
+try:
+    data_points = 50  # Number of dummy records
+    timestamps = generate_random_datetimes(BEGIN_DATE, END_DATE, data_points)
 
-#     current_date += timedelta(days=1)
-
-
-# _ActiveGraph = ActiveGraph.objects.get_or_create(
-#     user=user,
-#     zone=zone,
-
-# )
+    for timestamp in timestamps:
+        FruitSizeSensor.objects.create(
+            zone=zone,
+            user=user,
+            value=round(random.uniform(10.0, 70.0), 2),  # Fruit size in mm
+            timestamp=timestamp,
+            color="#82ca9d"
+        )
+    print(f"✅ Created {data_points} FruitSizeSensor records.")
+except Exception as e:
+    print(f"❌ Failed to create FruitSizeSensor data: {e}")
 
 print(f"🎉 Successfully created sensor records for {user.username}!")

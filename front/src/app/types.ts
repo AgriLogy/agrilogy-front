@@ -23,3 +23,12 @@ export interface ZoneWrapper {
 	user: number;
 	zone: Zone;
   }
+
+export interface SensorData {
+  id: number;
+  value: number;
+  timestamp: string;
+  color: string;
+  default_unit: string;
+  available_units: string[];
+}

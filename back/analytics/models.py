@@ -157,6 +157,7 @@ class PrecipitationRate(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Precipitation rate in mm/h.")
     timestamp = models.DateTimeField(help_text="Timestamp when the sensor data was recorded.")
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -173,6 +174,7 @@ class HumidityWeather(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Humidity from the weather sensor as a percentage.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -189,6 +191,7 @@ class WindSpeed(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Wind speed in m/s.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -205,6 +208,7 @@ class SolarRadiation(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Solar radiation in W/m².")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -221,6 +225,7 @@ class PressureWeather(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Atmospheric pressure in hPa.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -237,6 +242,7 @@ class WindDirection(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Wind direction in degrees.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -253,6 +259,7 @@ class TemperatureWeather(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Air temperature in Celsius.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -269,6 +276,7 @@ class ECSoilMedium(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Electrical conductivity of soil at medium depth in dS/m.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -285,6 +293,7 @@ class SoilTemperatureMedium(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Soil temperature at medium depth in Celsius.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -301,6 +310,7 @@ class SoilECHigh(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Electrical conductivity of soil at high depth in dS/m.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -317,6 +327,7 @@ class ECSoilLow(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Electrical conductivity of soil at low depth in dS/m.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -333,6 +344,7 @@ class SoilMoistureMedium(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Soil moisture at medium depth in percentage.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -349,6 +361,7 @@ class SoilMoistureHigh(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Soil moisture at high depth in percentage.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -365,6 +378,7 @@ class SoilMoistureLow(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Soil moisture at low depth in percentage.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -381,6 +395,7 @@ class PhSoil(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Soil pH level.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -397,6 +412,7 @@ class SoilTemperatureLow(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Soil temperature at low depth in Celsius.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -413,6 +429,7 @@ class SoilTemperatureHigh(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Soil temperature at high depth in Celsius.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -429,6 +446,7 @@ class WaterFlowSensor(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Water flow sensor reading in liters per second.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -446,6 +464,7 @@ class WaterECSensor(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Water EC sensor reading in μS/cm.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -462,6 +481,7 @@ class PhWaterSensor(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="pH level of water.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -478,6 +498,7 @@ class ElectricityConsumptionSensor(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Electricity consumption reading.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -494,6 +515,7 @@ class LeafMoistureSensor(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Leaf moisture percentage.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -510,6 +532,7 @@ class MultiDepthSoilMoistureSensor(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Multi-depth soil moisture percentage.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -526,6 +549,7 @@ class LargeFruitDiameterSensor(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Large fruit diameter size.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -542,6 +566,7 @@ class WaterLevelSensor(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Water level in the tank or river.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -558,6 +583,7 @@ class SoilSalinityConductivityIntegratedSensor(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Soil salinity conductivity value.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -574,6 +600,7 @@ class NpkSensor(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Soil nutrient NPK reading.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -590,6 +617,7 @@ class FruitSizeSensor(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="Fruit size measurement.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='Fuite size', max_length=50)
     
     @property
     def default_unit(self) -> str:
@@ -606,6 +634,7 @@ class EcSalinitySensor(models.Model):
     value = models.FloatField(null=True, blank=True, help_text="EC and salinity measurement.")
     timestamp = models.DateTimeField()
     color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
     
     @property
     def default_unit(self) -> str:

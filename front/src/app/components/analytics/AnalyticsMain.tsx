@@ -1,25 +1,21 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import "./AnalyticsMain.css";
 import { Box, HStack, Text, useColorModeValue } from "@chakra-ui/react";
-import IrrigationGraph from "./IrrigationGraph";
-import PhGraph from "./PhGraph";
-import DateRangePicker from "./DateRangePicker";
-import ConductivityIrrigationGraph from "./ConductivityIrrigationGraph";
-// import CumulIrrigationGraph from "./CumulIrrigationGraph";
-import TemperatureGraph from "./TemperatureGraph";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import axiosInstance from "@/app/lib/api";
 import { SensorData, StatusData } from "@/app/data/dashboard/data";
-import EmptyBox from "../common/EmptyBox";
-import CumulIrrigationGraph from "./CumulIrrigationGraph";
+
+import DateRangePicker from "./DateRangePicker";
+import useColorModeStyles from "@/app/utils/useColorModeStyles";
+import FruitSizeChart from "./FruitSizeChart";
+
 import api from "@/app/lib/api";
+
+import "./AnalyticsMain.css";
 
 const AnalyticsMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
   const [selectedZone, setSelectedZone] = useState<number | null>(null);
 
-  const { bg, textColor, zoneColor } = useColorModeStyles();
+  const { bg, textColor } = useColorModeStyles();
   const [data, setData] = useState<SensorData[]>([]);
   const [statusdata, setStatusData] = useState<StatusData | null>(null);
 
@@ -42,30 +38,7 @@ const AnalyticsMain = () => {
     fetchZones();
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const params = {
-          start_date: startDate,
-          end_date: endDate,
-          ...(selectedZone && { zone_id: selectedZone }),
-        };
-        const response = await axiosInstance.get("/api/all-sensor-data/", {
-          params,
-        });
-        const sensorData: SensorData[] = response.data || [];
-        const sensorStatusData: StatusData = response.data.sensor_status;
-
-        setData(sensorData);
-        setStatusData(sensorStatusData);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Unknown error");
-      }
-    };
-    fetchData();
-  }, [startDate, endDate, selectedZone]);
-
-  if (error) return <EmptyBox />;
+  // if (error) return <EmptyBox />;
 
   return (
     <div className="container">
@@ -83,7 +56,6 @@ const AnalyticsMain = () => {
             }}
           >
             {zones.map((zone) => (
-              
               <option key={zone.id} value={zone.id}>
                 {zone.name}
               </option>
@@ -101,33 +73,11 @@ const AnalyticsMain = () => {
           setSelectedZone={setSelectedZone}
         />
       </Box>
-
-      {/* {statusdata?.soil_irrigation_status && (
+      {
         <Box bg={bg} className="box wide">
-          <IrrigationGraph data={data} />
+          <FruitSizeChart />
         </Box>
-      )} */}
-      {statusdata?.soil_ph_status && (
-        <Box bg={bg} className="box wide">
-          <PhGraph data={data} />
-        </Box>
-      )}
-      {statusdata?.soil_conductivity_status && (
-        <Box bg={bg} className="box wide">
-          <ConductivityIrrigationGraph data={data} />
-        </Box>
-      )}
-      {/* {statusdata?.precipitation_rate_status &&
-        
-          <Box bg={bg} className="box wide">
-        <CumulIrrigationGraph data={data} />
-        </Box> 
-        } */}
-      {statusdata?.soil_temperature_status && (
-        <Box bg={bg} className="box wide">
-          <TemperatureGraph data={data} />
-        </Box>
-      )}
+      }
     </div>
   );
 };

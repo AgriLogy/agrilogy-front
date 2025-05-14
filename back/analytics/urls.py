@@ -13,8 +13,6 @@ from .sensor_registry import generated_views
 # 	  path('', include(router.urls)),
 #     path('notifications-and-alerts/', NotificationsAndAlertsView.as_view(), name='notifications-and-alerts'),
 #     path('all-sensor-data/', AllSensorDataView.as_view(), name='all-sensor-data'),
-#     path('zones-names-per-user/', ZonesNames.as_view(), name='zones-names-per-user'),
-#     path('header/', HeaderAPIView.as_view(), name='header'),
 #     path('graph-name/', GraphNameAPIView.as_view(), name='graph-name'),
 #     path('sensor-color/', SensorColorAPIView.as_view(), name='sensor-color'),
 # 	  path('auth-zone-per-user/', csrf_exempt(AuthZonePerUserAPIView.as_view()), name='zone-per-user'),
@@ -30,7 +28,13 @@ from .sensor_registry import generated_views
 	
 # ]
 
+
 urlpatterns = [
+    path('header/', HeaderAPIView.as_view(), name='header'),
+    path('zones-names-per-user/', ZonesNames.as_view(), name='zones-names-per-user'),
+]
+
+urlpatterns += [
     path(f"sensors/{name.lower().replace('sensor', '').replace('_', '-')}/", view.as_view())
     for name, view in generated_views
 ]

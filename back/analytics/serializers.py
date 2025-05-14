@@ -4,7 +4,7 @@ from .models import *
 from rest_framework import serializers
 
 class BaseSensorSerializer(serializers.ModelSerializer):
-    timestamp = serializers.DateTimeField(format="%d-%m-%Y")
+    timestamp = serializers.DateTimeField(format="%Y-%m-%d")
     default_unit = serializers.SerializerMethodField()
     available_units = serializers.SerializerMethodField()
 
@@ -15,7 +15,8 @@ class BaseSensorSerializer(serializers.ModelSerializer):
         return obj.available_units
 
     class Meta:
-        fields = ['id', 'value', 'timestamp', 'color', 'default_unit', 'available_units']
+        fields = '__all__'
+        # fields = ['id', 'value', 'timestamp', 'color', 'default_unit', 'available_units']
 
 
 # Graphe names for each user

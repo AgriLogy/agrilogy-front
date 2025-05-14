@@ -36,3 +36,17 @@ class SensorDataMixin(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class HeaderAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({"username": user.username}, status=status.HTTP_200_OK)
+
+class ZonesNames(APIView):
+    def get(self, request):
+        user = request.user
+        zone = Zone.objects.all().filter(user_id = user.id)
+        serialised_data = ZonesNameSerializer(zone, many = True)
+        return Response( serialised_data.data, status=status.HTTP_200_OK)
