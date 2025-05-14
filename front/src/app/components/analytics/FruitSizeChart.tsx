@@ -15,6 +15,8 @@ import { SensorData } from "@/app/types";
 import { useBreakpointValue } from "@chakra-ui/react";
 
 const FruitSizeChart = () => {
+  const xAxisName = "Taille des fruits";
+  const yAxisName = "Taille (mm)";
   const [data, setData] = useState<SensorData[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -40,7 +42,7 @@ const FruitSizeChart = () => {
   return (
     <div style={{ width: "100%", height: 400 }}>
       {loading || data.length === 0 ? (
-        <p>Loading chart...</p>
+        <p>Chargement...</p>
       ) : (
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
@@ -56,13 +58,13 @@ const FruitSizeChart = () => {
             />
 
             <YAxis
-              label={{ value: "Size (mm)", angle: -90, position: "insideLeft" }}
+              label={{ value: yAxisName, angle: -90, position: "insideLeft" }}
             />
             <Tooltip />
             <Legend />
             <Bar
               dataKey="value"
-              name="Fruit Size"
+              name= {xAxisName}
               fill="#82ca9d"
               activeBar={<Rectangle fill="gold" stroke="purple" />}
             />
