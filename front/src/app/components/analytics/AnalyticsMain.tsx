@@ -1,30 +1,34 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Box, HStack, Text, useColorModeValue } from "@chakra-ui/react";
-import { SensorData, StatusData } from "@/app/data/dashboard/data";
 
 import DateRangePicker from "./DateRangePicker";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import FruitSizeChart from "./FruitSizeChart";
+import FruiteSizeMain from "./fruiteSize/FruiteSizeMain";
 
 import api from "@/app/lib/api";
 
-import "./AnalyticsMain.css";
+import "@/app/styles/style.css";
+import NpkMain from "./npk/NpkMain";
+import ElectricityconsumptionMain from "./Electricityconsumption/ElectricityconsumptionMain";
 
 const AnalyticsMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
   const [selectedZone, setSelectedZone] = useState<number | null>(null);
 
   const { bg, textColor } = useColorModeStyles();
-  const [data, setData] = useState<SensorData[]>([]);
-  const [statusdata, setStatusData] = useState<StatusData | null>(null);
 
-  const [error, setError] = useState<string | null>(null);
 
   const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>(
+  const [endDate, setEndDate] = useState<string>( 
     new Date().toISOString().split("T")[0]
   );
+
+  const filters = {
+  startDate,
+  endDate,
+  selectedZone,
+};
   useEffect(() => {
     const fetchZones = async () => {
       try {
@@ -73,11 +77,18 @@ const AnalyticsMain = () => {
           setSelectedZone={setSelectedZone}
         />
       </Box>
-      {
-        <Box bg={bg} className="box wide">
-          <FruitSizeChart />
-        </Box>
-      }
+
+
+
+<Box bg={bg} className="box wide">
+  <FruiteSizeMain filters={filters} />
+</Box>
+<Box bg={bg} className="box wide">
+  <NpkMain filters={filters} />
+</Box>
+<Box bg={bg} className="box wide">
+  <ElectricityconsumptionMain filters={filters} />
+</Box>
     </div>
   );
 };

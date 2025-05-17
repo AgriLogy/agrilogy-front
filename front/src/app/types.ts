@@ -32,3 +32,21 @@ export interface SensorData {
   default_unit: string;
   available_units: string[];
 }
+
+export interface NpkSensorData {
+  id: number;
+  timestamp: string;
+  zone: number;
+  user: number;
+  nitrogen_value: number;
+  nitrogen_color: string;
+  nitrogen_courbe_name: string;
+  phosphorus_value: number;
+  phosphorus_color: string;
+  phosphorus_courbe_name: string;
+  potassium_value: number;
+  potassium_color: string;
+  potassium_courbe_name: string;
+  default_unit: string;
+  available_units: string[];
+}

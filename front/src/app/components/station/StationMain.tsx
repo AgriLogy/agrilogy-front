@@ -36,7 +36,7 @@ const StationMain = () => {
           start_date: startDate,
           end_date: endDate,
         };
-        const response = await axiosInstance.get("/api/all-sensor-data/", {
+        const response = await axiosInstance.get("/api/('all-sensor-data/')", {
           params,
         });
         console.log("API Response:", response.data); // Log the API response to inspect its structure

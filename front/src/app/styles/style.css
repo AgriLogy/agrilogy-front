@@ -19,26 +19,20 @@
 	font-weight: 800;
   }
   
-  .box {
-	margin: 3px;
-	border-radius: 5px;
-	flex-wrap: wrap;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	background-color: var(--chakra-colors-gray-200); /* Light mode background */
-	border: 1px solid #ccc;
-	height: 400px;
-	font-size: 24px;
-	font-weight: bold;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-  }
-  
-  .wide {
-	grid-column: span 2;
-  }
+.box {
+  margin: 3px;
+  border-radius: 5px;
+  background-color: var(--chakra-colors-gray-200); /* for light mode */
+  border: 1px solid #ccc;
+  font-size: 24px;
+  font-weight: bold;
+  overflow: hidden;
+}
+
+.wide {
+  grid-column: span 2;
+}
+
   
   @media (max-width: 576px) {
 	.container {

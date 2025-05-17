@@ -13,15 +13,33 @@ from .models import *
 from .serializers import *
 
 
+from django.utils.dateparse import parse_date
+
+
 class SensorDataMixin(APIView):
     sensor_model = None
     serializer_class = None
 
-    def get_queryset(self, user):
-        return self.sensor_model.objects.filter(user=user)
+    def get_queryset(self, request):
+        user = request.user
+        queryset = self.sensor_model.objects.filter(user=user)
+
+        # Apply optional filters
+        start_date = request.query_params.get("start_date")
+        end_date = request.query_params.get("end_date")
+        zone = request.query_params.get("zone")
+
+        if start_date:
+            queryset = queryset.filter(timestamp__date__gte=parse_date(start_date))
+        if end_date:
+            queryset = queryset.filter(timestamp__date__lte=parse_date(end_date))
+        if zone:
+            queryset = queryset.filter(zone_id=zone)
+
+        return queryset
 
     def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset(request.user)
+        queryset = self.get_queryset(request)
         serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
 

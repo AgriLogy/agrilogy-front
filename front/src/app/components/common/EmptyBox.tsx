@@ -1,6 +1,6 @@
-import { Box, Spinner, useBreakpointValue, useColorModeValue } from "@chakra-ui/react";
+import { Box, Text, useBreakpointValue, useColorModeValue } from "@chakra-ui/react";
 
-const EmptyBox = () => {
+const EmptyBox = ({ text = "Pas de données" }: { text?: string }) => {
   const chartBg = useColorModeValue("white", "gray.800");
   const p = useBreakpointValue({ base: 2, md: 4 });
 
@@ -17,7 +17,7 @@ const EmptyBox = () => {
       alignItems="center"
       justifyContent="center"
     >
-      <Spinner size="xl" color="green.500" />
+      <Text>{text}</Text>
     </Box>
   );
 };

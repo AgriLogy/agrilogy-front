@@ -597,11 +597,23 @@ class SoilSalinityConductivityIntegratedSensor(models.Model):
 class NpkSensor(models.Model):
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="npk_sensors")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="npk_sensors_per_user")    
-    value = models.FloatField(null=True, blank=True, help_text="Soil nutrient NPK reading.")
     timestamp = models.DateTimeField()
-    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
-    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
-    
+
+    # Nitrogen
+    nitrogen_value = models.FloatField(null=True, blank=True, help_text="Nitrogen reading (N).")
+    nitrogen_color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
+    nitrogen_courbe_name = models.CharField(null=True, blank=True, default='N_curve', max_length=50)
+
+    # Phosphorus
+    phosphorus_value = models.FloatField(null=True, blank=True, help_text="Phosphorus reading (P).")
+    phosphorus_color = models.CharField(null=True, blank=True, default='#00a86b', max_length=7)
+    phosphorus_courbe_name = models.CharField(null=True, blank=True, default='P_curve', max_length=50)
+
+    # Potassium
+    potassium_value = models.FloatField(null=True, blank=True, help_text="Potassium reading (K).")
+    potassium_color = models.CharField(null=True, blank=True, default='#4682b4', max_length=7)
+    potassium_courbe_name = models.CharField(null=True, blank=True, default='K_curve', max_length=50)
+
     @property
     def default_unit(self) -> str:
         return "mg/kg"
@@ -609,6 +621,7 @@ class NpkSensor(models.Model):
     @property
     def available_units(self) -> list[str]:
         return ["mg/kg", "ppm"]
+
 
 
 class FruitSizeSensor(models.Model):
