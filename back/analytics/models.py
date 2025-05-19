@@ -577,21 +577,45 @@ class WaterLevelSensor(models.Model):
         return ["cm", "m"]
 
 
-class SoilSalinityConductivityIntegratedSensor(models.Model):
-    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="soil_salinity_conductivity_integrated_sensors")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_salinity_conductivity_integrated_sensors_per_user")    
-    value = models.FloatField(null=True, blank=True, help_text="Soil salinity conductivity value.")
+
+class SoilSalinitySensor(models.Model):
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="soil_salinity_sensors")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_salinity_sensors_per_user")
+    value = models.FloatField(null=True, blank=True, help_text="Soil salinity value.")
     timestamp = models.DateTimeField()
-    color = models.CharField(null=True, blank=True, default='#dba800', max_length=7)
-    courbe_name = models.CharField(null=True, blank=True, default='name', max_length=50)
-    
+    color = models.CharField(null=True, blank=True, default="#1f77b4", max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default="Salinity", max_length=50)
+
+    @property
+    def default_unit(self) -> str:
+        return "dS/m"
+
+    @property
+    def available_units(self) -> list[str]:
+        return ["dS/m", "mS/cm"]
+
+    def __str__(self):
+        return f"Salinity at {self.timestamp} — {self.value} {self.default_unit}"
+
+
+class SoilConductivitySensor(models.Model):
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="soil_conductivity_sensors")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_conductivity_sensors_per_user")
+    value = models.FloatField(null=True, blank=True, help_text="Soil electrical conductivity value.")
+    timestamp = models.DateTimeField()
+    color = models.CharField(null=True, blank=True, default="#dba800", max_length=7)
+    courbe_name = models.CharField(null=True, blank=True, default="Conductivity", max_length=50)
+
     @property
     def default_unit(self) -> str:
         return "μS/cm"
 
     @property
     def available_units(self) -> list[str]:
-        return ["μS/cm", "dS/m"]
+        return ["μS/cm", "mS/cm"]
+
+    def __str__(self):
+        return f"Conductivity at {self.timestamp} — {self.value} {self.default_unit}"
 
 
 class NpkSensor(models.Model):
