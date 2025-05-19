@@ -11,6 +11,8 @@ import api from "@/app/lib/api";
 import "@/app/styles/style.css";
 import NpkMain from "./npk/NpkMain";
 import ElectricityconsumptionMain from "./Electricityconsumption/ElectricityconsumptionMain";
+import LargeFruitDiameterMain from "./LargeFruitDiameter/LargeFruitDiameterMain";
+import PhWaterMain from "./WaterPh/PhWaterMain";
 
 const AnalyticsMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
@@ -88,6 +90,12 @@ const AnalyticsMain = () => {
 </Box>
 <Box bg={bg} className="box wide">
   <ElectricityconsumptionMain filters={filters} />
+</Box>
+<Box bg={bg} className="box wide">
+  <LargeFruitDiameterMain filters={filters} />
+</Box>
+<Box bg={bg} className="box wide">
+  <PhWaterMain filters={filters} />
 </Box>
     </div>
   );

@@ -145,6 +145,77 @@ def ElectricityConsumptionSensorGenerator():
 
 
 
+def LargeFruitDiameterSensorGenerator():
+    # Generate dummy LargeFruitDiameterSensor data
+    print("📊 Generating LargeFruitDiameterSensor data...")
+    try:
+        data_points = 50  # Number of dummy records
+        timestamps = generate_random_datetimes(BEGIN_DATE, END_DATE, data_points)
+
+        for timestamp in timestamps:
+            LargeFruitDiameterSensor.objects.create(
+                zone=zone,
+                user=user,
+                value=round(random.uniform(10.0, 70.0), 2),  # Fruit size in mm
+                timestamp=timestamp,
+                color="#543141"
+            )
+        print(f"✅ Created {data_points} LargeFruitDiameterSensor records.")
+    except Exception as e:
+        print(f"❌ Failed to create LargeFruitDiameterSensor data: {e}")
+
+    print(f"🎉 Successfully created LargeFruitDiameterSensor records for {user.username}!")
+
+
+
+def LargeFruitDiameterSensorGenerator():
+    # Generate dummy LargeFruitDiameterSensor data
+    print("📊 Generating LargeFruitDiameterSensor data...")
+    try:
+        data_points = 50  # Number of dummy records
+        timestamps = generate_random_datetimes(BEGIN_DATE, END_DATE, data_points)
+
+        for timestamp in timestamps:
+            LargeFruitDiameterSensor.objects.create(
+                zone=zone,
+                user=user,
+                value=round(random.uniform(10.0, 70.0), 2),  # Fruit size in mm
+                timestamp=timestamp,
+                color="#543141"
+            )
+        print(f"✅ Created {data_points} LargeFruitDiameterSensor records.")
+    except Exception as e:
+        print(f"❌ Failed to create LargeFruitDiameterSensor data: {e}")
+
+    print(f"🎉 Successfully created LargeFruitDiameterSensor records for {user.username}!")
+
+
+
+def PhWaterSensorGenerator():
+    # Generate dummy PhWaterSensor data
+    print("📊 Generating PhWaterSensor data...")
+    try:
+        data_points = 50  # Number of dummy records
+        timestamps = generate_random_datetimes(BEGIN_DATE, END_DATE, data_points)
+
+        for timestamp in timestamps:
+            PhWaterSensor.objects.create(
+                zone=zone,
+                user=user,
+                value=round(random.uniform(10.0, 70.0), 2),  # Fruit size in mm
+                timestamp=timestamp,
+                color="#543141"
+            )
+        print(f"✅ Created {data_points} PhWaterSensor records.")
+    except Exception as e:
+        print(f"❌ Failed to create PhWaterSensor data: {e}")
+
+    print(f"🎉 Successfully created PhWaterSensor records for {user.username}!")
+
+
+
 # FruitSizeSensorGenerator()
 # NpkSensorGenerator()    
-ElectricityConsumptionSensorGenerator()
+# ElectricityConsumptionSensorGenerator()
+# LargeFruitDiameterSensorGenerator()
+PhWaterSensorGenerator()

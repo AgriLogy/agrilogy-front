@@ -1,5 +1,10 @@
-dateRangePicke : need to introduce filter by zone
-	+ get all the zone names for the auth user
-	+ when clicked refetch the data accordingly
-cumulIrrigationData : need to define the graph structure
-	
+EC & Salinity Sensorfinal
+leaf moisture sensorfinal
+water level sensorfinal
+temperature de solfinal
+wind speed final
+tempurature & humidty final
+rainfall final
+winddirection
+soil humidty high low meduim ir
+Multi depth soil moisture senso
