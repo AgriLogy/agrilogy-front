@@ -1,5 +1,5 @@
-import { Box, Text, useColorModeValue } from "@chakra-ui/react";
-import { FaAppleAlt } from "react-icons/fa";
+import { Box, Text, useColorModeValue, VStack } from "@chakra-ui/react";
+import { FaTint, FaRulerCombined } from "react-icons/fa";
 import { SensorData } from "@/app/types";
 
 const timeAgo = (timestamp: string): string => {
@@ -15,10 +15,16 @@ const timeAgo = (timestamp: string): string => {
   return then.toLocaleDateString();
 };
 
-const SoilSalinityConductivityLastData = ({ data }: { data: SensorData[] }) => {
-  const latest = data[data.length - 1];
+const SoilSalinityConductivityLastData = ({
+  salinityData,
+  conductivityData,
+}: {
+  salinityData: SensorData[];
+  conductivityData: SensorData[];
+}) => {
+  const latestSalinity = salinityData[salinityData.length - 1];
+  const latestConductivity = conductivityData[conductivityData.length - 1];
 
-  // Dynamic colors for light/dark modes
   const bgColor = useColorModeValue("green.100", "green.900");
   const valueColor = useColorModeValue("green.700", "green.200");
   const textColor = useColorModeValue("gray.600", "gray.300");
@@ -39,16 +45,33 @@ const SoilSalinityConductivityLastData = ({ data }: { data: SensorData[] }) => {
       alignItems="center"
       textAlign="center"
     >
-      <FaAppleAlt size={50} color="#d1495b" />
-      <Text fontWeight="bold" fontSize="lg" mt={2}>
-        Dernière taille mesurée :
-      </Text>
-      <Text fontSize="2xl" color={valueColor}>
-        {latest ? `${latest.value.toFixed(2)} mm` : "Aucune donnée"}
-      </Text>
-      <Text fontSize="sm" color={textColor}>
-        {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ""}
-      </Text>
+      <VStack spacing={6}>
+        <Box textAlign="center">
+          <FaTint size={40} color="#2b6cb0" />
+          <Text fontWeight="bold" fontSize="lg" mt={2}>
+            Dernière salinité :
+          </Text>
+          <Text fontSize="2xl" color={valueColor}>
+            {latestSalinity ? `${latestSalinity.value.toFixed(2)} dS/m` : "Aucune donnée"}
+          </Text>
+          <Text fontSize="sm" color={textColor}>
+            {latestSalinity ? `Mise à jour : ${timeAgo(latestSalinity.timestamp)}` : ""}
+          </Text>
+        </Box>
+
+        <Box textAlign="center">
+          <FaRulerCombined size={40} color="#48bb78" />
+          <Text fontWeight="bold" fontSize="lg" mt={2}>
+            Dernière conductivité :
+          </Text>
+          <Text fontSize="2xl" color={valueColor}>
+            {latestConductivity ? `${latestConductivity.value.toFixed(2)} μS/cm` : "Aucune donnée"}
+          </Text>
+          <Text fontSize="sm" color={textColor}>
+            {latestConductivity ? `Mise à jour : ${timeAgo(latestConductivity.timestamp)}` : ""}
+          </Text>
+        </Box>
+      </VStack>
     </Box>
   );
 };

@@ -124,7 +124,7 @@ const PhWaterChart = ({
               />
               <YAxis
                 label={{
-                  value: "PH",
+                  // value: "PH",
                   angle: -90,
                   // fontSize: 16,
                   // dy: 80,
@@ -136,7 +136,7 @@ const PhWaterChart = ({
               <Line
                 type="monotone"
                 dataKey="value"
-                name="ph"
+                name="PH"
                 stroke={showLine ? "#82ca9d" : "gray"}
                 strokeWidth={2}
                 dot={{ r: 4, fill: showLine ? "#82ca9d" : "gray" }}

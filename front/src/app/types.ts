@@ -29,6 +29,7 @@ export interface SensorData {
   value: number;
   timestamp: string;
   color: string;
+  courbe_name: string;
   default_unit: string;
   available_units: string[];
 }

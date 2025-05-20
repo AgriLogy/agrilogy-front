@@ -127,7 +127,7 @@ const FruitSizeChart = ({
               />
               <YAxis
                 label={{
-                  value: "Taille (mm)",
+                  // value: "Taille (mm)",
                   angle: -90,
                   position: "insideLeft",
                 }}
@@ -136,7 +136,7 @@ const FruitSizeChart = ({
               <Legend onClick={handleLegendClick} />
               <Bar
                 dataKey="value"
-                name="Taille des fruits"
+                name="Taille des fruits (mm)"
                 fill={showBar ? "#82ca9d" : "gray"}
                 activeBar={
                   <Rectangle

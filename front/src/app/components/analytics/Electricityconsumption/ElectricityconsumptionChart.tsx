@@ -124,7 +124,7 @@ const ElectricityconsumptionChart = ({
               />
               <YAxis
                 label={{
-                  value: "Consommation (kWh)",
+                  // value: "Consommation (kWh)",
                   angle: -90,
                   fontSize: 16,
                   dy: 80,
@@ -136,7 +136,7 @@ const ElectricityconsumptionChart = ({
               <Line
                 type="monotone"
                 dataKey="value"
-                name="Consommation"
+                name="consommation (kWh)"
                 stroke={showLine ? "#82ca9d" : "gray"}
                 strokeWidth={2}
                 dot={{ r: 4, fill: showLine ? "#82ca9d" : "gray" }}

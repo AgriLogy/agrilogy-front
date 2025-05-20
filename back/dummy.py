@@ -213,9 +213,54 @@ def PhWaterSensorGenerator():
     print(f"🎉 Successfully created PhWaterSensor records for {user.username}!")
 
 
+def SoilSalinitySensorGenerator():
+    # Generate dummy SoilSalinitySensor data
+    print("📊 Generating SoilSalinitySensor data...")
+    try:
+        data_points = 50  # Number of dummy records
+        timestamps = generate_random_datetimes(BEGIN_DATE, END_DATE, data_points)
+
+        for timestamp in timestamps:
+            SoilSalinitySensor.objects.create(
+                zone=zone,
+                user=user,
+                value=round(random.uniform(10.0, 70.0), 2),  # Fruit size in mm
+                timestamp=timestamp,
+                color="#543141"
+            )
+        print(f"✅ Created {data_points} SoilSalinitySensor records.")
+    except Exception as e:
+        print(f"❌ Failed to create SoilSalinitySensor data: {e}")
+
+    print(f"🎉 Successfully created SoilSalinitySensor records for {user.username}!")
+
+def SoilConductivitySensorGenerator():
+    # Generate dummy SoilConductivitySensor data
+    print("📊 Generating SoilConductivitySensor data...")
+    try:
+        data_points = 50  # Number of dummy records
+        timestamps = generate_random_datetimes(BEGIN_DATE, END_DATE, data_points)
+
+        for timestamp in timestamps:
+            SoilConductivitySensor.objects.create(
+                zone=zone,
+                user=user,
+                value=round(random.uniform(10.0, 70.0), 2),  # Fruit size in mm
+                timestamp=timestamp,
+                color="#543141"
+            )
+        print(f"✅ Created {data_points} SoilConductivitySensor records.")
+    except Exception as e:
+        print(f"❌ Failed to create SoilConductivitySensor data: {e}")
+
+    print(f"🎉 Successfully created SoilConductivitySensor records for {user.username}!")
+
 
 # FruitSizeSensorGenerator()
 # NpkSensorGenerator()    
 # ElectricityConsumptionSensorGenerator()
 # LargeFruitDiameterSensorGenerator()
-PhWaterSensorGenerator()
+# PhWaterSensorGenerator()
+# SoilSalinitySensorGenerator()
+# SoilConductivitySensorGenerator()
+

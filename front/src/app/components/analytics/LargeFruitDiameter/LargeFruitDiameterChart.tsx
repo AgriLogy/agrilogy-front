@@ -124,7 +124,7 @@ const LargeFruitDiameterChart = ({
               />
               <YAxis
                 label={{
-                  value: "Diamètre (mm)",
+                  // value: "Diamètre (mm)",
                   angle: -90,
                   fontSize: 16,
                   dy: 80,
@@ -136,7 +136,7 @@ const LargeFruitDiameterChart = ({
               <Line
                 type="monotone"
                 dataKey="value"
-                name="Diamètre"
+                name="Diamètre (mm)"
                 stroke={showLine ? "#82ca9d" : "gray"}
                 strokeWidth={2}
                 dot={{ r: 4, fill: showLine ? "#82ca9d" : "gray" }}

@@ -1,63 +1,88 @@
 import React, { useRef, useState } from "react";
 import {
-  BarChart,
-  Bar,
-  Rectangle,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   Tooltip,
   Legend,
   ResponsiveContainer,
+  CartesianGrid,
+  Brush,
 } from "recharts";
 import {
-  useBreakpointValue,
   Box,
-  Flex,
-  Text,
   Button,
+  Flex,
   HStack,
+  Text,
+  useBreakpointValue,
 } from "@chakra-ui/react";
-import { FaDownload, FaCamera } from "react-icons/fa";
+import { FaCamera, FaDownload } from "react-icons/fa";
 import html2canvas from "html2canvas";
 import { SensorData } from "@/app/types";
 import EmptyBox from "../../common/EmptyBox";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 
-const FruitSizeChart = ({
-  data,
-  loading,
-}: {
-  data: SensorData[];
+type Props = {
+  salinityData: SensorData[];
+  conductivityData: SensorData[];
   loading: boolean;
-}) => {
+};
+
+const SoilSalinityConductivityChart = ({
+  salinityData,
+  conductivityData,
+  loading,
+}: Props) => {
   const chartRef = useRef<HTMLDivElement>(null);
-  const [showBar, setShowBar] = useState(true);
+  const { textColor } = useColorModeStyles();
 
-  const chartData = data.map((item) => ({
-    name: item.timestamp,
-    value: item.value,
-  }));
-
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(chartData.length / 3),
-    md: Math.ceil(chartData.length / 9),
+  const [activeLines, setActiveLines] = useState({
+    salinity: true,
+    conductivity: true,
   });
 
+  const labelInterval = useBreakpointValue({
+    base: Math.ceil(Math.max(salinityData.length, conductivityData.length) / 3),
+    md: Math.ceil(Math.max(salinityData.length, conductivityData.length) / 9),
+  });
   const labelAngle = useBreakpointValue({ base: -15, md: -5 });
-  const {  textColor } = useColorModeStyles();
 
-  // Legend click handler
-  const handleLegendClick = (data: any) => {
-    if (data.value === "Taille des fruits") {
-      setShowBar((prev) => !prev);
-    }
+  const timestamps = Array.from(
+    new Set([
+      ...salinityData.map((d) => d.timestamp),
+      ...conductivityData.map((d) => d.timestamp),
+    ])
+  ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+
+  const chartData = timestamps.map((timestamp) => {
+    const sal = salinityData.find((d) => d.timestamp === timestamp);
+    const cond = conductivityData.find((d) => d.timestamp === timestamp);
+    return {
+      name: timestamp,
+      salinity: sal?.value,
+      salinity_color: sal?.color,
+      salinity_courbe_name: sal?.courbe_name,
+      conductivity: cond?.value,
+      conductivity_color: cond?.color,
+      conductivity_courbe_name: cond?.courbe_name,
+    };
+  });
+
+  const handleLegendClick = (e: any) => {
+    const key = e.dataKey;
+    setActiveLines((prev) => ({
+      ...prev,
+      [key]: !prev[key as keyof typeof prev],
+    }));
   };
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
       const canvas = await html2canvas(chartRef.current);
       const link = document.createElement("a");
-      link.download = "fruit_chart.png";
+      link.download = "soil_salinity_conductivity_chart.png";
       link.href = canvas.toDataURL();
       link.click();
     }
@@ -65,17 +90,20 @@ const FruitSizeChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      "timestamp,value\n" +
-      data.map((d) => `${d.timestamp},${d.value}`).join("\n");
+      "timestamp,salinity,conductivity\n" +
+      chartData
+        .map(
+          (d) => `${d.name},${d.salinity ?? ""},${d.conductivity ?? ""}`
+        )
+        .join("\n");
 
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
 
     const link = document.createElement("a");
     link.href = url;
-    link.download = "fruit_data.csv";
+    link.download = "soil_data.csv";
     link.click();
-
     URL.revokeObjectURL(url);
   };
 
@@ -83,23 +111,13 @@ const FruitSizeChart = ({
     <Box width="100%" pr={4} pb={4}>
       <Flex justify="space-between" align="center" mb={4}>
         <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Évolution de la taille des fruits
+          Évolution de la salinité et conductivité du sol
         </Text>
         <HStack spacing={2}>
-          <Button
-            aria-label="Capture graphique"
-            colorScheme="teal"
-            variant="ghost"
-            onClick={handleScreenshot}
-          >
+          <Button onClick={handleScreenshot} variant="ghost" colorScheme="teal">
             <FaCamera />
           </Button>
-          <Button
-            aria-label="Exporter CSV"
-            colorScheme="blue"
-            variant="ghost"
-            onClick={handleDownloadData}
-          >
+          <Button onClick={handleDownloadData} variant="ghost" colorScheme="blue">
             <FaDownload />
           </Button>
         </HStack>
@@ -107,18 +125,16 @@ const FruitSizeChart = ({
 
       <Box ref={chartRef} height="300px">
         {loading ? (
-          <EmptyBox text= "Chargement..." /> // Assuming you have an EmptyBox component
-        ) : data.length === 0 ? (
-          <EmptyBox text= "Pas de données" /> // Assuming you have an EmptyBox component
+          <EmptyBox text="Chargement..." />
+        ) : chartData.length === 0 ? (
+          <EmptyBox text="Pas de données" />
         ) : (
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart
+            <LineChart
               data={chartData}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-              onClick={(e) => {
-                // optional: if you want to toggle bar by clicking legend label only
-              }}
             >
+              <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="name"
                 angle={labelAngle}
@@ -127,29 +143,51 @@ const FruitSizeChart = ({
               />
               <YAxis
                 label={{
-                  value: "Taille (mm)",
+                  // value: "Concentration",
                   angle: -90,
                   position: "insideLeft",
+                  fontSize: 14,
+                  dy: 80,
                 }}
               />
               <Tooltip />
               <Legend onClick={handleLegendClick} />
-              <Bar
-                dataKey="value"
-                name="Taille des fruits"
-                fill={showBar ? "#82ca9d" : "gray"}
-                activeBar={
-                  <Rectangle
-                    fill={showBar ? "gold" : "gray"}
-                    stroke={showBar ? "purple" : "gray"}
-                  />
+
+              <Line
+                type="monotone"
+                dataKey="salinity"
+                name={chartData[0]?.salinity_courbe_name || "Salinité"}
+                stroke={
+                  activeLines.salinity
+                    ? chartData[0]?.salinity_color || "#dba800"
+                    : ""
                 }
-                isAnimationActive={false}
-                style={{
-                  pointerEvents: showBar ? "auto" : "none",
-                }}
+                strokeWidth={2}
+                dot={false}
+                activeDot={{ r: 6 }}
               />
-            </BarChart>
+
+              <Line
+                type="monotone"
+                dataKey="conductivity"
+                name={chartData[0]?.conductivity_courbe_name || "Conductivité"}
+                stroke={
+                  activeLines.conductivity
+                    ? chartData[0]?.conductivity_color || "#00a86b"
+                    : ""
+                }
+                strokeWidth={2}
+                dot={false}
+                activeDot={{ r: 6 }}
+              />
+
+              <Brush
+                dataKey="name"
+                height={30}
+                stroke="#8884d8"
+                travellerWidth={8}
+              />
+            </LineChart>
           </ResponsiveContainer>
         )}
       </Box>
@@ -157,4 +195,4 @@ const FruitSizeChart = ({
   );
 };
 
-export default FruitSizeChart;
+export default SoilSalinityConductivityChart;

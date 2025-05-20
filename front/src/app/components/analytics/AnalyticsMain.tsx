@@ -13,6 +13,7 @@ import NpkMain from "./npk/NpkMain";
 import ElectricityconsumptionMain from "./Electricityconsumption/ElectricityconsumptionMain";
 import LargeFruitDiameterMain from "./LargeFruitDiameter/LargeFruitDiameterMain";
 import PhWaterMain from "./WaterPh/PhWaterMain";
+import SoilSalinityConductivityMain from "./SoilSalinityConductivity/SoilSalinityConductivityMain";
 
 const AnalyticsMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
@@ -96,6 +97,9 @@ const AnalyticsMain = () => {
 </Box>
 <Box bg={bg} className="box wide">
   <PhWaterMain filters={filters} />
+</Box>
+<Box bg={bg} className="box wide">
+  <SoilSalinityConductivityMain filters={filters} />
 </Box>
     </div>
   );

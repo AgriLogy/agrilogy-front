@@ -20,13 +20,13 @@ const SoilSalinityConductivityMain = ({
 }) => {
   const { startDate, endDate, selectedZone } = filters;
   const [Salinitydata, setSalinityData] = useState<SensorData[]>([]);
+  const [Conductivitydata, setConductivityData] = useState<SensorData[]>([]);
+  const [data, setData] = useState<SensorData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // if (!selectedZone || !startDate || !endDate) return;
-
     api
-      .get<SensorData[]>("/api/sensors/fruitsize/", {
+      .get<SensorData[]>("/api/sensors/soilsalinity/", {
         params: {
           start_date: startDate,
           end_date: endDate,
@@ -34,6 +34,18 @@ const SoilSalinityConductivityMain = ({
         },
       })
       .then((res) => setSalinityData(res.data))
+      .catch((err) => console.error("Failed to fetch fruit size data:", err))
+      .finally(() => setLoading(false));
+
+    api
+      .get<SensorData[]>("/api/sensors/soilconductivity/", {
+        params: {
+          start_date: startDate,
+          end_date: endDate,
+          zone: selectedZone,
+        },
+      })
+      .then((res) => setConductivityData(res.data))
       .catch((err) => console.error("Failed to fetch fruit size data:", err))
       .finally(() => setLoading(false));
   }, [startDate, endDate, selectedZone]);
@@ -48,10 +60,19 @@ const SoilSalinityConductivityMain = ({
       className="Box"
     >
       <Box flex={3} p={2} height={"100%"} width={"100%"}>
-        <SoilSalinityConductivityChart data={data} loading={loading} />
+        {/* <SoilSalinityConductivityChart data={data} loading={loading} /> */}
+        <SoilSalinityConductivityChart
+          salinityData={Salinitydata}
+          conductivityData={Conductivitydata}
+          loading={loading}
+        />
       </Box>
       <Box flex={1} p={3} height={"100%"} width={"100%"}>
-        <SoilSalinityConductivityLastData data={data} />
+        {/* <SoilSalinityConductivityLastData data={data} /> */}
+        <SoilSalinityConductivityLastData
+          salinityData={Salinitydata}
+          conductivityData={Conductivitydata}
+        />
       </Box>
     </Stack>
   );
