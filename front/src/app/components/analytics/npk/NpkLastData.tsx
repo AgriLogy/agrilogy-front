@@ -58,7 +58,7 @@ const NpkLastData = ({ data }: { data: NpkSensorData[] }) => {
         </VStack>
       ) : (
         <Text mt={3} fontSize="md" color={noDataColor}>
-          Aucune donnée
+          N/A
         </Text>
       )}
 

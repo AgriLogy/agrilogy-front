@@ -255,6 +255,30 @@ def SoilConductivitySensorGenerator():
 
     print(f"🎉 Successfully created SoilConductivitySensor records for {user.username}!")
 
+def SensorDataGenerator(model_class, sensor_name: str, color="#543141"):
+    print(f"📊 Generating {sensor_name} data...")
+    try:
+        data_points = 50  # Number of dummy records
+        timestamps = generate_random_datetimes(BEGIN_DATE, END_DATE, data_points)
+
+        for timestamp in timestamps:
+            model_class.objects.create(
+                zone=zone,
+                user=user,
+                value=round(random.uniform(10.0, 70.0), 2),
+                timestamp=timestamp,
+            )
+        print(f"✅ Created {data_points} {sensor_name} records.")
+    except Exception as e:
+        print(f"❌ Failed to create {sensor_name} data: {e}")
+
+    print(f"🎉 Successfully created {sensor_name} records for {user.username}!")
+
+
+# SensorDataGenerator(ECSoilHigh, "ECSoilHigh")
+# SensorDataGenerator(ECSoilLow, "ECSoilLow")
+# SensorDataGenerator(WaterFlowSensor, "WaterFlowSensor")
+
 
 # FruitSizeSensorGenerator()
 # NpkSensorGenerator()    

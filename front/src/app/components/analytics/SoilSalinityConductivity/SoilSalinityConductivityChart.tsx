@@ -92,9 +92,7 @@ const SoilSalinityConductivityChart = ({
     const csv =
       "timestamp,salinity,conductivity\n" +
       chartData
-        .map(
-          (d) => `${d.name},${d.salinity ?? ""},${d.conductivity ?? ""}`
-        )
+        .map((d) => `${d.name},${d.salinity ?? ""},${d.conductivity ?? ""}`)
         .join("\n");
 
     const blob = new Blob([csv], { type: "text/csv" });
@@ -117,7 +115,11 @@ const SoilSalinityConductivityChart = ({
           <Button onClick={handleScreenshot} variant="ghost" colorScheme="teal">
             <FaCamera />
           </Button>
-          <Button onClick={handleDownloadData} variant="ghost" colorScheme="blue">
+          <Button
+            onClick={handleDownloadData}
+            variant="ghost"
+            colorScheme="blue"
+          >
             <FaDownload />
           </Button>
         </HStack>
@@ -157,11 +159,8 @@ const SoilSalinityConductivityChart = ({
                 type="monotone"
                 dataKey="salinity"
                 name={chartData[0]?.salinity_courbe_name || "Salinité"}
-                stroke={
-                  activeLines.salinity
-                    ? chartData[0]?.salinity_color || "#dba800"
-                    : ""
-                }
+                stroke={chartData[0]?.salinity_color || "#dba800"}
+                strokeOpacity={activeLines.salinity ? 1 : 0.1}
                 strokeWidth={2}
                 dot={false}
                 activeDot={{ r: 6 }}
@@ -171,11 +170,8 @@ const SoilSalinityConductivityChart = ({
                 type="monotone"
                 dataKey="conductivity"
                 name={chartData[0]?.conductivity_courbe_name || "Conductivité"}
-                stroke={
-                  activeLines.conductivity
-                    ? chartData[0]?.conductivity_color || "#00a86b"
-                    : ""
-                }
+                stroke={chartData[0]?.conductivity_color || "#00a86b"}
+                strokeOpacity={activeLines.conductivity ? 1 : 0.1}
                 strokeWidth={2}
                 dot={false}
                 activeDot={{ r: 6 }}

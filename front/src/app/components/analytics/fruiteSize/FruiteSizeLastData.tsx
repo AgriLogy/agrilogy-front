@@ -44,7 +44,7 @@ const FruiteSizeLastData = ({ data }: { data: SensorData[] }) => {
         Dernière taille mesurée :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest ? `${latest.value.toFixed(2)} mm` : "Aucune donnée"}
+        {latest ? `${latest.value.toFixed(2)} mm` : "N/A"}
       </Text>
       <Text fontSize="sm" color={textColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ""}

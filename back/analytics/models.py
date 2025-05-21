@@ -288,7 +288,7 @@ class SoilTemperatureMedium(models.Model):
         return ["°C", "°F"]
 
 
-class SoilECHigh(models.Model):
+class ECSoilHigh(models.Model):
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="soil_ec_high")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_ec_high_per_user")    
     value = models.FloatField(null=True, blank=True, help_text="Electrical conductivity of soil at high depth in dS/m.")

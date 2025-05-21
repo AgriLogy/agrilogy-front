@@ -47,9 +47,7 @@ const LargeFruitDiameterLastData = ({ data }: { data: SensorData[] }) => {
         Dernière consommation :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest
-          ? `${latest.value.toFixed(2)} ${latest.default_unit}`
-          : "Aucune donnée"}
+        {latest ? `${latest.value.toFixed(2)} ${latest.default_unit}` : "N/A"}
       </Text>
       <Text fontSize="sm" color={textColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ""}

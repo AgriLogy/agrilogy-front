@@ -1,6 +1,6 @@
 from .models import (
     PrecipitationRate, HumidityWeather, WindSpeed, SolarRadiation, PressureWeather,
-    WindDirection, TemperatureWeather, ECSoilMedium, SoilTemperatureMedium, SoilECHigh,
+    WindDirection, TemperatureWeather, ECSoilMedium, SoilTemperatureMedium, ECSoilHigh,
     ECSoilLow, SoilMoistureMedium, SoilMoistureHigh, SoilMoistureLow, PhSoil,
     SoilTemperatureLow, SoilTemperatureHigh, WaterFlowSensor, WaterECSensor,
     PhWaterSensor, ElectricityConsumptionSensor, LeafMoistureSensor,
@@ -10,7 +10,7 @@ from .models import (
 
 SENSOR_MODELS = [
     PrecipitationRate, HumidityWeather, WindSpeed, SolarRadiation, PressureWeather,
-    WindDirection, TemperatureWeather, ECSoilMedium, SoilTemperatureMedium, SoilECHigh,
+    WindDirection, TemperatureWeather, ECSoilMedium, SoilTemperatureMedium, ECSoilHigh,
     ECSoilLow, SoilMoistureMedium, SoilMoistureHigh, SoilMoistureLow, PhSoil,
     SoilTemperatureLow, SoilTemperatureHigh, WaterFlowSensor, WaterECSensor,
     PhWaterSensor, ElectricityConsumptionSensor, LeafMoistureSensor,

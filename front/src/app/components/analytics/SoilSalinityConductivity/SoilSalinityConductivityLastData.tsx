@@ -52,10 +52,12 @@ const SoilSalinityConductivityLastData = ({
             Dernière salinité :
           </Text>
           <Text fontSize="2xl" color={valueColor}>
-            {latestSalinity ? `${latestSalinity.value.toFixed(2)} dS/m` : "Aucune donnée"}
+            {latestSalinity ? `${latestSalinity.value.toFixed(2)} dS/m` : "N/A"}
           </Text>
           <Text fontSize="sm" color={textColor}>
-            {latestSalinity ? `Mise à jour : ${timeAgo(latestSalinity.timestamp)}` : ""}
+            {latestSalinity
+              ? `Mise à jour : ${timeAgo(latestSalinity.timestamp)}`
+              : ""}
           </Text>
         </Box>
 
@@ -65,10 +67,14 @@ const SoilSalinityConductivityLastData = ({
             Dernière conductivité :
           </Text>
           <Text fontSize="2xl" color={valueColor}>
-            {latestConductivity ? `${latestConductivity.value.toFixed(2)} μS/cm` : "Aucune donnée"}
+            {latestConductivity
+              ? `${latestConductivity.value.toFixed(2)} μS/cm`
+              : "N/A"}
           </Text>
           <Text fontSize="sm" color={textColor}>
-            {latestConductivity ? `Mise à jour : ${timeAgo(latestConductivity.timestamp)}` : ""}
+            {latestConductivity
+              ? `Mise à jour : ${timeAgo(latestConductivity.timestamp)}`
+              : ""}
           </Text>
         </Box>
       </VStack>
