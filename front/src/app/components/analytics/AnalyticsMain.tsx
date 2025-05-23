@@ -19,6 +19,7 @@ import EcWaterMain from "./WaterEc/EcWaterMain";
 import WaterFlowMain from "./WaterFlow/WaterFlowMain";
 import WaterPressureMain from "./WaterPressure/WaterPressureMain";
 import PhSoilMain from "./SoilPh/PhSoilMain";
+import PrecipitationRateMain from "./PrecipitationRate/PrecipitationRateMain";
 
 const AnalyticsMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
@@ -85,7 +86,10 @@ const AnalyticsMain = () => {
         />
       </Box>
 
-            <Box bg={bg} className="box wide">
+      <Box bg={bg} className="box wide">
+        <PrecipitationRateMain filters={filters} />
+      </Box>
+      <Box bg={bg} className="box wide">
         <PhSoilMain filters={filters} />
       </Box>
 
