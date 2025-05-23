@@ -1,0 +1,153 @@
+import React, { useRef, useState } from "react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  CartesianGrid,
+} from "recharts";
+import {
+  useBreakpointValue,
+  Box,
+  Flex,
+  Text,
+  Button,
+  HStack,
+} from "@chakra-ui/react";
+import { FaDownload, FaCamera } from "react-icons/fa";
+import html2canvas from "html2canvas";
+import { SensorData } from "@/app/types";
+import EmptyBox from "../../common/EmptyBox";
+import useColorModeStyles from "@/app/utils/useColorModeStyles";
+
+const WaterPressureChart = ({
+  data,
+  loading,
+}: {
+  data: SensorData[];
+  loading: boolean;
+}) => {
+  const chartRef = useRef<HTMLDivElement>(null);
+  const [showLine, setShowLine] = useState(true);
+
+  const chartData = data.map((item) => ({
+    name: item.timestamp,
+    value: item.value,
+  }));
+
+  const labelInterval = useBreakpointValue({
+    base: Math.ceil(chartData.length / 3),
+    md: Math.ceil(chartData.length / 9),
+  });
+
+  const labelAngle = useBreakpointValue({ base: -15, md: -5 });
+  const { textColor } = useColorModeStyles();
+
+  const handleLegendClick = (data: any) => {
+    if (data.value === "Consommation") {
+      setShowLine((prev) => !prev);
+    }
+  };
+
+  const handleScreenshot = async () => {
+    if (chartRef.current) {
+      const canvas = await html2canvas(chartRef.current);
+      const link = document.createElement("a");
+      link.download = "WaterPressure_chart.png";
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+  };
+
+  const handleDownloadData = () => {
+    const csv =
+      "timestamp,value\n" +
+      data.map((d) => `${d.timestamp},${d.value}`).join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "WaterPressure_data.csv";
+    link.click();
+
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <Box width="100%" pr={4} pb={4}>
+      <Flex justify="space-between" align="center" mb={4}>
+        <Text fontSize="xl" fontWeight="bold" color={textColor}>
+          Évolution du pression d'eau
+        </Text>
+        <HStack spacing={2}>
+          <Button
+            aria-label="Capture graphique"
+            colorScheme="teal"
+            variant="ghost"
+            onClick={handleScreenshot}
+          >
+            <FaCamera />
+          </Button>
+          <Button
+            aria-label="Exporter CSV"
+            colorScheme="blue"
+            variant="ghost"
+            onClick={handleDownloadData}
+          >
+            <FaDownload />
+          </Button>
+        </HStack>
+      </Flex>
+
+      <Box ref={chartRef} height="300px">
+        {loading ? (
+          <EmptyBox text="Chargement..." />
+        ) : data.length === 0 ? (
+          <EmptyBox text="Pas de données" />
+        ) : (
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={chartData}
+              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="name"
+                angle={labelAngle}
+                textAnchor="middle"
+                interval={labelInterval}
+              />
+              <YAxis
+                label={{
+                  angle: -90,
+                  // fontSize: 16,
+                  // dy: 80,
+                  position: "insideLeft",
+                }}
+              />
+              <Tooltip />
+              <Legend onClick={handleLegendClick} />
+              <Line
+                type="monotone"
+                dataKey="value"
+                name="Pression d'eau (Bar/S)"
+                stroke={showLine ? "#82ca9d" : "gray"}
+                strokeWidth={2}
+                dot={{ r: 4, fill: showLine ? "#82ca9d" : "gray" }}
+                activeDot={{ r: 6, stroke: showLine ? "#2f855a" : "gray" }}
+                isAnimationActive={false}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
+      </Box>
+    </Box>
+  );
+};
+
+export default WaterPressureChart;

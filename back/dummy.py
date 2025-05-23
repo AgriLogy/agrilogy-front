@@ -276,7 +276,8 @@ def SensorDataGenerator(model_class, sensor_name: str, color="#543141"):
 
 
 # SensorDataGenerator(WaterFlowSensor, "WaterFlowSensor")
-SensorDataGenerator(WaterPressureSensor, "WaterPressureSensor")
+# SensorDataGenerator(WaterPressureSensor, "WaterPressureSensor")
+SensorDataGenerator(PhSoil, "PhSoil")
 # SensorDataGenerator(WaterECSensor, "WaterECSensor")
 # SensorDataGenerator(ECSoilHigh, "ECSoilHigh")
 # SensorDataGenerator(ECSoilLow, "ECSoilLow")

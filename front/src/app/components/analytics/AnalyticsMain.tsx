@@ -17,6 +17,8 @@ import SoilSalinityConductivityMain from "./SoilSalinityConductivity/SoilSalinit
 import SoilConductivityIrrigationMain from "./SoilConductivityIrrigation/SoilConductivityIrrigationMain";
 import EcWaterMain from "./WaterEc/EcWaterMain";
 import WaterFlowMain from "./WaterFlow/WaterFlowMain";
+import WaterPressureMain from "./WaterPressure/WaterPressureMain";
+import PhSoilMain from "./SoilPh/PhSoilMain";
 
 const AnalyticsMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
@@ -83,8 +85,15 @@ const AnalyticsMain = () => {
         />
       </Box>
 
+            <Box bg={bg} className="box wide">
+        <PhSoilMain filters={filters} />
+      </Box>
+
       <Box bg={bg} className="box wide">
         <WaterFlowMain filters={filters} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <WaterPressureMain filters={filters} />
       </Box>
 
       <Box bg={bg} className="box wide">
