@@ -15,6 +15,8 @@ import LargeFruitDiameterMain from "./LargeFruitDiameter/LargeFruitDiameterMain"
 import PhWaterMain from "./WaterPh/PhWaterMain";
 import SoilSalinityConductivityMain from "./SoilSalinityConductivity/SoilSalinityConductivityMain";
 import SoilConductivityIrrigationMain from "./SoilConductivityIrrigation/SoilConductivityIrrigationMain";
+import EcWaterMain from "./WaterEc/EcWaterMain";
+import WaterFlowMain from "./WaterFlow/WaterFlowMain";
 
 const AnalyticsMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
@@ -22,17 +24,16 @@ const AnalyticsMain = () => {
 
   const { bg, textColor } = useColorModeStyles();
 
-
   const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>( 
+  const [endDate, setEndDate] = useState<string>(
     new Date().toISOString().split("T")[0]
   );
 
   const filters = {
-  startDate,
-  endDate,
-  selectedZone,
-};
+    startDate,
+    endDate,
+    selectedZone,
+  };
   useEffect(() => {
     const fetchZones = async () => {
       try {
@@ -82,6 +83,9 @@ const AnalyticsMain = () => {
         />
       </Box>
 
+      <Box bg={bg} className="box wide">
+        <WaterFlowMain filters={filters} />
+      </Box>
 
       <Box bg={bg} className="box wide">
         <FruiteSizeMain filters={filters} />
@@ -97,6 +101,9 @@ const AnalyticsMain = () => {
       </Box>
       <Box bg={bg} className="box wide">
         <PhWaterMain filters={filters} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <EcWaterMain filters={filters} />
       </Box>
       <Box bg={bg} className="box wide">
         <SoilSalinityConductivityMain filters={filters} />
