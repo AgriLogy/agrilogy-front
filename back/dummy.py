@@ -275,7 +275,8 @@ def SensorDataGenerator(model_class, sensor_name: str, color="#543141"):
     print(f"🎉 Successfully created {sensor_name} records for {user.username}!")
 
 
-SensorDataGenerator(WaterFlowSensor, "WaterFlowSensor")
+# SensorDataGenerator(WaterFlowSensor, "WaterFlowSensor")
+SensorDataGenerator(WaterPressureSensor, "WaterPressureSensor")
 # SensorDataGenerator(WaterECSensor, "WaterECSensor")
 # SensorDataGenerator(ECSoilHigh, "ECSoilHigh")
 # SensorDataGenerator(ECSoilLow, "ECSoilLow")

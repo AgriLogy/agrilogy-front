@@ -422,6 +422,19 @@ class WaterFlowSensor(models.Model):
     def available_units(self) -> list[str]:
         return ["L/s", "m³/h"]
 
+class WaterPressureSensor(models.Model):
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="water_pressure_sensors")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="water_pressure_sensors_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Water pressure sensor reading in bar per second.")
+    timestamp = models.DateTimeField()
+        
+    @property
+    def default_unit(self) -> str:
+        return "Bar/s"
+
+    @property
+    def available_units(self) -> list[str]:
+        return ["Bar/s"]
 
 
 class WaterECSensor(models.Model):
