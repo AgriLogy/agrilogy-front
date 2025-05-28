@@ -275,7 +275,8 @@ def SensorDataGenerator(model_class, sensor_name: str, color="#543141"):
     print(f"🎉 Successfully created {sensor_name} records for {user.username}!")
 
 
-# SensorDataGenerator(WaterFlowSensor, "WaterFlowSensor")
+# SensorDataGenerator(LeafMoistureSensor, "LeafMoistureSensor")
+# SensorDataGenerator(LeafTemperatureSensor, "LeafTemperatureSensor")
 # SensorDataGenerator(WaterPressureSensor, "WaterPressureSensor")
 # SensorDataGenerator(SolarRadiation, "SolarRadiation")
 # SensorDataGenerator(PrecipitationRate, "PrecipitationRate")
@@ -284,6 +285,10 @@ def SensorDataGenerator(model_class, sensor_name: str, color="#543141"):
 # SensorDataGenerator(ECSoilHigh, "ECSoilHigh")
 # SensorDataGenerator(ECSoilLow, "ECSoilLow")
 # SensorDataGenerator(WaterFlowSensor, "WaterFlowSensor")
+# SensorDataGenerator(TemperatureWeather, "TemperatureWeather")
+# SensorDataGenerator(WindDirection, "WindDirection")
+# SensorDataGenerator(WindSpeed, "WindSpeed")
+SensorDataGenerator(Et0Calculated, "Et0Calculated")
 
 
 # FruitSizeSensorGenerator()

@@ -151,6 +151,41 @@ class KcPeriodAssignment(models.Model):
         return f"Assignment of Period '{self.period.period_name}' to KC '{self.kc.name}'"
 
 
+class Et0Calculated(models.Model):
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="et0_calculated")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="et0_calculated_per_user")   
+    value = models.FloatField(null=True, blank=True, help_text="Evapotranspiration (ET0) in mm/day.")
+    timestamp = models.DateTimeField()
+
+    @property
+    def default_unit(self) -> str:
+        return "mm/day"
+
+    @property
+    def available_units(self) -> list[str]:
+        return ["mm/day"]
+
+    def __str__(self):
+        return f"ET0 ({self.value} mm/day) at {self.timestamp} in Zone {self.zone_id}"
+
+
+class Et0Weather(models.Model):
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="et0_weather")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="et0_weather_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Evapotranspiration (ET0) in mm/day.")
+    timestamp = models.DateTimeField()
+
+    @property
+    def default_unit(self) -> str:
+        return "mm/day"
+
+    @property
+    def available_units(self) -> list[str]:
+        return ["mm/day"]
+
+    def __str__(self):
+        return f"ET0 ({self.value} mm/day) at {self.timestamp} in Zone {self.zone_id}"
+
 class PrecipitationRate(models.Model):
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="precipitation_rates")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="precipitation_rates_per_user")    
@@ -181,6 +216,7 @@ class HumidityWeather(models.Model):
     @property
     def available_units(self) -> list[str]:
         return ["%"]
+
 
 
 class WindSpeed(models.Model):
@@ -496,6 +532,20 @@ class LeafMoistureSensor(models.Model):
     def available_units(self) -> list[str]:
         return ["%"]
 
+
+class LeafTemperatureSensor(models.Model):
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="leaf_tempeartue_sensors")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="leaf_tempeartue_sensors_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Leaf temperature in Celsius.") 
+    timestamp = models.DateTimeField()
+        
+    @property
+    def default_unit(self) -> str:
+        return "°C"
+
+    @property
+    def available_units(self) -> list[str]:
+        return ["C", "°F"]
 
 class MultiDepthSoilMoistureSensor(models.Model):
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="multi_depth_soil_moisture_sensors")

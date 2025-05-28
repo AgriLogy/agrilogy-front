@@ -51,3 +51,14 @@ export interface NpkSensorData {
   default_unit: string;
   available_units: string[];
 }
+
+
+export interface  WeatherData {
+  id: number;
+  timestamp: string;
+  default_unit: string;
+  available_units: string[];
+  value: number;
+  zone: number;
+  user: number;
+}

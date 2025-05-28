@@ -5,7 +5,7 @@ from .models import (
     SoilTemperatureLow, SoilTemperatureHigh, WaterFlowSensor, WaterECSensor,
     PhWaterSensor, ElectricityConsumptionSensor, LeafMoistureSensor,
     MultiDepthSoilMoistureSensor, LargeFruitDiameterSensor, WaterLevelSensor,
-    SoilConductivitySensor, SoilSalinitySensor, NpkSensor, FruitSizeSensor, EcSalinitySensor, WaterPressureSensor
+    SoilConductivitySensor, Et0Weather, Et0Calculated, LeafTemperatureSensor,  SoilSalinitySensor, NpkSensor, FruitSizeSensor, EcSalinitySensor, WaterPressureSensor
 )
 
 SENSOR_MODELS = [
@@ -15,7 +15,7 @@ SENSOR_MODELS = [
     SoilTemperatureLow, SoilTemperatureHigh, WaterFlowSensor, WaterECSensor,
     PhWaterSensor, ElectricityConsumptionSensor, LeafMoistureSensor,
     MultiDepthSoilMoistureSensor, LargeFruitDiameterSensor, WaterLevelSensor,
-    SoilConductivitySensor, SoilSalinitySensor, NpkSensor, FruitSizeSensor, EcSalinitySensor, WaterPressureSensor
+    SoilConductivitySensor, Et0Weather, Et0Calculated, LeafTemperatureSensor,  SoilSalinitySensor, NpkSensor, FruitSizeSensor, EcSalinitySensor, WaterPressureSensor
 ]
 
 # Auto-generate serializers and views
