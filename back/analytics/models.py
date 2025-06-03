@@ -11,6 +11,8 @@ from django.contrib.auth.models import User
 
 User = settings.AUTH_USER_MODEL
 
+from typing import List
+
 
 class Notification(models.Model):
     yesterday_temperature = models.DecimalField(max_digits=5, decimal_places=2, help_text="Temperature recorded yesterday in Celsius.")
@@ -152,9 +154,9 @@ class KcPeriodAssignment(models.Model):
 
 
 class Et0Calculated(models.Model):
-    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="et0_calculated")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="et0_calculated_per_user")   
-    value = models.FloatField(null=True, blank=True, help_text="Evapotranspiration (ET0) in mm/day.")
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="et0_calculated_weather")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="et0_calculated_weather_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Evapotranspiration calculated (ET0) in mm/day.")
     timestamp = models.DateTimeField()
 
     @property
@@ -162,11 +164,11 @@ class Et0Calculated(models.Model):
         return "mm/day"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["mm/day"]
 
     def __str__(self):
-        return f"ET0 ({self.value} mm/day) at {self.timestamp} in Zone {self.zone_id}"
+        return f"ET0 Calculated ({self.value} mm/day) at {self.timestamp} in Zone {self.zone_id}"
 
 
 class Et0Weather(models.Model):
@@ -180,7 +182,7 @@ class Et0Weather(models.Model):
         return "mm/day"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["mm/day"]
 
     def __str__(self):
@@ -199,7 +201,7 @@ class PrecipitationRate(models.Model):
         return "mm/h"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["mm/h"]
 
 
@@ -214,7 +216,7 @@ class HumidityWeather(models.Model):
         return "%"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["%"]
 
 
@@ -230,7 +232,7 @@ class WindSpeed(models.Model):
         return "m/s"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["m/s", "km/h"]
 
 
@@ -245,7 +247,7 @@ class SolarRadiation(models.Model):
         return "W/m²"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["W/m²"]
 
 
@@ -260,7 +262,7 @@ class PressureWeather(models.Model):
         return "hPa"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["hPa", "Pa", "atm"]
 
 
@@ -275,7 +277,7 @@ class WindDirection(models.Model):
         return "°"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["°"]
 
 
@@ -290,7 +292,7 @@ class TemperatureWeather(models.Model):
         return "°C"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["°C", "°F"]
 
 
@@ -305,7 +307,7 @@ class ECSoilMedium(models.Model):
         return "dS/m"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["dS/m"]
 
 
@@ -320,7 +322,7 @@ class SoilTemperatureMedium(models.Model):
         return "°C"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["°C", "°F"]
 
 
@@ -335,7 +337,7 @@ class ECSoilHigh(models.Model):
         return "dS/m"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["dS/m"]
 
 
@@ -350,7 +352,7 @@ class ECSoilLow(models.Model):
         return "dS/m"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["dS/m"]
 
 
@@ -365,7 +367,7 @@ class SoilMoistureMedium(models.Model):
         return "%"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["%"]
 
 
@@ -380,7 +382,7 @@ class SoilMoistureHigh(models.Model):
         return "%"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["%"]
 
 
@@ -395,7 +397,7 @@ class SoilMoistureLow(models.Model):
         return "%"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["%"]
 
 
@@ -410,7 +412,7 @@ class PhSoil(models.Model):
         return "pH"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["pH"]
 
 
@@ -425,7 +427,7 @@ class SoilTemperatureLow(models.Model):
         return "°C"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["°C", "°F"]
 
 
@@ -440,7 +442,7 @@ class SoilTemperatureHigh(models.Model):
         return "°C"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["°C", "°F"]
 
 
@@ -455,7 +457,7 @@ class WaterFlowSensor(models.Model):
         return "L/s"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["L/s", "m³/h"]
 
 class WaterPressureSensor(models.Model):
@@ -469,7 +471,7 @@ class WaterPressureSensor(models.Model):
         return "Bar/s"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["Bar/s"]
 
 
@@ -484,7 +486,7 @@ class WaterECSensor(models.Model):
         return "μS/cm"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["μS/cm", "mS/cm"]
 
 
@@ -499,7 +501,7 @@ class PhWaterSensor(models.Model):
         return "pH"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["pH"]
 
 
@@ -514,7 +516,7 @@ class ElectricityConsumptionSensor(models.Model):
         return "kWh"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["kWh", "Wh"]
 
 
@@ -529,7 +531,7 @@ class LeafMoistureSensor(models.Model):
         return "%"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["%"]
 
 
@@ -544,7 +546,7 @@ class LeafTemperatureSensor(models.Model):
         return "°C"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["C", "°F"]
 
 class MultiDepthSoilMoistureSensor(models.Model):
@@ -558,7 +560,7 @@ class MultiDepthSoilMoistureSensor(models.Model):
         return "%"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["%"]
 
 
@@ -573,7 +575,7 @@ class LargeFruitDiameterSensor(models.Model):
         return "mm"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["mm", "cm"]
 
 
@@ -588,7 +590,7 @@ class WaterLevelSensor(models.Model):
         return "cm"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["cm", "m"]
 
 
@@ -604,7 +606,7 @@ class SoilSalinitySensor(models.Model):
         return "dS/m"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["dS/m", "mS/cm"]
 
     def __str__(self):
@@ -622,7 +624,7 @@ class SoilConductivitySensor(models.Model):
         return "μS/cm"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["μS/cm", "mS/cm"]
 
     def __str__(self):
@@ -654,7 +656,7 @@ class NpkSensor(models.Model):
         return "mg/kg"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["mg/kg", "ppm"]
 
 
@@ -670,7 +672,7 @@ class FruitSizeSensor(models.Model):
         return "mm"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["mm", "cm"]
 
 
@@ -685,7 +687,7 @@ class EcSalinitySensor(models.Model):
         return "μS/cm"
 
     @property
-    def available_units(self) -> list[str]:
+    def available_units(self) -> List[str]:
         return ["μS/cm", "dS/m"]
 
  
