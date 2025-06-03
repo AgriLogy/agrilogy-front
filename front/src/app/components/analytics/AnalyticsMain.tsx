@@ -25,6 +25,7 @@ import TempuratureHumidtyMain from "./WeatherTempuratureHumidty/TempuratureHumid
 import WindRadarChartMain from "./Wind/WindRadarMain";
 import WindRadarMain from "./Wind/WindRadarMain";
 import ET0Main from "./ET0/ET0Main";
+import WindSpeedMain from "./WindSpeed/WindSpeedMain";
 
 const AnalyticsMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
@@ -93,23 +94,25 @@ const AnalyticsMain = () => {
 
 
       <Box bg={bg} className="box wide">
-        <ET0Main filters={filters} />
+        <WindSpeedMain filters={filters} />
       </Box>
-      
-
       {/* <Box bg={bg} className="box wide">
+        <ET0Main filters={filters} />
+      </Box> 
+
+      <Box bg={bg} className="box wide">
         <WindRadarMain filters={filters} />
       </Box> */}
 
       {/* <Box bg={bg} className="box wide">
         <TempuratureHumidtyMain filters={filters} />
-      </Box> */}
+      </Box> 
 
-      {/* <Box bg={bg} className="box wide">
+       <Box bg={bg} className="box wide">
         <SensorLeafMain filters={filters} />
-      </Box> */}
+      </Box>
 
-      {/* <Box bg={bg} className="box wide">
+       <Box bg={bg} className="box wide">
         <PrecipitationRateMain filters={filters} />
       </Box>
       <Box bg={bg} className="box wide">
