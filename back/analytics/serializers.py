@@ -20,9 +20,10 @@ class ZonesNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Zone
         fields = ['id', 'name']
-
+        
 class BaseSensorSerializer(serializers.ModelSerializer):
     timestamp = serializers.DateTimeField(format="%Y-%m-%d")
+
     default_unit = serializers.SerializerMethodField()
     available_units = serializers.SerializerMethodField()
 
@@ -34,4 +35,5 @@ class BaseSensorSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = '__all__'
+
 
