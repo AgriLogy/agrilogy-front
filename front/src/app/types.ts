@@ -62,3 +62,11 @@ export interface  WeatherData {
   zone: number;
   user: number;
 }
+
+export interface WaterSoilData {
+  timestamp: string;
+  soilLow?: number;
+  soilMedium?: number;
+  soilHigh?: number;
+  waterFlow?: number;
+}

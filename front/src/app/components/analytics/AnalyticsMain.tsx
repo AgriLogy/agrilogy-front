@@ -28,6 +28,7 @@ import ET0Main from "./ET0/ET0Main";
 import WindSpeedMain from "./WindSpeed/WindSpeedMain";
 import SolarRadiationMain from "./SolarRadiation/SolarRadiationMain";
 import CumulPrecipitationMain from "./CumulPrecipitation/CumulPrecipitationMain";
+import WaterSoilMain from "./SoilWater/WaterSoilMain";
 
 const AnalyticsMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
@@ -95,8 +96,12 @@ const AnalyticsMain = () => {
       </Box>
 
       <Box bg={bg} className="box wide">
-        <CumulPrecipitationMain filters={filters} />
+        <WaterSoilMain filters={filters} />
       </Box>
+
+      {/* <Box bg={bg} className="box wide">
+        <CumulPrecipitationMain filters={filters} />
+      </Box> */}
 
       {/* <Box bg={bg} className="box wide">
         <ET0Main filters={filters} />
