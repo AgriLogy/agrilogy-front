@@ -31,7 +31,9 @@ import Image from "next/image";
 import logo from "../../public/logo.png";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import api from "@/app/lib/api";
-import { PiSigmaBold } from "react-icons/pi";
+import { FaBell, FaSeedling } from "react-icons/fa";
+import { WiDaySunny } from "react-icons/wi";
+import { GiGrapes } from "react-icons/gi";
 import { useRouter } from "next/navigation";
 
 const MobileMenu = () => {
@@ -127,7 +129,7 @@ const MobileMenu = () => {
           <DrawerCloseButton />
           <DrawerHeader>Menu</DrawerHeader>
           <DrawerBody>
-            <Flex direction="column" gap={4}>
+            <Flex direction="column" gap={4} p={4} w="full">
               <Link href="/">
                 <Button
                   leftIcon={<FaHome />}
@@ -138,9 +140,10 @@ const MobileMenu = () => {
                   Accueil
                 </Button>
               </Link>
-              <Link href="/analytics">
+
+              <Link href="/soil">
                 <Button
-                  leftIcon={<FaLeaf />}
+                  leftIcon={<FaSeedling />}
                   variant="ghost"
                   justifyContent="flex-start"
                   w="full"
@@ -148,9 +151,10 @@ const MobileMenu = () => {
                   Données du sol
                 </Button>
               </Link>
+
               <Link href="/station">
                 <Button
-                  leftIcon={<PiSigmaBold />}
+                  leftIcon={<WiDaySunny />}
                   variant="ghost"
                   justifyContent="flex-start"
                   w="full"
@@ -158,6 +162,29 @@ const MobileMenu = () => {
                   Station météo
                 </Button>
               </Link>
+
+              <Link href="/plant">
+                <Button
+                  leftIcon={<GiGrapes />}
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  w="full"
+                >
+                  Données des plantes
+                </Button>
+              </Link>
+
+              <Link href="/alerts">
+                <Button
+                  leftIcon={<FaBell />}
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  w="full"
+                >
+                  Alertes
+                </Button>
+              </Link>
+
               <Link href="/settings">
                 <Button
                   leftIcon={<FaCog />}
@@ -174,18 +201,21 @@ const MobileMenu = () => {
                 onClick={toggleColorMode}
                 variant="ghost"
                 justifyContent="flex-start"
+                w="full"
               >
-                {colorMode === "light" ? "Mode sombre" : "Mode sombre"}
+                {colorMode === "light" ? "Mode sombre" : "Mode clair"}
               </Button>
+
               <Button
                 leftIcon={<IoLogOut />}
                 colorScheme="red"
-                onClick={onClose}
+                onClick={onOpen}
                 ref={cancelRef}
                 variant="ghost"
                 justifyContent="flex-start"
+                w="full"
               >
-                Log Out
+                Se déconnecter
               </Button>
             </Flex>
           </DrawerBody>

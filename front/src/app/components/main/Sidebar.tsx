@@ -15,10 +15,11 @@ import {
   AlertDialogOverlay,
   Button,
 } from "@chakra-ui/react";
-import { FaHome, FaLeaf, FaCog } from "react-icons/fa";
-import { PiSigmaBold } from "react-icons/pi";
+import { FaHome, FaCog, FaBell } from "react-icons/fa";
+import { FaSeedling } from "react-icons/fa6";
+import { WiDaySunny } from "react-icons/wi";
+import { GiGrapes } from "react-icons/gi";
 import { IoLogOut } from "react-icons/io5";
-import { FaBell } from "react-icons/fa"; // Import the notification icon
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import { useRouter } from "next/navigation";
 
@@ -44,6 +45,7 @@ const Sidebar = () => {
         width="100%"
         height="100%"
       >
+        {/* Home */}
         <Tooltip label="Accueil" aria-label="Accueil">
           <Link href="/">
             <IconButton
@@ -58,10 +60,11 @@ const Sidebar = () => {
 
         <Box height="1px" width="20px" bg="gray.400" mb={2} />
 
+        {/* Soil Data */}
         <Tooltip label="Données du sol" aria-label="Données du sol">
-          <Link href="/analytics">
+          <Link href="/soil">
             <IconButton
-              icon={<FaLeaf />}
+              icon={<FaSeedling />}
               aria-label="Données du sol"
               variant="ghost"
               mb={2}
@@ -72,11 +75,12 @@ const Sidebar = () => {
 
         <Box height="1px" width="20px" bg="gray.400" mb={2} />
 
-        <Tooltip label="Station météo" aria-label="Sigma">
+        {/* Weather Station */}
+        <Tooltip label="Station météo" aria-label="Station météo">
           <Link href="/station">
             <IconButton
-              icon={<PiSigmaBold />}
-              aria-label="Sigma"
+              icon={<WiDaySunny />}
+              aria-label="Station météo"
               variant="ghost"
               mb={2}
               _hover={{ color: hoverColor }}
@@ -84,22 +88,24 @@ const Sidebar = () => {
           </Link>
         </Tooltip>
 
-        {/* <Box height="1px" width="20px" bg="gray.400" mb={2} />
+        <Box height="1px" width="20px" bg="gray.400" mb={2} />
 
-        <Tooltip label="Humidité du sol" aria-label="Soil Moisture">
-          <Link href="/moisture">
+        {/* Plant Analytics */}
+        <Tooltip label="Données des plantes" aria-label="Données des plantes">
+          <Link href="/plant">
             <IconButton
-              icon={<FaLeaf />}
-              aria-label="Soil Moisture"
+              icon={<GiGrapes />}
+              aria-label="Données des plantes"
               variant="ghost"
               mb={2}
               _hover={{ color: hoverColor }}
             />
           </Link>
-        </Tooltip> */}
+        </Tooltip>
 
         <Box height="1px" width="20px" bg="gray.400" mb={2} />
 
+        {/* Settings */}
         <Tooltip label="Paramètres" aria-label="Settings">
           <Link href="/settings">
             <IconButton
@@ -113,7 +119,7 @@ const Sidebar = () => {
 
         <Box height="1px" width="20px" bg="gray.400" mb={2} />
 
-        {/* Notification icon */}
+        {/* Notifications */}
         <Tooltip label="Alertes" aria-label="Notifications">
           <Link href="/alerts">
             <IconButton
@@ -128,10 +134,10 @@ const Sidebar = () => {
 
         <Box height="1px" width="20px" bg="gray.400" mb={2} />
 
-        {/* Logout icon */}
+        {/* Logout */}
         <Tooltip label="Se déconnecter" aria-label="Logout">
           <IconButton
-            icon={<IoLogOut style={{ transform: "scaleX(-1)" }} />} // Reverse the icon
+            icon={<IoLogOut style={{ transform: "scaleX(-1)" }} />}
             aria-label="Logout"
             variant="ghost"
             onClick={onOpen}

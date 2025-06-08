@@ -1,4 +1,4 @@
-// StationMain.tsx
+// PlantMain.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 import { Box, HStack, Text, useColorModeValue } from "@chakra-ui/react";
@@ -8,17 +8,20 @@ import api from "@/app/lib/api";
 import "@/app/styles/style.css";
 
 import DateRangePicker from "../analytics/DateRangePicker";
+import ElectricityconsumptionMain from "../analytics/Electricityconsumption/ElectricityconsumptionMain";
+import FruiteSizeMain from "../analytics/fruiteSize/FruiteSizeMain";
+import LargeFruitDiameterMain from "../analytics/LargeFruitDiameter/LargeFruitDiameterMain";
+import SensorLeafMain from "../analytics/Leaf/SensorLeafMain";
+import NpkMain from "../analytics/npk/NpkMain";
+import EcWaterMain from "../analytics/WaterEc/EcWaterMain";
+import WaterFlowMain from "../analytics/WaterFlow/WaterFlowMain";
+import PhWaterMain from "../analytics/WaterPh/PhWaterMain";
+import WaterPressureMain from "../analytics/WaterPressure/WaterPressureMain";
 
-// Weather station components
-import TempuratureHumidtyMain from "../analytics/WeatherTempuratureHumidty/TempuratureHumidtyMain";
-import WindSpeedMain from "../analytics/WindSpeed/WindSpeedMain";
-import WindRadarMain from "../analytics/Wind/WindRadarMain";
-import ET0Main from "../analytics/ET0/ET0Main";
-import SolarRadiationMain from "../analytics/SolarRadiation/SolarRadiationMain";
-import CumulPrecipitationMain from "../analytics/CumulPrecipitation/CumulPrecipitationMain";
-import PrecipitationRateMain from "../analytics/PrecipitationRate/PrecipitationRateMain";
+// Plants components
 
-const StationMain = () => {
+
+const PlantMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
   const [selectedZone, setSelectedZone] = useState<number | null>(null);
 
@@ -47,7 +50,7 @@ const StationMain = () => {
     <div className="container">
       <Box bg={bg} className="header">
         <HStack>
-          <Text color={textColor}>Station météo du </Text>
+          <Text color={textColor}>Données des plantes du </Text>
           <select
             value={selectedZone ?? ""}
             onChange={(e) => setSelectedZone(Number(e.target.value))}
@@ -79,28 +82,34 @@ const StationMain = () => {
 
       {/* Station météo Data Components */}
       <Box bg={bg} className="box wide">
-        <TempuratureHumidtyMain filters={filters} />
+        <FruiteSizeMain filters={filters} />
       </Box>
       <Box bg={bg} className="box wide">
-        <ET0Main filters={filters} />
+        <LargeFruitDiameterMain filters={filters} />
       </Box>
       <Box bg={bg} className="box wide">
-        <WindSpeedMain filters={filters} />
+        <SensorLeafMain filters={filters} />
       </Box>
       <Box bg={bg} className="box wide">
-        <WindRadarMain filters={filters} />
+        <NpkMain filters={filters} />
       </Box>
       <Box bg={bg} className="box wide">
-        <SolarRadiationMain filters={filters} />
+        <ElectricityconsumptionMain filters={filters} />
       </Box>
       <Box bg={bg} className="box wide">
-        <CumulPrecipitationMain filters={filters} />
+        <WaterFlowMain filters={filters} />
       </Box>
       <Box bg={bg} className="box wide">
-        <PrecipitationRateMain filters={filters} />
+        <WaterPressureMain filters={filters} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <PhWaterMain filters={filters} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <EcWaterMain filters={filters} />
       </Box>
     </div>
   );
 };
 
-export default StationMain;
+export default PlantMain;

@@ -1,24 +1,21 @@
-// StationMain.tsx
+// SoilMain.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 import { Box, HStack, Text, useColorModeValue } from "@chakra-ui/react";
 
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
+import DateRangePicker from "./DateRangePicker";
 import api from "@/app/lib/api";
+
 import "@/app/styles/style.css";
 
-import DateRangePicker from "../analytics/DateRangePicker";
+// Soil-specific components
+import WaterSoilMain from "./SoilWater/WaterSoilMain";
+import PhSoilMain from "./SoilPh/PhSoilMain";
+import SoilSalinityConductivityMain from "./SoilSalinityConductivity/SoilSalinityConductivityMain";
+import SoilConductivityIrrigationMain from "./SoilConductivityIrrigation/SoilConductivityIrrigationMain";
 
-// Weather station components
-import TempuratureHumidtyMain from "../analytics/WeatherTempuratureHumidty/TempuratureHumidtyMain";
-import WindSpeedMain from "../analytics/WindSpeed/WindSpeedMain";
-import WindRadarMain from "../analytics/Wind/WindRadarMain";
-import ET0Main from "../analytics/ET0/ET0Main";
-import SolarRadiationMain from "../analytics/SolarRadiation/SolarRadiationMain";
-import CumulPrecipitationMain from "../analytics/CumulPrecipitation/CumulPrecipitationMain";
-import PrecipitationRateMain from "../analytics/PrecipitationRate/PrecipitationRateMain";
-
-const StationMain = () => {
+const SoilMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
   const [selectedZone, setSelectedZone] = useState<number | null>(null);
 
@@ -47,7 +44,7 @@ const StationMain = () => {
     <div className="container">
       <Box bg={bg} className="header">
         <HStack>
-          <Text color={textColor}>Station météo du </Text>
+          <Text color={textColor}>Données sur le sol du </Text>
           <select
             value={selectedZone ?? ""}
             onChange={(e) => setSelectedZone(Number(e.target.value))}
@@ -77,30 +74,21 @@ const StationMain = () => {
         />
       </Box>
 
-      {/* Station météo Data Components */}
+      {/* Soil-related Data Components */}
       <Box bg={bg} className="box wide">
-        <TempuratureHumidtyMain filters={filters} />
+        <WaterSoilMain filters={filters} />
       </Box>
       <Box bg={bg} className="box wide">
-        <ET0Main filters={filters} />
+        <PhSoilMain filters={filters} />
       </Box>
       <Box bg={bg} className="box wide">
-        <WindSpeedMain filters={filters} />
+        <SoilSalinityConductivityMain filters={filters} />
       </Box>
       <Box bg={bg} className="box wide">
-        <WindRadarMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <SolarRadiationMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <CumulPrecipitationMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <PrecipitationRateMain filters={filters} />
+        <SoilConductivityIrrigationMain filters={filters} />
       </Box>
     </div>
   );
 };
 
-export default StationMain;
+export default SoilMain;
