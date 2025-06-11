@@ -17,11 +17,12 @@ import {
 } from "@chakra-ui/react";
 import { FaHome, FaCog, FaBell } from "react-icons/fa";
 import { FaSeedling } from "react-icons/fa6";
-import { WiDaySunny } from "react-icons/wi";
+import { WiDaySunny} from "react-icons/wi";
 import { GiGrapes } from "react-icons/gi";
 import { IoLogOut } from "react-icons/io5";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import { useRouter } from "next/navigation";
+import { FaWater } from "react-icons/fa";
 
 const Sidebar = () => {
   const { bg, hoverColor } = useColorModeStyles();
@@ -96,6 +97,21 @@ const Sidebar = () => {
             <IconButton
               icon={<GiGrapes />}
               aria-label="Données des plantes"
+              variant="ghost"
+              mb={2}
+              _hover={{ color: hoverColor }}
+            />
+          </Link>
+        </Tooltip>
+
+        <Box height="1px" width="20px" bg="gray.400" mb={2} />
+
+        {/* Water Station */}
+        <Tooltip label="Station d'eau" aria-label="Station d'eau">
+          <Link href="/water">
+            <IconButton
+              icon={<FaWater />}
+              aria-label="Station d'eau"
               variant="ghost"
               mb={2}
               _hover={{ color: hoverColor }}

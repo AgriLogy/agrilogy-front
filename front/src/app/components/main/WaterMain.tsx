@@ -1,21 +1,26 @@
-// SoilMain.tsx
+// WaterMain.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 import { Box, HStack, Text, useColorModeValue } from "@chakra-ui/react";
 
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import DateRangePicker from "./DateRangePicker";
+import DateRangePicker from "../analytics/DateRangePicker";
 import api from "@/app/lib/api";
 
 import "@/app/styles/style.css";
 
 // Soil-specific components
-import WaterSoilMain from "./SoilWater/WaterSoilMain";
-import PhSoilMain from "./SoilPh/PhSoilMain";
-import SoilSalinityConductivityMain from "./SoilSalinityConductivity/SoilSalinityConductivityMain";
-import SoilConductivityIrrigationMain from "./SoilConductivityIrrigation/SoilConductivityIrrigationMain";
+import WaterSoilMain from "../analytics/SoilWater/WaterSoilMain";
+import CumulPrecipitationMain from "../analytics/CumulPrecipitation/CumulPrecipitationMain";
+import ET0Main from "../analytics/ET0/ET0Main";
+import PrecipitationRateMain from "../analytics/PrecipitationRate/PrecipitationRateMain";
+import SoilConductivityMain from "../analytics/SoilConductivityIrrigation/SoilConductivityIrrigationMain";
+import EcWaterMain from "../analytics/WaterEc/EcWaterMain";
+import WaterFlowMain from "../analytics/WaterFlow/WaterFlowMain";
+import PhWaterMain from "../analytics/WaterPh/PhWaterMain";
+import WaterPressureMain from "../analytics/WaterPressure/WaterPressureMain";
 
-const SoilMain = () => {
+const WaterMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
   const [selectedZone, setSelectedZone] = useState<number | null>(null);
 
@@ -44,7 +49,7 @@ const SoilMain = () => {
     <div className="container">
       <Box bg={bg} className="header">
         <HStack>
-          <Text color={textColor}>Données sur le sol du </Text>
+          <Text color={textColor}>données sur l&apos;eau du </Text>
           <select
             value={selectedZone ?? ""}
             onChange={(e) => setSelectedZone(Number(e.target.value))}
@@ -79,16 +84,31 @@ const SoilMain = () => {
         <WaterSoilMain filters={filters} />
       </Box>
       <Box bg={bg} className="box wide">
-        <PhSoilMain filters={filters} />
+        <CumulPrecipitationMain filters={filters} />
       </Box>
       <Box bg={bg} className="box wide">
-        <SoilSalinityConductivityMain filters={filters} />
+        <ET0Main filters={filters} />
       </Box>
       <Box bg={bg} className="box wide">
-        <SoilConductivityIrrigationMain filters={filters} />
+        <PrecipitationRateMain filters={filters} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <SoilConductivityMain filters={filters} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <EcWaterMain filters={filters} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <PhWaterMain filters={filters} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <WaterFlowMain filters={filters} />
+      </Box>
+      <Box bg={bg} className="box wide">
+        <WaterPressureMain filters={filters} />
       </Box>
     </div>
   );
 };
 
-export default SoilMain;
+export default WaterMain;

@@ -3,7 +3,7 @@ import { Grid, GridItem } from "@chakra-ui/react";
 import React from "react";
 import Header from "../components/main/Header";
 import Navbar from "../components/main/Sidebar";
-import AnalyticsMain from "../components/main/SoilMain";
+import WaterMain from "../components/main/WaterMain";
 import useColorModeStyles from "../utils/useColorModeStyles";
 
 const Page = () => {
@@ -41,7 +41,7 @@ const Page = () => {
         overflowY="auto"
         height="100%"
       >
-        <AnalyticsMain />
+        <WaterMain />
       </GridItem>
     </Grid>
   );
