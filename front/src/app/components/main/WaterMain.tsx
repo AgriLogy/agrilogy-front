@@ -1,4 +1,3 @@
-// WaterMain.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 import { Box, HStack, Text, useColorModeValue } from "@chakra-ui/react";
@@ -6,10 +5,12 @@ import { Box, HStack, Text, useColorModeValue } from "@chakra-ui/react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import DateRangePicker from "../analytics/DateRangePicker";
 import api from "@/app/lib/api";
+import getActiveGraphs, {
+  ActiveGraphResponse,
+} from "@/app/utils/getActiveGraphs";
 
 import "@/app/styles/style.css";
 
-// Soil-specific components
 import WaterSoilMain from "../analytics/SoilWater/WaterSoilMain";
 import CumulPrecipitationMain from "../analytics/CumulPrecipitation/CumulPrecipitationMain";
 import ET0Main from "../analytics/ET0/ET0Main";
@@ -23,6 +24,9 @@ import WaterPressureMain from "../analytics/WaterPressure/WaterPressureMain";
 const WaterMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
   const [selectedZone, setSelectedZone] = useState<number | null>(null);
+  const [activeGraph, setActiveGraph] = useState<ActiveGraphResponse | null>(
+    null
+  );
 
   const { bg, textColor } = useColorModeStyles();
   const [startDate, setStartDate] = useState<string>("");
@@ -44,6 +48,12 @@ const WaterMain = () => {
     };
     fetchZones();
   }, []);
+
+  useEffect(() => {
+    if (selectedZone !== null) {
+      getActiveGraphs(selectedZone).then(setActiveGraph);
+    }
+  }, [selectedZone]);
 
   return (
     <div className="container">
@@ -79,34 +89,52 @@ const WaterMain = () => {
         />
       </Box>
 
-      {/* Soil-related Data Components */}
-      <Box bg={bg} className="box wide">
-        <WaterSoilMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <CumulPrecipitationMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <ET0Main filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <PrecipitationRateMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <SoilConductivityMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <EcWaterMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <PhWaterMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <WaterFlowMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <WaterPressureMain filters={filters} />
-      </Box>
+      {/* Conditionally render based on activeGraph toggles */}
+      {activeGraph?.soil_moisture_status && (
+        <Box bg={bg} className="box wide">
+          <WaterSoilMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.pluviometry_status && (
+        <Box bg={bg} className="box wide">
+          <CumulPrecipitationMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.et0_status && (
+        <Box bg={bg} className="box wide">
+          <ET0Main filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.precipitation_humidity_rate_status && (
+        <Box bg={bg} className="box wide">
+          <PrecipitationRateMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.soil_conductivity_status && (
+        <Box bg={bg} className="box wide">
+          <SoilConductivityMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.water_ec_status && (
+        <Box bg={bg} className="box wide">
+          <EcWaterMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.water_ph_status && (
+        <Box bg={bg} className="box wide">
+          <PhWaterMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.water_flow_status && (
+        <Box bg={bg} className="box wide">
+          <WaterFlowMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.water_pressure_status && (
+        <Box bg={bg} className="box wide">
+          <WaterPressureMain filters={filters} />
+        </Box>
+      )}
     </div>
   );
 };

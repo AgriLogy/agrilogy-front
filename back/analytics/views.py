@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.utils.dateparse import parse_datetime
 
 from rest_framework import status, viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -68,3 +68,17 @@ class ZonesNames(APIView):
         zone = Zone.objects.all().filter(user_id = user.id)
         serialised_data = ZonesNameSerializer(zone, many = True)
         return Response( serialised_data.data, status=status.HTTP_200_OK)
+
+
+class ActiveGraphSelfAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, zone_id):
+        try:
+            active_graph = ActiveGraph.objects.get(user=request.user, zone_id=zone_id)
+        except ActiveGraph.DoesNotExist:
+            return Response({'detail': 'ActiveGraph not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ActiveGraphSerializer(active_graph)
+        return Response(serializer.data)
+

@@ -1,4 +1,3 @@
-// StationMain.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 import { Box, HStack, Text, useColorModeValue } from "@chakra-ui/react";
@@ -8,6 +7,9 @@ import api from "@/app/lib/api";
 import "@/app/styles/style.css";
 
 import DateRangePicker from "../analytics/DateRangePicker";
+import getActiveGraphs, {
+  ActiveGraphResponse,
+} from "@/app/utils/getActiveGraphs";
 
 // Weather station components
 import TempuratureHumidtyMain from "../analytics/WeatherTempuratureHumidty/TempuratureHumidtyMain";
@@ -21,6 +23,9 @@ import PrecipitationRateMain from "../analytics/PrecipitationRate/PrecipitationR
 const StationMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
   const [selectedZone, setSelectedZone] = useState<number | null>(null);
+  const [activeGraph, setActiveGraph] = useState<ActiveGraphResponse | null>(
+    null
+  );
 
   const { bg, textColor } = useColorModeStyles();
   const [startDate, setStartDate] = useState<string>("");
@@ -42,6 +47,12 @@ const StationMain = () => {
     };
     fetchZones();
   }, []);
+
+  useEffect(() => {
+    if (selectedZone !== null) {
+      getActiveGraphs(selectedZone).then(setActiveGraph);
+    }
+  }, [selectedZone]);
 
   return (
     <div className="container">
@@ -77,28 +88,42 @@ const StationMain = () => {
         />
       </Box>
 
-      {/* Station météo Data Components */}
-      <Box bg={bg} className="box wide">
-        <TempuratureHumidtyMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <ET0Main filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <WindSpeedMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <WindRadarMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <SolarRadiationMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <CumulPrecipitationMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <PrecipitationRateMain filters={filters} />
-      </Box>
+      {/* Conditionally render based on activeGraph */}
+      {activeGraph?.weather_temperature_humidity_status && (
+        <Box bg={bg} className="box wide">
+          <TempuratureHumidtyMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.et0_status && (
+        <Box bg={bg} className="box wide">
+          <ET0Main filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.wind_speed_status && (
+        <Box bg={bg} className="box wide">
+          <WindSpeedMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.wind_radar_status && (
+        <Box bg={bg} className="box wide">
+          <WindRadarMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.solar_radiation_status && (
+        <Box bg={bg} className="box wide">
+          <SolarRadiationMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.cumulative_precipitation_status && (
+        <Box bg={bg} className="box wide">
+          <CumulPrecipitationMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.precipitation_rate_status && (
+        <Box bg={bg} className="box wide">
+          <PrecipitationRateMain filters={filters} />
+        </Box>
+      )}
     </div>
   );
 };

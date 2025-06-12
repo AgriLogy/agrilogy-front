@@ -124,7 +124,70 @@ def NpkSensorGenerator():
 
 user, zone = create_user1_zone1()
 
-NpkSensorGenerator()
+
+
+def create_active_graph_for_user_zone(user, zone):
+    try:
+        active_graph, created = ActiveGraph.objects.get_or_create(
+            user=user,
+            zone=zone,
+            defaults={
+                # Soil
+                "soil_irrigation_status": True,
+                "soil_ph_status": True,
+                "soil_conductivity_status": True,
+                "soil_moisture_status": True,
+                "soil_temperature_status": True,
+
+                # Weather
+                "et0_status": True,
+                "wind_speed_status": True,
+                "wind_direction_status": True,
+                "solar_radiation_status": True,
+                "temperature_humidity_weather_status": True,
+                "precipitation_humidity_rate_status": True,
+                "pluviometry_status": True,
+                "data_table_status": True,
+
+                # Added missing weather fields
+                "wind_radar_status": True,
+                "cumulative_precipitation_status": True,
+                "precipitation_rate_status": True,
+                "weather_temperature_humidity_status": True,
+
+                # Water
+                "water_flow_status": True,
+                "water_pressure_status": True,
+                "water_ph_status": True,
+                "water_ec_status": True,
+
+                # Plant Sensors
+                "leaf_sensor_status": True,
+                "fruit_size_status": True,
+                "large_fruit_diameter_status": True,
+
+                # Fertilizer/Nutrients
+                "npk_status": True,
+
+                # Other
+                "electricity_consumption_status": True,
+            }
+        )
+        if created:
+            print(f"✅ Created ActiveGraph for user '{user.username}' and zone '{zone.name}'.")
+        else:
+            print(f"ℹ️ ActiveGraph already exists for user '{user.username}' and zone '{zone.name}'.")
+        return active_graph
+
+    except Exception as e:
+        print(f"❌ Error while creating/getting ActiveGraph: {e}")
+        raise
+
+
+
+active_graph = create_active_graph_for_user_zone(user, zone)
+
+# NpkSensorGenerator()
 
 # SensorDataGenerator( Notification, "Notification")
 # SensorDataGenerator( Alert, "Alert")
@@ -163,10 +226,11 @@ NpkSensorGenerator()
 # SensorDataGenerator( WaterLevelSensor, "WaterLevelSensor")
 # SensorDataGenerator( SoilSalinitySensor, "SoilSalinitySensor")
 # SensorDataGenerator( SoilConductivitySensor, "SoilConductivitySensor")
-# # SensorDataGenerator( NpkSensor, "NpkSensor")
+# SensorDataGenerator( NpkSensor, "NpkSensor")
 # SensorDataGenerator( FruitSizeSensor, "FruitSizeSensor")
 # SensorDataGenerator( EcSalinitySensor, "EcSalinitySensor")
 # SensorDataGenerator( SensorColor, "SensorColor")
 # SensorDataGenerator( SensorLocation, "SensorLocation")
 # SensorDataGenerator( GraphName, "GraphName")
 # SensorDataGenerator( ActiveGraph, "ActiveGraph")
+

@@ -824,27 +824,50 @@ class GraphName(models.Model):
         return f"Noms des graphiques pour {self.user.username}"
 
 
+
 class ActiveGraph(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_active_graph')
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="zone_active_graph")
 
-    # soil
-    soil_irrigation_status =  models.BooleanField(default=True, help_text="Irrigation du sol")
-    soil_ph_status =  models.BooleanField(default=True, help_text="pH du sol")
-    soil_conductivity_status =  models.BooleanField(default=True, help_text="Conductivité du sol")
-    soil_moisture_status =  models.BooleanField(default=True, help_text="Humidité du sol")
-    soil_temperature_status =  models.BooleanField(default=True, help_text="Température du sol")
-    
-    # meteo
-    et0_status =  models.BooleanField(default=True, help_text="Taux d'évapotranspiration")
-    wind_speed_status =  models.BooleanField(default=True, help_text="Vitesse du vent")
-    solar_radiation_status =  models.BooleanField(default=True, help_text="Rayonnement solaire")
-    wind_direction_status =  models.BooleanField(default=True, help_text="Direction du vent")
-    temperature_humidity_weather_status =  models.BooleanField(default=True, help_text="Température et humidité de l'air")
-    precipitation_humidity_rate_status =  models.BooleanField(default=True, help_text="Taux de précipitation et humidité")
-    pluviometrie_status =  models.BooleanField(default=True, help_text="Cumule de pluie tombée")
-    data_table_status =  models.BooleanField(default=True, help_text="Tableau de données")
+    # --- Soil ---
+    soil_irrigation_status = models.BooleanField(default=True, help_text="Statut d'irrigation du sol")
+    soil_ph_status = models.BooleanField(default=True, help_text="pH du sol")
+    soil_conductivity_status = models.BooleanField(default=True, help_text="Conductivité du sol")
+    soil_moisture_status = models.BooleanField(default=True, help_text="Humidité du sol")
+    soil_temperature_status = models.BooleanField(default=True, help_text="Température du sol")
 
+    # --- Weather ---
+    et0_status = models.BooleanField(default=True, help_text="Taux d'évapotranspiration (ET0)")
+    wind_speed_status = models.BooleanField(default=True, help_text="Vitesse du vent")
+    wind_direction_status = models.BooleanField(default=True, help_text="Direction du vent")
+    solar_radiation_status = models.BooleanField(default=True, help_text="Rayonnement solaire")
+    temperature_humidity_weather_status = models.BooleanField(default=True, help_text="Température et humidité de l'air")
+    precipitation_humidity_rate_status = models.BooleanField(default=True, help_text="Taux de précipitation et humidité")
+    pluviometry_status = models.BooleanField(default=True, help_text="Cumul de précipitations")
+    data_table_status = models.BooleanField(default=True, help_text="Affichage du tableau de données")
+
+    # Missing weather fields added here:
+    wind_radar_status = models.BooleanField(default=True, help_text="Radar du vent")
+    cumulative_precipitation_status = models.BooleanField(default=True, help_text="Précipitations cumulatives")
+    precipitation_rate_status = models.BooleanField(default=True, help_text="Taux de précipitations")
+    weather_temperature_humidity_status = models.BooleanField(default=True, help_text="Température et humidité météo")
+
+    # --- Water ---
+    water_flow_status = models.BooleanField(default=True, help_text="Débit d'eau")
+    water_pressure_status = models.BooleanField(default=True, help_text="Pression d'eau")
+    water_ph_status = models.BooleanField(default=True, help_text="pH de l'eau")
+    water_ec_status = models.BooleanField(default=True, help_text="Conductivité électrique de l'eau")
+
+    # --- Plant Sensors ---
+    leaf_sensor_status = models.BooleanField(default=True, help_text="Capteur de feuille")
+    fruit_size_status = models.BooleanField(default=True, help_text="Taille des fruits")
+    large_fruit_diameter_status = models.BooleanField(default=True, help_text="Diamètre des gros fruits")
+
+    # --- Fertilizer/Nutrients ---
+    npk_status = models.BooleanField(default=True, help_text="Statut NPK")
+
+    # --- Other ---
+    electricity_consumption_status = models.BooleanField(default=True, help_text="Consommation électrique")
 
     def __str__(self):
-        return f"Default Sensor Activation Settings (ID: {self.id})"
+        return f"ActiveGraph for User {self.user.username} - Zone: {self.zone.name}"

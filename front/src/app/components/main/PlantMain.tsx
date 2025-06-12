@@ -1,4 +1,3 @@
-// PlantMain.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 import { Box, HStack, Text, useColorModeValue } from "@chakra-ui/react";
@@ -8,6 +7,10 @@ import api from "@/app/lib/api";
 import "@/app/styles/style.css";
 
 import DateRangePicker from "../analytics/DateRangePicker";
+import getActiveGraphs, {
+  ActiveGraphResponse,
+} from "@/app/utils/getActiveGraphs";
+
 import ElectricityconsumptionMain from "../analytics/Electricityconsumption/ElectricityconsumptionMain";
 import FruiteSizeMain from "../analytics/fruiteSize/FruiteSizeMain";
 import LargeFruitDiameterMain from "../analytics/LargeFruitDiameter/LargeFruitDiameterMain";
@@ -18,12 +21,12 @@ import WaterFlowMain from "../analytics/WaterFlow/WaterFlowMain";
 import PhWaterMain from "../analytics/WaterPh/PhWaterMain";
 import WaterPressureMain from "../analytics/WaterPressure/WaterPressureMain";
 
-// Plants components
-
-
 const PlantMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
   const [selectedZone, setSelectedZone] = useState<number | null>(null);
+  const [activeGraph, setActiveGraph] = useState<ActiveGraphResponse | null>(
+    null
+  );
 
   const { bg, textColor } = useColorModeStyles();
   const [startDate, setStartDate] = useState<string>("");
@@ -45,6 +48,12 @@ const PlantMain = () => {
     };
     fetchZones();
   }, []);
+
+  useEffect(() => {
+    if (selectedZone !== null) {
+      getActiveGraphs(selectedZone).then(setActiveGraph);
+    }
+  }, [selectedZone]);
 
   return (
     <div className="container">
@@ -80,34 +89,52 @@ const PlantMain = () => {
         />
       </Box>
 
-      {/* Station météo Data Components */}
-      <Box bg={bg} className="box wide">
-        <FruiteSizeMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <LargeFruitDiameterMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <SensorLeafMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <NpkMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <ElectricityconsumptionMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <WaterFlowMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <WaterPressureMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <PhWaterMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <EcWaterMain filters={filters} />
-      </Box>
+      {/* Conditionally render graphs based on activeGraph */}
+      {activeGraph?.fruit_size_status && (
+        <Box bg={bg} className="box wide">
+          <FruiteSizeMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.large_fruit_diameter_status && (
+        <Box bg={bg} className="box wide">
+          <LargeFruitDiameterMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.leaf_sensor_status && (
+        <Box bg={bg} className="box wide">
+          <SensorLeafMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.npk_status && (
+        <Box bg={bg} className="box wide">
+          <NpkMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.electricity_consumption_status && (
+        <Box bg={bg} className="box wide">
+          <ElectricityconsumptionMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.water_flow_status && (
+        <Box bg={bg} className="box wide">
+          <WaterFlowMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.water_pressure_status && (
+        <Box bg={bg} className="box wide">
+          <WaterPressureMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.water_ph_status && (
+        <Box bg={bg} className="box wide">
+          <PhWaterMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.water_ec_status && (
+        <Box bg={bg} className="box wide">
+          <EcWaterMain filters={filters} />
+        </Box>
+      )}
     </div>
   );
 };

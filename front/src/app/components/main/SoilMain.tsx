@@ -1,13 +1,11 @@
-// SoilMain.tsx
-"use client";
 import React, { useEffect, useState } from "react";
 import { Box, HStack, Text, useColorModeValue } from "@chakra-ui/react";
-
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import DateRangePicker from "../analytics/DateRangePicker";
 import api from "@/app/lib/api";
-
-import "@/app/styles/style.css";
+import getActiveGraphs, {
+  ActiveGraphResponse,
+} from "@/app/utils/getActiveGraphs";
 
 // Soil-specific components
 import WaterSoilMain from "../analytics/SoilWater/WaterSoilMain";
@@ -18,6 +16,9 @@ import SoilConductivityIrrigationMain from "../analytics/SoilConductivityIrrigat
 const SoilMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
   const [selectedZone, setSelectedZone] = useState<number | null>(null);
+  const [activeGraph, setActiveGraph] = useState<ActiveGraphResponse | null>(
+    null
+  );
 
   const { bg, textColor } = useColorModeStyles();
   const [startDate, setStartDate] = useState<string>("");
@@ -39,6 +40,12 @@ const SoilMain = () => {
     };
     fetchZones();
   }, []);
+
+  useEffect(() => {
+    if (selectedZone !== null) {
+      getActiveGraphs(selectedZone).then(setActiveGraph);
+    }
+  }, [selectedZone]);
 
   return (
     <div className="container">
@@ -74,19 +81,27 @@ const SoilMain = () => {
         />
       </Box>
 
-      {/* Soil-related Data Components */}
-      <Box bg={bg} className="box wide">
-        <WaterSoilMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <PhSoilMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <SoilSalinityConductivityMain filters={filters} />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <SoilConductivityIrrigationMain filters={filters} />
-      </Box>
+      {/* Conditionally render based on activeGraph */}
+      {activeGraph?.soil_irrigation_status && (
+        <Box bg={bg} className="box wide">
+          <WaterSoilMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.soil_ph_status && (
+        <Box bg={bg} className="box wide">
+          <PhSoilMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.soil_conductivity_status && (
+        <Box bg={bg} className="box wide">
+          <SoilSalinityConductivityMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.soil_moisture_status && (
+        <Box bg={bg} className="box wide">
+          <SoilConductivityIrrigationMain filters={filters} />
+        </Box>
+      )}
     </div>
   );
 };

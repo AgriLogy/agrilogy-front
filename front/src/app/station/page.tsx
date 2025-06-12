@@ -4,7 +4,7 @@ import React from "react";
 import Header from "../components/main/Header";
 import Navbar from "../components/main/Sidebar";
 import useColorModeStyles from "../utils/useColorModeStyles";
-import StationMain from "../components/station/StationMain";
+import StationMain from "../components/main/StationMain";
 
 const Page = () => {
   const { navBgColor } = useColorModeStyles();
