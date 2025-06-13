@@ -89,42 +89,6 @@ const WaterMain = () => {
         />
       </Box>
 
-      {/* Conditionally render based on activeGraph toggles */}
-      {activeGraph?.soil_moisture_status && (
-        <Box bg={bg} className="box wide">
-          <WaterSoilMain filters={filters} />
-        </Box>
-      )}
-      {activeGraph?.pluviometry_status && (
-        <Box bg={bg} className="box wide">
-          <CumulPrecipitationMain filters={filters} />
-        </Box>
-      )}
-      {activeGraph?.et0_status && (
-        <Box bg={bg} className="box wide">
-          <ET0Main filters={filters} />
-        </Box>
-      )}
-      {activeGraph?.precipitation_humidity_rate_status && (
-        <Box bg={bg} className="box wide">
-          <PrecipitationRateMain filters={filters} />
-        </Box>
-      )}
-      {activeGraph?.soil_conductivity_status && (
-        <Box bg={bg} className="box wide">
-          <SoilConductivityMain filters={filters} />
-        </Box>
-      )}
-      {activeGraph?.water_ec_status && (
-        <Box bg={bg} className="box wide">
-          <EcWaterMain filters={filters} />
-        </Box>
-      )}
-      {activeGraph?.water_ph_status && (
-        <Box bg={bg} className="box wide">
-          <PhWaterMain filters={filters} />
-        </Box>
-      )}
       {activeGraph?.water_flow_status && (
         <Box bg={bg} className="box wide">
           <WaterFlowMain filters={filters} />
@@ -135,6 +99,17 @@ const WaterMain = () => {
           <WaterPressureMain filters={filters} />
         </Box>
       )}
+      {activeGraph?.water_ph_status && (
+        <Box bg={bg} className="box wide">
+          <PhWaterMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.water_ec_status && (
+        <Box bg={bg} className="box wide">
+          <EcWaterMain filters={filters} />
+        </Box>
+      )}
+      
     </div>
   );
 };

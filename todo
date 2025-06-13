@@ -5,3 +5,30 @@ automate zones creation :
 add notifications logic
 add aletrts logic :
 integrate devops integration
+
+
+      {activeGraph?.soil_moisture_status && (
+        <Box bg={bg} className="box wide">
+          <WaterSoilMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.pluviometry_status && (
+        <Box bg={bg} className="box wide">
+          <CumulPrecipitationMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.et0_status && (
+        <Box bg={bg} className="box wide">
+          <ET0Main filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.precipitation_humidity_rate_status && (
+        <Box bg={bg} className="box wide">
+          <PrecipitationRateMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.soil_conductivity_status && (
+        <Box bg={bg} className="box wide">
+          <SoilConductivityMain filters={filters} />
+        </Box>
+      )}

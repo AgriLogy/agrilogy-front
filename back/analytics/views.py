@@ -9,6 +9,10 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from django.contrib.auth import get_user_model
+
+CustomUser = get_user_model()
+
 from .models import *
 from .serializers import *
 
@@ -82,3 +86,15 @@ class ActiveGraphSelfAPIView(APIView):
         serializer = ActiveGraphSerializer(active_graph)
         return Response(serializer.data)
 
+class ActiveZonesView(APIView):
+    permission_classes = [IsAdminUser]  # Remove this if users can access their own zones
+
+    def get(self, request, username):
+        try:
+            user = CustomUser.objects.get(username=username)
+        except CustomUser.DoesNotExist:
+            return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        zones = Zone.objects.filter(user=user)
+        serializer = ZonesNameSerializer(zones, many=True)
+        return Response(serializer.data)

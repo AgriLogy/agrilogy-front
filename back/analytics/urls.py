@@ -9,7 +9,8 @@ urlpatterns = [
     path('zones-names-per-user/', ZonesNames.as_view(), name='zones-names-per-user'),
     path('active-graph/self/<int:zone_id>/', ActiveGraphSelfAPIView.as_view(), name='active-graph-self'),
     # Admin
-    path('active-graph/<int:user_id>/<int:zone_id>/', ActiveGraphAdminAPIView.as_view(), name='active-graph-admin'),
+    path('active-graph/<str:username>/<int:zone_id>/', ActiveGraphAdminAPIView.as_view(), name='active-graph-admin'),
+    path("active-zones/<str:username>/", ActiveZonesView.as_view(), name="active-zones"),
 ]
 
 urlpatterns += [
