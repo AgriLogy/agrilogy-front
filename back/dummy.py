@@ -17,8 +17,8 @@ from analytics.models import *
 fake = Faker()
 
 # Define date range for data
-BEGIN_DATE = datetime(year=2025, month=1, day=1)  # Change as needed
-END_DATE = datetime(year=2025, month=4, day=30)    # Change as needed
+BEGIN_DATE = datetime(year=2025, month=4, day=30)  # Change as needed
+END_DATE = datetime(year=2025, month=6, day=22)    # Change as needed
 
 def create_user1_zone1():
     try:
@@ -77,7 +77,7 @@ def SensorDataGenerator(model_class, sensor_name: str, color="#543141"):
             model_class.objects.create(
                 zone=zone,
                 user=user,
-                value=round(random.uniform(10.0, 70.0), 2),
+                value=round(random.uniform(10.0, 360.0), 2),
                 timestamp=timestamp,
             )
         print(f"✅ Created {data_points} {sensor_name} records.")
@@ -186,6 +186,8 @@ def create_active_graph_for_user_zone(user, zone):
 
 
 active_graph = create_active_graph_for_user_zone(user, zone)
+SensorDataGenerator( WindSpeed, "WindSpeed")
+SensorDataGenerator( WindDirection, "WindDirection")
 
 # NpkSensorGenerator()
 
@@ -199,10 +201,8 @@ active_graph = create_active_graph_for_user_zone(user, zone)
 # SensorDataGenerator( Et0Weather, "Et0Weather")
 # SensorDataGenerator( PrecipitationRate, "PrecipitationRate")
 # SensorDataGenerator( HumidityWeather, "HumidityWeather")
-# SensorDataGenerator( WindSpeed, "WindSpeed")
 # SensorDataGenerator( SolarRadiation, "SolarRadiation")
 # SensorDataGenerator( PressureWeather, "PressureWeather")
-# SensorDataGenerator( WindDirection, "WindDirection")
 # SensorDataGenerator( TemperatureWeather, "TemperatureWeather")
 # SensorDataGenerator( ECSoilMedium, "ECSoilMedium")
 # SensorDataGenerator( SoilTemperatureMedium, "SoilTemperatureMedium")

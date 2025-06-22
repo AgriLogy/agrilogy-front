@@ -23,6 +23,7 @@ class ZonesNameSerializer(serializers.ModelSerializer):
         
 class BaseSensorSerializer(serializers.ModelSerializer):
     timestamp = serializers.DateTimeField(format="%Y-%m-%d")
+    # value = serializers.SerializerMethodField()
 
     default_unit = serializers.SerializerMethodField()
     available_units = serializers.SerializerMethodField()
@@ -32,6 +33,10 @@ class BaseSensorSerializer(serializers.ModelSerializer):
 
     def get_available_units(self, obj):
         return obj.available_units
+    
+    # def get_value(self, obj):
+    #     # Format float to string with 2 decimals
+    #     return f"{obj.value:.2f}"
 
     class Meta:
         fields = '__all__'

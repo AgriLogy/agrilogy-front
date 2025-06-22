@@ -31,16 +31,22 @@ const WindRadarLastData = ({
   const latestSpeed = windSpeedData[windSpeedData.length - 1];
   const latestDirection = windDirectionData[windDirectionData.length - 1];
 
-  const bgColor = useColorModeValue("green.50", "green.900");
-  const noDataColor = useColorModeValue("gray.600", "gray.300");
-  const timeColor = useColorModeValue("gray.500", "gray.400");
-  const { textColor } = useColorModeStyles();
+  // Background color with good contrast in light/dark mode
+  const bgColor = useColorModeValue("green.100", "green.800");
 
+  // Text colors for readability
+  const titleColor = useColorModeValue("green.900", "green.300");
+  const valueColor = useColorModeValue("gray.800", "gray.200");
+  const noDataColor = useColorModeValue("gray.600", "gray.400");
+  const timeColor = useColorModeValue("gray.500", "gray.400");
+
+  // If you want to keep your custom hook color for title, you can uncomment below:
+  // const { textColor } = useColorModeStyles();
 
   return (
     <Box
       bg={bgColor}
-      p={4}
+      p={6}
       borderRadius="md"
       boxShadow="md"
       minH="300px"
@@ -53,30 +59,31 @@ const WindRadarLastData = ({
       alignItems="center"
       textAlign="center"
     >
-      <WiStrongWind size={50} color="#2F855A" />
-      <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
+      <WiStrongWind size={60} color={titleColor} />
+
+      <Text fontWeight="bold" fontSize="lg" mt={3} color={titleColor}>
         Données récentes du vent
       </Text>
 
       {latestSpeed && latestDirection ? (
-        <VStack spacing={2} mt={3}>
-          <Text fontSize="lg">
+        <VStack spacing={2} mt={4}>
+          <Text fontSize="lg" color={valueColor}>
             Vitesse du vent : {latestSpeed.value.toFixed(2)}{" "}
             {latestSpeed.default_unit}
           </Text>
-          <Text fontSize="lg">
+          <Text fontSize="lg" color={valueColor}>
             Direction du vent : {latestDirection.value.toFixed(2)}{" "}
             {latestDirection.default_unit}
           </Text>
         </VStack>
       ) : (
-        <Text mt={3} fontSize="md" color={noDataColor}>
+        <Text mt={4} fontSize="md" color={noDataColor}>
           N/A
         </Text>
       )}
 
       {latestSpeed && (
-        <Text fontSize="sm" color={timeColor} mt={3}>
+        <Text fontSize="sm" color={timeColor} mt={5}>
           Mise à jour : {timeAgo(latestSpeed.timestamp)}
         </Text>
       )}
