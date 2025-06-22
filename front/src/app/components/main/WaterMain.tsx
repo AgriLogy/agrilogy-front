@@ -57,9 +57,9 @@ const WaterMain = () => {
 
   return (
     <div className="container">
-      <Box bg={bg} className="header">
+      <Box bg={bg} className="header" border="1px">
         <HStack>
-          <Text color={textColor}>données sur l&apos;eau du </Text>
+          <Text color={textColor}>Données sur l&apos;eau du </Text>
           <select
             value={selectedZone ?? ""}
             onChange={(e) => setSelectedZone(Number(e.target.value))}
@@ -79,7 +79,7 @@ const WaterMain = () => {
         </HStack>
       </Box>
 
-      <Box bg={bg} className="header" mt={0} mb={0}>
+      <Box bg={bg} className="header" border="1px" mt={0} mb={0}>
         <DateRangePicker
           setStartDate={setStartDate}
           setEndDate={setEndDate}
@@ -109,7 +109,11 @@ const WaterMain = () => {
           <EcWaterMain filters={filters} />
         </Box>
       )}
-      
+      {activeGraph?.cumulative_precipitation_status && (
+        <Box bg={bg} className="box wide">
+          <CumulPrecipitationMain filters={filters} />
+        </Box>
+      )}
     </div>
   );
 };

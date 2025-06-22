@@ -87,15 +87,15 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
         {showManualDatePicker && (
           <Button onClick={() => handleYearsClick(1)}>1 y</Button>
         )}
-
       </HStack>
 
       {showManualDatePicker && (
-        <HStack alignItems="center" gap="1" ml="auto" mr={2}>
+        <HStack alignItems="center" gap="1" ml="auto" mr={2} flexWrap="wrap">
           <Text color={textColor}>De:</Text>
           <Input
             color={textColor}
             type="date"
+            maxW="130px" // ✅ Keep narrow
             value={manualStartDate}
             onChange={(e) => setManualStartDate(e.target.value)}
           />
@@ -103,11 +103,12 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
           <Input
             color={textColor}
             type="date"
+            maxW="130px"
             value={manualEndDate}
             onChange={(e) => setManualEndDate(e.target.value)}
           />
-          <Button onClick={handleManualDateSelection}>
-            <Text color={textColor} px={10}>
+          <Button onClick={handleManualDateSelection} whiteSpace="nowrap">
+            <Text color={textColor} px={2}>
               Appliquer
             </Text>
           </Button>

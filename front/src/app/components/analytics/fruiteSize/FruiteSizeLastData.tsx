@@ -40,7 +40,7 @@ const FruiteSizeLastData = ({ data }: { data: SensorData[] }) => {
       textAlign="center"
     >
       <FaAppleAlt size={50} color="#d1495b" />
-      <Text fontWeight="bold" fontSize="lg" mt={2}>
+      <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
         Dernière taille mesurée :
       </Text>
       <Text fontSize="2xl" color={valueColor}>

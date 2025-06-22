@@ -40,7 +40,7 @@ const SolarRadiationLastData = ({ data }: { data: SensorData[] }) => {
       textAlign="center"
     >
       <FaSun size={50} color="#f6c90e" />
-      <Text fontWeight="bold" fontSize="lg" mt={2}>
+      <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
         Dernière radiation solaire :
       </Text>
       <Text fontSize="2xl" color={valueColor}>

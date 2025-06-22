@@ -40,7 +40,7 @@ const CumulPrecipitationLastData = ({ data }: { data: SensorData[] }) => {
       textAlign="center"
     >
       <FaCloudRain size={50} color="#3b82f6" />
-      <Text fontWeight="bold" fontSize="lg" mt={2}>
+      <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
         Dernière précipitation :
       </Text>
       <Text fontSize="2xl" color={valueColor}>

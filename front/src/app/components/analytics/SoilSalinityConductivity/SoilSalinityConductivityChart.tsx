@@ -47,7 +47,7 @@ const SoilSalinityConductivityChart = ({
     base: Math.ceil(Math.max(salinityData.length, conductivityData.length) / 3),
     md: Math.ceil(Math.max(salinityData.length, conductivityData.length) / 9),
   });
-  const labelAngle = useBreakpointValue({ base: -15, md: -5 });
+  const labelAngle = useBreakpointValue({ base: -15, md: 15 });
 
   const timestamps = Array.from(
     new Set([

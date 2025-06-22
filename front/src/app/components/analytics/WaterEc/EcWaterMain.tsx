@@ -4,6 +4,7 @@ import { SensorData } from "@/app/types";
 import api from "@/app/lib/api";
 import "@/app/styles/style.css";
 import EcWaterChart from "./EcWaterChart";
+import EcWaterLastData from "./EcWaterLastData";
 
 const EcWaterMain = ({
   filters,
@@ -44,9 +45,9 @@ const EcWaterMain = ({
       <Box flex={3} p={2} height="100%" width="100%">
         <EcWaterChart data={data} loading={loading} />
       </Box>
-      {/* <Box flex={1} p={3} height="100%" width="100%">
-        <PhWaterLastData data={data} />
-      </Box> */}
+      <Box flex={1} p={3} height="100%" width="100%">
+        <EcWaterLastData data={data} />
+      </Box>
     </Stack>
   );
 };

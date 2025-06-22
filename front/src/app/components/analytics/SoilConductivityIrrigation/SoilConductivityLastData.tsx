@@ -1,6 +1,7 @@
 import { Box, Text, VStack, useColorModeValue } from "@chakra-ui/react";
 import { SensorData } from "@/app/types";
 import { FaWater, FaTint } from "react-icons/fa";
+import useColorModeStyles from "@/app/utils/useColorModeStyles";
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -25,9 +26,10 @@ const SoilConductivityLastData = ({
   const latestLow = lowData[lowData.length - 1];
   const latestHigh = highData[highData.length - 1];
   const latestFlow = flowData[flowData.length - 1];
-
+  
   const bgColor = useColorModeValue("blue.50", "blue.900");
   const timeColor = useColorModeValue("gray.500", "gray.400");
+  const { textColor } = useColorModeStyles();
 
   return (
     <Box
@@ -45,7 +47,7 @@ const SoilConductivityLastData = ({
       textAlign="center"
     >
       <FaWater size={40} color="#319795" />
-      <Text fontWeight="bold" fontSize="lg" mt={2}>
+      <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
         Derniers niveaux EC du sol & irrigation
       </Text>
 

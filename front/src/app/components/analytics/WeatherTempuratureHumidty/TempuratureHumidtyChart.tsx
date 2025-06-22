@@ -58,7 +58,7 @@ const TempuratureHumidtyChart = ({
     base: Math.ceil(mergedData.length / 3),
     md: Math.ceil(mergedData.length / 9),
   });
-  const labelAngle = useBreakpointValue({ base: -15, md: -5 });
+  const labelAngle = useBreakpointValue({ base: -15, md: 15 });
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
@@ -156,7 +156,12 @@ const TempuratureHumidtyChart = ({
                 strokeWidth={2}
                 activeDot={{ r: 6 }}
               />
-              <Brush dataKey="timestamp" height={30} stroke="#8884d8" travellerWidth={8} />
+              <Brush
+                dataKey="timestamp"
+                height={30}
+                stroke="#8884d8"
+                travellerWidth={8}
+              />
             </LineChart>
           </ResponsiveContainer>
         )}

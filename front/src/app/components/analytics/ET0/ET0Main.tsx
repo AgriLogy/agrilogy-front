@@ -60,15 +60,15 @@ const ET0Main = ({
       height="100%"
       className="Box"
     >
-      <Box flex={1} p={3} height="100%" width="100%">
-        <ET0LastData weatherData={weatherData} calculatedData={calculatedData} />
-      </Box>
       <Box flex={3} p={2} height="100%" width="100%">
         <ET0Chart
           weatherData={weatherData}
           calculatedData={calculatedData}
           loading={loading}
         />
+      </Box>
+      <Box flex={1} p={3} height="100%" width="100%">
+        <ET0LastData weatherData={weatherData} calculatedData={calculatedData} />
       </Box>
     </Stack>
   );

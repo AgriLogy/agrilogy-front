@@ -48,7 +48,7 @@ const SoilSalinityConductivityLastData = ({
       <VStack spacing={6}>
         <Box textAlign="center">
           <FaTint size={40} color="#2b6cb0" />
-          <Text fontWeight="bold" fontSize="lg" mt={2}>
+          <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
             Dernière salinité :
           </Text>
           <Text fontSize="2xl" color={valueColor}>
@@ -63,7 +63,7 @@ const SoilSalinityConductivityLastData = ({
 
         <Box textAlign="center">
           <FaRulerCombined size={40} color="#48bb78" />
-          <Text fontWeight="bold" fontSize="lg" mt={2}>
+          <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
             Dernière conductivité :
           </Text>
           <Text fontSize="2xl" color={valueColor}>

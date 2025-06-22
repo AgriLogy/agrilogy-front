@@ -64,9 +64,9 @@ const CumulPrecipitationChart = ({
   const chartData = aggregateData(data, groupBy);
   const labelInterval = useBreakpointValue({
     base: Math.ceil(chartData.length / 3),
-    md: Math.ceil(chartData.length / 9),
+    md: Math.ceil(chartData.length / 5),
   });
-  const labelAngle = useBreakpointValue({ base: -15, md: -5 });
+  const labelAngle = useBreakpointValue({ base: -15, md: 15 });
   const { textColor, bgColor } = useColorModeStyles();
 
   const handleScreenshot = async () => {
@@ -103,7 +103,7 @@ const CumulPrecipitationChart = ({
   const legendTextColor = textColor;
 
   return (
-    <Box width="100%" pr={4} pb={4} bg={bgColor} borderRadius="md" p={4}>
+    <Box width="100%" pr={4} pb={4}  borderRadius="md" p={4}>
       <Flex justify="space-between" align="center" mb={4}>
         <Text fontSize="xl" fontWeight="bold" color={textColor}>
           Précipitations cumulées par période (mm)
@@ -128,7 +128,7 @@ const CumulPrecipitationChart = ({
         </HStack>
       </Flex>
 
-      <Box ref={chartRef} height="300px" bg={bgColor} borderRadius="md" p={2}>
+      <Box ref={chartRef} height="300px"  borderRadius="md" p={2}>
         {loading ? (
           <EmptyBox text="Chargement..." />
         ) : chartData.length === 0 ? (

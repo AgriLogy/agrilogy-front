@@ -1,5 +1,5 @@
 import { Box, Text, useColorModeValue } from "@chakra-ui/react";
-import { FaBolt } from "react-icons/fa";
+import { RiWaterFlashFill } from "react-icons/ri";
 import { SensorData } from "@/app/types";
 
 const timeAgo = (timestamp: string): string => {
@@ -42,8 +42,8 @@ const WaterFlowLastData = ({ data }: { data: SensorData[] }) => {
       alignItems="center"
       textAlign="center"
     >
-      <FaBolt size={50} color="#f4a261" />
-      <Text fontWeight="bold" fontSize="lg" mt={2}>
+      <RiWaterFlashFill size={50} color="#00b4d8" />
+      <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
         Dernière consommation :
       </Text>
       <Text fontSize="2xl" color={valueColor}>

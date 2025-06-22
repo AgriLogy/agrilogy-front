@@ -67,7 +67,7 @@ const SoilConductivityChart = ({
 
   const labelInterval = useBreakpointValue({
     base: Math.ceil(chartData.length / 3),
-    md: Math.ceil(chartData.length / 9),
+    md: Math.ceil(chartData.length / 5),
   });
 
   const handleScreenshot = async () => {
@@ -177,7 +177,7 @@ const SoilConductivityChart = ({
                 strokeWidth={2}
                 strokeOpacity={activeLines.high ? 1 : 0.1}
                 dot={false}
-              />  
+              />
 
               <Bar
                 yAxisId="right"

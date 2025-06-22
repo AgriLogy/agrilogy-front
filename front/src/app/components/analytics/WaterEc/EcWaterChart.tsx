@@ -40,11 +40,12 @@ const EcWaterChart = ({
 
   const labelInterval = useBreakpointValue({
     base: Math.ceil(chartData.length / 3),
-    md: Math.ceil(chartData.length / 9),
+    md: Math.ceil(chartData.length / 5),
   });
 
-  const labelAngle = useBreakpointValue({ base: -15, md: -5 });
+  const labelAngle = useBreakpointValue({ base: -15, md: 15 });
   const { textColor } = useColorModeStyles();
+  
 
   const handleLegendClick = (data: any) => {
     if (data.value === "Consommation") {

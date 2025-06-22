@@ -43,7 +43,7 @@ const LargeFruitDiameterLastData = ({ data }: { data: SensorData[] }) => {
       textAlign="center"
     >
       <FaBolt size={50} color="#f4a261" />
-      <Text fontWeight="bold" fontSize="lg" mt={2}>
+      <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
         Dernière consommation :
       </Text>
       <Text fontSize="2xl" color={valueColor}>

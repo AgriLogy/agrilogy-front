@@ -38,7 +38,7 @@ const EC0Chart = ({
   const textColor = useColorModeValue("gray.800", "gray.200");
 
   return (
-    <Box width="100%" pr={4} pb={4} height="300px">
+    <Box width="100%" pr={4} pb={4}>
       <Text fontSize="xl" fontWeight="bold" color={textColor} mb={4}>
         ET0 Comparaison (Capteur vs Calculé)
       </Text>

@@ -40,7 +40,7 @@ const NpkLastData = ({ data }: { data: NpkSensorData[] }) => {
       textAlign="center"
     >
       <GiChemicalDrop size={50} color="#2B6CB0" />
-      <Text fontWeight="bold" fontSize="lg" mt={2}>
+      <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
         Dernières valeurs NPK
       </Text>
 

@@ -38,9 +38,7 @@ const SensorLeafChart = ({
   const { textColor } = useColorModeStyles();
 
   const combinedData = temperatureData.map((t) => {
-    const moisturePoint = moistureData.find(
-      (m) => m.timestamp === t.timestamp
-    );
+    const moisturePoint = moistureData.find((m) => m.timestamp === t.timestamp);
     return {
       name: t.timestamp,
       temperature: t.value,
@@ -53,7 +51,7 @@ const SensorLeafChart = ({
     md: Math.ceil(combinedData.length / 9),
   });
 
-  const labelAngle = useBreakpointValue({ base: -15, md: -5 });
+  const labelAngle = useBreakpointValue({ base: -15, md: 15 });
 
   const [activeLines, setActiveLines] = useState({
     temperature: true,
@@ -178,7 +176,6 @@ const SensorLeafChart = ({
                 stroke={activeLines.moisture ? "#007aff" : "gray"}
                 strokeWidth={2}
                 activeDot={{ r: 6 }}
-                
               />
               <Brush
                 dataKey="name"

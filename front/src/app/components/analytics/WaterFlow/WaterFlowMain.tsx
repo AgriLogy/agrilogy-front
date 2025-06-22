@@ -4,6 +4,7 @@ import { SensorData } from "@/app/types";
 import api from "@/app/lib/api";
 import "@/app/styles/style.css";
 import WaterFlowChart from "./WaterFlowChart";
+import WaterFlowLastData from "./WaterFlowLastData";
 
 const WaterFlowMain = ({
   filters,
@@ -44,9 +45,9 @@ const WaterFlowMain = ({
       <Box flex={3} p={2} height="100%" width="100%">
         <WaterFlowChart data={data} loading={loading} />
       </Box>
-      {/* <Box flex={1} p={3} height="100%" width="100%">
+      <Box flex={1} p={3} height="100%" width="100%">
         <WaterFlowLastData data={data} />
-      </Box> */}
+      </Box>
     </Stack>
   );
 };

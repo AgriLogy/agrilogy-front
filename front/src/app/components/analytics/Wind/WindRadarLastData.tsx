@@ -1,3 +1,4 @@
+import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import { Box, Text, VStack, useColorModeValue } from "@chakra-ui/react";
 import { WiStrongWind } from "react-icons/wi";
 
@@ -33,6 +34,8 @@ const WindRadarLastData = ({
   const bgColor = useColorModeValue("green.50", "green.900");
   const noDataColor = useColorModeValue("gray.600", "gray.300");
   const timeColor = useColorModeValue("gray.500", "gray.400");
+  const { textColor } = useColorModeStyles();
+
 
   return (
     <Box
@@ -51,17 +54,19 @@ const WindRadarLastData = ({
       textAlign="center"
     >
       <WiStrongWind size={50} color="#2F855A" />
-      <Text fontWeight="bold" fontSize="lg" mt={2}>
+      <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
         Données récentes du vent
       </Text>
 
       {latestSpeed && latestDirection ? (
         <VStack spacing={2} mt={3}>
           <Text fontSize="lg">
-            Vitesse du vent : {latestSpeed.value.toFixed(2)} {latestSpeed.default_unit}
+            Vitesse du vent : {latestSpeed.value.toFixed(2)}{" "}
+            {latestSpeed.default_unit}
           </Text>
           <Text fontSize="lg">
-            Direction du vent : {latestDirection.value.toFixed(2)} {latestDirection.default_unit}
+            Direction du vent : {latestDirection.value.toFixed(2)}{" "}
+            {latestDirection.default_unit}
           </Text>
         </VStack>
       ) : (

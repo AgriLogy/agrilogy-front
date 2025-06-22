@@ -63,17 +63,17 @@ const WindRadarMain = ({
       height="100%"
       className="Box"
     >
-      <Box flex={1} p={3} height="100%" width="100%">
-        <WindRadarLastData
-          windSpeedData={speedData}
-          windDirectionData={directionData}
-        />
-      </Box>
       <Box flex={3} p={2} height="100%" width="100%">
         <WindRadarChart
           windSpeedData={speedData}
           windDirectionData={directionData}
           loading={loading}
+        />
+      </Box>
+      <Box flex={1} p={3} height="100%" width="100%">
+        <WindRadarLastData
+          windSpeedData={speedData}
+          windDirectionData={directionData}
         />
       </Box>
     </Stack>

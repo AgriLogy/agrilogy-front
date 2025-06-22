@@ -69,17 +69,17 @@ const TempuratureHumidtyMain = ({
       height="100%"
       className="Box"
     >
-      <Box flex={1} p={3} height="100%" width="100%">
-        <TempuratureHumidtyLastData
-          humidityData={humidityData}
-          temperatureData={temperatureData}
-        />
-      </Box>
       <Box flex={3} p={2} height="100%" width="100%">
         <TempuratureHumidtyChart
           humidityData={humidityData}
           temperatureData={temperatureData}
           loading={loading}
+        />
+      </Box>
+      <Box flex={1} p={3} height="100%" width="100%">
+        <TempuratureHumidtyLastData
+          humidityData={humidityData}
+          temperatureData={temperatureData}
         />
       </Box>
     </Stack>

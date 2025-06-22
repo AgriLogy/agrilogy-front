@@ -1,3 +1,4 @@
+import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import { Box, Text, VStack, useColorModeValue } from "@chakra-ui/react";
 import { GiWaterDrop } from "react-icons/gi";
 
@@ -35,6 +36,8 @@ const ET0LastData = ({
   const bgColor = useColorModeValue("blue.50", "blue.900");
   const noDataColor = useColorModeValue("gray.600", "gray.300");
   const timeColor = useColorModeValue("gray.500", "gray.400");
+  const { textColor } = useColorModeStyles();
+  
 
   return (
     <Box
@@ -53,19 +56,27 @@ const ET0LastData = ({
       textAlign="center"
     >
       <GiWaterDrop size={50} color="#2B6CB0" />
-      <Text fontWeight="bold" fontSize="lg" mt={2}>
+      <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
         Dernières valeurs ET0
       </Text>
 
-      {(latestWeather || latestCalculated) ? (
+      {latestWeather || latestCalculated ? (
         <VStack spacing={2} mt={3}>
           <Text fontSize="lg" color="blue.600">
             ET0 météo:{" "}
-            {latestWeather ? `${latestWeather.value.toFixed(2)} ${latestWeather.default_unit}` : "N/A"}
+            {latestWeather
+              ? `${latestWeather.value.toFixed(2)} ${
+                  latestWeather.default_unit
+                }`
+              : "N/A"}
           </Text>
           <Text fontSize="lg" color="teal.600">
             ET0 calculé:{" "}
-            {latestCalculated ? `${latestCalculated.value.toFixed(2)} ${latestCalculated.default_unit}` : "N/A"}
+            {latestCalculated
+              ? `${latestCalculated.value.toFixed(2)} ${
+                  latestCalculated.default_unit
+                }`
+              : "N/A"}
           </Text>
         </VStack>
       ) : (
@@ -78,7 +89,11 @@ const ET0LastData = ({
         <Text fontSize="sm" color={timeColor} mt={3}>
           Mise à jour :{" "}
           {latestWeather && latestCalculated
-            ? timeAgo(latestWeather.timestamp > latestCalculated.timestamp ? latestWeather.timestamp : latestCalculated.timestamp)
+            ? timeAgo(
+                latestWeather.timestamp > latestCalculated.timestamp
+                  ? latestWeather.timestamp
+                  : latestCalculated.timestamp
+              )
             : latestWeather
             ? timeAgo(latestWeather.timestamp)
             : timeAgo(latestCalculated.timestamp)}

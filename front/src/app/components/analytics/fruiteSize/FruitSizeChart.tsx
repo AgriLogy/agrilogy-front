@@ -40,11 +40,11 @@ const FruitSizeChart = ({
 
   const labelInterval = useBreakpointValue({
     base: Math.ceil(chartData.length / 3),
-    md: Math.ceil(chartData.length / 9),
+    md: Math.ceil(chartData.length / 5),
   });
 
-  const labelAngle = useBreakpointValue({ base: -15, md: -5 });
-  const {  textColor } = useColorModeStyles();
+  const labelAngle = useBreakpointValue({ base: -15, md: 15 });
+  const { textColor } = useColorModeStyles();
 
   // Legend click handler
   const handleLegendClick = (data: any) => {
@@ -107,9 +107,9 @@ const FruitSizeChart = ({
 
       <Box ref={chartRef} height="300px">
         {loading ? (
-          <EmptyBox text= "Chargement..." /> // Assuming you have an EmptyBox component
+          <EmptyBox text="Chargement..." /> // Assuming you have an EmptyBox component
         ) : data.length === 0 ? (
-          <EmptyBox text= "Pas de données" /> // Assuming you have an EmptyBox component
+          <EmptyBox text="Pas de données" /> // Assuming you have an EmptyBox component
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
