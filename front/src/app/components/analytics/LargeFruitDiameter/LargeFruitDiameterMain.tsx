@@ -47,9 +47,9 @@ const LargeFruitDiameterMain = ({
       <Box flex={3} p={2} height="100%" width="100%">
         <LargeFruitDiameterChart data={data} loading={loading} />
       </Box>
-      {/* <Box flex={1} p={3} height="100%" width="100%">
+      <Box flex={1} p={3} height="100%" width="100%">
         <LargeFruitDiameterLastData data={data} />
-      </Box> */}
+      </Box>
     </Stack>
   );
 };

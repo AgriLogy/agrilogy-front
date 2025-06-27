@@ -1,5 +1,5 @@
-import { Box, Text, useColorModeValue } from "@chakra-ui/react";
-import { FaBolt } from "react-icons/fa";
+import { Box, Text, useColorMode, useColorModeValue } from "@chakra-ui/react";
+import { FaCloudShowersHeavy  } from "react-icons/fa";
 import { SensorData } from "@/app/types";
 
 const timeAgo = (timestamp: string): string => {
@@ -25,6 +25,8 @@ const PrecipitationRateLastData = ({ data }: { data: SensorData[] }) => {
 
   const noDataColor = useColorModeValue("gray.600", "gray.300");
   const timeColor = useColorModeValue("gray.500", "gray.400");
+  const { colorMode } = useColorMode();
+  
 
   return (
     <Box
@@ -42,7 +44,10 @@ const PrecipitationRateLastData = ({ data }: { data: SensorData[] }) => {
       alignItems="center"
       textAlign="center"
     >
-      <FaBolt size={50} color="#f4a261" />
+      <FaCloudShowersHeavy
+        size={50}
+        fill={colorMode === "dark" ? "#60a5fa" : "#3b82f6"}
+      />
       <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
         Dernière consommation :
       </Text>

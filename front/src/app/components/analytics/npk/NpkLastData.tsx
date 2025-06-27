@@ -22,6 +22,8 @@ const NpkLastData = ({ data }: { data: NpkSensorData[] }) => {
   const bgColor = useColorModeValue("blue.50", "blue.900");
   const noDataColor = useColorModeValue("gray.600", "gray.300");
   const timeColor = useColorModeValue("gray.500", "gray.400");
+  const textColor = useColorModeValue("gray.600", "gray.300");
+
 
   return (
     <Box

@@ -1,5 +1,5 @@
 import { Box, Text, useColorModeValue } from "@chakra-ui/react";
-import { FaBolt } from "react-icons/fa";
+import { FaFlask  } from "react-icons/fa";
 import { SensorData } from "@/app/types";
 
 const timeAgo = (timestamp: string): string => {
@@ -42,9 +42,9 @@ const PhSoilLastData = ({ data }: { data: SensorData[] }) => {
       alignItems="center"
       textAlign="center"
     >
-      <FaBolt size={50} color="#f4a261" />
+      <FaFlask  size={50} color="#f4a261" />
       <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
-        Dernière consommation :
+        Dernière mesure :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
         {latest ? `${latest.value.toFixed(2)} ${latest.default_unit}` : "N/A"}

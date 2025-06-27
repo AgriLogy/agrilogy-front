@@ -97,7 +97,7 @@ const SoilConductivityChart = ({
 
     URL.revokeObjectURL(url);
   };
-  const labelAngle = useBreakpointValue({ base: -10, md: -3 });
+  const labelAngle = useBreakpointValue({ base: -3, md: 5 });
 
   return (
     <Box width="100%" pr={4} pb={4}>

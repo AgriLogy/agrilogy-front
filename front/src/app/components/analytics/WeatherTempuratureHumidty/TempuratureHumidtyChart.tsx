@@ -58,7 +58,7 @@ const TempuratureHumidtyChart = ({
     base: Math.ceil(mergedData.length / 3),
     md: Math.ceil(mergedData.length / 9),
   });
-  const labelAngle = useBreakpointValue({ base: -15, md: 15 });
+  const labelAngle = useBreakpointValue({ base: -3, md: 5 });
 
   const handleScreenshot = async () => {
     if (chartRef.current) {

@@ -4,6 +4,7 @@ import { SensorData } from "@/app/types";
 import api from "@/app/lib/api";
 import "@/app/styles/style.css";
 import PrecipitationRateChart from "./PrecipitationRateChart";
+import PrecipitationRateLastData from "./WatePrecipitationRateLastData";
 
 const PrecipitationRateMain = ({
   filters,
@@ -44,9 +45,9 @@ const PrecipitationRateMain = ({
       <Box flex={3} p={2} height="100%" width="100%">
         <PrecipitationRateChart data={data} loading={loading} />
       </Box>
-      {/* <Box flex={1} p={3} height="100%" width="100%">
+      <Box flex={1} p={3} height="100%" width="100%">
         <PrecipitationRateLastData data={data} />
-      </Box> */}
+      </Box>
     </Stack>
   );
 };

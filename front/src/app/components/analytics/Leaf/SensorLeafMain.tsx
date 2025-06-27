@@ -49,17 +49,17 @@ const SensorLeafMain = ({
 
   return (
     <Stack direction={{ base: "column", md: "row" }} spacing={2} width="100%" height="100%">
-      <Box flex={1} p={3}>
-        <SensorLeafLastData
-          temperature={temperatureData[temperatureData.length - 1]}
-          moisture={moistureData[moistureData.length - 1]}
-        />
-      </Box>
       <Box flex={3} p={3}>
         <SensorLeafChart
           temperatureData={temperatureData}
           moistureData={moistureData}
           loading={loading}
+        />
+      </Box>
+      <Box flex={1} p={3}>
+        <SensorLeafLastData
+          temperature={temperatureData[temperatureData.length - 1]}
+          moisture={moistureData[moistureData.length - 1]}
         />
       </Box>
     </Stack>

@@ -2,10 +2,16 @@ import { useEffect, useState } from "react";
 import { Stack, Box } from "@chakra-ui/react";
 import api from "@/app/lib/api";
 import WaterSoilChart from "./WaterSoilChart";
+import WaterSoilLastData from "./WaterSoilLastData";
 
 interface SensorEntry {
+  id: number;
   timestamp: string;
   value: number;
+  default_unit: string;
+  available_units: string[];
+  zone: number;
+  user: number;
 }
 
 export interface WaterSoilData {
@@ -28,6 +34,14 @@ const WaterSoilMain = ({
   const { startDate, endDate, selectedZone } = filters;
   const [mergedData, setMergedData] = useState<WaterSoilData[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // NEW: States for last sensor values
+  const [soilLowLast, setSoilLowLast] = useState<SensorEntry | undefined>();
+  const [soilMediumLast, setSoilMediumLast] = useState<
+    SensorEntry | undefined
+  >();
+  const [soilHighLast, setSoilHighLast] = useState<SensorEntry | undefined>();
+  const [waterFlowLast, setWaterFlowLast] = useState<SensorEntry | undefined>();
 
   useEffect(() => {
     const fetchSensor = (endpoint: string) =>
@@ -76,16 +90,34 @@ const WaterSoilMain = ({
           a.timestamp.localeCompare(b.timestamp)
         );
         setMergedData(sorted);
-        console.log(waterRes);
+
+        // SET LAST VALUES
+        setSoilLowLast(lowRes.data.at(-1));
+        setSoilMediumLast(medRes.data.at(-1));
+        setSoilHighLast(highRes.data.at(-1));
+        setWaterFlowLast(waterRes.data.at(-1));
       })
       .catch((err) => console.error("Failed to fetch sensor data:", err))
       .finally(() => setLoading(false));
   }, [startDate, endDate, selectedZone]);
 
   return (
-    <Stack width="100%" height="100%">
-      <Box flex={1} p={3} height="100%">
+    <Stack
+      direction={{ base: "column", md: "row" }}
+      width="100%"
+      height="100%"
+      spacing={4}
+    >
+      <Box flex={3} p={3}>
         {!loading && <WaterSoilChart data={mergedData} />}
+      </Box>
+      <Box flex={1} p={3}>
+        <WaterSoilLastData
+          soilLow={soilLowLast}
+          soilMedium={soilMediumLast}
+          soilHigh={soilHighLast}
+          waterFlow={waterFlowLast}
+        />
       </Box>
     </Stack>
   );

@@ -46,7 +46,7 @@ const NpkSizeChart = ({
     md: Math.ceil(chartData.length / 5),
   });
 
-  const labelAngle = useBreakpointValue({ base: -15, md: 15 });
+  const labelAngle = useBreakpointValue({ base: -3, md: 5 });
 
   const [activeLines, setActiveLines] = useState({
     nitrogen: true,

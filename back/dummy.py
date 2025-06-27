@@ -49,7 +49,7 @@ def create_user1_zone1():
 
     zone, _ = Zone.objects.get_or_create(
         user=user,
-        name="zone de marichage 2",
+        name="zone de marichage 1",
         space= 1750.0,
         defaults={
             "space": 1750.0,
@@ -85,6 +85,26 @@ def SensorDataGenerator(model_class, sensor_name: str, color="#543141"):
         print(f"❌ Failed to create {sensor_name} data: {e}")
 
     print(f"🎉 Successfully created {sensor_name} records for {user.username}!")
+    
+def SensorDataDeletor(model_class, sensor_name: str, user=None, zone=None):
+    print(f"🗑️ Deleting {sensor_name} data...")
+
+    try:
+        queryset = model_class.objects.all()
+
+        if user:
+            queryset = queryset.filter(user=user)
+        if zone:
+            queryset = queryset.filter(zone=zone)
+
+        count = queryset.count()
+        queryset.delete()
+
+        print(f"✅ Deleted {count} {sensor_name} records.")
+    except Exception as e:
+        print(f"❌ Failed to delete {sensor_name} data: {e}")
+
+    print(f"🧹 Cleanup completed for {sensor_name} records.")
 
 
 def NpkSensorGenerator():
@@ -186,51 +206,56 @@ def create_active_graph_for_user_zone(user, zone):
 
 
 active_graph = create_active_graph_for_user_zone(user, zone)
+
+# SensorDataDeletor(WindSpeed, "Wind Speed", user=user, zone=zone)
+# SensorDataDeletor(WindDirection, "Wind Direction", user=user, zone=zone)
+
+
 SensorDataGenerator( WindSpeed, "WindSpeed")
 SensorDataGenerator( WindDirection, "WindDirection")
 
-# NpkSensorGenerator()
+NpkSensorGenerator()
 
-# SensorDataGenerator( Notification, "Notification")
-# SensorDataGenerator( Alert, "Alert")
-# SensorDataGenerator( Zone, "Zone")
-# SensorDataGenerator( KcPeriod, "KcPeriod")
-# SensorDataGenerator( Kc, "Kc")
-# SensorDataGenerator( KcPeriodAssignment, "KcPeriodAssignment")
-# SensorDataGenerator( Et0Calculated, "Et0Calculated")
-# SensorDataGenerator( Et0Weather, "Et0Weather")
-# SensorDataGenerator( PrecipitationRate, "PrecipitationRate")
-# SensorDataGenerator( HumidityWeather, "HumidityWeather")
-# SensorDataGenerator( SolarRadiation, "SolarRadiation")
-# SensorDataGenerator( PressureWeather, "PressureWeather")
-# SensorDataGenerator( TemperatureWeather, "TemperatureWeather")
-# SensorDataGenerator( ECSoilMedium, "ECSoilMedium")
-# SensorDataGenerator( SoilTemperatureMedium, "SoilTemperatureMedium")
-# SensorDataGenerator( ECSoilHigh, "ECSoilHigh")
-# SensorDataGenerator( ECSoilLow, "ECSoilLow")
-# SensorDataGenerator( SoilMoistureMedium, "SoilMoistureMedium")
-# SensorDataGenerator( SoilMoistureHigh, "SoilMoistureHigh")
-# SensorDataGenerator( SoilMoistureLow, "SoilMoistureLow")
-# SensorDataGenerator( PhSoil, "PhSoil")
-# SensorDataGenerator( SoilTemperatureLow, "SoilTemperatureLow")
-# SensorDataGenerator( SoilTemperatureHigh, "SoilTemperatureHigh")
-# SensorDataGenerator( WaterFlowSensor, "WaterFlowSensor")
-# SensorDataGenerator( WaterPressureSensor, "WaterPressureSensor")
-# SensorDataGenerator( WaterECSensor, "WaterECSensor")
-# SensorDataGenerator( PhWaterSensor, "PhWaterSensor")
-# SensorDataGenerator( ElectricityConsumptionSensor, "ElectricityConsumptionSensor")
-# SensorDataGenerator( LeafMoistureSensor, "LeafMoistureSensor")
-# SensorDataGenerator( LeafTemperatureSensor, "LeafTemperatureSensor")
-# SensorDataGenerator( MultiDepthSoilMoistureSensor, "MultiDepthSoilMoistureSensor")
-# SensorDataGenerator( LargeFruitDiameterSensor, "LargeFruitDiameterSensor")
-# SensorDataGenerator( WaterLevelSensor, "WaterLevelSensor")
-# SensorDataGenerator( SoilSalinitySensor, "SoilSalinitySensor")
-# SensorDataGenerator( SoilConductivitySensor, "SoilConductivitySensor")
-# SensorDataGenerator( NpkSensor, "NpkSensor")
-# SensorDataGenerator( FruitSizeSensor, "FruitSizeSensor")
-# SensorDataGenerator( EcSalinitySensor, "EcSalinitySensor")
-# SensorDataGenerator( SensorColor, "SensorColor")
-# SensorDataGenerator( SensorLocation, "SensorLocation")
-# SensorDataGenerator( GraphName, "GraphName")
-# SensorDataGenerator( ActiveGraph, "ActiveGraph")
+SensorDataGenerator( Notification, "Notification")
+SensorDataGenerator( Alert, "Alert")
+SensorDataGenerator( Zone, "Zone")
+SensorDataGenerator( KcPeriod, "KcPeriod")
+SensorDataGenerator( Kc, "Kc")
+SensorDataGenerator( KcPeriodAssignment, "KcPeriodAssignment")
+SensorDataGenerator( Et0Calculated, "Et0Calculated")
+SensorDataGenerator( Et0Weather, "Et0Weather")
+SensorDataGenerator( PrecipitationRate, "PrecipitationRate")
+SensorDataGenerator( HumidityWeather, "HumidityWeather")
+SensorDataGenerator( SolarRadiation, "SolarRadiation")
+SensorDataGenerator( PressureWeather, "PressureWeather")
+SensorDataGenerator( TemperatureWeather, "TemperatureWeather")
+SensorDataGenerator( ECSoilMedium, "ECSoilMedium")
+SensorDataGenerator( SoilTemperatureMedium, "SoilTemperatureMedium")
+SensorDataGenerator( ECSoilHigh, "ECSoilHigh")
+SensorDataGenerator( ECSoilLow, "ECSoilLow")
+SensorDataGenerator( SoilMoistureMedium, "SoilMoistureMedium")
+SensorDataGenerator( SoilMoistureHigh, "SoilMoistureHigh")
+SensorDataGenerator( SoilMoistureLow, "SoilMoistureLow")
+SensorDataGenerator( PhSoil, "PhSoil")
+SensorDataGenerator( SoilTemperatureLow, "SoilTemperatureLow")
+SensorDataGenerator( SoilTemperatureHigh, "SoilTemperatureHigh")
+SensorDataGenerator( WaterFlowSensor, "WaterFlowSensor")
+SensorDataGenerator( WaterPressureSensor, "WaterPressureSensor")
+SensorDataGenerator( WaterECSensor, "WaterECSensor")
+SensorDataGenerator( PhWaterSensor, "PhWaterSensor")
+SensorDataGenerator( ElectricityConsumptionSensor, "ElectricityConsumptionSensor")
+SensorDataGenerator( LeafMoistureSensor, "LeafMoistureSensor")
+SensorDataGenerator( LeafTemperatureSensor, "LeafTemperatureSensor")
+SensorDataGenerator( MultiDepthSoilMoistureSensor, "MultiDepthSoilMoistureSensor")
+SensorDataGenerator( LargeFruitDiameterSensor, "LargeFruitDiameterSensor")
+SensorDataGenerator( WaterLevelSensor, "WaterLevelSensor")
+SensorDataGenerator( SoilSalinitySensor, "SoilSalinitySensor")
+SensorDataGenerator( SoilConductivitySensor, "SoilConductivitySensor")
+SensorDataGenerator( NpkSensor, "NpkSensor")
+SensorDataGenerator( FruitSizeSensor, "FruitSizeSensor")
+SensorDataGenerator( EcSalinitySensor, "EcSalinitySensor")
+SensorDataGenerator( SensorColor, "SensorColor")
+SensorDataGenerator( SensorLocation, "SensorLocation")
+SensorDataGenerator( GraphName, "GraphName")
+SensorDataGenerator( ActiveGraph, "ActiveGraph")
 

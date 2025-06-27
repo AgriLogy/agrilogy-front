@@ -44,6 +44,8 @@ const ET0Main = ({
       .then(([weatherRes, calculatedRes]) => {
         setWeatherData(weatherRes.data);
         setCalculatedData(calculatedRes.data);
+        console.log("weatherRes:", weatherRes.data);
+        console.log("calculatedRes:", calculatedRes.data);
       })
       .catch((err) => {
         console.error("Failed to fetch ET0 sensor data:", err);
@@ -60,7 +62,7 @@ const ET0Main = ({
       height="100%"
       className="Box"
     >
-      <Box flex={3} p={2} height="100%" width="100%">
+      <Box flex={3} p={2} width="100%" height="370px">
         <ET0Chart
           weatherData={weatherData}
           calculatedData={calculatedData}
@@ -68,7 +70,10 @@ const ET0Main = ({
         />
       </Box>
       <Box flex={1} p={3} height="100%" width="100%">
-        <ET0LastData weatherData={weatherData} calculatedData={calculatedData} />
+        <ET0LastData
+          weatherData={weatherData}
+          calculatedData={calculatedData}
+        />
       </Box>
     </Stack>
   );

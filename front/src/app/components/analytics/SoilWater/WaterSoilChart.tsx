@@ -26,10 +26,10 @@ import useColorModeStyles from "@/app/utils/useColorModeStyles";
 const WaterSoilChart = ({ data }: { data: WaterSoilData[] }) => {
   const labelInterval = useBreakpointValue({
     base: Math.ceil(data.length / 3),
-    md: Math.ceil(data.length / 9),
+    md: Math.ceil(data.length / 5),
   });
 
-  const labelAngle = useBreakpointValue({ base: -15, md: 15 });
+  const labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const chartRef = useRef<HTMLDivElement>(null);
 
   const handleScreenshot = async () => {
@@ -63,7 +63,7 @@ const WaterSoilChart = ({ data }: { data: WaterSoilData[] }) => {
   return (
     <Box width="100%" height="100%">
       <Flex justify="space-between" align="center" mb={4}>
-        <Text fontSize="xl" fontWeight="bold" mb={4}>
+        <Text fontSize="xl" fontWeight="bold" mb={4} color={textColor}>
           Évolution de l'humidité du sol et du débit d'eau
         </Text>
         <HStack spacing={2}>
@@ -86,7 +86,7 @@ const WaterSoilChart = ({ data }: { data: WaterSoilData[] }) => {
         </HStack>
       </Flex>
       <Box ref={chartRef}>
-        <ResponsiveContainer width="100%" height={400}>
+        <ResponsiveContainer width="100%" height={300}>
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
@@ -100,7 +100,7 @@ const WaterSoilChart = ({ data }: { data: WaterSoilData[] }) => {
               yAxisId="left"
               domain={[0, 100]}
               label={{
-                value: "Humidité (%)",
+                // value: "Humidité (%)",
                 angle: -90,
                 position: "insideLeft",
               }}

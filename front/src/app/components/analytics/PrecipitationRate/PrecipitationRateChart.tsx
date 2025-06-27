@@ -16,6 +16,7 @@ import {
   Text,
   Button,
   HStack,
+  useColorMode,
 } from "@chakra-ui/react";
 import { FaDownload, FaCamera } from "react-icons/fa";
 import html2canvas from "html2canvas";
@@ -43,7 +44,7 @@ const PrecipitationRateChart = ({
     md: Math.ceil(chartData.length / 5),
   });
 
-  const labelAngle = useBreakpointValue({ base: -15, md: 15 });
+  const labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const { textColor } = useColorModeStyles();
 
   // Legend click handler
@@ -78,7 +79,7 @@ const PrecipitationRateChart = ({
 
     URL.revokeObjectURL(url);
   };
-
+  const { colorMode } = useColorMode();
   return (
     <Box width="100%" pr={4} pb={4}>
       <Flex justify="space-between" align="center" mb={4}>
@@ -137,7 +138,7 @@ const PrecipitationRateChart = ({
               <Bar
                 dataKey="value"
                 name="Taux de précipitation (mm/h)"
-                fill={showBar ? "#82ca9d" : "gray"}
+                fill={colorMode === "dark" ? "#60a5fa" : "#3b82f6"}
                 activeBar={
                   <Rectangle
                     fill={showBar ? "gold" : "gray"}

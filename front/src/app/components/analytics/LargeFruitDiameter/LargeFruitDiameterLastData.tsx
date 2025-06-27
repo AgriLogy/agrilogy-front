@@ -1,5 +1,5 @@
 import { Box, Text, useColorModeValue } from "@chakra-ui/react";
-import { FaBolt } from "react-icons/fa";
+import { FaAppleAlt } from "react-icons/fa";
 import { SensorData } from "@/app/types";
 
 const timeAgo = (timestamp: string): string => {
@@ -18,13 +18,10 @@ const timeAgo = (timestamp: string): string => {
 const LargeFruitDiameterLastData = ({ data }: { data: SensorData[] }) => {
   const latest = data[data.length - 1];
 
-  // Light/Dark mode values
-  const bgColor = useColorModeValue("blue.50", "blue.900");
-  const valueColor = useColorModeValue("blue.700", "blue.200");
+  // Dynamic colors for light/dark modes
+  const bgColor = useColorModeValue("green.100", "green.900");
+  const valueColor = useColorModeValue("green.700", "green.200");
   const textColor = useColorModeValue("gray.600", "gray.300");
-
-  const noDataColor = useColorModeValue("gray.600", "gray.300");
-  const timeColor = useColorModeValue("gray.500", "gray.400");
 
   return (
     <Box
@@ -42,12 +39,12 @@ const LargeFruitDiameterLastData = ({ data }: { data: SensorData[] }) => {
       alignItems="center"
       textAlign="center"
     >
-      <FaBolt size={50} color="#f4a261" />
+      <FaAppleAlt size={50} color="#d1495b" />
       <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
-        Dernière consommation :
+        Dernière taille mesurée :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest ? `${latest.value.toFixed(2)} ${latest.default_unit}` : "N/A"}
+        {latest ? `${latest.value.toFixed(2)} mm` : "N/A"}
       </Text>
       <Text fontSize="sm" color={textColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ""}

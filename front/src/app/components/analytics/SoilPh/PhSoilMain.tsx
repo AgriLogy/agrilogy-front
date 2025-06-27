@@ -4,6 +4,7 @@ import { SensorData } from "@/app/types";
 import api from "@/app/lib/api";
 import "@/app/styles/style.css";
 import PhSoilChart from "./PhSoilChart";
+import PhSoilLastData from "./PhSoilLastData";
 
 const PhSoilMain = ({
   filters,
@@ -44,9 +45,9 @@ const PhSoilMain = ({
       <Box flex={3} p={2} height="100%" width="100%">
         <PhSoilChart data={data} loading={loading} />
       </Box>
-      {/* <Box flex={1} p={3} height="100%" width="100%">
+      <Box flex={1} p={3} height="100%" width="100%">
         <PhSoilLastData data={data} />
-      </Box> */}
+      </Box>
     </Stack>
   );
 };

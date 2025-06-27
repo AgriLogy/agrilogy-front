@@ -48,10 +48,10 @@ const SensorLeafChart = ({
 
   const labelInterval = useBreakpointValue({
     base: Math.ceil(combinedData.length / 3),
-    md: Math.ceil(combinedData.length / 9),
+    md: Math.ceil(combinedData.length / 5),
   });
 
-  const labelAngle = useBreakpointValue({ base: -15, md: 15 });
+  const labelAngle = useBreakpointValue({ base: -3, md: 5 });
 
   const [activeLines, setActiveLines] = useState({
     temperature: true,

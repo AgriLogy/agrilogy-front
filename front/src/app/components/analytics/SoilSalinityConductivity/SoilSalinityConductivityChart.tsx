@@ -45,9 +45,10 @@ const SoilSalinityConductivityChart = ({
 
   const labelInterval = useBreakpointValue({
     base: Math.ceil(Math.max(salinityData.length, conductivityData.length) / 3),
-    md: Math.ceil(Math.max(salinityData.length, conductivityData.length) / 9),
+    md: Math.ceil(Math.max(salinityData.length, conductivityData.length) / 5),
   });
-  const labelAngle = useBreakpointValue({ base: -15, md: 15 });
+  // const labelAngle = useBreakpointValue({ base: -15, md: 15 });
+  const labelAngle = useBreakpointValue({ base: -3, md: 5 });
 
   const timestamps = Array.from(
     new Set([
@@ -178,6 +179,7 @@ const SoilSalinityConductivityChart = ({
               />
 
               <Brush
+                y={238}
                 dataKey="name"
                 height={30}
                 stroke="#8884d8"

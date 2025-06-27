@@ -66,7 +66,7 @@ const CumulPrecipitationChart = ({
     base: Math.ceil(chartData.length / 3),
     md: Math.ceil(chartData.length / 5),
   });
-  const labelAngle = useBreakpointValue({ base: -15, md: 15 });
+  const labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const { textColor, bgColor } = useColorModeStyles();
 
   const handleScreenshot = async () => {
@@ -103,7 +103,7 @@ const CumulPrecipitationChart = ({
   const legendTextColor = textColor;
 
   return (
-    <Box width="100%" pr={4} pb={4}  borderRadius="md" p={4}>
+    <Box width="100%" pr={4} pb={4} borderRadius="md" p={4}>
       <Flex justify="space-between" align="center" mb={4}>
         <Text fontSize="xl" fontWeight="bold" color={textColor}>
           Précipitations cumulées par période (mm)
@@ -128,7 +128,7 @@ const CumulPrecipitationChart = ({
         </HStack>
       </Flex>
 
-      <Box ref={chartRef} height="300px"  borderRadius="md" p={2}>
+      <Box ref={chartRef} height="300px" borderRadius="md" p={2}>
         {loading ? (
           <EmptyBox text="Chargement..." />
         ) : chartData.length === 0 ? (
@@ -143,24 +143,24 @@ const CumulPrecipitationChart = ({
               <XAxis
                 dataKey="period"
                 angle={labelAngle}
-                interval={labelInterval}
                 textAnchor="middle"
-                stroke={axisTickColor}
-                tick={{ fill: axisTickColor }}
-                tickLine={{ stroke: axisTickColor }}
-                axisLine={{ stroke: axisTickColor }}
+                interval={labelInterval}
+                // stroke={axisTickColor}
+                // tick={{ fill: axisTickColor }}
+                // tickLine={{ stroke: axisTickColor }}
+                // axisLine={{ stroke: axisTickColor }}
               />
               <YAxis
-                label={{
-                  angle: -90,
-                  value: "mm",
-                  position: "insideLeft",
-                  fill: axisTickColor,
-                }}
-                stroke={axisTickColor}
-                tick={{ fill: axisTickColor }}
-                tickLine={{ stroke: axisTickColor }}
-                axisLine={{ stroke: axisTickColor }}
+              // label={{
+              //   angle: -90,
+              //   value: "mm",
+              //   position: "insideLeft",
+              //   fill: axisTickColor,
+              // }}
+              // stroke={axisTickColor}
+              // tick={{ fill: axisTickColor }}
+              // tickLine={{ stroke: axisTickColor }}
+              // axisLine={{ stroke: axisTickColor }}
               />
               <Tooltip
                 contentStyle={tooltipStyle}
