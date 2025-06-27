@@ -3,10 +3,10 @@ import { Grid, GridItem } from "@chakra-ui/react";
 import React,  { useEffect } from "react";
 import Header from "./components/main/Header";
 import Navbar from "./components/main/Sidebar";
-import { MainContent } from "./components/dashboard/MainContent";
 import useColorModeStyles from "./utils/useColorModeStyles";
 import { useRouter } from "next/navigation";
 import { checkAuthTokens } from "./lib/checkAuthTokens";
+import MainContent from "./components/dashboard/MainContent";
 
 
 
