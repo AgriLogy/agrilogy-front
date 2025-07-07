@@ -91,6 +91,7 @@ import { SensorData } from "@/app/types";
 import PhSoilLastData from "../analytics/SoilPh/PhSoilLastData";
 import FormModalCreate from "../alert/FormModalCreate";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
+import GoogleMapWeather from "../GoogleMapWeather";
 
 // Simulated sensor groups (you can load these from the backend)
 const SENSOR_CATEGORIES = [
@@ -153,7 +154,6 @@ export default function Dashboard() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { bg } = useColorModeStyles();
 
-
   const openAlertModal = (sensor: string) => {
     setSelectedSensor(sensor);
     onOpen();
@@ -178,7 +178,6 @@ export default function Dashboard() {
           <Heading mb={6}>Tableau de bord des capteurs</Heading>
         </Box>
       </div>
-
       {SENSOR_CATEGORIES.map((category) => (
         <Box key={category.title} mb={10}>
           <Heading size="md" mb={4}>
@@ -204,12 +203,16 @@ export default function Dashboard() {
                   >
                     Créer une alerte
                   </Button>
+                  //{" "}
                 </VStack>
               </Box>
             ))}
           </SimpleGrid>
         </Box>
       ))}
+      <Box bg={bg} height="500px" className="box wide">
+        <GoogleMapWeather />
+      </Box>
       {selectedSensor && (
         <FormModalCreate
           isOpen={isOpen}

@@ -236,3 +236,33 @@ class AdminSignUpAPIView(APIView):
             return Response({'status': 'Account created successfully'}, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# views.py
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from django.core.mail import send_mail
+from django.utils.timezone import now
+from .notification_helper import perform_calculations
+
+class SendNotificationEmailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        try:
+            message = perform_calculations(user)
+            send_mail(
+                subject="Mise à jour de votre terrain agricole",
+                message=message,
+                from_email="noreply@votreapp.com",
+                # recipient_list=[user.email]
+                recipient_list=["makhkhas.zakaria@gmail.com", "contact.agrilogy@gmail.com"]
+            )
+
+            return Response({"success": True, "message": "Email envoyé avec succès."})
+
+        except Exception as e:
+            return Response({"success": False, "error": str(e)}, status=500)
