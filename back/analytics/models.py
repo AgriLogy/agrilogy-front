@@ -170,7 +170,8 @@ class Et0Calculated(models.Model):
     def __str__(self):
         return f"ET0 Calculated ({self.value} mm/day) at {self.timestamp} in Zone {self.zone_id}"
 
-
+# receive data each : 10 minutes
+@receiver(post_save, sender=Notification)
 class Et0Weather(models.Model):
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="et0_weather")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="et0_weather_per_user")    
@@ -188,6 +189,7 @@ class Et0Weather(models.Model):
     def __str__(self):
         return f"ET0 ({self.value} mm/day) at {self.timestamp} in Zone {self.zone_id}"
 
+# receive data each : 10 minutes
 class PrecipitationRate(models.Model):
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="precipitation_rates")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="precipitation_rates_per_user")    

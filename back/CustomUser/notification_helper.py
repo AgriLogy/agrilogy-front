@@ -21,16 +21,16 @@ def perform_calculations(user):
 
     # Données fictives simulées pour l'exemple
     temp_avg = 26
-    humidity_avg = 45
+    humidity_avg = 45 #HumidityWeather : moyenne de l'humidité de l'air d'une journée
     evap_mm = 3.2
     last_irrigation_date = "05/06/2025"
     last_irrigation_amount = "50L/1h"
-    soil_moisture = 38
-    soil_temp = 23
-    ec = 1.1
-    npk = "80/40/20"
-    salinity = "2.3 dS/m / 1600 mg/L"
-    irrigation_decision = "500 litres → 50 minutes"
+    soil_moisture = 38 # dyal lahda li katjik notification
+    soil_temp = 23    # dyal lahda li katjik notification
+    ec = 1.1  # dyal lahda li katjik notification
+    npk = "80/40/20" # dyal lahda li katjik notification
+    salinity = "2.3 dS/m / 1600 mg/L" # dyal lahda li katjik notification
+    irrigation_decision = "500 litres → 50 minutes"  
 
     message = f"""\
 Bonjour {user_name}
