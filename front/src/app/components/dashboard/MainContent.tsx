@@ -59,7 +59,7 @@ const MainContent = () => {
       <Box bg={bg} className="box">
         {/* <SensorDataTable data={sensorData} /> */}
       </Box>
-      <Box bg={bg} className="box">
+      <Box bg={bg} className="box" pt={4} pl={4}>
         <ElectrovannesList />
       </Box>
       <Box bg={bg} className="box wide">

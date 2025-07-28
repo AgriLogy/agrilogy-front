@@ -10,7 +10,6 @@ import {
   useColorMode,
   Spinner,
 } from "@chakra-ui/react";
-import axios from "axios";
 import ZoneCard from "../admin/ZoneCard";
 import EmptyBox from "../common/EmptyBox";
 import api from "@/app/lib/api";
