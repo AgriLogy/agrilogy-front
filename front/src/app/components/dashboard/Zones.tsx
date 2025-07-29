@@ -12,7 +12,9 @@ import {
 } from "@chakra-ui/react";
 import ZoneCard from "../admin/ZoneCard";
 import EmptyBox from "../common/EmptyBox";
-import api from "@/app/lib/api";
+// import api from "@/app/lib/api";
+import { zonesLst } from "@/app/data/dashboard/zones";
+// Or create 'src/app/types/zone.ts' and export 'zonesLst' from it.
 
 interface Zone {
   id: number;
@@ -23,9 +25,9 @@ interface Zone {
   critical_moisture_threshold: number;
 }
 
-interface ZonePerUser {
-  zone: Zone;
-}
+// interface ZonePerUser {
+//   zone: Zone;
+// }
 
 const Zones = () => {
   const [zones, setZones] = useState<Zone[]>([]);
@@ -38,12 +40,12 @@ const Zones = () => {
   useEffect(() => {
     const fetchZones = async () => {
       try {
-        const response = await api.get<ZonePerUser[]>(
-          "/api/auth-zone-per-user/"
-        );
-
-        const zonesFromAPI = response.data.map((item) => item.zone);
-        setZones(zonesFromAPI);
+        // const response = await api.get<ZonePerUser[]>(
+        //   "/api/auth-zone-per-user/"
+        // );
+        // const zonesFromAPI = response.data.map((item) => item.zone);
+        // setZones(zonesFromAPI);
+        setZones(zonesLst);
       } catch (error) {
         console.error("Failed to fetch zones:", error);
       } finally {
