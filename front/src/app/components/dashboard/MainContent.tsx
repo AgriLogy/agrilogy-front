@@ -1,46 +1,13 @@
 import "./MainContent.css";
 import { Box, Text } from "@chakra-ui/react";
 import Zones from "./Zones";
-import SensorDataTable from "../SensorDataTable";
-import StatusIndicators from "./StatusIndicators"; // Import the new component
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import GoogleMapWeather from "../GoogleMapWeather";
-// import axiosInstance from "@/app/lib/axiosInstance";
 import ElectrovannesList from "./ElectrovannesList";
+import WeatherDashboard from "./WeatherDashboard";
 
 const MainContent = () => {
   const { bg, textColor } = useColorModeStyles();
-  // const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState<string | null>(null);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await axiosInstance.get("/api/all-sensor-data/");
-  //       console.log("API Response:", response.data); // Log the API response to inspect its structure
-
-  //       // If response.data has a key "sensor_data" containing the array:
-  //       const data: SensorData[] = response.data.sensor_data || []; // Fallback to empty array if sensor_data is missing
-  //       setSensorData(data);
-  //     } catch (err) {
-  //       setError(err instanceof Error ? err.message : "Unknown error");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
-
-  // if (loading) return <EmptyBox/>;
-
-
-  // if (error ) {
-  //   if (error === "Network Error")
-  //       window.location.href = "/login";
-  //   return <Text color="red.500">[MainContent] Error: {error}</Text>;
-  // }
-
   return (
     <div className="container">
       <Box bg={bg} className="header">
@@ -50,14 +17,9 @@ const MainContent = () => {
         <Zones />
       </Box>
       <Box bg={bg} className="box">
-        {/* <StatusIndicators
-          humidity={sensorData[0]?.humidity_weather}
-          solarRadiation={sensorData[0]?.solar_radiation}
-          solarPanelVoltage={sensorData[0]?.solar_radiation}
-        /> */}
       </Box>
       <Box bg={bg} className="box">
-        {/* <SensorDataTable data={sensorData} /> */}
+        <WeatherDashboard/>
       </Box>
       <Box bg={bg} className="box" pt={4} pl={4}>
         <ElectrovannesList />

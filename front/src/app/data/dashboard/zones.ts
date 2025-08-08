@@ -13,4 +13,4 @@ interface Zone {
   { id: 3, name: 'Zone 3', space: 90, kc: 0.9, soil_type: "sandy", critical_moisture_threshold: 25 },
   { id: 4, name: 'Zone 4', space: 110, kc: 0.85, soil_type: "others", critical_moisture_threshold: 32 },
   ];
-  
+    
