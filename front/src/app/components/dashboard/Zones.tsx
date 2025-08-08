@@ -12,9 +12,7 @@ import {
 } from "@chakra-ui/react";
 import ZoneCard from "../admin/ZoneCard";
 import EmptyBox from "../common/EmptyBox";
-// import api from "@/app/lib/api";
 import { zonesLst } from "@/app/data/dashboard/zones";
-// Or create 'src/app/types/zone.ts' and export 'zonesLst' from it.
 
 interface Zone {
   id: number;
@@ -25,17 +23,12 @@ interface Zone {
   critical_moisture_threshold: number;
 }
 
-// interface ZonePerUser {
-//   zone: Zone;
-// }
-
 const Zones = () => {
   const [zones, setZones] = useState<Zone[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
+  const { colorMode } = useColorMode();
   const tableBg = useColorModeValue("white", "gray.800");
   const p = useBreakpointValue({ base: 2, md: 4 });
-  const { colorMode } = useColorMode();
 
   useEffect(() => {
     const fetchZones = async () => {
@@ -58,7 +51,6 @@ const Zones = () => {
 
   const handleZoneClick = (zoneId: number) => {
     console.log(`Redirecting to config page for zone ${zoneId}`);
-    // You can use router.push if using Next.js routing
   };
 
   return (

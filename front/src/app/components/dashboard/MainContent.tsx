@@ -14,12 +14,11 @@ const MainContent = () => {
         <Text color={textColor}>Dashboard</Text>
       </Box>
       <Box bg={bg} className="box">
+        <WeatherDashboard />
+      </Box>
+      <Box bg={bg} className="box"></Box>
+      <Box bg={bg} className="box">
         <Zones />
-      </Box>
-      <Box bg={bg} className="box">
-      </Box>
-      <Box bg={bg} className="box">
-        <WeatherDashboard/>
       </Box>
       <Box bg={bg} className="box" pt={4} pl={4}>
         <ElectrovannesList />
@@ -31,4 +30,4 @@ const MainContent = () => {
   );
 };
 
-export default MainContent ;
+export default MainContent;

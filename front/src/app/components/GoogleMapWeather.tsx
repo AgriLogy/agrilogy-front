@@ -1,11 +1,20 @@
 import { Box, Heading, useBreakpointValue } from "@chakra-ui/react";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import useColorModeStyles from "../utils/useColorModeStyles";
 import weather from "../public/weather.png";
+import Loading from "./common/Loading";
 const GoogleMapWeather = () => {
   const p = useBreakpointValue({ base: 2, md: 4 });
   const { bg, textColor } = useColorModeStyles();
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    setLoading(false);
+  }, [loading]);
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <Box
