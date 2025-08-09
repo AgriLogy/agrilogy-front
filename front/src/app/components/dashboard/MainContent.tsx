@@ -25,6 +25,7 @@ const MainContent = () => {
       </Box>
       <Box bg={bg} className="box wide">
         <GoogleMapWeather />
+        {/* <OpenStreetMap lon={lon} lat={lat} /> */}
       </Box>
     </div>
   );

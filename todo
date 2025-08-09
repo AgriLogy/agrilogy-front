@@ -3,4 +3,6 @@ todo :
     Générer ce message en HTML responsive
     Utiliser templates d’emails Django (render_to_string)
     Ajouter des logs ou sauvegarder les mails envoyés
-  - 
+  - et0 calculated
+  - maps 
+  - dashboard text size
