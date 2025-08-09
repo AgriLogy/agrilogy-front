@@ -22,7 +22,7 @@ const ElectrovanCard = ({ electrovanne, onClick }: Props) => {
     return (
       <Box
         bg={bg}
-        p={4}
+        p={2}
         borderWidth="1px"
         borderRadius="xl"
         boxShadow="md"

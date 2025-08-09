@@ -56,7 +56,6 @@ const WeatherDashboard = () => {
   const p = useBreakpointValue({ base: 2, md: 4 });
   const { hoverColor } = useColorModeStyles();
 
-  // const { colorMode } = useColorMode();
 
   useEffect(() => {
     const fetchWeather = async () => {

@@ -3,9 +3,9 @@ import { Box, Text, SimpleGrid } from "@chakra-ui/react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import axiosInstance from "@/app/lib/api";
 import ZoneCard from "./ZoneCard";
-import ZoneEditModal from "./ZoneEditModal"; // Import ZoneEditModal
+import ZoneEditModal from "./ZoneEditModalAdmin"; // Import ZoneEditModal
 import { Zone, ZoneWrapper } from "@/app/types";
-import ZoneAddFloatingButton from "./ZoneAddFloatingButton";
+import ZoneAddFloatingButton from "./ZoneAddFloatingButtonAdmin";
 import EmptyBox from "../common/EmptyBox";
 
 type Props = {

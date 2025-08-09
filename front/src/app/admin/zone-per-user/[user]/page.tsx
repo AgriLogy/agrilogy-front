@@ -4,7 +4,7 @@ import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import { Grid, GridItem } from "@chakra-ui/react";
 import HeaderAdmin from "@/app/components/main/AdminHeader";
 import AdminSidebar from "@/app/components/main/AdminSidebar";
-import ZoneMain from "@/app/components/admin/ZoneMain";
+import ZoneMain from "@/app/components/admin/ZoneMainAdmin";
 type Params = {
   user: string;
 };

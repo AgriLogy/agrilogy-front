@@ -1,7 +1,7 @@
 export type Electrovanne = {
   id: number;
   vanneName: string;
-  statusMode: 'manuel' | 'auto';
+  statusMode: 'manual' | 'auto';
   devEUI: string;
   isActivated: boolean;
 };
@@ -10,7 +10,7 @@ export const electrovanneList: Electrovanne[] = [
   {
     id: 1,
     vanneName: 'Vanne Nord',
-    statusMode: 'manuel',
+    statusMode: 'manual',
     devEUI: '00124A0007B4F1A1',
     isActivated: false,
   },
@@ -24,7 +24,7 @@ export const electrovanneList: Electrovanne[] = [
   {
     id: 3,
     vanneName: 'Vanne Est',
-    statusMode: 'manuel',
+    statusMode: 'manual',
     devEUI: '00124A0007B4F1C3',
     isActivated: false,
   },
@@ -38,7 +38,7 @@ export const electrovanneList: Electrovanne[] = [
   {
     id: 5,
     vanneName: 'Vanne Centrale',
-    statusMode: 'manuel',
+    statusMode: 'manual',
     devEUI: '00124A0007B4F1E5',
     isActivated: false,
   },

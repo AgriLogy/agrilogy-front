@@ -1,50 +1,52 @@
-import { Box, Heading, useBreakpointValue } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import useColorModeStyles from "../utils/useColorModeStyles";
-import Loading from "./common/Loading";
-import OpenStreetMap from "./OpenStreetMap";
+import { Box, useBreakpointValue } from "@chakra-ui/react";
+import Loading from "@component/common/Loading";
+import DashboardCard from "@component/dashboard/DashboardCard";
+import OpenStreetMap from "@component/OpenStreetMap";
+// import MapboxMap from "./MapboxMap";
 
 const GoogleMapWeather = () => {
   const p = useBreakpointValue({ base: 2, md: 4 });
-  const { bg, textColor } = useColorModeStyles();
   const [loading, setLoading] = useState(true);
-  const lat = 32.88986;
-  const lon = -6.914351;
 
+  const lat = 32.88986; // Latitude for the map
+  const lon = -6.914351; // Longitude for the map
+
+  // Use effect to simulate fetching data or performing initial setup
   useEffect(() => {
-    setLoading(false);
+    setLoading(false); // Set loading to false once data is ready (simulated here)
   }, [loading]);
 
-  if (loading) {
-    return <Loading />;
-  }
+  // Content of the DashboardCard
+  const content = loading ? (
+    <Loading />
+  ) : (
+    <Box
+      maxW="100%"
+      maxH={{ base: "300px", md: "500px" }}
+      height="100%"
+      width="100%"
+      borderRadius="md"
+      overflow="hidden"
+    >
+      {/* <MapboxMap lat={lat} lon={lon} /> */}
+      <OpenStreetMap lat={lat} lon={lon} />
+    </Box>
+  );
 
   return (
     <Box
       width="100%"
       height="100%"
-      bg={bg}
-      borderRadius="md"
-      boxShadow="lg"
+      // borderRadius="md"
+      // boxShadow="lg"
       p={p}
-      overflowX="auto" // Ensure horizontal scroll is supported
+      overflowX="auto"
     >
-      <Heading as="h3" size="md" color={textColor} mb={4}>
-        Localisation de la Station Météorologique
-      </Heading>
-      
-      {/* Use Chakra UI Box for OpenStreetMap container */}
-      <Box
-        maxW="100%"           // Allow full width but restrict it on large screens
-        maxH={{ base: "300px", md: "500px" }} // Maximum height based on screen size
-        height="100%"         // Take up 100% of available height in the parent container
-        width="100%"          // Take up 100% of available width in the parent container
-        borderRadius="md"
-        overflow="hidden"     // Hide overflow to avoid stretching
-        boxShadow="md"
-      >
-        <OpenStreetMap lat={lat} lon={lon} />
-      </Box>
+      <DashboardCard
+        title="Localisation"
+        content={content}
+      />
     </Box>
   );
 };

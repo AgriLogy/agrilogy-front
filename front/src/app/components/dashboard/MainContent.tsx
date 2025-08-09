@@ -1,9 +1,9 @@
 import "./MainContent.css";
 import { Box, Text } from "@chakra-ui/react";
-import Zones from "./Zones";
+import Zones from "./ZonesDashboardCard";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import GoogleMapWeather from "../GoogleMapWeather";
-import ElectrovannesList from "./ElectrovannesList";
+import ElectrovannesList from "./ElectrovannesDashboardCard";
 import WeatherDashboard from "./WeatherDashboard";
 
 const MainContent = () => {
@@ -11,21 +11,19 @@ const MainContent = () => {
   return (
     <div className="container">
       <Box bg={bg} className="header">
-        <Text color={textColor}>Dashboard</Text>
+        <Text color={textColor}>Tableau de board</Text>
+      </Box>
+      <Box bg={bg} className="box">
+        <GoogleMapWeather />
       </Box>
       <Box bg={bg} className="box">
         <WeatherDashboard />
       </Box>
-      <Box bg={bg} className="box"></Box>
       <Box bg={bg} className="box">
         <Zones />
       </Box>
-      <Box bg={bg} className="box" pt={4} pl={4}>
+      <Box bg={bg} className="box">
         <ElectrovannesList />
-      </Box>
-      <Box bg={bg} className="box wide">
-        <GoogleMapWeather />
-        {/* <OpenStreetMap lon={lon} lat={lat} /> */}
       </Box>
     </div>
   );

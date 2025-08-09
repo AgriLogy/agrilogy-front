@@ -18,7 +18,7 @@ import { AddIcon } from "@chakra-ui/icons";
 interface Props {
   user : string;
 }
-import ZoneModalAddFormComponent from "./ZoneModalAddForm"; // Adjust path
+import ZoneModalAddFormComponent from "./ZoneModalAddFormAdmin"; // Adjust path
 
 const ZoneAddFloatingButton = ({ user }: Props) => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
