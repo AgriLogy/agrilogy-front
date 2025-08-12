@@ -95,7 +95,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
           <Input
             color={textColor}
             type="date"
-            maxW="130px" // ✅ Keep narrow
+            maxW="160px" // ✅ Keep narrow
             value={manualStartDate}
             onChange={(e) => setManualStartDate(e.target.value)}
           />
@@ -103,7 +103,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
           <Input
             color={textColor}
             type="date"
-            maxW="130px"
+            maxW="160px"
             value={manualEndDate}
             onChange={(e) => setManualEndDate(e.target.value)}
           />
