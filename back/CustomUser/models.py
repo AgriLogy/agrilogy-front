@@ -28,6 +28,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     lastname = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
+    longitude = models.FloatField(blank=True, null=True)
+    latitude = models.FloatField(blank=True, null=True)
     payement_status = models.CharField(
         max_length=100,
         choices=[('actif', 'Actif'), ('suspended', 'Suspended')],

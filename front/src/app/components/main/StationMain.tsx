@@ -88,18 +88,17 @@ const StationMain = () => {
         />
       </Box>
 
-      {/* Conditionally render based on activeGraph */}
-      {/* {activeGraph?.weather_temperature_humidity_status && (
+      {activeGraph?.weather_temperature_humidity_status && (
         <Box bg={bg} className="box wide">
           <TempuratureHumidtyMain filters={filters} />
         </Box>
-      )} */}
+      )}
       {activeGraph?.et0_status && (
         <Box bg={bg} className="box wide">
           <ET0Main filters={filters} />
         </Box>
       )}
-      {/* {activeGraph?.wind_speed_status && (
+      {activeGraph?.wind_speed_status && (
         <Box bg={bg} className="box wide">
           <WindSpeedMain filters={filters} />
         </Box>
@@ -123,7 +122,7 @@ const StationMain = () => {
         <Box bg={bg} className="box wide">
           <PrecipitationRateMain filters={filters} />
         </Box>
-      )} */}
+      )} 
     </div>
   );
 };

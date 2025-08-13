@@ -29,7 +29,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
 class AdminModifyUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'firstname', 'lastname', 'phone_number', 'payement_status', 'is_staff']
+        fields = ['username', 'email', 'firstname', 'lastname', 'phone_number', 'payement_status', 'is_staff', 'longitude', 'latitude']
 
 class AdminCreateUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)

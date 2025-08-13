@@ -44,7 +44,7 @@ const SolarRadiationLastData = ({ data }: { data: SensorData[] }) => {
         Dernière radiation solaire :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest ? `${(latest.value / 1000).toFixed(2)} MJ/m²` : "N/A"}
+        {latest ? `${(latest.value / 1000).toFixed(2)} W/M²` : "N/A"}
       </Text>
       <Text fontSize="sm" color={timeColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ""}

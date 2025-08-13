@@ -11,6 +11,8 @@ import {
   Text,
   Select,
   useToast,
+  HStack,
+  Spinner,
 } from "@chakra-ui/react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import axiosInstance from "@/app/lib/api";
@@ -22,7 +24,7 @@ type Props = {
 
 const ModifyUser = ({ user }: Props) => {
   const toast = useToast();
-  const { bg, textColor, hoverColor, bgColor } = useColorModeStyles();
+  const { bg, textColor, hoverColor } = useColorModeStyles();
 
   const [formData, setFormData] = useState({
     username: user,
@@ -31,7 +33,11 @@ const ModifyUser = ({ user }: Props) => {
     email: "",
     phone_number: "",
     is_staff: "",
+    latitude: "",
+    longitude: "",
   });
+
+  const [loadingLocation, setLoadingLocation] = useState(false);
 
   // Fetch user data on component mount
   useEffect(() => {
@@ -41,10 +47,12 @@ const ModifyUser = ({ user }: Props) => {
           `/auth/modify-user/?username=${user}`
         );
         if (response.status === 200) {
-          setFormData({
-            ...formData,
-            ...response.data, // Populate form fields with user data
-          });
+          setFormData((prev) => ({
+            ...prev,
+            ...response.data,
+            latitude: response.data.latitude ?? "",
+            longitude: response.data.longitude ?? "",
+          }));
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -66,6 +74,49 @@ const ModifyUser = ({ user }: Props) => {
   ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleFillLocation = () => {
+    if (!navigator.geolocation) {
+      toast({
+        title: "Error",
+        description: "Geolocation is not supported by your browser.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setLoadingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setFormData((prev) => ({
+          ...prev,
+          latitude: position.coords.latitude.toString(),
+          longitude: position.coords.longitude.toString(),
+        }));
+        setLoadingLocation(false);
+        toast({
+          title: "Success",
+          description: "Location filled successfully!",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      },
+      (error) => {
+        setLoadingLocation(false);
+        toast({
+          title: "Error",
+          description: "Failed to get location. Please try again.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+        console.error("Geolocation error:", error);
+      }
+    );
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -180,9 +231,45 @@ const ModifyUser = ({ user }: Props) => {
               </Select>
             </FormControl>
 
+            {/* New Latitude and Longitude fields */}
+            <FormControl id="latitude">
+              <FormLabel>Latitude</FormLabel>
+              <Input
+                type="text"
+                name="latitude"
+                value={formData.latitude}
+                onChange={handleChange}
+                placeholder="Enter latitude"
+              />
+            </FormControl>
+
+            <FormControl id="longitude">
+              <FormLabel>Longitude</FormLabel>
+              <Input
+                type="text"
+                name="longitude"
+                value={formData.longitude}
+                onChange={handleChange}
+                placeholder="Enter longitude"
+              />
+            </FormControl>
+
+            <HStack width="100%" justify="flex-end" spacing={3}>
+              <Button
+                onClick={handleFillLocation}
+                colorScheme="teal"
+                isLoading={loadingLocation}
+                loadingText="Fetching location"
+                size="sm"
+              >
+                Remplir la position automatiquement
+              </Button>
+            </HStack>
+
             <Button
               type="submit"
-              bg={bgColor}
+              // bg={bgColor}
+              colorScheme="blue"
               color="white"
               _hover={{ bg: hoverColor }}
               width="100%"
