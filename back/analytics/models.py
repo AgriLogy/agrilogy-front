@@ -180,7 +180,7 @@ class Et0Weather(models.Model):
 
     @property
     def default_unit(self) -> str:
-        return "mm/day"
+        return "mm/day"  
 
     @property
     def available_units(self) -> List[str]:
@@ -250,7 +250,7 @@ class SolarRadiation(models.Model):
 
     @property
     def available_units(self) -> List[str]:
-        return ["W/m²"]
+        return ["W/m²"]  # mj/m2 add
 
 
 class PressureWeather(models.Model):
@@ -265,7 +265,7 @@ class PressureWeather(models.Model):
 
     @property
     def available_units(self) -> List[str]:
-        return ["hPa", "Pa", "atm"]
+        return ["hPa", "bar", "kpa"]
 
 
 class WindDirection(models.Model):
@@ -306,11 +306,11 @@ class ECSoilMedium(models.Model):
         
     @property
     def default_unit(self) -> str:
-        return "dS/m"
+        return "dS/m"    #default is us/cm
 
     @property
     def available_units(self) -> List[str]:
-        return ["dS/m"]
+        return ["dS/m"]   #add ms/cm
 
 
 class SoilTemperatureMedium(models.Model):
@@ -336,11 +336,11 @@ class ECSoilHigh(models.Model):
         
     @property
     def default_unit(self) -> str:
-        return "dS/m"
+        return "dS/m" # the same of ECSoilMedium
 
     @property
     def available_units(self) -> List[str]:
-        return ["dS/m"]
+        return ["dS/m"]  #the same 
 
 
 class ECSoilLow(models.Model):
@@ -351,11 +351,11 @@ class ECSoilLow(models.Model):
         
     @property
     def default_unit(self) -> str:
-        return "dS/m"
+        return "dS/m" #the same
 
     @property
     def available_units(self) -> List[str]:
-        return ["dS/m"]
+        return ["dS/m"] # the same
 
 
 class SoilMoistureMedium(models.Model):
@@ -456,11 +456,11 @@ class WaterFlowSensor(models.Model):
         
     @property
     def default_unit(self) -> str:
-        return "L/s"
+        return "L/s" #default is m3/h
 
     @property
     def available_units(self) -> List[str]:
-        return ["L/s", "m³/h"]
+        return ["L/s", "m³/h"]  # l/min hayd l/s
 
 class WaterPressureSensor(models.Model):
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="water_pressure_sensors")
@@ -470,7 +470,7 @@ class WaterPressureSensor(models.Model):
         
     @property
     def default_unit(self) -> str:
-        return "Bar/s"
+        return "Bar/s"  # bar
 
     @property
     def available_units(self) -> List[str]:
@@ -519,7 +519,7 @@ class ElectricityConsumptionSensor(models.Model):
 
     @property
     def available_units(self) -> List[str]:
-        return ["kWh", "Wh"]
+        return ["kWh", "Wh"] # not preority don't change it
 
 
 class LeafMoistureSensor(models.Model):
@@ -605,7 +605,7 @@ class SoilSalinitySensor(models.Model):
     
     @property
     def default_unit(self) -> str:
-        return "dS/m"
+        return "mg/m"  #default mg/l
 
     @property
     def available_units(self) -> List[str]:
@@ -671,7 +671,7 @@ class FruitSizeSensor(models.Model):
         
     @property
     def default_unit(self) -> str:
-        return "mm"
+        return "mm" 
 
     @property
     def available_units(self) -> List[str]:

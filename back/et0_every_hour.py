@@ -31,7 +31,6 @@ from datetime import datetime
 def calculate_et0(lat, lon, avg_temp, avg_air_pressure, humidity, avg_solar_radiation, avg_wind_speed, day_of_year=None):
     """
     Calculates ET0 (mm/day) using FAO-56 Penman-Monteith method.
-    
     lat: latitude in decimal degrees
     lon: longitude in decimal degrees (not used directly here)
     avg_temp: mean air temperature (°C)
@@ -73,7 +72,7 @@ def calculate_et0(lat, lon, avg_temp, avg_air_pressure, humidity, avg_solar_radi
     # Psychrometric constant
     gamma = 0.000665 * avg_air_pressure
 
-    # Soil heat flux (daily) ≈ 0
+    # Soil heat flux (daily) ≈ 0   //need to clarify
     G = 0
 
     # Net radiation approximation

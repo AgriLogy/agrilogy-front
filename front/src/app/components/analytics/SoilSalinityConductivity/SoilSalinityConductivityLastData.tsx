@@ -1,4 +1,4 @@
-import { Box, Text, useColorModeValue, VStack } from "@chakra-ui/react";
+import { Box, Text, useColorModeValue } from "@chakra-ui/react";
 import { FaTint, FaRulerCombined } from "react-icons/fa";
 import { SensorData } from "@/app/types";
 
@@ -53,7 +53,7 @@ const SoilSalinityConductivityLastData = ({
           Dernière salinité :
         </Text>
         <Text fontSize="2xl" color={valueColor}>
-          {latestSalinity ? `${latestSalinity.value.toFixed(2)} dS/m` : "N/A"}
+          {latestSalinity ? `${latestSalinity.value.toFixed(2)} mg/l` : "N/A"}
         </Text>
         <Text fontSize="sm" color={textColor}>
           {latestSalinity
