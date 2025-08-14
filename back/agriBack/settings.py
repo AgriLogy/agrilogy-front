@@ -221,3 +221,14 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'z.mks.iii@gmail.com'
 EMAIL_HOST_PASSWORD = 'mzwu tuho ptze cvqy'
+
+
+
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    'send-email-every-morning': {
+        'task': 'agriBack.tasks.send_periodic_notifications',
+        'schedule': crontab(),  # Every day at 08:00
+    },
+}
