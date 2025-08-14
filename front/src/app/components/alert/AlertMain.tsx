@@ -30,7 +30,7 @@ const AlertMain = () => {
   const { bg, textColor } = useColorModeStyles();
 
   const openCreateModal = () => {
-    if (alerts.length >= 3) {
+    if (alerts.length >= 5) {
       toast({
         title: "Supprimer des alertes pour pouvoir en créer d'autres",
         status: "warning",

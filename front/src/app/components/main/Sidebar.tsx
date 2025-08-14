@@ -15,20 +15,22 @@ import {
   AlertDialogOverlay,
   Button,
 } from "@chakra-ui/react";
-import { FaHome, FaCog, FaBell } from "react-icons/fa";
+// import { FaHome, FaCog, FaBell } from "react-icons/fa";
+import { MdWarningAmber } from "react-icons/md";
 import { FaSeedling } from "react-icons/fa6";
-import { WiDaySunny} from "react-icons/wi";
+import { WiDaySunny } from "react-icons/wi";
 import { GiGrapes } from "react-icons/gi";
 import { IoLogOut } from "react-icons/io5";
+import { FaHome, FaWater } from "react-icons/fa";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import { useRouter } from "next/navigation";
-import { FaWater } from "react-icons/fa";
+import { useRouter, usePathname } from "next/navigation";
 
 const Sidebar = () => {
-  const { bg, hoverColor } = useColorModeStyles();
+  const { SideBarbg, hoverColor, iconColor } = useColorModeStyles();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef(null);
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogout = () => {
     localStorage.clear();
@@ -36,121 +38,49 @@ const Sidebar = () => {
     router.push("/login");
   };
 
+  const navItems = [
+    { href: "/", icon: <FaHome />, label: "Accueil" },
+    { href: "/soil", icon: <FaSeedling />, label: "Données du sol" },
+    { href: "/station", icon: <WiDaySunny />, label: "Station météo" },
+    { href: "/plant", icon: <GiGrapes />, label: "Données des plantes" },
+    { href: "/water", icon: <FaWater />, label: "Station d'eau" },
+    // { href: "/settings", icon: <FaCog />, label: "Paramètres" },
+    { href: "/alerts", icon: <MdWarningAmber  />, label: "Alertes" },
+  ];
+
   return (
     <>
       <Flex
         direction="column"
         align="center"
-        bg={bg}
+        bg={SideBarbg}
         p={4}
         width="100%"
         height="100%"
       >
-        {/* Home */}
-        <Tooltip label="Accueil" aria-label="Accueil">
-          <Link href="/">
-            <IconButton
-              icon={<FaHome />}
-              aria-label="Accueil"
-              variant="ghost"
-              mb={2}
-              _hover={{ color: hoverColor }}
-            />
-          </Link>
-        </Tooltip>
-
-        <Box height="1px" width="20px" bg="gray.400" mb={2} />
-
-        {/* Soil Data */}
-        <Tooltip label="Données du sol" aria-label="Données du sol">
-          <Link href="/soil">
-            <IconButton
-              icon={<FaSeedling />}
-              aria-label="Données du sol"
-              variant="ghost"
-              mb={2}
-              _hover={{ color: hoverColor }}
-            />
-          </Link>
-        </Tooltip>
-
-        <Box height="1px" width="20px" bg="gray.400" mb={2} />
-
-        {/* Weather Station */}
-        <Tooltip label="Station météo" aria-label="Station météo">
-          <Link href="/station">
-            <IconButton
-              icon={<WiDaySunny />}
-              aria-label="Station météo"
-              variant="ghost"
-              mb={2}
-              _hover={{ color: hoverColor }}
-            />
-          </Link>
-        </Tooltip>
-
-        <Box height="1px" width="20px" bg="gray.400" mb={2} />
-
-        {/* Plant Analytics */}
-        <Tooltip label="Données des plantes" aria-label="Données des plantes">
-          <Link href="/plant">
-            <IconButton
-              icon={<GiGrapes />}
-              aria-label="Données des plantes"
-              variant="ghost"
-              mb={2}
-              _hover={{ color: hoverColor }}
-            />
-          </Link>
-        </Tooltip>
-
-        <Box height="1px" width="20px" bg="gray.400" mb={2} />
-
-        {/* Water Station */}
-        <Tooltip label="Station d'eau" aria-label="Station d'eau">
-          <Link href="/water">
-            <IconButton
-              icon={<FaWater />}
-              aria-label="Station d'eau"
-              variant="ghost"
-              mb={2}
-              _hover={{ color: hoverColor }}
-            />
-          </Link>
-        </Tooltip>
-
-        <Box height="1px" width="20px" bg="gray.400" mb={2} />
-
-        {/* Settings */}
-        <Tooltip label="Paramètres" aria-label="Settings">
-          <Link href="/settings">
-            <IconButton
-              icon={<FaCog />}
-              aria-label="Settings"
-              variant="ghost"
-              _hover={{ color: hoverColor }}
-            />
-          </Link>
-        </Tooltip>
-
-        <Box height="1px" width="20px" bg="gray.400" mb={2} />
-
-        {/* Notifications */}
-        <Tooltip label="Alertes" aria-label="Notifications">
-          <Link href="/alerts">
-            <IconButton
-              icon={<FaBell />}
-              aria-label="Notifications"
-              variant="ghost"
-              mb={2}
-              _hover={{ color: hoverColor }}
-            />
-          </Link>
-        </Tooltip>
-
-        <Box height="1px" width="20px" bg="gray.400" mb={2} />
+        {navItems.map((item, idx) => (
+          <React.Fragment key={item.href}>
+            <Tooltip label={item.label} aria-label={item.label}>
+              <Link href={item.href}>
+                <IconButton
+                  icon={item.icon}
+                  aria-label={item.label}
+                  variant="ghost"
+                  // color={iconColor}
+                  mb={2}
+                  _hover={{ color: hoverColor }}
+                  color={pathname === item.href ? hoverColor : iconColor} // highlight active
+                />
+              </Link>
+            </Tooltip>
+            {idx < navItems.length - 1 && (
+              <Box height="1px" width="20px" bg="gray.400" mb={2} />
+            )}
+          </React.Fragment>
+        ))}
 
         {/* Logout */}
+        <Box height="1px" width="20px" bg="gray.400" mb={2} />
         <Tooltip label="Se déconnecter" aria-label="Logout">
           <IconButton
             icon={<IoLogOut style={{ transform: "scaleX(-1)" }} />}
@@ -162,6 +92,7 @@ const Sidebar = () => {
         </Tooltip>
       </Flex>
 
+      {/* Logout Confirmation */}
       <AlertDialog
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}

@@ -4,6 +4,8 @@ import { useColorMode, useColorModeValue } from '@chakra-ui/react';
 const useColorModeStyles = () => {
   const { toggleColorMode } = useColorMode();
   const bg = useColorModeValue('white', 'gray.800');
+  const SideBarbg = useColorModeValue('white', 'gray.800');
+  const iconColor = useColorModeValue('gray.800', 'gray.200');
   const textColor = useColorModeValue('gray.800', 'gray.200');
   const zoneColor = useColorModeValue('gray.500', 'gray.500');
   const hoverColor = useColorModeValue('blue.500', 'blue.300');
@@ -48,6 +50,8 @@ const useColorModeStyles = () => {
     tableStripeClore,
     thBg,
     borderColor,
+    SideBarbg,
+    iconColor,
   };
 };
 

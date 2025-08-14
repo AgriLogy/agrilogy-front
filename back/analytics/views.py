@@ -98,3 +98,23 @@ class ActiveZonesView(APIView):
         zones = Zone.objects.filter(user=user)
         serializer = ZonesNameSerializer(zones, many=True)
         return Response(serializer.data)
+
+class AlertsAPIView(APIView):
+    permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
+
+    def get(self, request):
+        alerts = Alert.objects.filter(user=request.user).order_by('-id')
+        serializer = AlertSerializer(alerts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        # Manually add the user to the request data before validation
+        data = request.data.copy()  # Make a copy of the request data
+        data['user'] = request.user.id  # Assign the authenticated user's ID
+
+        # Pass the updated data to the serializer
+        serializer = AlertSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

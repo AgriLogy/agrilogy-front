@@ -11,6 +11,8 @@ urlpatterns = [
     # Admin
     path('active-graph/<str:username>/<int:zone_id>/', ActiveGraphAdminAPIView.as_view(), name='active-graph-admin'),
     path("active-zones/<str:username>/", ActiveZonesView.as_view(), name="active-zones"),
+    path('alert/', AlertsAPIView.as_view(), name='user-alert'),
+	
 ]
 
 urlpatterns += [
