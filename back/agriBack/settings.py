@@ -11,7 +11,9 @@ load_dotenv()
 
 # === DJANGO CONFIG ===
 SECRET_KEY = os.getenv('SECRET_KEY', '+@*@loo#%*ay6*m8w1xy7)l2+$iueppj)ns(nj0r6^@+@ujokd')
+# DEBUG = os.getenv('DEBUG', 'True') == 'True'
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
+
 
 # === CORS CONFIG ===
 from corsheaders.defaults import default_headers
@@ -75,6 +77,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'rest_framework',
 	'django_extensions',
+    'django_celery_beat',
 	
     # My apps
     'analytics',
@@ -215,20 +218,47 @@ EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False') == 'True'
 B_HOST = os.getenv('B_HOST', '')
 F_HOST = os.getenv('F_HOST', '')
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'z.mks.iii@gmail.com'
-EMAIL_HOST_PASSWORD = 'mzwu tuho ptze cvqy'
+
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'z.mks.iii@gmail.com'
+# EMAIL_HOST_PASSWORD = 'mzwu tuho ptze cvqy'
 
 
 
 from celery.schedules import crontab
 
+
+# EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+CELERY_BROKER_URL="redis://redis:6379/0"
+
 CELERY_BEAT_SCHEDULE = {
-    'send-email-every-morning': {
+    'send-email-every-minute': {
         'task': 'agriBack.tasks.send_periodic_notifications',
-        'schedule': crontab(),  # Every day at 08:00
+        'schedule': crontab(minute='*'),
     },
 }
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
+

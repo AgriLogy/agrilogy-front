@@ -1,4 +1,7 @@
+version: '3.9'
 
+services:
+  # adminer (commented out, assuming you won't use it in dev)
   # agryadminer:
   #   container_name: agryadminer
   #   image: adminer
@@ -7,63 +10,96 @@
   #   networks:
   #     - agro
   #   restart: unless-stopped
-  
 
+  # PostgreSQL (commented out for SQLite-only use)
   # agrydata:
-  #     container_name: agrydata
-  #     image: postgres:17
-  #     volumes:
-  #       - data_database:/var/lib/postgresql/data
-  #     env_file: ./back/.env                # Make sure this file exists!
-  #     healthcheck:
-  #       test: ["CMD-SHELL", "pg_isready -U postgres"]
-  #       interval: 1s
-  #       timeout: 5s
-  #       retries: 10
+  #   container_name: agrydata
+  #   image: postgres:17
+  #   volumes:
+  #     - data_database:/var/lib/postgresql/data
+  #   env_file: ./back/.env
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U postgres"]
+  #     interval: 1s
+  #     timeout: 5s
+  #     retries: 10
+  #   ports:
+  #     - "5432:5432"
+  #   networks:
+  #     - agro
+  #   restart: unless-stopped
 
-  #     ports:
-  #       - "5432:5432"
-  #     networks:
-  #       - agro
-  #     restart: unless-stopped
-services:
-  agrydevops:
-    build: ./Devops/server
-    ports:
-      - "9090:9090"
-    container_name: agroserver
-    volumes:
-      - ./shared_data:/shared  # Ensuring requests.json is shared
-    networks:
-      - agro
-    restart: unless-stopped
-  agryfrontend:
-    build:
-      context: ./front
-    image: agryfrontend
-    container_name: agryfrontend
-    ports:
-      - "3000:3000"
-    networks:
-      - agro
-    depends_on:
-      - agrybackend
-    restart: unless-stopped
   agrybackend:
-      build: ./back
+    container_name: agrybackend
+    build: ./back
+    image: agriback:v1.0
+    env_file: back/.env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./back:/code
+      - ./shared_data:/shared
+    networks:
+      - agro
+    restart: unless-stopped
+    depends_on:
+      - redis 
+
+  redis:
+      container_name: redis
+      image: redis:7-alpine
       ports:
-        - "8000:8000"
-      container_name: agrybackend
-      volumes:
-        - ./back:/code
-        - ./shared_data:/shared
-      # depends_on:
-      #   agrydata:
-      #     condition: service_healthy    # Wait for Postgres to be ready!
-      env_file: back/.env               # Pass DB creds to Django
+        - "6379:6379"
+      restart: unless-stopped
+      healthcheck:
+        test: ["CMD", "redis-cli", "ping"]
+        interval: 10s
+        retries: 3
+        start_period: 30s
+        timeout: 5s
       networks:
         - agro
-      restart: unless-stopped
+
+    # Celery Beat scheduler
+  celery-beat:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    command: celery -A agriBack beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    working_dir: /code
+    volumes:
+      - ./back:/code
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    networks:
+      - agro
+
+  # Celery worker
+  celery-worker:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    command: celery -A agriBack worker --loglevel=info --concurrency=1
+    working_dir: /code
+    volumes:
+      - ./back:/code
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    networks:
+      - agro
+
+
+
 
 networks:
   agro:
@@ -71,4 +107,8 @@ networks:
 volumes:
   data_database:
   shared_data:
-
+    driver: local
+    driver_opts:
+      type: none
+      device: ./shared_data
+      o: bind
