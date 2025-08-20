@@ -21,20 +21,31 @@ const ZoneCard = ({ zone, onClick }: ZoneCardType) => {
       </Text>
 
       <Text color={textColor} fontSize="sm">
-        📏 Space: {zone.space} m²
+        📏 Espace : {zone.space} m²
       </Text>
 
       <Text color={textColor} fontSize="sm">
-        🌿 KC: {zone.kc}
+        🌱 Plante : <Badge colorScheme="green">{zone.plant_type}</Badge>
       </Text>
 
       <Text color={textColor} fontSize="sm">
-        🧱 Soil: <Badge colorScheme="teal">{zone.soil_type}</Badge>
+        🧱 Type de sol : <Badge colorScheme="teal">{zone.soil_type}</Badge>
       </Text>
 
       <Text color={textColor} fontSize="sm">
-        💧 Threshold:{" "}
-        <Tag colorScheme="purple">{zone.critical_moisture_threshold}%</Tag>
+        🌿 Coefficient (Kc) : {zone.kc}
+      </Text>
+
+      <Text color={textColor} fontSize="sm">
+        🚿 Méthode d&apos;irrigation : <Tag colorScheme="blue">{zone.irrigation_method}</Tag>
+      </Text>
+
+      <Text color={textColor} fontSize="sm">
+        🌤️ Et0 : {zone.et0} mm/jour
+      </Text>
+
+      <Text color={textColor} fontSize="sm">
+        🗓️ Dernière irrigation : {new Date(zone.last_irrigation_date).toLocaleDateString("fr-FR")}
       </Text>
     </Box>
   );

@@ -9,14 +9,17 @@ export interface AlertProps {
 	};
   }
 
-export interface Zone {
-	id: number;
-	name: string;
-	space: number;
-	kc: number;
-	soil_type: "clay" | "loamy" | "sandy" | "others";
-	critical_moisture_threshold: number;
-  }
+  export interface Zone {
+  id: number;
+  name: string;
+  space: number;
+  plant_type: string;
+  soil_type: string;
+  kc: number;
+  irrigation_method: string;
+  et0: number;
+  last_irrigation_date: string; // ISO format e.g., '2025-08-15'
+}
 
 export interface ZoneWrapper {
 	id: number;
