@@ -45,6 +45,7 @@ const TempuratureHumidtyChart = ({
   const chartRef = useRef<HTMLDivElement>(null);
   const { textColor } = useColorModeStyles();
 
+  // Merging humidity and temperature data based on the timestamp
   const mergedData = humidityData.map((h) => {
     const tempEntry = temperatureData.find((t) => t.timestamp === h.timestamp);
     return {
@@ -54,12 +55,14 @@ const TempuratureHumidtyChart = ({
     };
   });
 
+  // Label interval and angle adjustments for responsive chart
   const labelInterval = useBreakpointValue({
     base: Math.ceil(mergedData.length / 3),
     md: Math.ceil(mergedData.length / 9),
   });
   const labelAngle = useBreakpointValue({ base: -3, md: 5 });
 
+  // Screenshot capture function
   const handleScreenshot = async () => {
     if (chartRef.current) {
       const canvas = await html2canvas(chartRef.current);
@@ -70,6 +73,7 @@ const TempuratureHumidtyChart = ({
     }
   };
 
+  // CSV data export function
   const handleDownloadData = () => {
     const csv =
       "timestamp,humidity,temperature\n" +
@@ -90,7 +94,7 @@ const TempuratureHumidtyChart = ({
     <Box width="100%" pr={4} pb={4}>
       <Flex justify="space-between" align="center" mb={4}>
         <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Évolution Température et Humidité
+          Température et Humidité
         </Text>
         <HStack spacing={2}>
           <Button
@@ -130,17 +134,30 @@ const TempuratureHumidtyChart = ({
                 interval={labelInterval}
               />
               <YAxis
+                yAxisId="left"
                 label={{
-                  value: "Valeurs",
+                  value: "Température (°C)",
                   angle: -90,
                   position: "insideLeft",
                   fontSize: 14,
                   dy: 80,
                 }}
               />
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                label={{
+                  value: "Humidité (%)",
+                  angle: -90,
+                  position: "insideRight",
+                  fontSize: 14,
+                  dx: 10,
+                }}
+              />
               <Tooltip />
               <Legend />
               <Line
+                yAxisId="left"
                 type="monotone"
                 dataKey="humidity"
                 name="Humidité (%)"
@@ -149,6 +166,7 @@ const TempuratureHumidtyChart = ({
                 activeDot={{ r: 6 }}
               />
               <Line
+                yAxisId="right"
                 type="monotone"
                 dataKey="temperature"
                 name="Température (°C)"

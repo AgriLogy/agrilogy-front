@@ -106,7 +106,7 @@ const CumulPrecipitationChart = ({
     <Box width="100%" pr={4} pb={4} borderRadius="md" p={4}>
       <Flex justify="space-between" align="center" mb={4}>
         <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Précipitations cumulées par période (mm)
+          Cumul de précipitations
         </Text>
         <HStack spacing={2}>
           <Select

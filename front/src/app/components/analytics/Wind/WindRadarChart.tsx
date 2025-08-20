@@ -134,7 +134,8 @@ const WindRadarChart = ({
     <Box width="100%" pr={4} pb={4}>
       <Flex justify="space-between" align="center" mb={4}>
         <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Radar du vent (10 dernières valeurs)
+          {/* Radar du vent (10 dernières valeurs) */}
+          Direction de vent
         </Text>
         <HStack spacing={2}>
           <Button

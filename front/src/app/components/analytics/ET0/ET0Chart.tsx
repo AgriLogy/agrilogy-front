@@ -84,7 +84,7 @@ const EC0Chart = ({
     <Box width="100%"  pr={4} pb={4}>
       <Flex justify="space-between" align="center" mb={4}>
         <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          ET0 Comparaison (Capteur vs Calculé)
+          ET0
         </Text>
         <HStack spacing={2}>
           <Button
