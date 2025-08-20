@@ -20,7 +20,6 @@ const SensorBox = ({
   icon,
   label,
   data,
-  color,
 }: {
   icon: JSX.Element;
   label: string;
@@ -74,34 +73,50 @@ const WaterSoilLastData = ({
       width="100%"
       display="flex"
       flexDirection="column"
-      justifyContent="center"
+      // justifyContent="center"
       alignItems="center"
       textAlign="center"
+      overflowY="auto"  // Enable vertical overflow scrolling
     >
-      {/* <SensorBox
-        icon={<GiGroundbreaker size={40} color="#9c6644" />}
-        label="Sol - Bas"
-        data={soilLow}
-        color="#9c6644"
-      /> */}
-      <SensorBox
-        icon={<GiWaterDrop size={40} color="#2b6cb0" />}
-        label="Humidité du Sol - Moyen"
-        data={soilMedium}
-        color="#2b6cb0"
-      />
-      {/* <SensorBox
-        icon={<GiWaterTank size={40} color="#38a169" />}
-        label="Sol - Haut"
-        data={soilHigh}
-        color="#38a169"
-      /> */}
-      <SensorBox
-        icon={<FaTachometerAlt size={40} color="#e53e3e" />}
-        label="Débit d'eau"
-        data={waterFlow}
-        color="#e53e3e"
-      />
+      {/* Soil - Low */}
+      {soilLow && (
+        <SensorBox
+          icon={<GiGroundbreaker size={40} color="#9c6644" />}
+          label="Humidité du Sol - Bas"
+          data={soilLow}
+          color="#9c6644"
+        />
+      )}
+
+      {/* Soil - Medium */}
+      {soilMedium && (
+        <SensorBox
+          icon={<GiWaterDrop size={40} color="#2b6cb0" />}
+          label="Humidité du Sol - Moyen"
+          data={soilMedium}
+          color="#2b6cb0"
+        />
+      )}
+
+      {/* Soil - High */}
+      {soilHigh && (
+        <SensorBox
+          icon={<GiWaterTank size={40} color="#38a169" />}
+          label="Humidité du Sol - Haut"
+          data={soilHigh}
+          color="#38a169"
+        />
+      )}
+
+      {/* Water Flow */}
+      {waterFlow && (
+        <SensorBox
+          icon={<FaTachometerAlt size={40} color="#e53e3e" />}
+          label="Irrigation"
+          data={waterFlow}
+          color="#e53e3e"
+        />
+      )}
     </Box>
   );
 };

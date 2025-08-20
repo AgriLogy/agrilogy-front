@@ -61,10 +61,11 @@ const WaterSoilChart = ({ data }: { data: WaterSoilData[] }) => {
   const { textColor } = useColorModeStyles();
 
   return (
-    <Box width="100%" height="100%">
+    <Box width="100%" height="100%" >
       <Flex justify="space-between" align="center" mb={4}>
         <Text fontSize="xl" fontWeight="bold" mb={4} color={textColor}>
-          Évolution de l'humidité du sol et du débit d'eau
+          {/* Évolution de l'humidité du sol et du débit d'eau */}
+          Eau disponible
         </Text>
         <HStack spacing={2}>
           <Button
@@ -111,7 +112,7 @@ const WaterSoilChart = ({ data }: { data: WaterSoilData[] }) => {
               orientation="right"
               domain={[0, "auto"]}
               label={{
-                value: "Débit (L/s)",
+                value: "Débit (L/ss)",
                 angle: 90,
                 position: "insideRight",
                 dx: 10,

@@ -103,7 +103,7 @@ const SoilConductivityChart = ({
     <Box width="100%" pr={4} pb={4}>
       <Flex justify="space-between" align="center" mb={4}>
         <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Évolution de la conductivité du sol et irrigation
+          Conductivité du sol et irrigation
         </Text>
         <HStack spacing={2}>
           <Button onClick={handleScreenshot}>
@@ -158,36 +158,37 @@ const SoilConductivityChart = ({
 
               {/* EC Lines */}
               <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="low"
-                name="Conductivité Basse"
-                stroke="#2B6CB0"
-                strokeWidth={2}
-                strokeOpacity={activeLines.low ? 1 : 0.1}
-                dot={false}
-              />
+  yAxisId="left"
+  type="monotone"
+  dataKey="low"
+  name="Conductivité Basse"
+  stroke="#1E88E5" 
+  strokeWidth={2}
+  strokeOpacity={activeLines.low ? 1 : 0.1}
+  dot={false}
+/>
 
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="high"
-                name="Conductivité Haute"
-                stroke="#319795"
-                strokeWidth={2}
-                strokeOpacity={activeLines.high ? 1 : 0.1}
-                dot={false}
-              />
+<Line
+  yAxisId="left"
+  type="monotone"
+  dataKey="high"
+  name="Conductivité Haute"
+  stroke="#2BB673" 
+  strokeWidth={2}
+  strokeOpacity={activeLines.high ? 1 : 0.1}
+  dot={false}
+/>
 
-              <Bar
-                yAxisId="right"
-                dataKey="waterflow"
-                name="Irrigation"
-                fill="#E53E3E"
-                stroke="#E53E3E"
-                barSize={10}
-                fillOpacity={activeLines.waterflow ? 0.5 : 0.05}
-              />
+<Bar
+  yAxisId="right"
+  dataKey="waterflow"
+  name="Irrigation"
+  fill="#00B0FF" 
+  stroke="#0091EA" 
+  barSize={10}
+  fillOpacity={activeLines.waterflow ? 0.7 : 0.05} 
+/>
+
 
               <Brush dataKey="timestamp" height={30} stroke="#8884d8" />
             </ComposedChart>

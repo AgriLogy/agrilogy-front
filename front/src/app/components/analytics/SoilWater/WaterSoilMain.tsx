@@ -106,6 +106,7 @@ const WaterSoilMain = ({
       direction={{ base: "column", md: "row" }}
       width="100%"
       height="100%"
+      maxH="400px"
       spacing={4}
     >
       <Box flex={3} p={3}>
