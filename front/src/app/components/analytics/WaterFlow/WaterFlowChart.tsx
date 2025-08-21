@@ -82,7 +82,7 @@ const WaterFlowChart = ({
     <Box width="100%" pr={4} pb={4}>
       <Flex justify="space-between" align="center" mb={4}>
         <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Évolution du flux d'eau
+          Débit d&apos;eau
         </Text>
         <HStack spacing={2}>
           <Button

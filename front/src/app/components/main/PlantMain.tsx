@@ -105,7 +105,7 @@ const PlantMain = () => {
           <SensorLeafMain filters={filters} />
         </Box>
       )}
-      {activeGraph?.npk_status && (
+      {/* {activeGraph?.npk_status && (
         <Box bg={bg} className="box wide">
           <NpkMain filters={filters} />
         </Box>
@@ -114,13 +114,13 @@ const PlantMain = () => {
         <Box bg={bg} className="box wide">
           <ElectricityconsumptionMain filters={filters} />
         </Box>
-      )}
-      {activeGraph?.water_flow_status && (
+      )} */}
+      {/* {activeGraph?.water_flow_status && (
         <Box bg={bg} className="box wide">
           <WaterFlowMain filters={filters} />
         </Box>
-      )}
-      {activeGraph?.water_pressure_status && (
+      )} */}
+      {/* {activeGraph?.water_pressure_status && (
         <Box bg={bg} className="box wide">
           <WaterPressureMain filters={filters} />
         </Box>
@@ -134,7 +134,7 @@ const PlantMain = () => {
         <Box bg={bg} className="box wide">
           <EcWaterMain filters={filters} />
         </Box>
-      )}
+      )} */}
     </div>
   );
 };

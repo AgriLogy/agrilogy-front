@@ -56,7 +56,6 @@ const WeatherDashboard = () => {
   const p = useBreakpointValue({ base: 2, md: 4 });
   const { hoverColor } = useColorModeStyles();
 
-
   useEffect(() => {
     const fetchWeather = async () => {
       try {
@@ -127,11 +126,28 @@ const WeatherDashboard = () => {
         >
           Météo
         </Text>
-        <Switch
-          id="unit-toggle"
-          isChecked={useImperial}
-          onChange={handleUnitToggle}
-        />
+        <HStack spacing={2}>
+          <Text 
+            fontSize="sm" 
+            color={!useImperial ? primaryText : secondaryText}
+            fontWeight={!useImperial ? "bold" : "normal"}
+          >
+            °C
+          </Text>
+          <Switch
+            id="unit-toggle"
+            isChecked={useImperial}
+            onChange={handleUnitToggle}
+            colorScheme="blue"
+          />
+          <Text 
+            fontSize="sm" 
+            color={useImperial ? primaryText : secondaryText}
+            fontWeight={useImperial ? "bold" : "normal"}
+          >
+            °F
+          </Text>
+        </HStack>
       </HStack>
 
       {/* Current Weather */}
