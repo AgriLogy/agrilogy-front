@@ -29,6 +29,23 @@ services:
   #     - agro
   #   restart: unless-stopped
 
+
+  agryfrontend:
+    container_name: agryfrontend
+    build: ./front
+    image: agrifront:v1.0
+    # env_file: back/.env
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./front:/code
+      # - ./shared_data:/shared
+    networks:
+      - agro
+    restart: unless-stopped
+    depends_on:
+      - agrybackend 
+
   agrybackend:
     container_name: agrybackend
     build: ./back

@@ -13,6 +13,7 @@ import PhSoilMain from "../analytics/SoilPh/PhSoilMain";
 import SoilSalinityConductivityMain from "../analytics/SoilSalinityConductivity/SoilSalinityConductivityMain";
 import SoilConductivityIrrigationMain from "../analytics/SoilConductivityIrrigation/SoilConductivityIrrigationMain";
 import NpkMain from "../analytics/npk/NpkMain";
+import SoilTemperatureMain from "../analytics/SoilTemperature/SoilTemperatureMain";
 
 const SoilMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
@@ -79,36 +80,40 @@ const SoilMain = () => {
           zones={zones}
           selectedZone={selectedZone}
           setSelectedZone={setSelectedZone}
-          />
+        />
       </Box>
 
-
-          {activeGraph?.soil_irrigation_status && (
-            <Box bg={bg} className="box wide">
-              <WaterSoilMain filters={filters} />
-            </Box>
-          )}
+      {activeGraph?.soil_irrigation_status && (
+        <Box bg={bg} className="box wide">
+          <WaterSoilMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.soil_temperature_status && (
+        <Box bg={bg} className="box wide">
+          <SoilTemperatureMain filters={filters} />
+        </Box>
+      )}
       {activeGraph?.soil_ph_status && (
         <Box bg={bg} className="box wide">
           <PhSoilMain filters={filters} />
         </Box>
       )}
 
-{activeGraph?.soil_conductivity_status && (
-  <Box bg={bg} className="box wide">
-    <SoilSalinityConductivityMain filters={filters} />
-  </Box>
-)}
-{activeGraph?.soil_moisture_status && (
-  <Box bg={bg} className="box wide">
-    <SoilConductivityIrrigationMain filters={filters} />
-  </Box>
-)}
-{activeGraph?.npk_status && (
-  <Box bg={bg} className="box wide">
-    <NpkMain filters={filters} />
-  </Box>
-)}
+      {activeGraph?.soil_conductivity_status && (
+        <Box bg={bg} className="box wide">
+          <SoilSalinityConductivityMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.soil_moisture_status && (
+        <Box bg={bg} className="box wide">
+          <SoilConductivityIrrigationMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.npk_status && (
+        <Box bg={bg} className="box wide">
+          <NpkMain filters={filters} />
+        </Box>
+      )}
     </div>
   );
 };

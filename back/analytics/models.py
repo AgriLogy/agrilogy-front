@@ -313,21 +313,6 @@ class ECSoilMedium(models.Model):
         return ["dS/m"]   #add ms/cm
 
 
-class SoilTemperatureMedium(models.Model):
-    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="soil_temperature_medium")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_temperature_medium_per_user")    
-    value = models.FloatField(null=True, blank=True, help_text="Soil temperature at medium depth in Celsius.")
-    timestamp = models.DateTimeField()
-        
-    @property
-    def default_unit(self) -> str:
-        return "°C"
-
-    @property
-    def available_units(self) -> List[str]:
-        return ["°C", "°F"]
-
-
 class ECSoilHigh(models.Model):
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="soil_ec_high")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_ec_high_per_user")    
@@ -432,6 +417,20 @@ class SoilTemperatureLow(models.Model):
     def available_units(self) -> List[str]:
         return ["°C", "°F"]
 
+class SoilTemperatureMedium(models.Model):
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="soil_temperature_medium")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="soil_temperature_medium_per_user")    
+    value = models.FloatField(null=True, blank=True, help_text="Soil temperature at medium depth in Celsius.")
+    timestamp = models.DateTimeField()
+        
+    @property
+    def default_unit(self) -> str:
+        return "°C"
+
+    @property
+    def available_units(self) -> List[str]:
+        return ["°C", "°F"]
+
 
 class SoilTemperatureHigh(models.Model):
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="soil_temperature_high")
@@ -456,7 +455,7 @@ class WaterFlowSensor(models.Model):
         
     @property
     def default_unit(self) -> str:
-        return "L/s" #default is m3/h
+        return "m³/h"
 
     @property
     def available_units(self) -> List[str]:

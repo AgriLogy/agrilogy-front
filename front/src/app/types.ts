@@ -27,15 +27,7 @@ export interface ZoneWrapper {
 	zone: Zone;
   }
 
-export interface SensorData {
-  id: number;
-  value: number;
-  timestamp: string;
-  color: string;
-  courbe_name: string;
-  default_unit: string;
-  available_units: string[];
-}
+
 
 export interface NpkSensorData {
   id: number;
@@ -88,4 +80,52 @@ export interface ZoneType {
 export interface ZoneCardType {
   zone: Zone;
   onClick?: () => void;
+}
+
+
+// Shared types for Water/Soil dashboard
+
+export interface SensorEntry {
+  id: number;
+  timestamp: string;        // ISO string
+  value: number;
+  default_unit: string;
+  available_units: string[];
+  zone: number;
+  user: number;
+}
+
+export interface SensorData {
+  id: number;
+  value: number;
+  timestamp: string;
+  color?: string;
+  courbe_name?: string;
+  default_unit: string;
+  available_units: string[];
+}
+
+
+
+// Chart merged row
+export interface WaterSoilData {
+  timestamp: string;
+  soilLow?: number;
+  soilMedium?: number;
+  soilHigh?: number;
+  waterFlow?: number;
+}
+
+// Threshold band on one axis
+export interface ThresholdBand {
+  critical_min: number;
+  critical_max: number;
+  normal_min: number;
+  normal_max: number;
+}
+
+// Provide thresholds per axis (left = soil %, right = flow)
+export interface Thresholds {
+  left?: ThresholdBand;
+  right?: ThresholdBand;
 }
