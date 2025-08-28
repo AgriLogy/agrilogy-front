@@ -226,22 +226,42 @@ F_HOST = os.getenv('F_HOST', '')
 # EMAIL_USE_TLS = True
 # EMAIL_HOST_USER = 'z.mks.iii@gmail.com'
 # EMAIL_HOST_PASSWORD = 'mzwu tuho ptze cvqy'
+# EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 
 from celery.schedules import crontab
 
-
-# EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
+CELERY_TIMEZONE = "UTC"
+CELERY_ENABLE_UTC = True
 CELERY_BROKER_URL="redis://redis:6379/0"
 
+
+# CELERY_BEAT_SCHEDULE = {
+#     'send-email-every-minute': {
+#         'task': 'agriBack.tasks.send_periodic_notifications',
+#         'schedule': crontab(minute='*'),
+#     },
+# 	    "compute_et0_vpd_hourly": {
+#         "task": "sensors.tasks.compute_et0_vpd_hourly",
+#         "schedule": crontab(minute='*'),  # every hour at :05
+#     },
+# }
+
 CELERY_BEAT_SCHEDULE = {
-    'send-email-every-minute': {
-        'task': 'agriBack.tasks.send_periodic_notifications',
-        'schedule': crontab(minute='*'),
+    "simulate_sensors_quarter_hourly": {
+        "task": "sensors.tasks.simulate_sensor_ingest",
+        "schedule": crontab(minute="*"),
     },
+    "compute_et0_vpd_hourly": {
+        "task": "sensors.tasks.compute_et0_vpd_hourly",
+        "schedule": crontab(minute='*/2'),   # previous full hour at :05
+    },
+    # "send-daily-email": {
+    #     "task": "agriBack.tasks.send_periodic_notifications",
+    #     "schedule": crontab(minute=0, hour=6),
+    # },
 }
 
 LOGGING = {

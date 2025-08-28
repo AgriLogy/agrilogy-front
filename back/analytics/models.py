@@ -872,3 +872,22 @@ class ActiveGraph(models.Model):
 
     def __str__(self):
         return f"ActiveGraph for User {self.user.username} - Zone: {self.zone.name}"
+
+from django.db import models
+from django.conf import settings
+from .models import Zone  # if inside same app
+
+User = settings.AUTH_USER_MODEL
+
+class VPDWeather(models.Model):
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="vpd_weather")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="vpd_weather_per_user")
+    value = models.FloatField(null=True, blank=True, help_text="Vapor Pressure Deficit in kPa.")
+    timestamp = models.DateTimeField()
+
+    @property
+    def default_unit(self) -> str:
+        return "kPa"
+
+    def __str__(self):
+        return f"VPD ({self.value} kPa) at {self.timestamp} in Zone {self.zone_id}"
