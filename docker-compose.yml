@@ -1,56 +1,41 @@
-version: '3.9'
+version: "3.9"
 
 services:
-  # adminer (commented out, assuming you won't use it in dev)
-  # agryadminer:
-  #   container_name: agryadminer
-  #   image: adminer
-  #   ports:
-  #     - "8080:8080"
-  #   networks:
-  #     - agro
-  #   restart: unless-stopped
-
-  # PostgreSQL (commented out for SQLite-only use)
-  # agrydata:
-  #   container_name: agrydata
-  #   image: postgres:17
-  #   volumes:
-  #     - data_database:/var/lib/postgresql/data
-  #   env_file: ./back/.env
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -U postgres"]
-  #     interval: 1s
-  #     timeout: 5s
-  #     retries: 10
-  #   ports:
-  #     - "5432:5432"
-  #   networks:
-  #     - agro
-  #   restart: unless-stopped
-
-
-  agryfrontend:
-    container_name: agryfrontend
-    build: ./front
-    image: agrifront:v1.0
-    # env_file: back/.env
+  agryadminer:
+    container_name: agryadminer
+    image: adminer
+    environment:
+      - ADMINER_DEFAULT_SERVER=agrydata
     ports:
-      - "3000:3000"
-    volumes:
-      - ./front:/code
-      # - ./shared_data:/shared
+      - "8080:8080"
     networks:
       - agro
     restart: unless-stopped
     depends_on:
-      - agrybackend 
+      - agrydata
+
+  agrydata:
+    container_name: agrydata
+    image: postgres:17
+    volumes:
+      - data_database:/var/lib/postgresql/data
+    env_file: ./back/.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 2s
+      timeout: 5s
+      retries: 20
+    ports:
+      - "5432:5432"
+    networks:
+      - agro
+    restart: unless-stopped
 
   agrybackend:
     container_name: agrybackend
     build: ./back
     image: agriback:v1.0
-    env_file: back/.env
+    env_file: ./back/.env
     ports:
       - "8000:8000"
     volumes:
@@ -60,43 +45,45 @@ services:
       - agro
     restart: unless-stopped
     depends_on:
-      - redis 
+      redis:
+        condition: service_healthy
+      # uncomment if USE_POSTGRES=True
+      agrydata:
+        condition: service_started
 
   redis:
-      container_name: redis
-      image: redis:7-alpine
-      ports:
-        - "6379:6379"
-      restart: unless-stopped
-      healthcheck:
-        test: ["CMD", "redis-cli", "ping"]
-        interval: 10s
-        retries: 3
-        start_period: 30s
-        timeout: 5s
-      networks:
-        - agro
+    container_name: redis
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+    networks:
+      - agro
 
-    # Celery Beat scheduler
   celery-beat:
     build:
       context: ./back
       dockerfile: Dockerfile
-    command: celery -A agriBack beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    command: >
+      celery -A agriBack beat --loglevel=info
+      --scheduler django_celery_beat.schedulers:DatabaseScheduler
     working_dir: /code
     volumes:
       - ./back:/code
+    env_file: ./back/.env
     depends_on:
       redis:
         condition: service_healthy
-    environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - PYTHONUNBUFFERED=1
     restart: unless-stopped
     networks:
       - agro
 
-  # Celery worker
   celery-worker:
     build:
       context: ./back
@@ -105,18 +92,13 @@ services:
     working_dir: /code
     volumes:
       - ./back:/code
+    env_file: ./back/.env
     depends_on:
       redis:
         condition: service_healthy
-    environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - PYTHONUNBUFFERED=1
     restart: unless-stopped
     networks:
       - agro
-
-
-
 
 networks:
   agro:
