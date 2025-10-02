@@ -1,0 +1,17 @@
+# .env (inside ./front)
+
+# Next.js server config
+HOST=0.0.0.0
+PORT=3000
+
+# Public API URL for frontend requests (browser will use this)
+NEXT_PUBLIC_API_URL=http://agrybackend:8000
+
+# Optional - used only during build (Node server-side fetches)
+API_URL=http://agrybackend:8000
+
+# Disable Next telemetry (optional)
+NEXT_TELEMETRY_DISABLED=1
+
+# Example other env vars
+NODE_ENV=production

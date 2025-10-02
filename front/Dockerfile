@@ -6,6 +6,8 @@ RUN apt-get update && apt-get install -y nano
 # Create app directory
 WORKDIR /app
 
+COPY env-example /.env
+
 # Copy dependencies definition files
 COPY package.json package-lock.json ./ 
 

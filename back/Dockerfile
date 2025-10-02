@@ -16,6 +16,7 @@ COPY . /code/
 
 # Entrypoint script
 COPY run.sh /run.sh
+COPY env-example /.env
 RUN chmod +x /run.sh
 
 RUN mkdir -m 777 /shared
