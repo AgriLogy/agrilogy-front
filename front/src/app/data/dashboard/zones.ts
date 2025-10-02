@@ -7,7 +7,7 @@
 //   critical_moisture_threshold: number;
 // }
 
-import { Zone } from "@/app/types";
+import { ZoneType } from "@/app/types";
 
   
   // export const zonesLst: Zone[] = [
@@ -18,7 +18,7 @@ import { Zone } from "@/app/types";
   // ];
     
 
-export const zonesLst: Zone[] = [
+export const zonesLst: ZoneType[] = [
   {
     id: 1,
     name: 'Zone 1',
@@ -28,7 +28,8 @@ export const zonesLst: Zone[] = [
     kc: 0.8,
     irrigation_method: 'Goutte-à-goutte',
     et0: 5.2,
-    last_irrigation_date: '2025-08-18'
+    last_irrigation_date: '2025-08-18',
+    critical_moisture_threshold: 18
   },
   {
     id: 2,
@@ -39,7 +40,8 @@ export const zonesLst: Zone[] = [
     kc: 0.7,
     irrigation_method: 'Arroseur',
     et0: 4.9,
-    last_irrigation_date: '2025-08-17'
+    last_irrigation_date: '2025-08-17',
+    critical_moisture_threshold: 18
   },
   {
     id: 3,
@@ -50,7 +52,8 @@ export const zonesLst: Zone[] = [
     kc: 0.9,
     irrigation_method: 'Pivot central',
     et0: 6.1,
-    last_irrigation_date: '2025-08-16'
+    last_irrigation_date: '2025-08-16',
+    critical_moisture_threshold: 18
   },
   {
     id: 4,
@@ -61,6 +64,7 @@ export const zonesLst: Zone[] = [
     kc: 0.85,
     irrigation_method: 'Irrigation par inondation',
     et0: 5.0,
-    last_irrigation_date: '2025-08-15'
+    last_irrigation_date: '2025-08-15',
+    critical_moisture_threshold: 18
   }
 ];

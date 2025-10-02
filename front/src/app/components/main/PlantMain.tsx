@@ -11,15 +11,10 @@ import getActiveGraphs, {
   ActiveGraphResponse,
 } from "@/app/utils/getActiveGraphs";
 
-import ElectricityconsumptionMain from "../analytics/Electricityconsumption/ElectricityconsumptionMain";
 import FruiteSizeMain from "../analytics/fruiteSize/FruiteSizeMain";
 import LargeFruitDiameterMain from "../analytics/LargeFruitDiameter/LargeFruitDiameterMain";
 import SensorLeafMain from "../analytics/Leaf/SensorLeafMain";
-import NpkMain from "../analytics/npk/NpkMain";
-import EcWaterMain from "../analytics/WaterEc/EcWaterMain";
-import WaterFlowMain from "../analytics/WaterFlow/WaterFlowMain";
-import PhWaterMain from "../analytics/WaterPh/PhWaterMain";
-import WaterPressureMain from "../analytics/WaterPressure/WaterPressureMain";
+
 
 const PlantMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);

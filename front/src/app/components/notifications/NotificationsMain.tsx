@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import "./NotificationsMain.css";
-import { Box, Text, VStack, SimpleGrid } from "@chakra-ui/react";
+import { Box, Text, SimpleGrid } from "@chakra-ui/react";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import Notification from "../notifications/Notification";
 import axiosInstance from "@/app/lib/api";

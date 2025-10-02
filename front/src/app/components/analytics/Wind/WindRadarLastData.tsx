@@ -1,4 +1,3 @@
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
 import { Box, Text, VStack, useColorModeValue } from "@chakra-ui/react";
 import { WiStrongWind } from "react-icons/wi";
 
@@ -40,8 +39,6 @@ const WindRadarLastData = ({
   const noDataColor = useColorModeValue("gray.600", "gray.400");
   const timeColor = useColorModeValue("gray.500", "gray.400");
 
-  // If you want to keep your custom hook color for title, you can uncomment below:
-  // const { textColor } = useColorModeStyles();
 
   return (
     <Box

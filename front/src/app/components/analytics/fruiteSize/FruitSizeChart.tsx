@@ -117,6 +117,7 @@ const FruitSizeChart = ({
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
               onClick={(e) => {
                 // optional: if you want to toggle bar by clicking legend label only
+                console.log(e);
               }}
             >
               <XAxis

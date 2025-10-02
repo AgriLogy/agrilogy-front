@@ -350,7 +350,7 @@ def simulate_sensor_ingest(self):
 
     # align to quarter-hour UTC
     now_utc = timezone.now()
-    aligned_min = (now_utc.minute // 15) * 15
+    aligned_min = (now_utc.minute // 1) * 1
     slot_utc = now_utc.replace(minute=aligned_min, second=0, microsecond=0)
     # now_utc = timezone.now()
     # slot_utc = now_utc.replace(second=0, microsecond=0)

@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Text, Badge, Divider } from "@chakra-ui/react";
+import { Box, Text, Badge } from "@chakra-ui/react";
 import { ALERT_CHOICES } from "@/app/utils/alertChoices";
 import useColorModeStyles from "@/app/utils/useColorModeStyles"; // import the custom hook
 import "../../styles/style.css";
@@ -23,7 +23,7 @@ const Alert: React.FC<AlertProps> = ({
   condition_nbr,
   onClick,
 }) => {
-  const { textColor, bg, hoverColor } = useColorModeStyles(); // Use the custom hook for theme-based styles
+  const { textColor, bg } = useColorModeStyles(); // Use the custom hook for theme-based styles
   const typeLabels = ALERT_CHOICES.find((alert) => alert.value === type)?.label;
 
   return (

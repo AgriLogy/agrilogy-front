@@ -6,13 +6,13 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  Tooltip,
+  
   Link,
   useColorMode,
-  Button,
+  
 } from "@chakra-ui/react";
-import { BellIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
-import { FaCog, FaUser } from "react-icons/fa";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
+import { FaUser } from "react-icons/fa";
 import Image from "next/image";
 import api from "@/app/lib/api";
 import useColorModeStyles from "@/app/utils/useColorModeStyles";
@@ -20,7 +20,7 @@ import logo from "../../public/logo.png";
 
 const AdminBigMenu = () => {
   const { colorMode, toggleColorMode } = useColorMode();
-  const { bg, hoverColor } = useColorModeStyles();
+  const { bg } = useColorModeStyles();
   const [username, setUsername] = useState("User");
 
   useEffect(() => {

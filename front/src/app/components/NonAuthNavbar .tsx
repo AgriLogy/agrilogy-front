@@ -3,12 +3,6 @@ import {
   IconButton,
   useColorMode,
   Spacer,
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerHeader,
-  DrawerOverlay,
-  Button,
 } from "@chakra-ui/react";
 import { MoonIcon, SunIcon, HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import Image from "next/image";
@@ -17,10 +11,10 @@ import { useState } from "react";
 
 const NonAuthNavbar = () => {
   const { colorMode, toggleColorMode } = useColorMode();
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  // const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const handleDrawerOpen = () => setIsDrawerOpen(true);
-  const handleDrawerClose = () => setIsDrawerOpen(false);
+  // const handleDrawerOpen = () => setIsDrawerOpen(true);
+  // const handleDrawerClose = () => setIsDrawerOpen(false);
 
   return (
     <Flex

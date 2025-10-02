@@ -40,7 +40,7 @@ const Notification: React.FC<NotificationProps> = ({ notification, is_read }) =>
       _hover={{ borderColor: hoverColor }}
       color={textColor}
     >
-      {/* <Text fontWeight="bold">{is_read ? "✅ Lu" : "📩 Non lu"}</Text> */}
+      <Text fontWeight="bold">{is_read ? "✅ Lu" : "📩 Non lu"}</Text>
       <Text fontSize="sm" mt={2}>📅 {formattedDate}</Text>
 
       <Box mt={4}>

@@ -9,22 +9,25 @@ export interface AlertProps {
 	};
   }
 
-  export interface Zone {
-  id: number;
-  name: string;
-  space: number;
-  plant_type: string;
-  soil_type: string;
-  kc: number;
-  irrigation_method: string;
-  et0: number;
-  last_irrigation_date: string; // ISO format e.g., '2025-08-15'
-}
+//   export interface Zone {
+//   id: number;
+//   name: string;
+//   space: number;
+//   plant_type: string;
+//   soil_type: string;
+//   kc: number;
+//   irrigation_method: string;
+//   et0: number;
+//   last_irrigation_date: string; // ISO format e.g., '2025-08-15'
+  
+//   critical_moisture_threshold: number;
+
+// }
 
 export interface ZoneWrapper {
 	id: number;
 	user: number;
-	zone: Zone;
+	zone: ZoneType;
   }
 
 
@@ -73,12 +76,16 @@ export interface ZoneType {
   name: string;
   space: number;
   kc: number;
-  soil_type: "clay" | "loamy" | "sandy" | "others";
+  soil_type: string;
   critical_moisture_threshold: number;
+  plant_type: string;
+  irrigation_method: string;
+  et0: number;
+  last_irrigation_date: string; // ISO format e.g., '2025-08-15'  
 }
 
 export interface ZoneCardType {
-  zone: Zone;
+  zone: ZoneType;
   onClick?: () => void;
 }
 

@@ -86,7 +86,7 @@ const WindSpeedForm: React.FC = () => {
       <VStack spacing={4} align="stretch">
         {/* Nom de l'alerte */}
         <FormControl isRequired>
-          <FormLabel>Nom de l'alerte</FormLabel>
+          <FormLabel>Nom de l&apos;alerte</FormLabel>
           <Input
             name="name"
             placeholder="Entrez le nom de l'alerte"
@@ -97,7 +97,7 @@ const WindSpeedForm: React.FC = () => {
 
         {/* Type d'alerte */}
         <FormControl isReadOnly>
-          <FormLabel>Type d'alerte</FormLabel>
+          <FormLabel>Type d&apos;alerte</FormLabel>
           <Input name="type" value={formData.type} isReadOnly />
         </FormControl>
 

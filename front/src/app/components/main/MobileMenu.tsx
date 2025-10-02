@@ -25,7 +25,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { HamburgerIcon, MoonIcon, SunIcon, BellIcon } from "@chakra-ui/icons";
-import { FaUser, FaHome, FaCog, FaLeaf } from "react-icons/fa";
+import { FaUser, FaHome, FaCog } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
 import Image from "next/image";
 import logo from "../../public/logo.png";

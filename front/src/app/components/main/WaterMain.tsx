@@ -10,12 +10,7 @@ import getActiveGraphs, {
 } from "@/app/utils/getActiveGraphs";
 
 import "@/app/styles/style.css";
-
-import WaterSoilMain from "../analytics/SoilWater/WaterSoilMain";
 import CumulPrecipitationMain from "../analytics/CumulPrecipitation/CumulPrecipitationMain";
-import ET0Main from "../analytics/ET0/ET0Main";
-import PrecipitationRateMain from "../analytics/PrecipitationRate/PrecipitationRateMain";
-import SoilConductivityMain from "../analytics/SoilConductivityIrrigation/SoilConductivityIrrigationMain";
 import EcWaterMain from "../analytics/WaterEc/EcWaterMain";
 import WaterFlowMain from "../analytics/WaterFlow/WaterFlowMain";
 import PhWaterMain from "../analytics/WaterPh/PhWaterMain";

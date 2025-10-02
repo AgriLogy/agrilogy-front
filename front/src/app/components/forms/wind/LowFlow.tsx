@@ -12,7 +12,6 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  Switch,
   Button,
   VStack,
   useToast,

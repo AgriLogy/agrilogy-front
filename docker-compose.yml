@@ -1,6 +1,34 @@
-version: "3.9"
+# version: "3.9"
 
 services:
+
+  # agryfront:
+  #   container_name: agryfront
+  #   build:
+  #     context: ./front        # <- path to your Next.js app
+  #     dockerfile: Dockerfile  # <- the Dockerfile you shared
+  #   image: agrifront:v1.0
+  #   env_file: ./front/.env
+  #   environment:
+  #     - HOST=0.0.0.0
+  #     - PORT=3000
+  #     # Expose your backend URL to the browser code
+  #     - NEXT_PUBLIC_API_URL=http://agrybackend:8000
+  #     # optional: disable Next telemetry in CI/containers
+  #     - NEXT_TELEMETRY_DISABLED=1
+  #   ports:
+  #     - "3000:3000"
+  #   # Live-reload friendly: mount code in dev, keep node_modules inside container
+  #   volumes:
+  #     - ./front:/app
+  #     - /app/node_modules
+  #   networks:
+  #     - agro
+  #   restart: unless-stopped
+  #   depends_on:
+  #     agrybackend:
+  #       condition: service_started
+        
   agryadminer:
     container_name: agryadminer
     image: adminer

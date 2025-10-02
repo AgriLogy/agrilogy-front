@@ -14,12 +14,17 @@ const SettingsMain = () => {
       <Box bg={bg} className="header">
         <Text color={textColor}>Paramètres</Text>
       </Box>
-      <Box bg={bg} className="wide text-box">
+       <Box bg={bg} className="wide text-box">
+        <Text fontSize="md" color="gray.500">
+          Plus d’options de configuration seront bientôt disponibles.
+        </Text>
+      </Box>
+      {/* <Box bg={bg} className="wide text-box">
         <SensorColorSettings />
       </Box>
       <Box bg={bg} className="wide text-box">
         <GraphNameSettings />
-      </Box>
+      </Box> */}
     </div>
   );
 };

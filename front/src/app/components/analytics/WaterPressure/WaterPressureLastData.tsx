@@ -1,5 +1,5 @@
 import { Box, Text, useColorModeValue } from "@chakra-ui/react";
-import { FaBolt, FaTachometerAlt } from "react-icons/fa";
+import { FaTachometerAlt } from "react-icons/fa";
 import { SensorData } from "@/app/types";
 
 const timeAgo = (timestamp: string): string => {
@@ -23,8 +23,6 @@ const WaterPressureLastData = ({ data }: { data: SensorData[] }) => {
   const valueColor = useColorModeValue("blue.700", "blue.200");
   const textColor = useColorModeValue("gray.600", "gray.300");
 
-  const noDataColor = useColorModeValue("gray.600", "gray.300");
-  const timeColor = useColorModeValue("gray.500", "gray.400");
 
   return (
     <Box
