@@ -1,48 +1,39 @@
 from datetime import timedelta
 from pathlib import Path
 import os
+
 from dotenv import load_dotenv
+from corsheaders.defaults import default_headers
 
+# -----------------------------------------------------------------------------
+# Paths & .env
+# -----------------------------------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")  # loads back/.env
 
-# Load .env explicitly from the back/ folder
-load_dotenv(BASE_DIR / ".env")
+def _csv_env(name: str, default: str = "") -> list[str]:
+    raw = os.getenv(name, default) or ""
+    return [item.strip() for item in raw.split(",") if item.strip()]
 
-# === DJANGO CONFIG ===
+# -----------------------------------------------------------------------------
+# Core
+# -----------------------------------------------------------------------------
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-not-secret-please-override")
 DEBUG = os.getenv("DEBUG", "True").lower() in ("1", "true", "yes")
-
-def _csv_env(name, default=""):
-    raw = os.getenv(name, default)
-    return [item.strip() for item in raw.split(",") if item.strip()]
 
 ALLOWED_HOSTS = _csv_env(
     "ALLOWED_HOSTS",
     "localhost,127.0.0.1,0.0.0.0,agrybackend,157.245.43.196",
 )
 
-# === CORS / CSRF ===
-# Prefer explicit origins; don't set CORS_ALLOW_ALL_ORIGINS in dev unless you must.
-CORS_ALLOWED_ORIGINS = _csv_env(
-    "CORS_ALLOWED_ORIGINS",
-    "http://localhost:3000,http://127.0.0.1:3000",
-)
-CORS_ALLOW_CREDENTIALS = True
+# If you’re behind a proxy/ingress that terminates TLS, keep this:
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-CSRF_TRUSTED_ORIGINS = _csv_env(
-    "CSRF_TRUSTED_ORIGINS",
-    "http://localhost:3000,http://127.0.0.1:3000,http://157.245.43.196,http://157.245.43.196:3000",
-)
-
-from corsheaders.defaults import default_headers
-CORS_ALLOW_HEADERS = list(default_headers)
-
-# === APPS ===
+# -----------------------------------------------------------------------------
+# CORS / CSRF
+# -----------------------------------------------------------------------------
 INSTALLED_APPS = [
-    # Third-party must be before Django common middleware wiring
-    "corsheaders",
-
-    # Django apps
+    "corsheaders",  # keep corsheaders before Django common middleware (see MIDDLEWARE)
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -61,11 +52,11 @@ INSTALLED_APPS = [
     "CustomUser",
 ]
 
-# === MIDDLEWARE (CORS first, then common, then CSRF) ===
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
 
+    # CORS must be as high as possible, especially before CommonMiddleware
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
 
@@ -74,6 +65,34 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+# Explicit browser origins that can call your API (front-end URLs)
+CORS_ALLOWED_ORIGINS = _csv_env(
+    "CORS_ALLOWED_ORIGINS",
+    (
+        "http://localhost:3000,"
+        "http://127.0.0.1:3000,"
+        "http://157.245.43.196:3000,"
+        "https://157.245.43.196:3000"
+    ),
+)
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = list(default_headers)
+# If you need extra headers later:
+# CORS_ALLOW_HEADERS += ["x-requested-with"]
+
+# If you’ll host the site under a domain, add it here (both http/https).
+CSRF_TRUSTED_ORIGINS = _csv_env(
+    "CSRF_TRUSTED_ORIGINS",
+    (
+        "http://localhost:3000,"
+        "http://127.0.0.1:3000,"
+        "http://157.245.43.196,"
+        "http://157.245.43.196:3000,"
+        "https://157.245.43.196,"
+        "https://157.245.43.196:3000"
+    ),
+)
 
 ROOT_URLCONF = "agriBack.urls"
 
@@ -95,7 +114,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "agriBack.wsgi.application"
 
-# === DATABASES ===
+# -----------------------------------------------------------------------------
+# Database
+# -----------------------------------------------------------------------------
 USE_POSTGRES = os.getenv("USE_POSTGRES", "False").lower() in ("1", "true", "yes")
 
 if USE_POSTGRES:
@@ -117,7 +138,9 @@ else:
         }
     }
 
-# === AUTH & PASSWORDS ===
+# -----------------------------------------------------------------------------
+# Auth
+# -----------------------------------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -127,13 +150,17 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = "CustomUser.CustomUser"
 
-# === I18N / TZ ===
+# -----------------------------------------------------------------------------
+# I18N / TZ
+# -----------------------------------------------------------------------------
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = os.getenv("DJANGO_TIME_ZONE", "UTC")
 USE_I18N = True
 USE_TZ = True
 
-# === STATIC / MEDIA ===
+# -----------------------------------------------------------------------------
+# Static / Media
+# -----------------------------------------------------------------------------
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
@@ -141,7 +168,9 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# === DRF ===
+# -----------------------------------------------------------------------------
+# DRF / JWT
+# -----------------------------------------------------------------------------
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -151,7 +180,6 @@ REST_FRAMEWORK = {
     ],
 }
 
-# === JWT ===
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=10),
@@ -166,7 +194,9 @@ SIMPLE_JWT = {
     "JTI_CLAIM": "jti",
 }
 
-# === CELERY ===
+# -----------------------------------------------------------------------------
+# Celery
+# -----------------------------------------------------------------------------
 from celery.schedules import crontab
 
 CELERY_ENABLE_UTC = True
@@ -175,6 +205,7 @@ CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://redis:6379/0")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", CELERY_BROKER_URL)
 
 CELERY_BEAT_SCHEDULE = {
+    # Adjust to your real tasks
     "simulate_sensors_quarter_hourly": {
         "task": "sensors.tasks.simulate_sensor_ingest",
         "schedule": crontab(minute="*"),
@@ -185,12 +216,16 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
-# === CRON (django-cron or your custom runner) ===
+# -----------------------------------------------------------------------------
+# Cron (if used)
+# -----------------------------------------------------------------------------
 CRON_CLASSES = [
     "agriBack.cron.job.MyCronJob",
 ]
 
-# === EMAIL ===
+# -----------------------------------------------------------------------------
+# Email
+# -----------------------------------------------------------------------------
 if DEBUG:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 else:
@@ -204,7 +239,9 @@ else:
     EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() in ("1", "true", "yes")
     EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "False").lower() in ("1", "true", "yes")
 
-# === LOGGING ===
+# -----------------------------------------------------------------------------
+# Logging
+# -----------------------------------------------------------------------------
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
