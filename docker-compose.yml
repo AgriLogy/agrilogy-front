@@ -84,8 +84,9 @@ services:
         condition: service_started
       redis:
         condition: service_healthy
+    # ✅ bind mount a folder that lives inside your WSL project
     volumes:
-      - shared_data:/shared
+      - ./shared_data:/shared:rw
     restart: unless-stopped
     networks: [agro]
 
@@ -128,9 +129,3 @@ networks:
 
 volumes:
   data_database:
-  shared_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${PWD}/shared_data
-      o: bind
