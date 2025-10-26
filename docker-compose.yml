@@ -86,6 +86,7 @@ services:
         condition: service_healthy
     # ✅ bind mount a folder that lives inside your WSL project
     volumes:
+      - ./back:/code:delegated
       - ./shared_data:/shared:rw
     restart: unless-stopped
     networks: [agro]

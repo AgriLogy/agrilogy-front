@@ -1,19 +1,33 @@
 from django.contrib import admin
 from .models import *
 
-# @admin.register(Notification)
-# class NotificationAdmin(admin.ModelAdmin):
-#     pass
+from django.contrib import admin
+from .models import (
+    Notification, Alert, Zone, KcPeriod, Kc, KcPeriodAssignment, Et0Calculated, Et0Weather,
+    PrecipitationRate, HumidityWeather, WindSpeed, SolarRadiation, PressureWeather,
+    WindDirection, TemperatureWeather, ECSoilMedium, ECSoilHigh, ECSoilLow,
+    SoilMoistureMedium, SoilMoistureHigh, SoilMoistureLow, PhSoil,
+    SoilTemperatureLow, SoilTemperatureMedium, SoilTemperatureHigh,
+    WaterFlowSensor, WaterPressureSensor, WaterECSensor, PhWaterSensor,
+    ElectricityConsumptionSensor, LeafMoistureSensor, LeafTemperatureSensor,
+    MultiDepthSoilMoistureSensor, LargeFruitDiameterSensor, WaterLevelSensor,
+    SoilSalinitySensor, SoilConductivitySensor, NpkSensor, FruitSizeSensor,
+    EcSalinitySensor, SensorColor, SensorLocation, GraphName, ActiveGraph, VPDWeather
+)
 
-# @admin.register(Alert)
-# class AlertAdmin(admin.ModelAdmin):
-#     pass
+# Register all models at once
+all_models = [
+    Notification, Alert, Zone, KcPeriod, Kc, KcPeriodAssignment, Et0Calculated, Et0Weather,
+    PrecipitationRate, HumidityWeather, WindSpeed, SolarRadiation, PressureWeather,
+    WindDirection, TemperatureWeather, ECSoilMedium, ECSoilHigh, ECSoilLow,
+    SoilMoistureMedium, SoilMoistureHigh, SoilMoistureLow, PhSoil,
+    SoilTemperatureLow, SoilTemperatureMedium, SoilTemperatureHigh,
+    WaterFlowSensor, WaterPressureSensor, WaterECSensor, PhWaterSensor,
+    ElectricityConsumptionSensor, LeafMoistureSensor, LeafTemperatureSensor,
+    MultiDepthSoilMoistureSensor, LargeFruitDiameterSensor, WaterLevelSensor,
+    SoilSalinitySensor, SoilConductivitySensor, NpkSensor, FruitSizeSensor,
+    EcSalinitySensor, SensorColor, SensorLocation, GraphName, ActiveGraph, VPDWeather
+]
 
-# @admin.register(NotificationsPerUser)
-# class NotificationsPerUserAdmin(admin.ModelAdmin):
-#     pass
-
-
-# @admin.register(Sensor)
-# class SensorDataAdmin(admin.ModelAdmin):
-#     pass
+for model in all_models:
+    admin.site.register(model)

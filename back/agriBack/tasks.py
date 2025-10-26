@@ -138,7 +138,7 @@ def soil_heat_flux_MJm2h(Rn_MJm2h, is_daytime):
 def is_day(Rn_MJm2h):
     return Rn_MJm2h > 0
 
-@shared_task(name="sensors.tasks.compute_et0_vpd_hourly")
+@shared_task
 def compute_et0_vpd_hourly():
     """
     For each Zone:
@@ -338,7 +338,7 @@ def get_or_create_user_and_zones():
     return user, zones
 
 # --- main simulator ---
-@shared_task(name="sensors.tasks.simulate_sensor_ingest", bind=True, max_retries=0)
+@shared_task
 def simulate_sensor_ingest(self):
     """
     Runs every 15 minutes. Writes one sample for *each sensor model* per zone,
@@ -348,9 +348,19 @@ def simulate_sensor_ingest(self):
     """
     user, zones = get_or_create_user_and_zones()
 
+    schedule_mode = getattr(settings, "SCHEDULE_MODE", "test").lower()
     # align to quarter-hour UTC
     now_utc = timezone.now()
     aligned_min = (now_utc.minute // 1) * 1
+    if schedule_mode == "test":
+    # last full 4-minute window end-aligned to previous multiple of 4
+        end = now.replace(second=0, microsecond=0)
+        end = end.replace(minute=(end.minute // 4) * 4)
+        start = end - timedelta(minutes=4)
+    else:
+    # last full hour
+        end = now.replace(minute=0, second=0, microsecond=0)
+        start = end - timedelta(hours=1)
     slot_utc = now_utc.replace(minute=aligned_min, second=0, microsecond=0)
     # now_utc = timezone.now()
     # slot_utc = now_utc.replace(second=0, microsecond=0)
