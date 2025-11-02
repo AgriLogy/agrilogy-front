@@ -1,8 +1,5 @@
 FROM node:18
 
-# Optional tools for debugging inside the container (like nano)
-RUN apt-get update && apt-get install -y nano
-
 # Create app directory
 WORKDIR /app
 
