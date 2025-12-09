@@ -1,7 +1,10 @@
 import axios from "axios";
 
-export const API_URL = "http://157.245.43.196:8000/";
-// export const API_URL = "http://127.0.0.1:8000/";
+export const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://agrilogy-pi.com/";
+  //  "http://localhost:8000";
+
+  console.log("[NEXT_PUBLIC_API_URL]", API_URL);
 
 const api = axios.create({
   baseURL: API_URL,
