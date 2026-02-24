@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import api, { API_URL } from "@/app/lib/api";
+import { API_URL } from '@/app/lib/api';
 import {
   Modal,
   ModalOverlay,
@@ -14,9 +14,9 @@ import {
   Input,
   Select,
   useToast,
-} from "@chakra-ui/react";
-import axios from "axios";
-import { useState } from "react";
+} from '@chakra-ui/react';
+import axios from 'axios';
+import { useState } from 'react';
 
 interface ZoneModalAddForm {
   isOpen: boolean;
@@ -25,22 +25,22 @@ interface ZoneModalAddForm {
 }
 
 const ZoneModalAddForm = ({ isOpen, onClose, user }: ZoneModalAddForm) => {
-  const [name, setName] = useState("");
-  const [space, setSpace] = useState("");
-  const [kc, setKc] = useState("");
-  const [soilType, setSoilType] = useState("loamy");
-  const [flow_rate, setFlow_rate] = useState("");
+  const [name, setName] = useState('');
+  const [space, setSpace] = useState('');
+  const [kc, setKc] = useState('');
+  const [soilType, setSoilType] = useState('loamy');
+  const [flow_rate, setFlow_rate] = useState('');
   const [criticalMoistureThreshold, setCriticalMoistureThreshold] =
-    useState("");
+    useState('');
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   const handleSubmit = async () => {
     if (!name || !space || !kc || !criticalMoistureThreshold) {
       toast({
-        title: "Champs requis.",
-        description: "Veuillez remplir tous les champs.",
-        status: "warning",
+        title: 'Champs requis.',
+        description: 'Veuillez remplir tous les champs.',
+        status: 'warning',
         duration: 3000,
         isClosable: true,
       });
@@ -67,26 +67,26 @@ const ZoneModalAddForm = ({ isOpen, onClose, user }: ZoneModalAddForm) => {
       // await axios.post(`/admin/zone-per-user/${user}/`, payload);
 
       toast({
-        title: "Zone ajoutée.",
+        title: 'Zone ajoutée.',
         description: `La zone ${name} a été créée pour ${user}.`,
-        status: "success",
+        status: 'success',
         duration: 3000,
         isClosable: true,
       });
       window.location.reload();
 
       onClose();
-      setName("");
-      setSpace("");
-      setKc("");
-      setCriticalMoistureThreshold("");
-      setSoilType("loamy");
+      setName('');
+      setSpace('');
+      setKc('');
+      setCriticalMoistureThreshold('');
+      setSoilType('loamy');
     } catch (error: any) {
       toast({
-        title: "Erreur lors de la création.",
+        title: 'Erreur lors de la création.',
         description:
           error?.response?.data?.detail || "Une erreur s'est produite.",
-        status: "error",
+        status: 'error',
         duration: 4000,
         isClosable: true,
       });
@@ -142,7 +142,7 @@ const ZoneModalAddForm = ({ isOpen, onClose, user }: ZoneModalAddForm) => {
           </FormControl>
 
           <FormControl mt={4} isRequired>
-            <FormLabel>Seuil critique d'humidité (%)</FormLabel>
+            <FormLabel>Seuil critique d&apos;humidité (%)</FormLabel>
             <Input
               type="number"
               value={criticalMoistureThreshold}
@@ -150,13 +150,13 @@ const ZoneModalAddForm = ({ isOpen, onClose, user }: ZoneModalAddForm) => {
             />
           </FormControl>
           <FormControl>
-                <FormLabel>Débit d'aeau (L/s)</FormLabel>
-                <Input
-                  type="number"
-                  value={flow_rate}
-                  onChange={(e) => setFlow_rate(e.target.value)}
-                />
-              </FormControl>
+            <FormLabel>Débit d&apos;aeau (L/s)</FormLabel>
+            <Input
+              type="number"
+              value={flow_rate}
+              onChange={(e) => setFlow_rate(e.target.value)}
+            />
+          </FormControl>
         </ModalBody>
 
         <ModalFooter>

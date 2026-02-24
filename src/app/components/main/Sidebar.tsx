@@ -1,5 +1,5 @@
-"use client";
-import React, { useRef } from "react";
+'use client';
+import React, { useRef } from 'react';
 import {
   Flex,
   IconButton,
@@ -14,16 +14,16 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   Button,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 // import { FaHome, FaCog, FaBell } from "react-icons/fa";
-import { MdWarningAmber } from "react-icons/md";
-import { FaSeedling } from "react-icons/fa6";
-import { WiDaySunny } from "react-icons/wi";
-import { GiGrapes } from "react-icons/gi";
-import { IoLogOut } from "react-icons/io5";
-import { FaHome, FaWater } from "react-icons/fa";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import { useRouter, usePathname } from "next/navigation";
+import { MdWarningAmber } from 'react-icons/md';
+import { FaSeedling } from 'react-icons/fa6';
+import { WiDaySunny } from 'react-icons/wi';
+import { GiGrapes } from 'react-icons/gi';
+import { IoLogOut } from 'react-icons/io5';
+import { FaHome, FaWater } from 'react-icons/fa';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { useRouter, usePathname } from 'next/navigation';
 
 const Sidebar = () => {
   const { SideBarbg, hoverColor, iconColor } = useColorModeStyles();
@@ -35,17 +35,17 @@ const Sidebar = () => {
   const handleLogout = () => {
     localStorage.clear();
     onClose();
-    router.push("/login");
+    router.push('/login');
   };
 
   const navItems = [
-    { href: "/", icon: <FaHome />, label: "Accueil" },
-    { href: "/soil", icon: <FaSeedling />, label: "Données du sol" },
-    { href: "/station", icon: <WiDaySunny />, label: "Station météo" },
-    { href: "/plant", icon: <GiGrapes />, label: "Données des plantes" },
-    { href: "/water", icon: <FaWater />, label: "Station d'eau" },
+    { href: '/', icon: <FaHome />, label: 'Accueil' },
+    { href: '/soil', icon: <FaSeedling />, label: 'Données du sol' },
+    { href: '/station', icon: <WiDaySunny />, label: 'Station météo' },
+    { href: '/plant', icon: <GiGrapes />, label: 'Données des plantes' },
+    { href: '/water', icon: <FaWater />, label: "Station d'eau" },
     // { href: "/settings", icon: <FaCog />, label: "Paramètres" },
-    { href: "/alerts", icon: <MdWarningAmber  />, label: "Alertes" },
+    { href: '/alerts', icon: <MdWarningAmber />, label: 'Alertes' },
   ];
 
   return (
@@ -83,7 +83,7 @@ const Sidebar = () => {
         <Box height="1px" width="20px" bg="gray.400" mb={2} />
         <Tooltip label="Se déconnecter" aria-label="Logout">
           <IconButton
-            icon={<IoLogOut style={{ transform: "scaleX(-1)" }} />}
+            icon={<IoLogOut style={{ transform: 'scaleX(-1)' }} />}
             aria-label="Logout"
             variant="ghost"
             onClick={onOpen}

@@ -1,8 +1,7 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
-  Box,
   FormControl,
   FormLabel,
   Input,
@@ -24,10 +23,10 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 
-import api from "@/app/lib/api";
-import { ALERT_CHOICES, CONDITION_CHOICES } from "@/app/utils/alertChoices";
+import api from '@/app/lib/api';
+import { ALERT_CHOICES, CONDITION_CHOICES } from '@/app/utils/alertChoices';
 
 interface FormModalCreateProps {
   isOpen: boolean;
@@ -41,18 +40,16 @@ const FormModalCreate: React.FC<FormModalCreateProps> = ({
   refreshAlerts,
 }) => {
   const [formData, setFormData] = useState({
-    name: "",
-    type: "Pressure",
-    condition: ">",
-    description: "",
+    name: '',
+    type: 'Pressure',
+    condition: '>',
+    description: '',
     condition_nbr: 0,
   });
 
   const toast = useToast();
 
-  const handleTypeChange = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
+  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -87,9 +84,9 @@ const FormModalCreate: React.FC<FormModalCreateProps> = ({
     try {
       await api.post(`/api/alert/`, formData); // Utiliser POST pour la création
       toast({
-        title: "Alerte créée",
+        title: 'Alerte créée',
         description: "L'alerte a été créée avec succès.",
-        status: "success",
+        status: 'success',
         duration: 3000,
         isClosable: true,
       });
@@ -99,7 +96,7 @@ const FormModalCreate: React.FC<FormModalCreateProps> = ({
       toast({
         title: "Erreur lors de la création de l'alerte",
         description: "La création de l'alerte a échoué.",
-        status: "error",
+        status: 'error',
         duration: 3000,
         isClosable: true,
       });

@@ -1,13 +1,12 @@
-"use client";
-import React from "react";
+'use client';
+import React from 'react';
 import {
   Box,
   Text,
   useColorModeValue,
   useBreakpointValue,
   useColorMode,
-  Spinner,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 import {
   LineChart,
   Line,
@@ -17,9 +16,9 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from "recharts";
-import { SensorData } from "../data/dashboard/data";
-import EmptyBox from "./common/EmptyBox";
+} from 'recharts';
+import { SensorData } from '../data/dashboard/data';
+import EmptyBox from './common/EmptyBox';
 // import { calculateET0 } from "../data/dashboard/calculateET0";
 
 interface SensorDataChartProps {
@@ -31,10 +30,10 @@ const CustomLegend = (props: any) => {
   return (
     <ul
       style={{
-        display: "flex",
-        listStyle: "none",
+        display: 'flex',
+        listStyle: 'none',
         padding: 0,
-        flexWrap: "wrap",
+        flexWrap: 'wrap',
         margin: 0,
       }}
     >
@@ -42,19 +41,19 @@ const CustomLegend = (props: any) => {
         <li
           key={`item-${index}`}
           style={{
-            marginRight: "15px",
-            fontSize: "12px",
+            marginRight: '15px',
+            fontSize: '12px',
             color: entry.color,
-            whiteSpace: "nowrap",
+            whiteSpace: 'nowrap',
           }}
         >
           <span
             style={{
-              marginRight: "5px",
+              marginRight: '5px',
               backgroundColor: entry.color,
-              width: "10px",
-              height: "10px",
-              display: "inline-block",
+              width: '10px',
+              height: '10px',
+              display: 'inline-block',
             }}
           />
           {entry.value}
@@ -74,7 +73,7 @@ const CustomTick = ({ x, y, payload }: any) => {
 };
 
 const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
-  console.log("okay : ", data);
+  console.log('okay : ', data);
   // Ensure data is an array and not empty
   const validData = Array.isArray(data) && data.length > 0 ? data : [];
 
@@ -86,8 +85,8 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
   // Slice to get only the last 8 entries
   const lastEightData = dataWithET0.slice(-8);
 
-  const chartColor = useColorModeValue("#4A90E2", "#90CDF4");
-  const chartBg = useColorModeValue("white", "gray.800");
+  const chartColor = useColorModeValue('#4A90E2', '#90CDF4');
+  const chartBg = useColorModeValue('white', 'gray.800');
   const p = useBreakpointValue({ base: 2, md: 4 });
   const { colorMode } = useColorMode();
 
@@ -107,7 +106,7 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
       // >
       //   <Spinner size="xl" color="green.500" />
       // </Box>
-      <EmptyBox/>
+      <EmptyBox />
     );
   }
 
@@ -122,7 +121,7 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
       overflow="hidden"
     >
       <Text
-        color={colorMode === "light" ? "gray.700" : "gray.200"}
+        color={colorMode === 'light' ? 'gray.700' : 'gray.200'}
         fontSize="lg"
         fontWeight="bold"
         mb={4}

@@ -22,21 +22,21 @@ export interface SensorData {
 }
 
 export interface StatusData {
-    soil_irrigation_status : string;
-    soil_ph_status : string;
-    soil_conductivity_status : string;
-    soil_moisture_status : string;
-    soil_temperature_status : string;
-    et0_status : string;
-    precipitation_rate_status : string;
-    wind_speed_status : string;
-    solar_radiation_status : string;
-    pressure_weather_status : string;
-    wind_direction_status : string;
-    humidity_weather_status : string;
-    temperature_weather_status : string;
-    temperature_humidity_weather_status : string;
-    precipitation_humidity_rate_status : string;
-    pluviometrie_status : string;
-    data_table_status : string;
+  soil_irrigation_status: string;
+  soil_ph_status: string;
+  soil_conductivity_status: string;
+  soil_moisture_status: string;
+  soil_temperature_status: string;
+  et0_status: string;
+  precipitation_rate_status: string;
+  wind_speed_status: string;
+  solar_radiation_status: string;
+  pressure_weather_status: string;
+  wind_direction_status: string;
+  humidity_weather_status: string;
+  temperature_weather_status: string;
+  temperature_humidity_weather_status: string;
+  precipitation_humidity_rate_status: string;
+  pluviometrie_status: string;
+  data_table_status: string;
 }

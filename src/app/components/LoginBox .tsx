@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Box,
@@ -12,54 +12,52 @@ import {
   Stack,
   Text,
   useColorModeValue,
-} from "@chakra-ui/react";
-import { EmailIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { useState } from "react";
-import axiosInstance from "../lib/api";
-import { useRouter } from "next/navigation"; // Importing useRouter from next/navigation
-
+} from '@chakra-ui/react';
+import { EmailIcon, ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+import { useState } from 'react';
+import axiosInstance from '../lib/api';
+import { useRouter } from 'next/navigation'; // Importing useRouter from next/navigation
 
 const LoginBox = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false); // Added loading state
 
   const handlePasswordVisibility = () => setShowPassword(!showPassword);
 
-  const boxBg = useColorModeValue("white", "gray.700");
-  const inputBg = useColorModeValue("gray.100", "gray.600");
-  const inputBorderColor = useColorModeValue("gray.300", "gray.500");
-  const textColor = useColorModeValue("gray.800", "white");
+  const boxBg = useColorModeValue('white', 'gray.700');
+  const inputBg = useColorModeValue('gray.100', 'gray.600');
+  const inputBorderColor = useColorModeValue('gray.300', 'gray.500');
+  const textColor = useColorModeValue('gray.800', 'white');
   const router = useRouter(); // Use Next.js router for redirection
-
 
   const handleSubmit = async () => {
     setLoading(true); // Set loading to true when submitting
     try {
-      const response = await axiosInstance.post("/auth/signin/", {
+      const response = await axiosInstance.post('/auth/signin/', {
         username,
         password,
       });
-  
+
       if (response.status >= 200 && response.status < 300) {
         const { access, refresh, is_staff } = response.data;
-        localStorage.setItem("accessToken", access);
-        localStorage.setItem("refreshToken", refresh);
-        is_staff ? router.push("/admin") : router.push("/");
+        localStorage.setItem('accessToken', access);
+        localStorage.setItem('refreshToken', refresh);
+        is_staff ? router.push('/admin') : router.push('/');
       }
     } catch (error) {
       setErrorMessage("Nom d'utilisateur ou mot de passe incorrect.");
       // Clear error message after 5 seconds
     } finally {
       setTimeout(() => {
-        setErrorMessage(""); // Clear error message after 5 seconds
+        setErrorMessage(''); // Clear error message after 5 seconds
       }, 10000);
       setLoading(false); // Set loading to false after the request is done
     }
   };
-  
+
   return (
     <Box
       maxWidth="500px"
@@ -72,13 +70,13 @@ const LoginBox = () => {
       position="relative"
       _before={{
         content: `""`,
-        position: "absolute",
-        top: "-20px",
-        left: "50%",
-        transform: "translateX(-50%)",
-        width: "60px",
-        height: "60px",
-        backgroundSize: "cover",
+        position: 'absolute',
+        top: '-20px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: '60px',
+        height: '60px',
+        backgroundSize: 'cover',
         zIndex: 1,
       }}
     >
@@ -113,7 +111,7 @@ const LoginBox = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               _placeholder={{
-                color: useColorModeValue("gray.500", "gray.400"),
+                color: useColorModeValue('gray.500', 'gray.400'),
               }}
             />
           </InputGroup>
@@ -131,14 +129,14 @@ const LoginBox = () => {
               />
             </InputLeftElement>
             <Input
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               placeholder="Votre mot de passe"
               bg={inputBg}
               borderColor={inputBorderColor}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               _placeholder={{
-                color: useColorModeValue("gray.500", "gray.400"),
+                color: useColorModeValue('gray.500', 'gray.400'),
               }}
             />
           </InputGroup>

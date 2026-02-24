@@ -1,6 +1,6 @@
-import { Box, Text, VStack, useColorModeValue } from "@chakra-ui/react";
-import { GiChemicalDrop } from "react-icons/gi";
-import { NpkSensorData } from "@/app/types";
+import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
+import { GiChemicalDrop } from 'react-icons/gi';
+import { NpkSensorData } from '@/app/types';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -19,11 +19,10 @@ const NpkLastData = ({ data }: { data: NpkSensorData[] }) => {
   const latest = data[data.length - 1];
 
   // Light/dark mode colors
-  const bgColor = useColorModeValue("blue.50", "blue.900");
-  const noDataColor = useColorModeValue("gray.600", "gray.300");
-  const timeColor = useColorModeValue("gray.500", "gray.400");
-  const textColor = useColorModeValue("gray.600", "gray.300");
-
+  const bgColor = useColorModeValue('blue.50', 'blue.900');
+  const noDataColor = useColorModeValue('gray.600', 'gray.300');
+  const timeColor = useColorModeValue('gray.500', 'gray.400');
+  const textColor = useColorModeValue('gray.600', 'gray.300');
 
   return (
     <Box
@@ -49,13 +48,13 @@ const NpkLastData = ({ data }: { data: NpkSensorData[] }) => {
       {latest ? (
         <VStack spacing={1} mt={3}>
           <Text fontSize="lg" color={latest.nitrogen_color}>
-            Azote (N): {latest.nitrogen_value?.toFixed(2) ?? "N/A"} mg/kg
+            Azote (N): {latest.nitrogen_value?.toFixed(2) ?? 'N/A'} mg/kg
           </Text>
           <Text fontSize="lg" color={latest.phosphorus_color}>
-            Phosphore (P): {latest.phosphorus_value?.toFixed(2) ?? "N/A"} mg/kg
+            Phosphore (P): {latest.phosphorus_value?.toFixed(2) ?? 'N/A'} mg/kg
           </Text>
           <Text fontSize="lg" color={latest.potassium_color}>
-            Potassium (K): {latest.potassium_value?.toFixed(2) ?? "N/A"} mg/kg
+            Potassium (K): {latest.potassium_value?.toFixed(2) ?? 'N/A'} mg/kg
           </Text>
         </VStack>
       ) : (

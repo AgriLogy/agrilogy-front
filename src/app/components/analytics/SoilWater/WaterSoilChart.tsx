@@ -8,7 +8,7 @@ import {
   CartesianGrid,
   ResponsiveContainer,
   ReferenceArea,
-} from "recharts";
+} from 'recharts';
 import {
   Box,
   Button,
@@ -16,21 +16,21 @@ import {
   HStack,
   Text,
   useBreakpointValue,
-} from "@chakra-ui/react";
-import { useRef, useMemo } from "react";
-import html2canvas from "html2canvas";
-import { FaCamera, FaDownload } from "react-icons/fa";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import { ThresholdBand, WaterSoilData } from "@/app/types";
+} from '@chakra-ui/react';
+import { useRef, useMemo } from 'react';
+import html2canvas from 'html2canvas';
+import { FaCamera, FaDownload } from 'react-icons/fa';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { ThresholdBand, WaterSoilData } from '@/app/types';
 
 const WaterSoilChart = ({
   data,
   thresholds,
-  targetAxis = "left", // which Y axis the bands align to
+  targetAxis = 'left', // which Y axis the bands align to
 }: {
   data: WaterSoilData[];
   thresholds: ThresholdBand;
-  targetAxis?: "left" | "right";
+  targetAxis?: 'left' | 'right';
 }) => {
   const { critical_min, critical_max, normal_min, normal_max } = thresholds;
 
@@ -45,41 +45,41 @@ const WaterSoilChart = ({
   const handleScreenshot = async () => {
     if (!chartRef.current) return;
     const canvas = await html2canvas(chartRef.current);
-    const link = document.createElement("a");
-    link.download = "water_soil_data.png";
+    const link = document.createElement('a');
+    link.download = 'water_soil_data.png';
     link.href = canvas.toDataURL();
     link.click();
   };
 
   const handleDownloadData = () => {
     const headers = [
-      "timestamp",
-      "soilLow",
-      "soilMedium",
-      "soilHigh",
-      "waterFlow",
+      'timestamp',
+      'soilLow',
+      'soilMedium',
+      'soilHigh',
+      'waterFlow',
     ];
     const csv =
-      headers.join(",") +
-      "\n" +
+      headers.join(',') +
+      '\n' +
       data
         .map((d) =>
           [
             d.timestamp,
-            d.soilLow ?? "",
-            d.soilMedium ?? "",
-            d.soilHigh ?? "",
-            d.waterFlow ?? "",
-          ].join(",")
+            d.soilLow ?? '',
+            d.soilMedium ?? '',
+            d.soilHigh ?? '',
+            d.waterFlow ?? '',
+          ].join(',')
         )
-        .join("\n");
+        .join('\n');
 
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
 
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
-    link.download = "water_soil_data.csv";
+    link.download = 'water_soil_data.csv';
     link.click();
 
     URL.revokeObjectURL(url);
@@ -215,9 +215,25 @@ const WaterSoilChart = ({
 
             <XAxis
               dataKey="timestamp"
-              angle={labelAngle}
+              angle={0}
               textAnchor="middle"
               interval={labelInterval}
+
+              stroke="#666"                    // Axis line color
+              strokeWidth={1}                  // Axis line thickness
+              tick={{                          // Tick styling
+                fill: '#666',                  // Tick label color
+                fontSize: 17,                  // Tick label font size
+                fontFamily: 'Arial, sans-serif' // Tick label font
+              }}
+              axisLine={{                       // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1
+              }}
+              tickLine={{                       // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1
+                            }}
             />
 
             <YAxis
@@ -225,19 +241,42 @@ const WaterSoilChart = ({
               domain={[0, 100]}
               label={{
                 angle: -90,
-                position: "insideLeft",
+                position: 'insideLeft',
               }}
+              stroke="#666"                    // Axis line color
+              strokeWidth={1}                  // Axis line thickness
+              tick={{                          // Tick styling
+                fill: '#666',                  // Tick label color
+                fontSize: 17,                  // Tick label font size
+                fontFamily: 'Arial, sans-serif' // Tick label font
+              }}
+              axisLine={{                       // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1
+              }}
+              tickLine={{                       // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1
+                            }}
             />
 
             <YAxis
               yAxisId="right"
               orientation="right"
-              domain={[0, "auto"]}
+              domain={[0, 'auto']}
               label={{
-                value: "Débit (L/s)",
+                value: 'Débit (L/s)',
                 angle: 90,
-                position: "insideRight",
-                dx: 10,
+                position: 'inside',
+                dx: 20,
+                fontSize: 18,                  // Tick label font size
+                fontFamily: 'Arial, sans-serif' // Tick label font
+
+              }}
+              tick={{                          // Tick styling
+                fill: '#666',                  // Tick label color
+                fontSize: 17,                  // Tick label font size
+                fontFamily: 'Arial, sans-serif' // Tick label font
               }}
             />
 
@@ -254,7 +293,7 @@ const WaterSoilChart = ({
               stroke="#0288d1"
               strokeWidth={2}
               fillOpacity={0.5}
-              connectNulls={true} // 
+              connectNulls={true} //
               isAnimationActive={false}
             />
             <Line

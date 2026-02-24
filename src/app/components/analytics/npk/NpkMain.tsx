@@ -1,10 +1,10 @@
-import { Box, Stack } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import api from "@/app/lib/api";
-import "@/app/styles/style.css";
-import NpkLastData from "./NpkLastData";
-import NpkSizeChart from "./NpkSizeChart";
-import { NpkSensorData } from "@/app/types";
+import { Box, Stack } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import api from '@/app/lib/api';
+import '@/app/styles/style.css';
+import NpkLastData from './NpkLastData';
+import NpkSizeChart from './NpkSizeChart';
+import { NpkSensorData } from '@/app/types';
 
 const NpkMain = ({
   filters,
@@ -21,7 +21,7 @@ const NpkMain = ({
 
   useEffect(() => {
     api
-      .get<NpkSensorData[]>("/api/sensors/npk/", {
+      .get<NpkSensorData[]>('/api/sensors/npk/', {
         params: {
           start_date: startDate,
           end_date: endDate,
@@ -29,23 +29,23 @@ const NpkMain = ({
         },
       })
       .then((res) => setData(res.data))
-      .catch((err) => console.error("Failed to fetch NPK sensor data:", err))
+      .catch((err) => console.error('Failed to fetch NPK sensor data:', err))
       .finally(() => setLoading(false));
   }, [startDate, endDate, selectedZone]);
 
   return (
     <Stack
       spacing={2}
-      direction={{ base: "column", md: "row" }}
+      direction={{ base: 'column', md: 'row' }}
       align="start"
       width="100%"
       height="100%"
       className="Box"
     >
-      <Box flex={3} p={2} height={"100%"} width={"100%"}>
+      <Box flex={3} p={2} height={'100%'} width={'100%'}>
         <NpkSizeChart data={data} loading={loading} />
       </Box>
-      <Box flex={1} p={3} height={"100%"} width={"100%"}>
+      <Box flex={1} p={3} height={'100%'} width={'100%'}>
         <NpkLastData data={data} />
       </Box>
     </Stack>

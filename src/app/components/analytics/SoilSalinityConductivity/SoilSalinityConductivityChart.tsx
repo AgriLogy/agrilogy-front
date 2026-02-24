@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
   Brush,
-} from "recharts";
+} from 'recharts';
 import {
   Box,
   Button,
@@ -17,12 +17,12 @@ import {
   HStack,
   Text,
   useBreakpointValue,
-} from "@chakra-ui/react";
-import { FaCamera, FaDownload } from "react-icons/fa";
-import html2canvas from "html2canvas";
-import { SensorData } from "@/app/types";
-import EmptyBox from "../../common/EmptyBox";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
+} from '@chakra-ui/react';
+import { FaCamera, FaDownload } from 'react-icons/fa';
+import html2canvas from 'html2canvas';
+import { SensorData } from '@/app/types';
+import EmptyBox from '../../common/EmptyBox';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
 
 type Props = {
   salinityData: SensorData[];
@@ -82,8 +82,8 @@ const SoilSalinityConductivityChart = ({
   const handleScreenshot = async () => {
     if (chartRef.current) {
       const canvas = await html2canvas(chartRef.current);
-      const link = document.createElement("a");
-      link.download = "soil_salinity_conductivity_chart.png";
+      const link = document.createElement('a');
+      link.download = 'soil_salinity_conductivity_chart.png';
       link.href = canvas.toDataURL();
       link.click();
     }
@@ -91,17 +91,17 @@ const SoilSalinityConductivityChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      "timestamp,salinity,conductivity\n" +
+      'timestamp,salinity,conductivity\n' +
       chartData
-        .map((d) => `${d.name},${d.salinity ?? ""},${d.conductivity ?? ""}`)
-        .join("\n");
+        .map((d) => `${d.name},${d.salinity ?? ''},${d.conductivity ?? ''}`)
+        .join('\n');
 
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
 
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
-    link.download = "soil_data.csv";
+    link.download = 'soil_data.csv';
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -140,18 +140,50 @@ const SoilSalinityConductivityChart = ({
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="name"
-                angle={labelAngle}
+                angle={0}
                 textAnchor="middle"
                 interval={labelInterval}
+
+                stroke="#666"                    // Axis line color
+                strokeWidth={1}                  // Axis line thickness
+                tick={{                          // Tick styling
+                  fill: '#666',                  // Tick label color
+                  fontSize: 17,                  // Tick label font size
+                  fontFamily: 'Arial, sans-serif' // Tick label font
+                }}
+                axisLine={{                       // Main axis line styling
+                  stroke: '#666',
+                  strokeWidth: 1
+                }}
+                tickLine={{                       // Tick line styling
+                  stroke: '#666',
+                  strokeWidth: 1
+                              }}
               />
               <YAxis
                 label={{
                   // value: "Concentration",
                   angle: -90,
-                  position: "insideLeft",
+                  position: 'insideLeft',
                   fontSize: 14,
                   dy: 80,
                 }}
+
+                stroke="#666"                    // Axis line color
+                strokeWidth={1}                  // Axis line thickness
+                tick={{                          // Tick styling
+                  fill: '#666',                  // Tick label color
+                  fontSize: 17,                  // Tick label font size
+                  fontFamily: 'Arial, sans-serif' // Tick label font
+                }}
+                axisLine={{                       // Main axis line styling
+                  stroke: '#666',
+                  strokeWidth: 1
+                }}
+                tickLine={{                       // Tick line styling
+                  stroke: '#666',
+                  strokeWidth: 1
+                              }}
               />
               <Tooltip />
               <Legend onClick={handleLegendClick} />
@@ -159,8 +191,8 @@ const SoilSalinityConductivityChart = ({
               <Line
                 type="monotone"
                 dataKey="salinity"
-                name={chartData[0]?.salinity_courbe_name || "Salinité"}
-                stroke={chartData[0]?.salinity_color || "#dba800"}
+                name={chartData[0]?.salinity_courbe_name || 'Salinité'}
+                stroke={chartData[0]?.salinity_color || '#dba800'}
                 strokeOpacity={activeLines.salinity ? 1 : 0.1}
                 strokeWidth={2}
                 dot={false}
@@ -170,8 +202,8 @@ const SoilSalinityConductivityChart = ({
               <Line
                 type="monotone"
                 dataKey="conductivity"
-                name={chartData[0]?.conductivity_courbe_name || "Conductivité"}
-                stroke={chartData[0]?.conductivity_color || "#00a86b"}
+                name={chartData[0]?.conductivity_courbe_name || 'Conductivité'}
+                stroke={chartData[0]?.conductivity_color || '#00a86b'}
                 strokeOpacity={activeLines.conductivity ? 1 : 0.1}
                 strokeWidth={2}
                 dot={false}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Flex,
   IconButton,
@@ -10,24 +10,24 @@ import {
   Link,
   useColorMode,
   Button,
-} from "@chakra-ui/react";
-import { BellIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
-import { FaCog, FaUser } from "react-icons/fa";
-import Image from "next/image";
-import api from "@/app/lib/api";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import logo from "../../public/logo.png";
+} from '@chakra-ui/react';
+import { BellIcon, MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { FaCog, FaUser } from 'react-icons/fa';
+import Image from 'next/image';
+import api from '@/app/lib/api';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import logo from '../../public/logo.png';
 
 const BigMenu = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { bg, hoverColor } = useColorModeStyles();
-  const [username, setUsername] = useState("User");
+  const [username, setUsername] = useState('User');
 
   useEffect(() => {
     api
-      .get("/api/header/")
+      .get('/api/header/')
       .then((response) => setUsername(response.data.username))
-      .catch((error) => console.error("Error fetching header data", error));
+      .catch((error) => console.error('Error fetching header data', error));
   }, []);
 
   return (
@@ -75,7 +75,7 @@ const BigMenu = () => {
           </MenuList>
         </Menu>
         <IconButton
-          icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+          icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
           aria-label="Toggle Color Mode"
           variant="ghost"
           onClick={toggleColorMode}

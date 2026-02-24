@@ -1,4 +1,4 @@
-import { SensorData } from "./data";
+import { SensorData } from './data';
 
 export const calculateET0 = (data: SensorData): number => {
   const {

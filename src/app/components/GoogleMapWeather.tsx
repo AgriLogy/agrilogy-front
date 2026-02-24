@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
-import { Box, useBreakpointValue } from "@chakra-ui/react";
-import Loading from "@component/common/Loading";
-import DashboardCard from "@component/dashboard/DashboardCard";
+import React, { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { Box, useBreakpointValue } from '@chakra-ui/react';
+import Loading from '@component/common/Loading';
+import DashboardCard from '@component/dashboard/DashboardCard';
 
 // Import the map only in the browser (prevents SSR "window is not defined")
-const OpenStreetMap = dynamic(() => import("@component/OpenStreetMap"), {
+const OpenStreetMap = dynamic(() => import('@component/OpenStreetMap'), {
   ssr: false,
   loading: () => <Loading />,
 });
@@ -30,7 +30,7 @@ export default function GoogleMapWeather() {
   ) : (
     <Box
       maxW="100%"
-      maxH={{ base: "300px", md: "500px" }}
+      maxH={{ base: '300px', md: '500px' }}
       height="100%"
       width="100%"
       borderRadius="md"

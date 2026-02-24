@@ -1,8 +1,8 @@
-import { Box, Stack } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import api from "@/app/lib/api";
-import TempuratureHumidtyChart from "./TempuratureHumidtyChart";
-import TempuratureHumidtyLastData from "./TempuratureHumidtyLastData";
+import { Box, Stack } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import api from '@/app/lib/api';
+import TempuratureHumidtyChart from './TempuratureHumidtyChart';
+import TempuratureHumidtyLastData from './TempuratureHumidtyLastData';
 
 interface WeatherData {
   id: number;
@@ -30,7 +30,7 @@ const TempuratureHumidtyMain = ({
 
   useEffect(() => {
     const fetchHumidity = api.get<WeatherData[]>(
-      "/api/sensors/humidityweather/",
+      '/api/sensors/humidityweather/',
       {
         params: {
           start_date: startDate,
@@ -41,7 +41,7 @@ const TempuratureHumidtyMain = ({
     );
 
     const fetchTemperature = api.get<WeatherData[]>(
-      "/api/sensors/temperatureweather/",
+      '/api/sensors/temperatureweather/',
       {
         params: {
           start_date: startDate,
@@ -56,14 +56,14 @@ const TempuratureHumidtyMain = ({
         setHumidityData(humRes.data);
         setTemperatureData(tempRes.data);
       })
-      .catch((err) => console.error("Error fetching weather data:", err))
+      .catch((err) => console.error('Error fetching weather data:', err))
       .finally(() => setLoading(false));
   }, [startDate, endDate, selectedZone]);
 
   return (
     <Stack
       spacing={2}
-      direction={{ base: "column", md: "row" }}
+      direction={{ base: 'column', md: 'row' }}
       align="start"
       width="100%"
       height="100%"

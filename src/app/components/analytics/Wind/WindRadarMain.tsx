@@ -1,8 +1,8 @@
-import { Box, Stack } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import api from "@/app/lib/api";
-import WindRadarLastData from "./WindRadarLastData";
-import WindRadarChart from "./WindRadarChart";
+import { Box, Stack } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import api from '@/app/lib/api';
+import WindRadarLastData from './WindRadarLastData';
+import WindRadarChart from './WindRadarChart';
 
 interface WindData {
   id: number;
@@ -29,7 +29,7 @@ const WindRadarMain = ({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchSpeed = api.get<WindData[]>("/api/sensors/windspeed/", {
+    const fetchSpeed = api.get<WindData[]>('/api/sensors/windspeed/', {
       params: {
         start_date: startDate,
         end_date: endDate,
@@ -37,7 +37,7 @@ const WindRadarMain = ({
       },
     });
 
-    const fetchDirection = api.get<WindData[]>("/api/sensors/winddirection/", {
+    const fetchDirection = api.get<WindData[]>('/api/sensors/winddirection/', {
       params: {
         start_date: startDate,
         end_date: endDate,
@@ -50,14 +50,14 @@ const WindRadarMain = ({
         setSpeedData(speedRes.data);
         setDirectionData(dirRes.data);
       })
-      .catch((err) => console.error("Error fetching wind data:", err))
+      .catch((err) => console.error('Error fetching wind data:', err))
       .finally(() => setLoading(false));
   }, [startDate, endDate, selectedZone]);
 
   return (
     <Stack
       spacing={2}
-      direction={{ base: "column", md: "row" }}
+      direction={{ base: 'column', md: 'row' }}
       align="start"
       width="100%"
       height="100%"

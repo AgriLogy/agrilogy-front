@@ -1,5 +1,5 @@
 // components/ZoneEditModal.tsx
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -13,15 +13,15 @@ import {
   VStack,
   Select,
   useToast,
-} from "@chakra-ui/react";
-import axiosInstance from "@/app/lib/api";
+} from '@chakra-ui/react';
+import axiosInstance from '@/app/lib/api';
 
 interface Zone {
   id: number;
   name: string;
   space: number;
   kc: number;
-  soil_type: "clay" | "loamy" | "sandy" | "others";
+  soil_type: 'clay' | 'loamy' | 'sandy' | 'others';
   critical_moisture_threshold: number;
 }
 
@@ -33,7 +33,13 @@ interface Props {
   onUpdate: (zone: Zone) => void;
 }
 
-const ZoneEditModal = ({ isOpen, onClose, zone, username, onUpdate }: Props) => {
+const ZoneEditModal = ({
+  isOpen,
+  onClose,
+  zone,
+  username,
+  onUpdate,
+}: Props) => {
   const [formData, setFormData] = useState<Zone>(zone);
   const toast = useToast();
 
@@ -44,9 +50,9 @@ const ZoneEditModal = ({ isOpen, onClose, zone, username, onUpdate }: Props) => 
     setFormData((prev) => ({
       ...prev,
       [name]:
-        name === "space" ||
-        name === "kc" ||
-        name === "critical_moisture_threshold"
+        name === 'space' ||
+        name === 'kc' ||
+        name === 'critical_moisture_threshold'
           ? parseFloat(value)
           : value,
     }));
@@ -60,10 +66,10 @@ const ZoneEditModal = ({ isOpen, onClose, zone, username, onUpdate }: Props) => 
       );
       onUpdate(response.data);
       onClose();
-      toast({ title: "Zone updated", status: "success" });
+      toast({ title: 'Zone updated', status: 'success' });
       window.location.reload();
     } catch (error) {
-      toast({ title: "Failed to update zone", status: "error" });
+      toast({ title: 'Failed to update zone', status: 'error' });
     }
   };
 
@@ -73,11 +79,11 @@ const ZoneEditModal = ({ isOpen, onClose, zone, username, onUpdate }: Props) => 
         `/api/mod-zone-per-user/${username}/${zone.id}/`
       );
       onClose();
-      toast({ title: "Zone deleted", status: "success" });
+      toast({ title: 'Zone deleted', status: 'success' });
       // Optionally, refresh the page
       window.location.reload(); // Refresh the page after delete
     } catch (error) {
-      toast({ title: "Failed to delete zone", status: "error" });
+      toast({ title: 'Failed to delete zone', status: 'error' });
     }
   };
 

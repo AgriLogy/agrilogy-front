@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
   ReferenceArea, // ⬅️ add this
-} from "recharts";
+} from 'recharts';
 import {
   useBreakpointValue,
   Box,
@@ -18,12 +18,12 @@ import {
   Button,
   HStack,
   useColorModeValue,
-} from "@chakra-ui/react";
-import { FaDownload, FaCamera } from "react-icons/fa";
-import html2canvas from "html2canvas";
-import EmptyBox from "../../common/EmptyBox";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import { TemperaturePoint } from "./SoilTemperatureMain";
+} from '@chakra-ui/react';
+import { FaDownload, FaCamera } from 'react-icons/fa';
+import html2canvas from 'html2canvas';
+import EmptyBox from '../../common/EmptyBox';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { TemperaturePoint } from './SoilTemperatureMain';
 
 const SoilTemperatureChart = ({
   data,
@@ -57,18 +57,24 @@ const SoilTemperatureChart = ({
   const labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const { textColor } = useColorModeStyles();
 
-  const bandFill = useColorModeValue("rgba(72,187,120,0.18)", "rgba(72,187,120,0.28)"); // green
-  const bandStroke = useColorModeValue("rgba(56,161,105,0.8)", "rgba(154,230,180,0.9)");
+  const bandFill = useColorModeValue(
+    'rgba(72,187,120,0.18)',
+    'rgba(72,187,120,0.28)'
+  ); // green
+  const bandStroke = useColorModeValue(
+    'rgba(56,161,105,0.8)',
+    'rgba(154,230,180,0.9)'
+  );
 
   const handleLegendClick = (e: any) => {
     switch (e.value) {
-      case "Basse":
+      case 'Basse':
         setShowLow((s) => !s);
         break;
-      case "Moyenne":
+      case 'Moyenne':
         setShowMedium((s) => !s);
         break;
-      case "Haute":
+      case 'Haute':
         setShowHigh((s) => !s);
         break;
       default:
@@ -79,25 +85,24 @@ const SoilTemperatureChart = ({
   const handleScreenshot = async () => {
     if (!chartRef.current) return;
     const canvas = await html2canvas(chartRef.current);
-    const a = document.createElement("a");
-    a.download = "soil_temperature_chart.png";
+    const a = document.createElement('a');
+    a.download = 'soil_temperature_chart.png';
     a.href = canvas.toDataURL();
     a.click();
   };
 
   const handleDownloadData = () => {
-    const header = "timestamp,low,medium,high\n";
+    const header = 'timestamp,low,medium,high\n';
     const rows = data
       .map(
-        (d) =>
-          `${d.timestamp},${d.low ?? ""},${d.medium ?? ""},${d.high ?? ""}`
+        (d) => `${d.timestamp},${d.low ?? ''},${d.medium ?? ''},${d.high ?? ''}`
       )
-      .join("\n");
-    const blob = new Blob([header + rows], { type: "text/csv" });
+      .join('\n');
+    const blob = new Blob([header + rows], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
-    a.download = "soil_temperature_data.csv";
+    a.download = 'soil_temperature_data.csv';
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -105,8 +110,8 @@ const SoilTemperatureChart = ({
   const xStart = chartData[0]?.name;
   const xEnd = chartData[chartData.length - 1]?.name;
   const showBand =
-    typeof bestValueMin === "number" &&
-    typeof bestValueMax === "number" &&
+    typeof bestValueMin === 'number' &&
+    typeof bestValueMax === 'number' &&
     bestValueMin < bestValueMax &&
     xStart &&
     xEnd;
@@ -166,13 +171,44 @@ const SoilTemperatureChart = ({
 
               <XAxis
                 dataKey="name"
-                angle={labelAngle}
+                angle={0}
                 textAnchor="middle"
                 interval={labelInterval}
+                stroke="#666"                    // Axis line color
+                strokeWidth={1}                  // Axis line thickness
+                tick={{                          // Tick styling
+                  fill: '#666',                  // Tick label color
+                  fontSize: 17,                  // Tick label font size
+                  fontFamily: 'Arial, sans-serif' // Tick label font
+                }}
+                axisLine={{                       // Main axis line styling
+                  stroke: '#666',
+                  strokeWidth: 1
+                }}
+                tickLine={{                       // Tick line styling
+                  stroke: '#666',
+                  strokeWidth: 1
+                              }}
               />
               <YAxis
-                label={{ angle: -90, position: "insideLeft" }}
-                domain={["auto", "auto"]}
+                label={{ angle: -90, position: 'insideLeft' }}
+                domain={['auto', 'auto']}
+
+                stroke="#666"                    // Axis line color
+                strokeWidth={1}                  // Axis line thickness
+                tick={{                          // Tick styling
+                  fill: '#666',                  // Tick label color
+                  fontSize: 17,                  // Tick label font size
+                  fontFamily: 'Arial, sans-serif' // Tick label font
+                }}
+                axisLine={{                       // Main axis line styling
+                  stroke: '#666',
+                  strokeWidth: 1
+                }}
+                tickLine={{                       // Tick line styling
+                  stroke: '#666',
+                  strokeWidth: 1
+                              }}
               />
               <Tooltip />
               <Legend onClick={handleLegendClick} />
@@ -181,9 +217,9 @@ const SoilTemperatureChart = ({
                 type="monotone"
                 dataKey="low"
                 name="Basse"
-                stroke={showLow ? "#3182CE" : "gray"}
+                stroke={showLow ? '#3182CE' : 'gray'}
                 strokeWidth={2}
-                dot={{ r: 3, fill: showLow ? "#3182CE" : "gray" }}
+                dot={{ r: 3, fill: showLow ? '#3182CE' : 'gray' }}
                 hide={!showLow}
                 isAnimationActive={false}
               />
@@ -191,9 +227,9 @@ const SoilTemperatureChart = ({
                 type="monotone"
                 dataKey="medium"
                 name="Moyenne"
-                stroke={showMedium ? "#2F855A" : "gray"}
+                stroke={showMedium ? '#2F855A' : 'gray'}
                 strokeWidth={2}
-                dot={{ r: 3, fill: showMedium ? "#2F855A" : "gray" }}
+                dot={{ r: 3, fill: showMedium ? '#2F855A' : 'gray' }}
                 hide={!showMedium}
                 isAnimationActive={false}
               />
@@ -201,9 +237,9 @@ const SoilTemperatureChart = ({
                 type="monotone"
                 dataKey="high"
                 name="Haute"
-                stroke={showHigh ? "#E53E3E" : "gray"}
+                stroke={showHigh ? '#E53E3E' : 'gray'}
                 strokeWidth={2}
-                dot={{ r: 3, fill: showHigh ? "#E53E3E" : "gray" }}
+                dot={{ r: 3, fill: showHigh ? '#E53E3E' : 'gray' }}
                 hide={!showHigh}
                 isAnimationActive={false}
               />

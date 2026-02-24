@@ -1,5 +1,5 @@
-"use client";
-import React, { useState, useRef, useEffect } from "react";
+'use client';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Flex,
   IconButton,
@@ -23,21 +23,21 @@ import {
   MenuItem,
   MenuList,
   useDisclosure,
-} from "@chakra-ui/react";
-import { HamburgerIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
-import { FaUser, FaHome } from "react-icons/fa";
-import { IoLogOut } from "react-icons/io5";
-import Image from "next/image";
-import logo from "../../public/logo.png";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import api from "@/app/lib/api";
-import { useRouter } from "next/navigation";
+} from '@chakra-ui/react';
+import { HamburgerIcon, MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { FaUser, FaHome } from 'react-icons/fa';
+import { IoLogOut } from 'react-icons/io5';
+import Image from 'next/image';
+import logo from '../../public/logo.png';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import api from '@/app/lib/api';
+import { useRouter } from 'next/navigation';
 
 const MobileMenu = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { bg } = useColorModeStyles();
   const cancelRef = useRef(null);
-  const [username, setUsername] = useState("User");
+  const [username, setUsername] = useState('User');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const router = useRouter();
 
@@ -45,17 +45,17 @@ const MobileMenu = () => {
   const handleLogout = () => {
     localStorage.clear();
     onClose();
-    router.push("/login");
+    router.push('/login');
   };
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await api.get("/api/header/");
+        const response = await api.get('/api/header/');
 
         setUsername(response.data.first_name);
       } catch (error) {
-        console.error("[MobileMenu] Error fetching user data.");
+        console.error('[MobileMenu] Error fetching user data.');
       }
     };
     fetchUser();
@@ -78,7 +78,7 @@ const MobileMenu = () => {
           width={100}
           src={logo}
           alt="Logo"
-          style={{ objectFit: "contain" }}
+          style={{ objectFit: 'contain' }}
         />
       </Link>
 
@@ -94,7 +94,7 @@ const MobileMenu = () => {
             <MenuItem>Bonjour {username}</MenuItem>
             <MenuItem
               onClick={onOpen}
-              icon={<IoLogOut style={{ transform: "scaleX(-1)" }} />}
+              icon={<IoLogOut style={{ transform: 'scaleX(-1)' }} />}
             >
               Déconnexion
             </MenuItem>
@@ -132,12 +132,12 @@ const MobileMenu = () => {
                 </Button>
               </Link>
               <Button
-                leftIcon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+                leftIcon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
                 onClick={toggleColorMode}
                 variant="ghost"
                 justifyContent="flex-start"
               >
-                {colorMode === "light" ? "Mode sombre" : "Mode sombre"}
+                {colorMode === 'light' ? 'Mode sombre' : 'Mode sombre'}
               </Button>
               <Button
                 leftIcon={<IoLogOut />}

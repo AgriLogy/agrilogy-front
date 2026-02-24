@@ -1,31 +1,30 @@
 /* styles/global.css */
 
 :root {
-	--background-color-light: #f7f7f7;
-	--text-color-light: #000;
-	--sidebar-background-color-light: #fff;
-	--border-color-light: #e2e8f0;
-  
-	--background-color-dark: #1a202c;
-	--text-color-dark: #fff;
-	--sidebar-background-color-dark: #2d3748;
-	--border-color-dark: #4a5568;
-  
-	--background-color: var(--background-color-light);
-	--text-color: var(--text-color-light);
-	--sidebar-background-color: var(--sidebar-background-color-light);
-	--border-color: var(--border-color-light);
-  }
-  
-  [data-theme='dark'] {
-	--background-color: var(--background-color-dark);
-	--text-color: var(--text-color-dark);
-	--sidebar-background-color: var(--sidebar-background-color-dark);
-	--border-color: var(--border-color-dark);
-  }
-  
-  body {
-	background-color: var(--background-color);
-	color: var(--text-color);
-  }
-  
+  --background-color-light: #f7f7f7;
+  --text-color-light: #000;
+  --sidebar-background-color-light: #fff;
+  --border-color-light: #e2e8f0;
+
+  --background-color-dark: #1a202c;
+  --text-color-dark: #fff;
+  --sidebar-background-color-dark: #2d3748;
+  --border-color-dark: #4a5568;
+
+  --background-color: var(--background-color-light);
+  --text-color: var(--text-color-light);
+  --sidebar-background-color: var(--sidebar-background-color-light);
+  --border-color: var(--border-color-light);
+}
+
+[data-theme='dark'] {
+  --background-color: var(--background-color-dark);
+  --text-color: var(--text-color-dark);
+  --sidebar-background-color: var(--sidebar-background-color-dark);
+  --border-color: var(--border-color-dark);
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}

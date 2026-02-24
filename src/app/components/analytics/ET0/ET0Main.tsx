@@ -1,8 +1,8 @@
-import { Box, Stack } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import api from "@/app/lib/api";
-import ET0LastData from "./ET0LastData";
-import ET0Chart from "./ET0Chart";
+import { Box, Stack } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import api from '@/app/lib/api';
+import ET0LastData from './ET0LastData';
+import ET0Chart from './ET0Chart';
 
 interface ET0Data {
   id: number;
@@ -37,18 +37,22 @@ const ET0Main = ({
       zone: selectedZone ?? undefined,
     };
 
-    const fetchWeather = api.get<ET0Data[]>("/api/sensors/et0weather/", { params });
-    const fetchCalculated = api.get<ET0Data[]>("/api/sensors/et0calculated/", { params });
+    const fetchWeather = api.get<ET0Data[]>('/api/sensors/et0weather/', {
+      params,
+    });
+    const fetchCalculated = api.get<ET0Data[]>('/api/sensors/et0calculated/', {
+      params,
+    });
 
     Promise.all([fetchWeather, fetchCalculated])
       .then(([weatherRes, calculatedRes]) => {
         setWeatherData(weatherRes.data);
         setCalculatedData(calculatedRes.data);
-        console.log("weatherRes:", weatherRes.data);
-        console.log("calculatedRes:", calculatedRes.data);
+        console.log('weatherRes:', weatherRes.data);
+        console.log('calculatedRes:', calculatedRes.data);
       })
       .catch((err) => {
-        console.error("Failed to fetch ET0 sensor data:", err);
+        console.error('Failed to fetch ET0 sensor data:', err);
       })
       .finally(() => setLoading(false));
   }, [startDate, endDate, selectedZone]);
@@ -56,7 +60,7 @@ const ET0Main = ({
   return (
     <Stack
       spacing={2}
-      direction={{ base: "column", md: "row" }}
+      direction={{ base: 'column', md: 'row' }}
       align="start"
       width="100%"
       height="100%"

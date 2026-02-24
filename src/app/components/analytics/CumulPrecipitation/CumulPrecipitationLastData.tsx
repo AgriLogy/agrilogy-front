@@ -1,6 +1,6 @@
-import { Box, Text, useColorModeValue } from "@chakra-ui/react";
-import { FaCloudRain } from "react-icons/fa";
-import { SensorData } from "@/app/types";
+import { Box, Text, useColorModeValue } from '@chakra-ui/react';
+import { FaCloudRain } from 'react-icons/fa';
+import { SensorData } from '@/app/types';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -18,10 +18,10 @@ const timeAgo = (timestamp: string): string => {
 const CumulPrecipitationLastData = ({ data }: { data: SensorData[] }) => {
   const latest = data[data.length - 1];
 
-  const bgColor = useColorModeValue("blue.50", "blue.900");
-  const valueColor = useColorModeValue("blue.700", "blue.200");
-  const textColor = useColorModeValue("gray.600", "gray.300");
-  const timeColor = useColorModeValue("gray.500", "gray.400");
+  const bgColor = useColorModeValue('blue.50', 'blue.900');
+  const valueColor = useColorModeValue('blue.700', 'blue.200');
+  const textColor = useColorModeValue('gray.600', 'gray.300');
+  const timeColor = useColorModeValue('gray.500', 'gray.400');
 
   return (
     <Box
@@ -44,10 +44,10 @@ const CumulPrecipitationLastData = ({ data }: { data: SensorData[] }) => {
         Dernière précipitation :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest ? `${latest.value.toFixed(2)} mm` : "N/A"}
+        {latest ? `${latest.value.toFixed(2)} mm` : 'N/A'}
       </Text>
       <Text fontSize="sm" color={timeColor}>
-        {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ""}
+        {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}
       </Text>
     </Box>
   );

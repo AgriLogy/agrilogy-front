@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   VStack,
   Box,
   useColorModeValue,
   useBreakpointValue,
-} from "@chakra-ui/react";
-import ZoneCard from "../admin/ZoneCard";
-import { zonesLst } from "@/app/data/dashboard/zones";
-import DashboardCard from "@component/dashboard/DashboardCard";
-import { ZoneType } from "@/app/types";
-import Loading from "@component/common/Loading";
+} from '@chakra-ui/react';
+import ZoneCard from '../admin/ZoneCard';
+import { zonesLst } from '@/app/data/dashboard/zones';
+import DashboardCard from '@component/dashboard/DashboardCard';
+import { ZoneType } from '@/app/types';
+import Loading from '@component/common/Loading';
 
 const ZonesDashboardCard = () => {
   const [zones, setZones] = useState<ZoneType[]>([]);
   const [loading, setLoading] = useState(true);
-  const tableBg = useColorModeValue("white", "gray.800");
+  const tableBg = useColorModeValue('white', 'gray.800');
   const p = useBreakpointValue({ base: 2, md: 4 });
 
   const fetchZones = async () => {
@@ -24,7 +24,7 @@ const ZonesDashboardCard = () => {
       setZones(zonesLst);
       setLoading(false);
     } catch (error) {
-      console.error("Failed to fetch zones:", error);
+      console.error('Failed to fetch zones:', error);
     }
   };
   const handleZoneClick = (zoneId: number) => {

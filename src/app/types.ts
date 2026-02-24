@@ -1,13 +1,13 @@
 export interface AlertProps {
-	alert: {
-	  name: string;
-	  type: string;
-	  condition: string; // For example: "<=", ">", etc.
-	  value: number; // The threshold value for the alert
-	  description: string;
-	  created_at: string; // Date when the alert was created
-	};
-  }
+  alert: {
+    name: string;
+    type: string;
+    condition: string; // For example: "<=", ">", etc.
+    value: number; // The threshold value for the alert
+    description: string;
+    created_at: string; // Date when the alert was created
+  };
+}
 
 //   export interface Zone {
 //   id: number;
@@ -19,18 +19,16 @@ export interface AlertProps {
 //   irrigation_method: string;
 //   et0: number;
 //   last_irrigation_date: string; // ISO format e.g., '2025-08-15'
-  
+
 //   critical_moisture_threshold: number;
 
 // }
 
 export interface ZoneWrapper {
-	id: number;
-	user: number;
-	zone: ZoneType;
-  }
-
-
+  id: number;
+  user: number;
+  zone: ZoneType;
+}
 
 export interface NpkSensorData {
   id: number;
@@ -50,8 +48,7 @@ export interface NpkSensorData {
   available_units: string[];
 }
 
-
-export interface  WeatherData {
+export interface WeatherData {
   id: number;
   timestamp: string;
   default_unit: string;
@@ -69,7 +66,6 @@ export interface WaterSoilData {
   waterFlow?: number;
 }
 
-
 // Zones
 export interface ZoneType {
   id: number;
@@ -81,7 +77,7 @@ export interface ZoneType {
   plant_type: string;
   irrigation_method: string;
   et0: number;
-  last_irrigation_date: string; // ISO format e.g., '2025-08-15'  
+  last_irrigation_date: string; // ISO format e.g., '2025-08-15'
 }
 
 export interface ZoneCardType {
@@ -89,12 +85,11 @@ export interface ZoneCardType {
   onClick?: () => void;
 }
 
-
 // Shared types for Water/Soil dashboard
 
 export interface SensorEntry {
   id: number;
-  timestamp: string;        // ISO string
+  timestamp: string; // ISO string
   value: number;
   default_unit: string;
   available_units: string[];
@@ -111,8 +106,6 @@ export interface SensorData {
   default_unit: string;
   available_units: string[];
 }
-
-
 
 // Chart merged row
 export interface WaterSoilData {

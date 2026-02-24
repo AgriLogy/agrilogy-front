@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef } from 'react';
 import {
   Radar,
   RadarChart,
@@ -7,7 +7,7 @@ import {
   ResponsiveContainer,
   Tooltip,
   TooltipProps,
-} from "recharts";
+} from 'recharts';
 import {
   Box,
   Text,
@@ -15,14 +15,14 @@ import {
   HStack,
   Flex,
   useColorModeValue,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 import {
   ValueType,
   NameType,
-} from "recharts/types/component/DefaultTooltipContent";
-import { TickItem } from "recharts/types/util/types";
-import { FaCamera, FaDownload } from "react-icons/fa";
-import html2canvas from "html2canvas";
+} from 'recharts/types/component/DefaultTooltipContent';
+import { TickItem } from 'recharts/types/util/types';
+import { FaCamera, FaDownload } from 'react-icons/fa';
+import html2canvas from 'html2canvas';
 
 interface WindData {
   timestamp: string;
@@ -50,8 +50,8 @@ const prepareRadarData = (
       speedReading &&
       directionReading &&
       speedReading.timestamp === directionReading.timestamp &&
-      typeof speedReading.value === "number" &&
-      typeof directionReading.value === "number"
+      typeof speedReading.value === 'number' &&
+      typeof directionReading.value === 'number'
     ) {
       radarData.push({
         angle: directionReading.value,
@@ -72,8 +72,8 @@ const CustomTooltip = ({
   active,
   payload,
 }: TooltipProps<ValueType, NameType>) => {
-  const bg = useColorModeValue("white", "gray.800");
-  const color = useColorModeValue("black", "white");
+  const bg = useColorModeValue('white', 'gray.800');
+  const color = useColorModeValue('black', 'white');
 
   if (active && payload && payload.length) {
     const data = payload[0].payload as RadarPoint;
@@ -100,13 +100,13 @@ const WindRadarChart = ({
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartData = prepareRadarData(windSpeedData, windDirectionData);
-  const textColor = useColorModeValue("gray.800", "gray.200");
+  const textColor = useColorModeValue('gray.800', 'gray.200');
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
       const canvas = await html2canvas(chartRef.current);
-      const link = document.createElement("a");
-      link.download = "wind_radar_chart.png";
+      const link = document.createElement('a');
+      link.download = 'wind_radar_chart.png';
       link.href = canvas.toDataURL();
       link.click();
     }
@@ -114,18 +114,18 @@ const WindRadarChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      "timestamp,angle,speed\n" +
+      'timestamp,angle,speed\n' +
       chartData
         .map(
           (d) => `${d.timestamp},${d.angle.toFixed(1)},${d.speed.toFixed(2)}`
         )
-        .join("\n");
+        .join('\n');
 
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
-    link.download = "wind_radar_data.csv";
+    link.download = 'wind_radar_data.csv';
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -183,14 +183,14 @@ const WindRadarChart = ({
                 stroke={textColor}
                 tickFormatter={(degree) => {
                   const directions = [
-                    "N",
-                    "NE",
-                    "E",
-                    "SE",
-                    "S",
-                    "SW",
-                    "W",
-                    "NW",
+                    'N',
+                    'NE',
+                    'E',
+                    'SE',
+                    'S',
+                    'SW',
+                    'W',
+                    'NW',
                   ];
                   const index = Math.round(degree / 45) % 8;
                   return directions[index];

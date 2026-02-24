@@ -1,10 +1,10 @@
-import "./MainContent.css";
-import { Box, Text } from "@chakra-ui/react";
-import Zones from "./ZonesDashboardCard";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import GoogleMapWeather from "../GoogleMapWeather";
-import ElectrovannesList from "./ElectrovannesDashboardCard";
-import WeatherDashboard from "./WeatherDashboard";
+import './MainContent.css';
+import { Box, Text } from '@chakra-ui/react';
+import Zones from './ZonesDashboardCard';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import GoogleMapWeather from '../GoogleMapWeather';
+import ElectrovannesList from './ElectrovannesDashboardCard';
+import WeatherDashboard from './WeatherDashboard';
 
 const MainContent = () => {
   const { bg, textColor } = useColorModeStyles();

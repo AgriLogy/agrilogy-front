@@ -1,22 +1,22 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { Box, HStack, Text, useColorModeValue } from "@chakra-ui/react";
+'use client';
+import React, { useEffect, useState } from 'react';
+import { Box, HStack, Text, useColorModeValue } from '@chakra-ui/react';
 
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import DateRangePicker from "../analytics/DateRangePicker";
-import api from "@/app/lib/api";
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import DateRangePicker from '../analytics/DateRangePicker';
+import api from '@/app/lib/api';
 import getActiveGraphs, {
   ActiveGraphResponse,
-} from "@/app/utils/getActiveGraphs";
+} from '@/app/utils/getActiveGraphs';
 
-import "@/app/styles/style.css";
-import CumulPrecipitationMain from "../analytics/CumulPrecipitation/CumulPrecipitationMain";
-import EcWaterMain from "../analytics/WaterEc/EcWaterMain";
-import WaterFlowMain from "../analytics/WaterFlow/WaterFlowMain";
-import PhWaterMain from "../analytics/WaterPh/PhWaterMain";
-import WaterPressureMain from "../analytics/WaterPressure/WaterPressureMain";
+import '@/app/styles/style.css';
+import CumulPrecipitationMain from '../analytics/CumulPrecipitation/CumulPrecipitationMain';
+import EcWaterMain from '../analytics/WaterEc/EcWaterMain';
+import WaterFlowMain from '../analytics/WaterFlow/WaterFlowMain';
+import PhWaterMain from '../analytics/WaterPh/PhWaterMain';
+import WaterPressureMain from '../analytics/WaterPressure/WaterPressureMain';
 
-const WaterMain = () => {
+const   WaterMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
   const [selectedZone, setSelectedZone] = useState<number | null>(null);
   const [activeGraph, setActiveGraph] = useState<ActiveGraphResponse | null>(
@@ -24,9 +24,9 @@ const WaterMain = () => {
   );
 
   const { bg, textColor } = useColorModeStyles();
-  const [startDate, setStartDate] = useState<string>("");
+  const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split('T')[0]
   );
 
   const filters = { startDate, endDate, selectedZone };
@@ -34,11 +34,11 @@ const WaterMain = () => {
   useEffect(() => {
     const fetchZones = async () => {
       try {
-        const res = await api.get("/api/zones-names-per-user/");
+        const res = await api.get('/api/zones-names-per-user/');
         setZones(res.data || []);
         if (res.data.length > 0) setSelectedZone(res.data[0].id);
       } catch (error) {
-        console.error("Failed to fetch zones", error);
+        console.error('Failed to fetch zones', error);
       }
     };
     fetchZones();
@@ -56,13 +56,13 @@ const WaterMain = () => {
         <HStack>
           <Text color={textColor}>Données sur l&apos;eau du </Text>
           <select
-            value={selectedZone ?? ""}
+            value={selectedZone ?? ''}
             onChange={(e) => setSelectedZone(Number(e.target.value))}
             style={{
-              borderRadius: "2px",
-              padding: "4px",
-              color: useColorModeValue("black", "white"),
-              border: `1px solid ${useColorModeValue("black", "white")}`,
+              borderRadius: '2px',
+              padding: '4px',
+              color: useColorModeValue('black', 'white'),
+              border: `1px solid ${useColorModeValue('black', 'white')}`,
             }}
           >
             {zones.map((zone) => (

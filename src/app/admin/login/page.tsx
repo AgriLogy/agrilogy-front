@@ -1,12 +1,12 @@
-"use client";
-import { Flex, useColorModeValue } from "@chakra-ui/react";
-import NonAuthNavbar from "@/app/components/NonAuthNavbar ";
-import AdminLoginBox from "@/app/components/admin/AdminLoginBox";
+'use client';
+import { Flex, useColorModeValue } from '@chakra-ui/react';
+import NonAuthNavbar from '@/app/components/NonAuthNavbar ';
+import AdminLoginBox from '@/app/components/admin/AdminLoginBox';
 
 const LoginPage = () => {
   const bgGradient = useColorModeValue(
-    "linear(to-b, #C4DAD2, green.200)",
-    "linear(to-b, #6A9C89, gray.700)"
+    'linear(to-b, #C4DAD2, green.200)',
+    'linear(to-b, #6A9C89, gray.700)'
   );
 
   return (

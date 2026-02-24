@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Text,
@@ -10,12 +10,10 @@ import {
   Td,
   Spinner,
   TableContainer,
-  useColorModeValue,
-  Button,
   Link,
   Badge,
-} from "@chakra-ui/react";
-import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
+} from '@chakra-ui/react';
+import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
 import {
   useReactTable,
   ColumnDef,
@@ -23,10 +21,10 @@ import {
   getSortedRowModel,
   SortingState,
   flexRender,
-} from "@tanstack/react-table";
-import api from "@/app/lib/api";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import '@/app/styles/style.css'
+} from '@tanstack/react-table';
+import api from '@/app/lib/api';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import '@/app/styles/style.css';
 
 interface User {
   id: number;
@@ -46,10 +44,10 @@ const ListeUsers: React.FC = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await api.get<User[]>("/auth/users");
+        const response = await api.get<User[]>('/auth/users');
         setData(response.data);
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error('Error fetching users:', error);
       } finally {
         setLoading(false);
       }
@@ -61,18 +59,18 @@ const ListeUsers: React.FC = () => {
   const columns = useMemo<ColumnDef<User>[]>(
     () => [
       {
-        accessorKey: "username",
-        header: "Username",
+        accessorKey: 'username',
+        header: 'Username',
         cell: (info) => info.getValue(),
       },
       {
-        accessorKey: "email",
-        header: "Email",
+        accessorKey: 'email',
+        header: 'Email',
         cell: (info) => info.getValue(),
       },
       {
-        accessorKey: "is_active",
-        header: "Status",
+        accessorKey: 'is_active',
+        header: 'Status',
         cell: (info) =>
           info.getValue() ? (
             <Badge colorScheme="green">Active</Badge>
@@ -81,8 +79,8 @@ const ListeUsers: React.FC = () => {
           ),
       },
       {
-        accessorKey: "is_staff",
-        header: "Role",
+        accessorKey: 'is_staff',
+        header: 'Role',
         cell: (info) =>
           info.getValue() ? (
             <Badge colorScheme="purple">Admin</Badge>
@@ -91,12 +89,12 @@ const ListeUsers: React.FC = () => {
           ),
       },
       {
-        accessorKey: "username",
-        header: "Graphiques",
+        accessorKey: 'username',
+        header: 'Graphiques',
         cell: (info) => (
           <Link
             href={`/admin/graph-per-user/${info.getValue()}`}
-            _hover={{ textDecoration: "none" }}
+            _hover={{ textDecoration: 'none' }}
           >
             {/* <Button size="sm" colorScheme="blue">
               Voire
@@ -106,12 +104,12 @@ const ListeUsers: React.FC = () => {
         ),
       },
       {
-        accessorKey: "username",
-        header: "Donnée du sol",
+        accessorKey: 'username',
+        header: 'Donnée du sol',
         cell: (info) => (
           <Link
             href={`/admin/users/data/soil/${info.getValue()}`}
-            _hover={{ textDecoration: "none" }}
+            _hover={{ textDecoration: 'none' }}
           >
             {/* <Button size="sm" colorScheme="blue">
               Voire
@@ -121,12 +119,12 @@ const ListeUsers: React.FC = () => {
         ),
       },
       {
-        accessorKey: "username",
-        header: "Donnée du station",
+        accessorKey: 'username',
+        header: 'Donnée du station',
         cell: (info) => (
           <Link
             href={`/admin/users/data/station/${info.getValue()}`}
-            _hover={{ textDecoration: "none" }}
+            _hover={{ textDecoration: 'none' }}
           >
             {/* <Button size="sm" colorScheme="blue">
               Voire
@@ -136,12 +134,12 @@ const ListeUsers: React.FC = () => {
         ),
       },
       {
-        accessorKey: "username",
-        header: "Zones",
+        accessorKey: 'username',
+        header: 'Zones',
         cell: (info) => (
           <Link
             href={`/admin/zone-per-user/${info.getValue()}`}
-            _hover={{ textDecoration: "none" }}
+            _hover={{ textDecoration: 'none' }}
           >
             {/* <Button size="sm" colorScheme="blue">
               Modify
@@ -151,13 +149,13 @@ const ListeUsers: React.FC = () => {
         ),
       },
       {
-        id: "actions",
-        accessorKey: "username",
-        header: "Action",
+        id: 'actions',
+        accessorKey: 'username',
+        header: 'Action',
         cell: (info) => (
           <Link
             href={`/admin/users/modify/${info.getValue()}`}
-            _hover={{ textDecoration: "none" }}
+            _hover={{ textDecoration: 'none' }}
           >
             {/* <Button size="sm" colorScheme="blue">
               Modifier
@@ -229,10 +227,10 @@ const ListeUsers: React.FC = () => {
                               header.column.columnDef.header,
                               header.getContext()
                             )}
-                            {isSorted === "asc" && (
+                            {isSorted === 'asc' && (
                               <TriangleUpIcon ml={1} boxSize={3} />
                             )}
-                            {isSorted === "desc" && (
+                            {isSorted === 'desc' && (
                               <TriangleDownIcon ml={1} boxSize={3} />
                             )}
                           </Box>

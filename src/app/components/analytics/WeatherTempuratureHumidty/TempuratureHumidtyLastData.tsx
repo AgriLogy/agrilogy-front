@@ -1,5 +1,5 @@
-import { Box, Text, VStack, useColorModeValue } from "@chakra-ui/react";
-import { WiHumidity, WiThermometer } from "react-icons/wi";
+import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
+import { WiHumidity, WiThermometer } from 'react-icons/wi';
 
 interface WeatherData {
   timestamp: string;
@@ -30,9 +30,9 @@ const TempuratureHumidtyLastData = ({
   const latestHumidity = humidityData[humidityData.length - 1];
   const latestTemperature = temperatureData[temperatureData.length - 1];
 
-  const bgColor = useColorModeValue("gray.100", "gray.700");
-  const textColor = useColorModeValue("gray.800", "gray.200");
-  const timeColor = useColorModeValue("gray.500", "gray.400");
+  const bgColor = useColorModeValue('gray.100', 'gray.700');
+  const textColor = useColorModeValue('gray.800', 'gray.200');
+  const timeColor = useColorModeValue('gray.500', 'gray.400');
 
   return (
     <Box
@@ -57,7 +57,8 @@ const TempuratureHumidtyLastData = ({
       <VStack spacing={3}>
         {latestTemperature ? (
           <Text fontSize="lg" color="red.400">
-            <WiThermometer size={24} style={{ display: "inline" }} /> Température :
+            <WiThermometer size={24} style={{ display: 'inline' }} />{' '}
+            Température :
             {` ${latestTemperature.value.toFixed(2)} ${latestTemperature.default_unit}`}
           </Text>
         ) : (
@@ -66,7 +67,7 @@ const TempuratureHumidtyLastData = ({
 
         {latestHumidity ? (
           <Text fontSize="lg" color="blue.400">
-            <WiHumidity size={24} style={{ display: "inline" }} /> Humidité :
+            <WiHumidity size={24} style={{ display: 'inline' }} /> Humidité :
             {` ${latestHumidity.value.toFixed(2)} ${latestHumidity.default_unit}`}
           </Text>
         ) : (

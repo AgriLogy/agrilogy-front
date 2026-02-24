@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   FormControl,
@@ -17,21 +17,23 @@ import {
   Flex,
   Select,
   useToast,
-} from "@chakra-ui/react";
-import api from "@/app/lib/api";
+} from '@chakra-ui/react';
+import api from '@/app/lib/api';
 
 const WindSpeedForm: React.FC = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    type: "Wind Speed",
-    condition: ">",
-    description: "",
-    condition_nbr : 0,
+    name: '',
+    type: 'Wind Speed',
+    condition: '>',
+    description: '',
+    condition_nbr: 0,
   });
 
   const toast = useToast();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -55,26 +57,26 @@ const WindSpeedForm: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      await api.post("/api/alert/", formData);
+      await api.post('/api/alert/', formData);
       toast({
-        title: "Alerte créée",
-        description: "Alerte de vitesse du vent ajoutée avec succès.",
-        status: "success",
+        title: 'Alerte créée',
+        description: 'Alerte de vitesse du vent ajoutée avec succès.',
+        status: 'success',
         duration: 3000,
         isClosable: true,
       });
       setFormData({
-        name: "",
-        type: "Wind Speed",
-        condition: ">",
-        description: "",
+        name: '',
+        type: 'Wind Speed',
+        condition: '>',
+        description: '',
         condition_nbr: 0,
       });
     } catch (error) {
       toast({
-        title: "Erreur",
+        title: 'Erreur',
         description: "Échec de la création de l'alerte de vitesse du vent.",
-        status: "error",
+        status: 'error',
         duration: 3000,
         isClosable: true,
       });
@@ -123,7 +125,9 @@ const WindSpeedForm: React.FC = () => {
               min={1}
               max={100}
               value={formData.condition_nbr}
-              onChange={(_, valueAsNumber) => handlecondition_nbrChange(valueAsNumber)}
+              onChange={(_, valueAsNumber) =>
+                handlecondition_nbrChange(valueAsNumber)
+              }
               w="100px"
             >
               <NumberInputField name="condition_nbr" />

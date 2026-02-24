@@ -1,7 +1,6 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from 'react';
 import {
   Button,
   IconButton,
@@ -12,13 +11,13 @@ import {
   ModalBody,
   ModalFooter,
   Text,
-} from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
+} from '@chakra-ui/react';
+import { AddIcon } from '@chakra-ui/icons';
 
 interface Props {
-  user : string;
+  user: string;
 }
-import ZoneModalAddFormComponent from "./ZoneModalAddFormAdmin"; // Adjust path
+import ZoneModalAddFormComponent from './ZoneModalAddFormAdmin'; // Adjust path
 
 const ZoneAddFloatingButton = ({ user }: Props) => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -39,7 +38,11 @@ const ZoneAddFloatingButton = ({ user }: Props) => {
       />
 
       {/* Confirmation Modal */}
-      <Modal isOpen={isConfirmOpen} onClose={() => setIsConfirmOpen(false)} isCentered>
+      <Modal
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        isCentered
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Créer un nouvel utilisateur</ModalHeader>
@@ -47,13 +50,20 @@ const ZoneAddFloatingButton = ({ user }: Props) => {
             <Text>Voulez-vous créer une nouvelle zone pour {user} ?</Text>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" onClick={() => {
-              setIsConfirmOpen(false);
-              setShowForm(true);
-            }}>
+            <Button
+              colorScheme="blue"
+              onClick={() => {
+                setIsConfirmOpen(false);
+                setShowForm(true);
+              }}
+            >
               Oui
             </Button>
-            <Button variant="ghost" ml={3} onClick={() => setIsConfirmOpen(false)}>
+            <Button
+              variant="ghost"
+              ml={3}
+              onClick={() => setIsConfirmOpen(false)}
+            >
               Non
             </Button>
           </ModalFooter>

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -8,7 +8,7 @@ import {
   Legend,
   ResponsiveContainer,
   CartesianGrid,
-} from "recharts";
+} from 'recharts';
 import {
   useBreakpointValue,
   Box,
@@ -16,12 +16,12 @@ import {
   Text,
   Button,
   HStack,
-} from "@chakra-ui/react";
-import { FaDownload, FaCamera } from "react-icons/fa";
-import html2canvas from "html2canvas";
-import { SensorData } from "@/app/types";
-import EmptyBox from "../../common/EmptyBox";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
+} from '@chakra-ui/react';
+import { FaDownload, FaCamera } from 'react-icons/fa';
+import html2canvas from 'html2canvas';
+import { SensorData } from '@/app/types';
+import EmptyBox from '../../common/EmptyBox';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
 
 const WaterFlowChart = ({
   data,
@@ -47,7 +47,7 @@ const WaterFlowChart = ({
   const { textColor } = useColorModeStyles();
 
   const handleLegendClick = (data: any) => {
-    if (data.value === "Consommation") {
+    if (data.value === 'Consommation') {
       setShowLine((prev) => !prev);
     }
   };
@@ -55,8 +55,8 @@ const WaterFlowChart = ({
   const handleScreenshot = async () => {
     if (chartRef.current) {
       const canvas = await html2canvas(chartRef.current);
-      const link = document.createElement("a");
-      link.download = "WaterFlow_chart.png";
+      const link = document.createElement('a');
+      link.download = 'WaterFlow_chart.png';
       link.href = canvas.toDataURL();
       link.click();
     }
@@ -64,15 +64,15 @@ const WaterFlowChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      "timestamp,value\n" +
-      data.map((d) => `${d.timestamp},${d.value}`).join("\n");
+      'timestamp,value\n' +
+      data.map((d) => `${d.timestamp},${d.value}`).join('\n');
 
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
 
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
-    link.download = "WaterFlow_data.csv";
+    link.download = 'WaterFlow_data.csv';
     link.click();
 
     URL.revokeObjectURL(url);
@@ -118,17 +118,52 @@ const WaterFlowChart = ({
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="name"
-                angle={labelAngle}
+                angle={0}
                 textAnchor="middle"
                 interval={labelInterval}
+
+                stroke="#666"                    // Axis line color
+  strokeWidth={1}                  // Axis line thickness
+  tick={{                          // Tick styling
+    fill: '#666',                  // Tick label color
+    fontSize: 17,                  // Tick label font size
+    fontFamily: 'Arial, sans-serif' // Tick label font
+  }}
+  axisLine={{                       // Main axis line styling
+    stroke: '#666',
+    strokeWidth: 1
+  }}
+  tickLine={{                       // Tick line styling
+    stroke: '#666',
+    strokeWidth: 1
+                }}
+
+
+
               />
               <YAxis
                 label={{
                   angle: -90,
                   // fontSize: 16,
                   // dy: 80,
-                  position: "insideLeft",
+                  position: 'insideLeft',
                 }}
+
+                stroke="#666"                    // Axis line color
+                strokeWidth={1}                  // Axis line thickness
+                tick={{                          // Tick styling
+                  fill: '#666',                  // Tick label color
+                  fontSize: 17,                  // Tick label font size
+                  fontFamily: 'Arial, sans-serif' // Tick label font
+                }}
+                axisLine={{                       // Main axis line styling
+                  stroke: '#666',
+                  strokeWidth: 1
+                }}
+                tickLine={{                       // Tick line styling
+                  stroke: '#666',
+                  strokeWidth: 1
+                              }}
               />
               <Tooltip />
               <Legend onClick={handleLegendClick} />
@@ -136,10 +171,10 @@ const WaterFlowChart = ({
                 type="monotone"
                 dataKey="value"
                 name="Flux d'eau (L/Min)"
-                stroke={showLine ? "#82ca9d" : "gray"}
+                stroke={showLine ? '#82ca9d' : 'gray'}
                 strokeWidth={2}
-                dot={{ r: 4, fill: showLine ? "#82ca9d" : "gray" }}
-                activeDot={{ r: 6, stroke: showLine ? "#2f855a" : "gray" }}
+                dot={{ r: 4, fill: showLine ? '#82ca9d' : 'gray' }}
+                activeDot={{ r: 6, stroke: showLine ? '#2f855a' : 'gray' }}
                 isAnimationActive={false}
               />
             </LineChart>

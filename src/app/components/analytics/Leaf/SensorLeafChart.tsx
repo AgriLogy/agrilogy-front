@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
   Brush,
-} from "recharts";
+} from 'recharts';
 import {
   Box,
   Text,
@@ -17,11 +17,11 @@ import {
   HStack,
   Button,
   useBreakpointValue,
-} from "@chakra-ui/react";
-import { FaCamera, FaDownload } from "react-icons/fa";
-import html2canvas from "html2canvas";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import EmptyBox from "../../common/EmptyBox";
+} from '@chakra-ui/react';
+import { FaCamera, FaDownload } from 'react-icons/fa';
+import html2canvas from 'html2canvas';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import EmptyBox from '../../common/EmptyBox';
 
 type SensorData = { timestamp: string; value: number };
 
@@ -69,8 +69,8 @@ const SensorLeafChart = ({
   const handleScreenshot = async () => {
     if (chartRef.current) {
       const canvas = await html2canvas(chartRef.current);
-      const link = document.createElement("a");
-      link.download = "leaf_chart.png";
+      const link = document.createElement('a');
+      link.download = 'leaf_chart.png';
       link.href = canvas.toDataURL();
       link.click();
     }
@@ -78,16 +78,16 @@ const SensorLeafChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      "timestamp,temperature,moisture\n" +
+      'timestamp,temperature,moisture\n' +
       combinedData
         .map((d) => `${d.name},${d.temperature},${d.moisture}`)
-        .join("\n");
+        .join('\n');
 
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
-    link.download = "leaf_data.csv";
+    link.download = 'leaf_data.csv';
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -96,7 +96,7 @@ const SensorLeafChart = ({
     <Box width="100%" pr={4} pb={4}>
       <Flex justify="space-between" align="center" mb={4}>
         <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Évolution de l'humidité et de la température des feuilles
+          Évolution de l&apos;humidité et de la température des feuilles
         </Text>
         <HStack spacing={2}>
           <Button
@@ -132,27 +132,58 @@ const SensorLeafChart = ({
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="name"
-                angle={labelAngle}
+                angle={0}
                 textAnchor="middle"
                 interval={labelInterval}
+                stroke="#666"                    // Axis line color
+                strokeWidth={1}                  // Axis line thickness
+                tick={{                          // Tick styling
+                  fill: '#666',                  // Tick label color
+                  fontSize: 17,                  // Tick label font size
+                  fontFamily: 'Arial, sans-serif' // Tick label font
+                }}
+                axisLine={{                       // Main axis line styling
+                  stroke: '#666',
+                  strokeWidth: 1
+                }}
+                tickLine={{                       // Tick line styling
+                  stroke: '#666',
+                  strokeWidth: 1
+                              }}
               />
               <YAxis
                 yAxisId="left"
                 label={{
-                  value: "Température (°C)",
+                  value: 'Température (°C)',
                   angle: -90,
-                  position: "insideLeft",
+                  position: 'insideLeft',
                   fontSize: 14,
                   dy: 50,
                 }}
+
+                stroke="#666"                    // Axis line color
+                strokeWidth={1}                  // Axis line thickness
+                tick={{                          // Tick styling
+                  fill: '#666',                  // Tick label color
+                  fontSize: 17,                  // Tick label font size
+                  fontFamily: 'Arial, sans-serif' // Tick label font
+                }}
+                axisLine={{                       // Main axis line styling
+                  stroke: '#666',
+                  strokeWidth: 1
+                }}
+                tickLine={{                       // Tick line styling
+                  stroke: '#666',
+                  strokeWidth: 1
+                              }}
               />
               <YAxis
                 yAxisId="right"
                 orientation="right"
                 label={{
-                  value: "Humidité (%)",
+                  value: 'Humidité (%)',
                   angle: -90,
-                  position: "insideRight",
+                  position: 'insideRight',
                   fontSize: 14,
                   dy: -50,
                 }}
@@ -164,7 +195,7 @@ const SensorLeafChart = ({
                 type="monotone"
                 dataKey="temperature"
                 name="Température (°C)"
-                stroke={activeLines.temperature ? "#ff7300" : "gray"}
+                stroke={activeLines.temperature ? '#ff7300' : 'gray'}
                 strokeWidth={2}
                 activeDot={{ r: 6 }}
               />
@@ -173,7 +204,7 @@ const SensorLeafChart = ({
                 type="monotone"
                 dataKey="moisture"
                 name="Humidité des feuilles (%)"
-                stroke={activeLines.moisture ? "#007aff" : "gray"}
+                stroke={activeLines.moisture ? '#007aff' : 'gray'}
                 strokeWidth={2}
                 activeDot={{ r: 6 }}
               />
