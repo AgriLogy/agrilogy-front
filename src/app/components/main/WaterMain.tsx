@@ -16,7 +16,7 @@ import WaterFlowMain from '../analytics/WaterFlow/WaterFlowMain';
 import PhWaterMain from '../analytics/WaterPh/PhWaterMain';
 import WaterPressureMain from '../analytics/WaterPressure/WaterPressureMain';
 
-const   WaterMain = () => {
+const WaterMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
   const [selectedZone, setSelectedZone] = useState<number | null>(null);
   const [activeGraph, setActiveGraph] = useState<ActiveGraphResponse | null>(

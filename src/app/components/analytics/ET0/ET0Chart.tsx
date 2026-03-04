@@ -48,7 +48,7 @@ const EC0Chart = ({
   });
 
   const textColor = useColorModeValue('gray.800', 'gray.200');
-  const labelAngle = useBreakpointValue({ base: -3, md: 5 });
+  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const labelInterval = useBreakpointValue({
     base: Math.ceil(chartData.length / 3),
     md: Math.ceil(chartData.length / 5),
@@ -123,39 +123,45 @@ const EC0Chart = ({
                 angle={0}
                 textAnchor="middle"
                 interval={labelInterval}
-                stroke="#666"                    // Axis line color
-                strokeWidth={1}                  // Axis line thickness
-                tick={{                          // Tick styling
-                  fill: '#666',                  // Tick label color
-                  fontSize: 17,                  // Tick label font size
-                  fontFamily: 'Arial, sans-serif' // Tick label font
+                stroke="#666" // Axis line color
+                strokeWidth={1} // Axis line thickness
+                tick={{
+                  // Tick styling
+                  fill: '#666', // Tick label color
+                  fontSize: 17, // Tick label font size
+                  fontFamily: 'Arial, sans-serif', // Tick label font
                 }}
-                axisLine={{                       // Main axis line styling
+                axisLine={{
+                  // Main axis line styling
                   stroke: '#666',
-                  strokeWidth: 1
+                  strokeWidth: 1,
                 }}
-                tickLine={{                       // Tick line styling
+                tickLine={{
+                  // Tick line styling
                   stroke: '#666',
-                  strokeWidth: 1
-                              }}
+                  strokeWidth: 1,
+                }}
               />
-              <YAxis 
-              
-              stroke="#666"                    // Axis line color
-              strokeWidth={1}                  // Axis line thickness
-              tick={{                          // Tick styling
-                fill: '#666',                  // Tick label color
-                fontSize: 17,                  // Tick label font size
-                fontFamily: 'Arial, sans-serif' // Tick label font
-              }}
-              axisLine={{                       // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1
-              }}
-              tickLine={{                       // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1
-                            }}/>
+              <YAxis
+                stroke="#666" // Axis line color
+                strokeWidth={1} // Axis line thickness
+                tick={{
+                  // Tick styling
+                  fill: '#666', // Tick label color
+                  fontSize: 17, // Tick label font size
+                  fontFamily: 'Arial, sans-serif', // Tick label font
+                }}
+                axisLine={{
+                  // Main axis line styling
+                  stroke: '#666',
+                  strokeWidth: 1,
+                }}
+                tickLine={{
+                  // Tick line styling
+                  stroke: '#666',
+                  strokeWidth: 1,
+                }}
+              />
               <Tooltip />
               <Legend />
               <Bar dataKey="Weather" fill="#3182ce" name="ET0 Capteur" />

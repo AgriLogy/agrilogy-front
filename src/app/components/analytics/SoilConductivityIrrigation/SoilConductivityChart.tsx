@@ -96,7 +96,7 @@ const SoilConductivityChart = ({
 
     URL.revokeObjectURL(url);
   };
-  const labelAngle = useBreakpointValue({ base: -3, md: 5 });
+  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
 
   return (
     <Box width="100%" pr={4} pb={4}>
@@ -131,22 +131,24 @@ const SoilConductivityChart = ({
                 interval={labelInterval}
                 angle={0}
                 textAnchor="middle"
-
-                stroke="#666"                    // Axis line color
-                strokeWidth={1}                  // Axis line thickness
-                tick={{                          // Tick styling
-                  fill: '#666',                  // Tick label color
-                  fontSize: 17,                  // Tick label font size
-                  fontFamily: 'Arial, sans-serif' // Tick label font
+                stroke="#666" // Axis line color
+                strokeWidth={1} // Axis line thickness
+                tick={{
+                  // Tick styling
+                  fill: '#666', // Tick label color
+                  fontSize: 17, // Tick label font size
+                  fontFamily: 'Arial, sans-serif', // Tick label font
                 }}
-                axisLine={{                       // Main axis line styling
+                axisLine={{
+                  // Main axis line styling
                   stroke: '#666',
-                  strokeWidth: 1
+                  strokeWidth: 1,
                 }}
-                tickLine={{                       // Tick line styling
+                tickLine={{
+                  // Tick line styling
                   stroke: '#666',
-                  strokeWidth: 1
-                              }}
+                  strokeWidth: 1,
+                }}
               />
               <YAxis
                 yAxisId="left"
@@ -155,25 +157,27 @@ const SoilConductivityChart = ({
                   angle: -90,
                   position: 'insideLeft',
                   dy: 70,
-                  fontSize: 18,                  // Tick label font size
-                  fontFamily: 'Arial, sans-serif' // Tick label font
+                  fontSize: 18, // Tick label font size
+                  fontFamily: 'Arial, sans-serif', // Tick label font
                 }}
-
-                stroke="#666"                    // Axis line color
-                strokeWidth={1}                  // Axis line thickness
-                tick={{                          // Tick styling
-                  fill: '#666',                  // Tick label color
-                  fontSize: 17,                  // Tick label font size
-                  fontFamily: 'Arial, sans-serif' // Tick label font
+                stroke="#666" // Axis line color
+                strokeWidth={1} // Axis line thickness
+                tick={{
+                  // Tick styling
+                  fill: '#666', // Tick label color
+                  fontSize: 17, // Tick label font size
+                  fontFamily: 'Arial, sans-serif', // Tick label font
                 }}
-                axisLine={{                       // Main axis line styling
+                axisLine={{
+                  // Main axis line styling
                   stroke: '#666',
-                  strokeWidth: 1
+                  strokeWidth: 1,
                 }}
-                tickLine={{                       // Tick line styling
+                tickLine={{
+                  // Tick line styling
                   stroke: '#666',
-                  strokeWidth: 1
-                              }}
+                  strokeWidth: 1,
+                }}
               />
               <YAxis
                 yAxisId="right"
@@ -184,7 +188,7 @@ const SoilConductivityChart = ({
                   position: 'insideRight',
                   dy: 50,
                   dx: 19,
-                  fontSize: 18,                  // Tick label font size
+                  fontSize: 18, // Tick label font size
                 }}
               />
               <Tooltip />

@@ -46,7 +46,7 @@ const NpkSizeChart = ({
     md: Math.ceil(chartData.length / 5),
   });
 
-  const labelAngle = useBreakpointValue({ base: -3, md: 5 });
+  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
 
   const [activeLines, setActiveLines] = useState({
     nitrogen: true,
@@ -136,22 +136,24 @@ const NpkSizeChart = ({
                 angle={0}
                 textAnchor="middle"
                 interval={labelInterval}
-
-                stroke="#666"                    // Axis line color
-                strokeWidth={1}                  // Axis line thickness
-                tick={{                          // Tick styling
-                  fill: '#666',                  // Tick label color
-                  fontSize: 17,                  // Tick label font size
-                  fontFamily: 'Arial, sans-serif' // Tick label font
+                stroke="#666" // Axis line color
+                strokeWidth={1} // Axis line thickness
+                tick={{
+                  // Tick styling
+                  fill: '#666', // Tick label color
+                  fontSize: 17, // Tick label font size
+                  fontFamily: 'Arial, sans-serif', // Tick label font
                 }}
-                axisLine={{                       // Main axis line styling
+                axisLine={{
+                  // Main axis line styling
                   stroke: '#666',
-                  strokeWidth: 1
+                  strokeWidth: 1,
                 }}
-                tickLine={{                       // Tick line styling
+                tickLine={{
+                  // Tick line styling
                   stroke: '#666',
-                  strokeWidth: 1
-                              }}
+                  strokeWidth: 1,
+                }}
               />
               <YAxis
                 label={{
@@ -160,25 +162,25 @@ const NpkSizeChart = ({
                   position: 'insideLeft',
                   fontSize: 14,
                   dy: 80, // Push down the label slightly
-
-                  
                 }}
-
-                stroke="#666"                    // Axis line color
-                strokeWidth={1}                  // Axis line thickness
-                tick={{                          // Tick styling
-                  fill: '#666',                  // Tick label color
-                  fontSize: 17,                  // Tick label font size
-                  fontFamily: 'Arial, sans-serif' // Tick label font
+                stroke="#666" // Axis line color
+                strokeWidth={1} // Axis line thickness
+                tick={{
+                  // Tick styling
+                  fill: '#666', // Tick label color
+                  fontSize: 17, // Tick label font size
+                  fontFamily: 'Arial, sans-serif', // Tick label font
                 }}
-                axisLine={{                       // Main axis line styling
+                axisLine={{
+                  // Main axis line styling
                   stroke: '#666',
-                  strokeWidth: 1
+                  strokeWidth: 1,
                 }}
-                tickLine={{                       // Tick line styling
+                tickLine={{
+                  // Tick line styling
                   stroke: '#666',
-                  strokeWidth: 1
-                              }}
+                  strokeWidth: 1,
+                }}
               />
               <Tooltip />
               <Legend onClick={handleLegendClick} />

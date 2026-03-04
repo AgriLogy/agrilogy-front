@@ -73,40 +73,47 @@ const WindSpeedGraph = ({ data }: { data: any }) => {
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data.sensor_data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="timestamp" tick={<CustomTick />}
-          
-          stroke="#666"                    // Axis line color
-          strokeWidth={1}                  // Axis line thickness
-          // tick={{                          // Tick styling
-          //   fill: '#666',                  // Tick label color
-          //   fontSize: 17,                  // Tick label font size
-          //   fontFamily: 'Arial, sans-serif' // Tick label font
-          // }}
-          axisLine={{                       // Main axis line styling
-            stroke: '#666',
-            strokeWidth: 1
-          }}
-          tickLine={{                       // Tick line styling
-            stroke: '#666',
-            strokeWidth: 1
-                        }}/>
-          <YAxis tick={<CustomTick />} 
-          
-          stroke="#666"                    // Axis line color
-          strokeWidth={1}                  // Axis line thickness
-          // tick={{                          // Tick styling
-          //   fill: '#666',                  // Tick label color
-          //   fontSize: 17,                  // Tick label font size
-          //   fontFamily: 'Arial, sans-serif' // Tick label font
-          // }}
-          axisLine={{                       // Main axis line styling
-            stroke: '#666',
-            strokeWidth: 1
-          }}
-          tickLine={{                       // Tick line styling
-            stroke: '#666',
-            strokeWidth: 1
-                        }}/>
+          <XAxis
+            dataKey="timestamp"
+            tick={<CustomTick />}
+            stroke="#666" // Axis line color
+            strokeWidth={1} // Axis line thickness
+            // tick={{                          // Tick styling
+            //   fill: '#666',                  // Tick label color
+            //   fontSize: 17,                  // Tick label font size
+            //   fontFamily: 'Arial, sans-serif' // Tick label font
+            // }}
+            axisLine={{
+              // Main axis line styling
+              stroke: '#666',
+              strokeWidth: 1,
+            }}
+            tickLine={{
+              // Tick line styling
+              stroke: '#666',
+              strokeWidth: 1,
+            }}
+          />
+          <YAxis
+            tick={<CustomTick />}
+            stroke="#666" // Axis line color
+            strokeWidth={1} // Axis line thickness
+            // tick={{                          // Tick styling
+            //   fill: '#666',                  // Tick label color
+            //   fontSize: 17,                  // Tick label font size
+            //   fontFamily: 'Arial, sans-serif' // Tick label font
+            // }}
+            axisLine={{
+              // Main axis line styling
+              stroke: '#666',
+              strokeWidth: 1,
+            }}
+            tickLine={{
+              // Tick line styling
+              stroke: '#666',
+              strokeWidth: 1,
+            }}
+          />
           <Tooltip />
           <Legend content={<CustomLegend />} />
           {/* Line for Wind Speed */}

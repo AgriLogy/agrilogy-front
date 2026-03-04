@@ -66,7 +66,7 @@ const CumulPrecipitationChart = ({
     base: Math.ceil(chartData.length / 3),
     md: Math.ceil(chartData.length / 5),
   });
-  const labelAngle = useBreakpointValue({ base: -3, md: 5 });
+  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const { textColor } = useColorModeStyles();
 
   const handleScreenshot = async () => {
@@ -150,48 +150,54 @@ const CumulPrecipitationChart = ({
                 // tickLine={{ stroke: axisTickColor }}
                 // axisLine={{ stroke: axisTickColor }}
 
-                stroke="#666"                    // Axis line color
-                strokeWidth={1}                  // Axis line thickness
-                tick={{                          // Tick styling
-                  fill: '#666',                  // Tick label color
-                  fontSize: 17,                  // Tick label font size
-                  fontFamily: 'Arial, sans-serif' // Tick label font
+                stroke="#666" // Axis line color
+                strokeWidth={1} // Axis line thickness
+                tick={{
+                  // Tick styling
+                  fill: '#666', // Tick label color
+                  fontSize: 17, // Tick label font size
+                  fontFamily: 'Arial, sans-serif', // Tick label font
                 }}
-                axisLine={{                       // Main axis line styling
+                axisLine={{
+                  // Main axis line styling
                   stroke: '#666',
-                  strokeWidth: 1
+                  strokeWidth: 1,
                 }}
-                tickLine={{                       // Tick line styling
+                tickLine={{
+                  // Tick line styling
                   stroke: '#666',
-                  strokeWidth: 1
-                              }}
+                  strokeWidth: 1,
+                }}
               />
               <YAxis
-              // label={{
-              //   angle: -90,
-              //   value: "mm",
-              //   position: "insideLeft",
-              //   fill: axisTickColor,
-              // }}
-              // stroke={axisTickColor}
-              // tick={{ fill: axisTickColor }}
-              // tickLine={{ stroke: axisTickColor }}
-              // axisLine={{ stroke: axisTickColor }}
-              stroke="#666"                    // Axis line color
-              strokeWidth={1}                  // Axis line thickness
-              tick={{                          // Tick styling
-                fill: '#666',                  // Tick label color
-                fontSize: 17,                  // Tick label font size
-                fontFamily: 'Arial, sans-serif' // Tick label font
-              }}
-              axisLine={{                       // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1
-              }}
-              tickLine={{                       // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1
-                            }}
+                // label={{
+                //   angle: -90,
+                //   value: "mm",
+                //   position: "insideLeft",
+                //   fill: axisTickColor,
+                // }}
+                // stroke={axisTickColor}
+                // tick={{ fill: axisTickColor }}
+                // tickLine={{ stroke: axisTickColor }}
+                // axisLine={{ stroke: axisTickColor }}
+                stroke="#666" // Axis line color
+                strokeWidth={1} // Axis line thickness
+                tick={{
+                  // Tick styling
+                  fill: '#666', // Tick label color
+                  fontSize: 17, // Tick label font size
+                  fontFamily: 'Arial, sans-serif', // Tick label font
+                }}
+                axisLine={{
+                  // Main axis line styling
+                  stroke: '#666',
+                  strokeWidth: 1,
+                }}
+                tickLine={{
+                  // Tick line styling
+                  stroke: '#666',
+                  strokeWidth: 1,
+                }}
               />
               <Tooltip
                 contentStyle={tooltipStyle}

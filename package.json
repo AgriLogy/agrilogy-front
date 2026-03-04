@@ -9,7 +9,10 @@
     "lint": "next lint --quiet",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "export": "next export"
+    "check": "npm run lint && npm run format:check",
+    "export": "next export",
+    "prepare": "husky",
+    "test": "npm run lint && npm run format:check"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
@@ -49,6 +52,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.8",
     "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
     "postcss": "^8",
     "prettier": "^3.8.1",
     "tailwindcss": "^3.4.1",

@@ -1,8 +1,5 @@
+'use client';
 
-
-
- 'use client';
- 
 import React, { useRef } from 'react';
 import {
   Box,
@@ -68,7 +65,13 @@ const stackedPolarAreaPlugin = {
 };
 
 // Register Chart.js modules + plugin
-ChartJS.register(RadialLinearScale, ArcElement, Tooltip, Legend, stackedPolarAreaPlugin);
+ChartJS.register(
+  RadialLinearScale,
+  ArcElement,
+  Tooltip,
+  Legend,
+  stackedPolarAreaPlugin
+);
 
 interface WindData {
   timestamp: string;
@@ -78,16 +81,30 @@ interface WindData {
 
 // Exact color palette from your target image
 const SPEED_BINS = [
-  { label: '< 2 m/s', min: 0, max: 2, color: '#7cb5ec' },   
-  { label: '2 - 4 m/s', min: 2, max: 4, color: '#434348' }, 
-  { label: '4 - 6 m/s', min: 4, max: 6, color: '#90ed7d' }, 
-  { label: '6 - 8 m/s', min: 6, max: 8, color: '#f7a35c' }, 
-  { label: '> 8 m/s', min: 8, max: Infinity, color: '#8085e9' }, 
+  { label: '< 2 m/s', min: 0, max: 2, color: '#7cb5ec' },
+  { label: '2 - 4 m/s', min: 2, max: 4, color: '#434348' },
+  { label: '4 - 6 m/s', min: 4, max: 6, color: '#90ed7d' },
+  { label: '6 - 8 m/s', min: 6, max: 8, color: '#f7a35c' },
+  { label: '> 8 m/s', min: 8, max: Infinity, color: '#8085e9' },
 ];
 
 const LABELS_16_POINT = [
-  'N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
-  'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW',
+  'N',
+  'NNE',
+  'NE',
+  'ENE',
+  'E',
+  'ESE',
+  'SE',
+  'SSE',
+  'S',
+  'SSW',
+  'SW',
+  'WSW',
+  'W',
+  'WNW',
+  'NW',
+  'NNW',
 ];
 
 const getCompassSector = (degrees: number): string => {
@@ -116,13 +133,17 @@ const prepareWindRoseData = (
     const direction = directionData[i];
 
     if (
-      speed && direction &&
+      speed &&
+      direction &&
       speed.timestamp === direction.timestamp &&
-      typeof speed.value === 'number' && typeof direction.value === 'number'
+      typeof speed.value === 'number' &&
+      typeof direction.value === 'number'
     ) {
       const sector = getCompassSector(direction.value);
       const speedVal = speed.value;
-      const matchingBin = SPEED_BINS.find(b => speedVal >= b.min && speedVal < b.max);
+      const matchingBin = SPEED_BINS.find(
+        (b) => speedVal >= b.min && speedVal < b.max
+      );
 
       if (matchingBin) {
         countsMap[sector][matchingBin.label]++;
@@ -145,13 +166,16 @@ const prepareWindRoseData = (
   LABELS_16_POINT.forEach((dir) => {
     pctMap[dir] = {};
     SPEED_BINS.forEach((bin) => {
-      pctMap[dir][bin.label] = (countsMap[dir][bin.label] / totalValidPoints) * 100;
+      pctMap[dir][bin.label] =
+        (countsMap[dir][bin.label] / totalValidPoints) * 100;
     });
   });
 
   // Build datasets with actual percentages (stacking handled by plugin)
   const datasets = SPEED_BINS.map((bin) => {
-    const realPercentages = LABELS_16_POINT.map((dir) => pctMap[dir][bin.label]);
+    const realPercentages = LABELS_16_POINT.map(
+      (dir) => pctMap[dir][bin.label]
+    );
     const realCounts = LABELS_16_POINT.map((dir) => countsMap[dir][bin.label]);
 
     return {
@@ -193,9 +217,18 @@ const WindRadarChart = ({
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const textColor = useColorModeValue('gray.800', 'gray.200');
-  const gridColor = useColorModeValue('rgba(0, 0, 0, 0.1)', 'rgba(255, 255, 255, 0.1)');
-  const axisLineColor = useColorModeValue('rgba(0, 0, 0, 0.3)', 'rgba(255, 255, 255, 0.3)');
-  const backdropColor = useColorModeValue('rgba(255, 255, 255, 0.85)', 'rgba(26, 32, 44, 0.85)');
+  const gridColor = useColorModeValue(
+    'rgba(0, 0, 0, 0.1)',
+    'rgba(255, 255, 255, 0.1)'
+  );
+  const axisLineColor = useColorModeValue(
+    'rgba(0, 0, 0, 0.3)',
+    'rgba(255, 255, 255, 0.3)'
+  );
+  const backdropColor = useColorModeValue(
+    'rgba(255, 255, 255, 0.85)',
+    'rgba(26, 32, 44, 0.85)'
+  );
 
   const { chartData, pctMap, countsMap, maxStacked } = prepareWindRoseData(
     windSpeedData,
@@ -247,7 +280,7 @@ const WindRadarChart = ({
         display: true,
         position: 'right',
         reverse: false,
-        onClick: () => {}, 
+        onClick: () => {},
         labels: {
           color: textColor,
           usePointStyle: true,
@@ -271,9 +304,9 @@ const WindRadarChart = ({
             const dataset = context.dataset;
             const realValue = dataset.realData[context.dataIndex];
             const countValue = dataset.realCounts[context.dataIndex];
-            
+
             if (realValue === 0) return undefined;
-            
+
             return ` ${dataset.label}: ${realValue.toFixed(1)}% (${countValue} mesures)`;
           },
         },
@@ -283,7 +316,10 @@ const WindRadarChart = ({
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
-      const canvas = await html2canvas(chartRef.current, { scale: 2, backgroundColor: null });
+      const canvas = await html2canvas(chartRef.current, {
+        scale: 2,
+        backgroundColor: null,
+      });
       const link = document.createElement('a');
       link.download = 'wind_direction_chart.png';
       link.href = canvas.toDataURL();
@@ -293,11 +329,19 @@ const WindRadarChart = ({
 
   const handleDownloadData = () => {
     if (isDataEmpty) return;
-    
-    const headers = ['Direction', ...SPEED_BINS.map(b => `${b.label} (%)`), ...SPEED_BINS.map(b => `${b.label} (Count)`)];
+
+    const headers = [
+      'Direction',
+      ...SPEED_BINS.map((b) => `${b.label} (%)`),
+      ...SPEED_BINS.map((b) => `${b.label} (Count)`),
+    ];
     const rows = LABELS_16_POINT.map((dir) => {
-      const pctData = SPEED_BINS.map((bin) => pctMap[dir][bin.label].toFixed(2) + '%');
-      const countData = SPEED_BINS.map((bin) => countsMap[dir][bin.label].toString());
+      const pctData = SPEED_BINS.map(
+        (bin) => pctMap[dir][bin.label].toFixed(2) + '%'
+      );
+      const countData = SPEED_BINS.map((bin) =>
+        countsMap[dir][bin.label].toString()
+      );
       return [dir, ...pctData, ...countData].join(',');
     });
 
@@ -318,10 +362,21 @@ const WindRadarChart = ({
           Direction de vent
         </Text>
         <HStack spacing={2}>
-          <Button aria-label="Capture" colorScheme="teal" variant="ghost" onClick={handleScreenshot}>
+          <Button
+            aria-label="Capture"
+            colorScheme="teal"
+            variant="ghost"
+            onClick={handleScreenshot}
+          >
             <FaCamera />
           </Button>
-          <Button aria-label="Export" colorScheme="blue" variant="ghost" onClick={handleDownloadData} isDisabled={isDataEmpty}>
+          <Button
+            aria-label="Export"
+            colorScheme="blue"
+            variant="ghost"
+            onClick={handleDownloadData}
+            isDisabled={isDataEmpty}
+          >
             <FaDownload />
           </Button>
         </HStack>
@@ -329,9 +384,13 @@ const WindRadarChart = ({
 
       <Box ref={chartRef} height="400px" position="relative">
         {loading ? (
-          <Flex height="100%" align="center" justify="center"><Text>Chargement...</Text></Flex>
+          <Flex height="100%" align="center" justify="center">
+            <Text>Chargement...</Text>
+          </Flex>
         ) : isDataEmpty ? (
-          <Flex height="100%" align="center" justify="center"><Text>Aucune donnée disponible</Text></Flex>
+          <Flex height="100%" align="center" justify="center">
+            <Text>Aucune donnée disponible</Text>
+          </Flex>
         ) : (
           <PolarArea data={chartData as any} options={chartOptions} />
         )}
