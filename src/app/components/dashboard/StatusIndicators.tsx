@@ -1,7 +1,7 @@
-import React from "react";
-import { Box, Text, useBreakpointValue } from "@chakra-ui/react";
-import { CircularProgress } from "@chakra-ui/react";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
+import React from 'react';
+import { Box, Text, useBreakpointValue } from '@chakra-ui/react';
+import { CircularProgress } from '@chakra-ui/react';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
 
 interface StatusIndicatorsProps {
   humidity: number;
@@ -14,7 +14,13 @@ const StatusIndicators: React.FC<StatusIndicatorsProps> = ({
   solarRadiation,
   solarPanelVoltage,
 }) => {
-  const { bg, textColor, humidityColors, solarRadiationColors, solarPanelVoltageColors } = useColorModeStyles();
+  const {
+    bg,
+    textColor,
+    humidityColors,
+    solarRadiationColors,
+    solarPanelVoltageColors,
+  } = useColorModeStyles();
   const p = useBreakpointValue({ base: 2, md: 4 });
 
   const getHumidityColor = (value: number) => {
@@ -39,15 +45,16 @@ const StatusIndicators: React.FC<StatusIndicatorsProps> = ({
     if (
       getHumidityColor(humidity) === humidityColors.red ||
       getSolarRadiationColor(solarRadiation) === solarRadiationColors.red ||
-      getSolarPanelVoltageColor(solarPanelVoltage) === solarPanelVoltageColors.red
+      getSolarPanelVoltageColor(solarPanelVoltage) ===
+        solarPanelVoltageColors.red
     ) {
-      return "Statut du système : Non sain";
+      return 'Statut du système : Non sain';
     }
-    return "Statut du système : Sain";
+    return 'Statut du système : Sain';
   };
 
   return (
-    <Box 
+    <Box
       width="100%"
       height="100%"
       bg={bg}
@@ -59,12 +66,12 @@ const StatusIndicators: React.FC<StatusIndicatorsProps> = ({
       <Text color={textColor} fontSize="lg" fontWeight="bold" mb={4}>
         Indicateurs d&apos;état du système
       </Text>
-      <Box 
-        display="flex" 
-        justifyContent="space-around" 
-        flexWrap="wrap" 
+      <Box
+        display="flex"
+        justifyContent="space-around"
+        flexWrap="wrap"
         width="100%"
-        mb={4} 
+        mb={4}
       >
         <Box textAlign="center" mx={2} mb={4}>
           <Text color={textColor}>Humidité (%)</Text>
@@ -74,7 +81,9 @@ const StatusIndicators: React.FC<StatusIndicatorsProps> = ({
             size="120px"
             thickness="12px"
           />
-          <Text color={textColor} fontSize="md" mt={2}>{humidity}%</Text>
+          <Text color={textColor} fontSize="md" mt={2}>
+            {humidity}%
+          </Text>
         </Box>
         <Box textAlign="center" mx={2} mb={4}>
           <Text color={textColor}>Rayonnement solaire (W/m²)</Text>
@@ -84,7 +93,9 @@ const StatusIndicators: React.FC<StatusIndicatorsProps> = ({
             size="120px"
             thickness="12px"
           />
-          <Text color={textColor} fontSize="md" mt={2}>{solarRadiation} W/m²</Text>
+          <Text color={textColor} fontSize="md" mt={2}>
+            {solarRadiation} W/m²
+          </Text>
         </Box>
         <Box textAlign="center" mx={2} mb={4}>
           <Text color={textColor}>Tension du panneau (V)</Text>
@@ -94,7 +105,9 @@ const StatusIndicators: React.FC<StatusIndicatorsProps> = ({
             size="120px"
             thickness="12px"
           />
-          <Text  color={textColor} fontSize="md" mt={2}>{solarPanelVoltage} V</Text>
+          <Text color={textColor} fontSize="md" mt={2}>
+            {solarPanelVoltage} V
+          </Text>
         </Box>
       </Box>
       <Text color={textColor} textAlign="center" mt={4}>

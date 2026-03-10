@@ -7,7 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint --quiet",
-    "export": "next export"
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run lint && npm run format:check",
+    "export": "next export",
+    "prepare": "husky",
+    "test": "npm run lint && npm run format:check"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
@@ -46,7 +51,10 @@
     "@types/react-table": "^7.7.20",
     "eslint": "^8",
     "eslint-config-next": "14.2.8",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
     "postcss": "^8",
+    "prettier": "^3.8.1",
     "tailwindcss": "^3.4.1",
     "typescript": "5.8.3"
   }

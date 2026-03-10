@@ -1,6 +1,6 @@
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import { Box, Text, VStack, useColorModeValue } from "@chakra-ui/react";
-import { GiWaterDrop } from "react-icons/gi";
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
+import { GiWaterDrop } from 'react-icons/gi';
 
 interface ET0Data {
   id: number;
@@ -33,11 +33,10 @@ const ET0LastData = ({
   const latestCalculated = calculatedData[calculatedData.length - 1];
 
   // Light/dark mode colors
-  const bgColor = useColorModeValue("blue.50", "blue.900");
-  const noDataColor = useColorModeValue("gray.600", "gray.300");
-  const timeColor = useColorModeValue("gray.500", "gray.400");
+  const bgColor = useColorModeValue('blue.50', 'blue.900');
+  const noDataColor = useColorModeValue('gray.600', 'gray.300');
+  const timeColor = useColorModeValue('gray.500', 'gray.400');
   const { textColor } = useColorModeStyles();
-  
 
   return (
     <Box
@@ -63,20 +62,20 @@ const ET0LastData = ({
       {latestWeather || latestCalculated ? (
         <VStack spacing={2} mt={3}>
           <Text fontSize="lg" color="blue.600">
-            ET0 météo:{" "}
+            ET0 météo:{' '}
             {latestWeather
               ? `${latestWeather.value.toFixed(2)} ${
                   latestWeather.default_unit
                 }`
-              : "N/A"}
+              : 'N/A'}
           </Text>
           <Text fontSize="lg" color="teal.600">
-            ET0 calculé:{" "}
+            ET0 calculé:{' '}
             {latestCalculated
               ? `${latestCalculated.value.toFixed(2)} ${
                   latestCalculated.default_unit
                 }`
-              : "N/A"}
+              : 'N/A'}
           </Text>
         </VStack>
       ) : (
@@ -87,7 +86,7 @@ const ET0LastData = ({
 
       {(latestWeather || latestCalculated) && (
         <Text fontSize="sm" color={timeColor} mt={3}>
-          Mise à jour :{" "}
+          Mise à jour :{' '}
           {latestWeather && latestCalculated
             ? timeAgo(
                 latestWeather.timestamp > latestCalculated.timestamp
@@ -95,8 +94,8 @@ const ET0LastData = ({
                   : latestCalculated.timestamp
               )
             : latestWeather
-            ? timeAgo(latestWeather.timestamp)
-            : timeAgo(latestCalculated.timestamp)}
+              ? timeAgo(latestWeather.timestamp)
+              : timeAgo(latestCalculated.timestamp)}
         </Text>
       )}
     </Box>

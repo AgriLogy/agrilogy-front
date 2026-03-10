@@ -1,10 +1,9 @@
-"use client";
+'use client';
 
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import { Box, Text } from "@chakra-ui/react";
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { Box, Text } from '@chakra-ui/react';
 
 const NoDataBox = ({ name }: { name: string }) => {
-  
   const { bg, textColor } = useColorModeStyles();
 
   return (

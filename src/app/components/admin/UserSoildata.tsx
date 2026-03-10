@@ -1,12 +1,11 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { Box, Text } from "@chakra-ui/react";
-import "./style.css";
-import axiosInstance from "@/app/lib/api";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import DateRangePicker from "../analytics/DateRangePicker";
-import "@/app/styles/graphes.css";
-import EmptyBox from "../common/EmptyBox";
+'use client';
+import React, { useEffect, useState } from 'react';
+import { Box, Text } from '@chakra-ui/react';
+import './style.css';
+import axiosInstance from '@/app/lib/api';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import '@/app/styles/graphes.css';
+import EmptyBox from '../common/EmptyBox';
 
 type Props = {
   user: string;
@@ -16,10 +15,8 @@ const UserAlldata: React.FC<Props> = ({ user }) => {
   const { bg, textColor } = useColorModeStyles();
   const [data, setData] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
-  );
+  const [startDate] = useState<string>('');
+  const [endDate] = useState<string>(new Date().toISOString().split('T')[0]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,10 +30,10 @@ const UserAlldata: React.FC<Props> = ({ user }) => {
           `api/admin-user-data/`,
           payload
         );
-        console.log("API Response:", response.data.sensor_data); // Inspect the structure
+        console.log('API Response:', response.data.sensor_data); // Inspect the structure
         setData(response.data.sensor_data || []);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Unknown error");
+        setError(err instanceof Error ? err.message : 'Unknown error');
       }
     };
 
@@ -72,7 +69,6 @@ const UserAlldata: React.FC<Props> = ({ user }) => {
       </Box>
 
       {/* Date Range Picker */}
-
     </div>
   );
 };

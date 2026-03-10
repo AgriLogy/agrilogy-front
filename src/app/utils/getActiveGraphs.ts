@@ -1,5 +1,5 @@
 // utils/getActiveGraphs.ts
-import api from "@/app/lib/api";
+import api from '@/app/lib/api';
 
 export interface ActiveGraphResponse {
   soil_irrigation_status: boolean;
@@ -39,7 +39,7 @@ const getActiveGraphs = async (
     const response = await api.get(`/api/active-graph/self/${zoneId}/`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching active graphs:", error);
+    console.error('Error fetching active graphs:', error);
     return null;
   }
 };

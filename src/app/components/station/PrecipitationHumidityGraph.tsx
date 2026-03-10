@@ -1,5 +1,5 @@
-"use client";
-import { Box, Spinner, Text, useColorMode } from "@chakra-ui/react";
+'use client';
+import { Box, Spinner, Text, useColorMode } from '@chakra-ui/react';
 import {
   LineChart,
   Line,
@@ -9,16 +9,16 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from "recharts";
+} from 'recharts';
 
 // Custom legend component
 const CustomLegend = (props: any) => (
   <ul
     style={{
-      display: "flex",
-      listStyle: "none",
+      display: 'flex',
+      listStyle: 'none',
       padding: 0,
-      flexWrap: "wrap",
+      flexWrap: 'wrap',
       margin: 0,
       marginLeft: 60,
     }}
@@ -27,19 +27,19 @@ const CustomLegend = (props: any) => (
       <li
         key={`item-${index}`}
         style={{
-          marginRight: "15px",
-          fontSize: "12px",
+          marginRight: '15px',
+          fontSize: '12px',
           color: entry.color,
-          whiteSpace: "nowrap",
+          whiteSpace: 'nowrap',
         }}
       >
         <span
           style={{
-            marginRight: "5px",
+            marginRight: '5px',
             backgroundColor: entry.color,
-            width: "10px",
-            height: "10px",
-            display: "inline-block",
+            width: '10px',
+            height: '10px',
+            display: 'inline-block',
           }}
         />
         {entry.value}
@@ -61,18 +61,18 @@ const CustomTooltip = ({ active, payload }: any) => {
     return (
       <div
         style={{
-          backgroundColor: "white",
-          border: "1px solid #ccc",
-          padding: "5px",
-          borderRadius: "5px",
+          backgroundColor: 'white',
+          border: '1px solid #ccc',
+          padding: '5px',
+          borderRadius: '5px',
         }}
       >
         <p>{`Timestamp: ${payload[0].payload.timestamp}`}</p>
-        <p style={{ color: "rgba(75, 192, 192, 1)" }}>
-          {`Precipitation: ${payload[0].payload.precipitation} mm`}{" "}
+        <p style={{ color: 'rgba(75, 192, 192, 1)' }}>
+          {`Precipitation: ${payload[0].payload.precipitation} mm`}{' '}
         </p>
         <p
-          style={{ color: "rgba(255, 159, 64, 1)" }}
+          style={{ color: 'rgba(255, 159, 64, 1)' }}
         >{`Humidity: ${payload[1].payload.humidity_weather} %`}</p>
       </div>
     );
@@ -80,13 +80,11 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-const PrecipitationHumidityGraph= ({ data }: { data: any }) => {
-
+const PrecipitationHumidityGraph = ({ data }: { data: any }) => {
   const { colorMode } = useColorMode();
-  const chartBg = colorMode === "light" ? "white" : "gray.800";
+  const chartBg = colorMode === 'light' ? 'white' : 'gray.800';
 
   if (!data) return <Spinner />;
- 
 
   return (
     <Box
@@ -98,7 +96,7 @@ const PrecipitationHumidityGraph= ({ data }: { data: any }) => {
       p={2}
     >
       <Text
-        color={colorMode === "light" ? "gray.700" : "gray.200"}
+        color={colorMode === 'light' ? 'gray.700' : 'gray.200'}
         fontSize="lg"
         fontWeight="bold"
         mb={4}
@@ -108,8 +106,47 @@ const PrecipitationHumidityGraph= ({ data }: { data: any }) => {
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data.sensor_data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="timestamp" tick={<CustomTick />} />
-          <YAxis tick={<CustomTick />} />
+          <XAxis
+            dataKey="timestamp"
+            tick={<CustomTick />}
+            stroke="#666" // Axis line color
+            strokeWidth={1} // Axis line thickness
+            // tick={{                          // Tick styling
+            //   fill: '#666',                  // Tick label color
+            //   fontSize: 17,                  // Tick label font size
+            //   fontFamily: 'Arial, sans-serif' // Tick label font
+            // }}
+            axisLine={{
+              // Main axis line styling
+              stroke: '#666',
+              strokeWidth: 1,
+            }}
+            tickLine={{
+              // Tick line styling
+              stroke: '#666',
+              strokeWidth: 1,
+            }}
+          />
+          <YAxis
+            tick={<CustomTick />}
+            stroke="#666" // Axis line color
+            strokeWidth={1} // Axis line thickness
+            // tick={{                          // Tick styling
+            //   fill: '#666',                  // Tick label color
+            //   fontSize: 17,                  // Tick label font size
+            //   fontFamily: 'Arial, sans-serif' // Tick label font
+            // }}
+            axisLine={{
+              // Main axis line styling
+              stroke: '#666',
+              strokeWidth: 1,
+            }}
+            tickLine={{
+              // Tick line styling
+              stroke: '#666',
+              strokeWidth: 1,
+            }}
+          />
           <Tooltip content={<CustomTooltip />} />
           <Legend content={<CustomLegend />} />
           <Line

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState } from 'react';
 import {
   BarChart,
   Bar,
@@ -8,7 +8,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from "recharts";
+} from 'recharts';
 import {
   useBreakpointValue,
   Box,
@@ -17,12 +17,12 @@ import {
   Button,
   HStack,
   useColorMode,
-} from "@chakra-ui/react";
-import { FaDownload, FaCamera } from "react-icons/fa";
-import html2canvas from "html2canvas";
-import { SensorData } from "@/app/types";
-import EmptyBox from "../../common/EmptyBox";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
+} from '@chakra-ui/react';
+import { FaDownload, FaCamera } from 'react-icons/fa';
+import html2canvas from 'html2canvas';
+import { SensorData } from '@/app/types';
+import EmptyBox from '../../common/EmptyBox';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
 
 const PrecipitationRateChart = ({
   data,
@@ -44,12 +44,12 @@ const PrecipitationRateChart = ({
     md: Math.ceil(chartData.length / 5),
   });
 
-  const labelAngle = useBreakpointValue({ base: -3, md: 5 });
+  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const { textColor } = useColorModeStyles();
 
   // Legend click handler
   const handleLegendClick = (data: any) => {
-    if (data.value === "Taille des fruits") {
+    if (data.value === 'Taille des fruits') {
       setShowBar((prev) => !prev);
     }
   };
@@ -57,8 +57,8 @@ const PrecipitationRateChart = ({
   const handleScreenshot = async () => {
     if (chartRef.current) {
       const canvas = await html2canvas(chartRef.current);
-      const link = document.createElement("a");
-      link.download = "precipitation_rate.png";
+      const link = document.createElement('a');
+      link.download = 'precipitation_rate.png';
       link.href = canvas.toDataURL();
       link.click();
     }
@@ -66,15 +66,15 @@ const PrecipitationRateChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      "timestamp,value\n" +
-      data.map((d) => `${d.timestamp},${d.value}`).join("\n");
+      'timestamp,value\n' +
+      data.map((d) => `${d.timestamp},${d.value}`).join('\n');
 
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
 
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
-    link.download = "fruit_data.csv";
+    link.download = 'fruit_data.csv';
     link.click();
 
     URL.revokeObjectURL(url);
@@ -116,21 +116,57 @@ const PrecipitationRateChart = ({
             <BarChart
               data={chartData}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-              onClick={(e) => {
+              onClick={(_e) => {
                 // optional: if you want to toggle bar by clicking legend label only
               }}
             >
               <XAxis
                 dataKey="name"
-                angle={labelAngle}
+                angle={0}
                 textAnchor="middle"
                 interval={labelInterval}
+                stroke="#666" // Axis line color
+                strokeWidth={1} // Axis line thickness
+                tick={{
+                  // Tick styling
+                  fill: '#666', // Tick label color
+                  fontSize: 17, // Tick label font size
+                  fontFamily: 'Arial, sans-serif', // Tick label font
+                }}
+                axisLine={{
+                  // Main axis line styling
+                  stroke: '#666',
+                  strokeWidth: 1,
+                }}
+                tickLine={{
+                  // Tick line styling
+                  stroke: '#666',
+                  strokeWidth: 1,
+                }}
               />
               <YAxis
                 label={{
                   // value: "Taille (mm)",
                   angle: -90,
-                  position: "insideLeft",
+                  position: 'insideLeft',
+                }}
+                stroke="#666" // Axis line color
+                strokeWidth={1} // Axis line thickness
+                tick={{
+                  // Tick styling
+                  fill: '#666', // Tick label color
+                  fontSize: 17, // Tick label font size
+                  fontFamily: 'Arial, sans-serif', // Tick label font
+                }}
+                axisLine={{
+                  // Main axis line styling
+                  stroke: '#666',
+                  strokeWidth: 1,
+                }}
+                tickLine={{
+                  // Tick line styling
+                  stroke: '#666',
+                  strokeWidth: 1,
                 }}
               />
               <Tooltip />
@@ -138,16 +174,16 @@ const PrecipitationRateChart = ({
               <Bar
                 dataKey="value"
                 name="Taux de précipitation (mm/h)"
-                fill={colorMode === "dark" ? "#60a5fa" : "#3b82f6"}
+                fill={colorMode === 'dark' ? '#60a5fa' : '#3b82f6'}
                 activeBar={
                   <Rectangle
-                    fill={showBar ? "gold" : "gray"}
-                    stroke={showBar ? "purple" : "gray"}
+                    fill={showBar ? 'gold' : 'gray'}
+                    stroke={showBar ? 'purple' : 'gray'}
                   />
                 }
                 isAnimationActive={false}
                 style={{
-                  pointerEvents: showBar ? "auto" : "none",
+                  pointerEvents: showBar ? 'auto' : 'none',
                 }}
               />
             </BarChart>

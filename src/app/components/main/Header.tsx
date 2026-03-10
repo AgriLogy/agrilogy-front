@@ -1,7 +1,7 @@
-import React from "react";
-import { useBreakpointValue } from "@chakra-ui/react";
-import MobileMenu from "./MobileMenu";
-import BigMenu from "./BigMenu";
+import React from 'react';
+import { useBreakpointValue } from '@chakra-ui/react';
+import MobileMenu from './MobileMenu';
+import BigMenu from './BigMenu';
 
 const Header = () => {
   const isMobile = useBreakpointValue({ base: true, md: false });

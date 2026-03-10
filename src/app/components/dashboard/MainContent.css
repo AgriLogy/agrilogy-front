@@ -45,21 +45,21 @@
   .container {
     grid-template-columns: 1fr;
   }
-  
+
   .header {
-    margin: 2px 0 0 ; 
+    margin: 2px 0 0;
     width: 100%;
   }
-  
+
   .box {
     display: flex;
     flex-wrap: wrap;
     border: 1px solid #ccc;
-    height: 400px; 
+    height: 400px;
     grid-column: span 2;
-    width: 100%; 
-    height: auto; 
-    margin: 2px 0; 
+    width: 100%;
+    height: auto;
+    margin: 2px 0;
   }
 }
 

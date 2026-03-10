@@ -1,7 +1,7 @@
-import { Box, Text, VStack, useColorModeValue } from "@chakra-ui/react";
-import { SensorData } from "@/app/types";
-import { FaWater } from "react-icons/fa";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
+import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
+import { SensorData } from '@/app/types';
+import { FaWater } from 'react-icons/fa';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -26,9 +26,9 @@ const SoilConductivityLastData = ({
   const latestLow = lowData[lowData.length - 1];
   const latestHigh = highData[highData.length - 1];
   const latestFlow = flowData[flowData.length - 1];
-  
-  const bgColor = useColorModeValue("blue.50", "blue.900");
-  const timeColor = useColorModeValue("gray.500", "gray.400");
+
+  const bgColor = useColorModeValue('blue.50', 'blue.900');
+  const timeColor = useColorModeValue('gray.500', 'gray.400');
   const { textColor } = useColorModeStyles();
 
   return (
@@ -46,34 +46,38 @@ const SoilConductivityLastData = ({
       alignItems="center"
       textAlign="center"
     >
-      <FaWater size={40} color="#00B0FF" />  {/* Bright blue water icon */}
+      <FaWater size={40} color="#00B0FF" /> {/* Bright blue water icon */}
       <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
         Derniers niveaux EC du sol & irrigation
       </Text>
-
       <VStack spacing={3} mt={4}>
-        <Text fontSize="lg" color="#1E88E5">  {/* Medium blue for low conductivity */}
-          Profondeur basse :{" "}
-          {latestLow ? `${latestLow.value.toFixed(2)} µS/cm` : "N/A"}
+        <Text fontSize="lg" color="#1E88E5">
+          {' '}
+          {/* Medium blue for low conductivity */}
+          Profondeur basse :{' '}
+          {latestLow ? `${latestLow.value.toFixed(2)} µS/cm` : 'N/A'}
         </Text>
-        <Text fontSize="lg" color="#2BB673">  {/* Vibrant teal-green for high conductivity */}
-          Profondeur haute :{" "}
-          {latestHigh ? `${latestHigh.value.toFixed(2)} µS/cm` : "N/A"}
+        <Text fontSize="lg" color="#2BB673">
+          {' '}
+          {/* Vibrant teal-green for high conductivity */}
+          Profondeur haute :{' '}
+          {latestHigh ? `${latestHigh.value.toFixed(2)} µS/cm` : 'N/A'}
         </Text>
-        <Text fontSize="lg" color="#00B0FF">  {/* Orange-red for irrigation flow */}
-          Débit irrigation :{" "}
-          {latestFlow ? `${latestFlow.value.toFixed(2)} L/min` : "N/A"}
+        <Text fontSize="lg" color="#00B0FF">
+          {' '}
+          {/* Orange-red for irrigation flow */}
+          Débit irrigation :{' '}
+          {latestFlow ? `${latestFlow.value.toFixed(2)} L/min` : 'N/A'}
         </Text>
       </VStack>
-
       {(latestLow || latestHigh || latestFlow) && (
         <Text fontSize="sm" color={timeColor} mt={3}>
-          Mise à jour :{" "}
+          Mise à jour :{' '}
           {timeAgo(
             latestFlow?.timestamp ||
               latestHigh?.timestamp ||
               latestLow?.timestamp ||
-              ""
+              ''
           )}
         </Text>
       )}

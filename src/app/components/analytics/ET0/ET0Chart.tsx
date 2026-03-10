@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef } from 'react';
 import {
   BarChart,
   Bar,
@@ -8,7 +8,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from "recharts";
+} from 'recharts';
 import {
   Box,
   Text,
@@ -17,9 +17,9 @@ import {
   Button,
   HStack,
   Flex,
-} from "@chakra-ui/react";
-import { FaDownload, FaCamera } from "react-icons/fa";
-import html2canvas from "html2canvas";
+} from '@chakra-ui/react';
+import { FaDownload, FaCamera } from 'react-icons/fa';
+import html2canvas from 'html2canvas';
 
 interface Et0Data {
   timestamp: string;
@@ -47,8 +47,8 @@ const EC0Chart = ({
     };
   });
 
-  const textColor = useColorModeValue("gray.800", "gray.200");
-  const labelAngle = useBreakpointValue({ base: -3, md: 5 });
+  const textColor = useColorModeValue('gray.800', 'gray.200');
+  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const labelInterval = useBreakpointValue({
     base: Math.ceil(chartData.length / 3),
     md: Math.ceil(chartData.length / 5),
@@ -57,8 +57,8 @@ const EC0Chart = ({
   const handleScreenshot = async () => {
     if (chartRef.current) {
       const canvas = await html2canvas(chartRef.current);
-      const link = document.createElement("a");
-      link.download = "et0_chart.png";
+      const link = document.createElement('a');
+      link.download = 'et0_chart.png';
       link.href = canvas.toDataURL();
       link.click();
     }
@@ -66,22 +66,22 @@ const EC0Chart = ({
 
   const handleDownloadData = () => {
     const csv =
-      "timestamp,Weather,Calculated\n" +
+      'timestamp,Weather,Calculated\n' +
       chartData
-        .map((d) => `${d.name},${d.Weather ?? ""},${d.Calculated ?? ""}`)
-        .join("\n");
+        .map((d) => `${d.name},${d.Weather ?? ''},${d.Calculated ?? ''}`)
+        .join('\n');
 
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
-    link.download = "et0_data.csv";
+    link.download = 'et0_data.csv';
     link.click();
     URL.revokeObjectURL(url);
   };
 
   return (
-    <Box width="100%"  pr={4} pb={4}>
+    <Box width="100%" pr={4} pb={4}>
       <Flex justify="space-between" align="center" mb={4}>
         <Text fontSize="xl" fontWeight="bold" color={textColor}>
           ET0
@@ -120,11 +120,48 @@ const EC0Chart = ({
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="name"
-                angle={labelAngle}
+                angle={0}
                 textAnchor="middle"
                 interval={labelInterval}
+                stroke="#666" // Axis line color
+                strokeWidth={1} // Axis line thickness
+                tick={{
+                  // Tick styling
+                  fill: '#666', // Tick label color
+                  fontSize: 17, // Tick label font size
+                  fontFamily: 'Arial, sans-serif', // Tick label font
+                }}
+                axisLine={{
+                  // Main axis line styling
+                  stroke: '#666',
+                  strokeWidth: 1,
+                }}
+                tickLine={{
+                  // Tick line styling
+                  stroke: '#666',
+                  strokeWidth: 1,
+                }}
               />
-              <YAxis />
+              <YAxis
+                stroke="#666" // Axis line color
+                strokeWidth={1} // Axis line thickness
+                tick={{
+                  // Tick styling
+                  fill: '#666', // Tick label color
+                  fontSize: 17, // Tick label font size
+                  fontFamily: 'Arial, sans-serif', // Tick label font
+                }}
+                axisLine={{
+                  // Main axis line styling
+                  stroke: '#666',
+                  strokeWidth: 1,
+                }}
+                tickLine={{
+                  // Tick line styling
+                  stroke: '#666',
+                  strokeWidth: 1,
+                }}
+              />
               <Tooltip />
               <Legend />
               <Bar dataKey="Weather" fill="#3182ce" name="ET0 Capteur" />

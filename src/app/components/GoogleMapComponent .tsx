@@ -6,7 +6,13 @@ const containerStyle = {
   height: '400px',
 };
 
-const GoogleMapComponent = ({ latitude, longitude }: { latitude: number; longitude: number }) => {
+const GoogleMapComponent = ({
+  latitude,
+  longitude,
+}: {
+  latitude: number;
+  longitude: number;
+}) => {
   return (
     <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
       <GoogleMap

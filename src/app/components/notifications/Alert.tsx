@@ -1,8 +1,8 @@
-import React from "react";
-import { Box, Text, Badge } from "@chakra-ui/react";
-import { ALERT_CHOICES } from "@/app/utils/alertChoices";
-import useColorModeStyles from "@/app/utils/useColorModeStyles"; // import the custom hook
-import "../../styles/style.css";
+import React from 'react';
+import { Box, Text, Badge } from '@chakra-ui/react';
+import { ALERT_CHOICES } from '@/app/utils/alertChoices';
+import useColorModeStyles from '@/app/utils/useColorModeStyles'; // import the custom hook
+import '../../styles/style.css';
 
 interface AlertProps {
   id: number;
@@ -28,7 +28,7 @@ const Alert: React.FC<AlertProps> = ({
 
   return (
     <Box
-	    border="1px solid #ccc"
+      border="1px solid #ccc"
       p={6}
       key={id}
       borderWidth={1}
@@ -41,8 +41,8 @@ const Alert: React.FC<AlertProps> = ({
       onClick={onClick} // Make it clickable
       transition="transform 0.3s ease, box-shadow 0.3s ease"
       _hover={{
-        transform: "translateY(-4px)",
-        boxShadow: "xl",
+        transform: 'translateY(-4px)',
+        boxShadow: 'xl',
         // bg: hoverColor, // Hover color changes based on the color mode
       }}
     >
@@ -62,8 +62,12 @@ const Alert: React.FC<AlertProps> = ({
           ⚡ Condition
         </Text>
         <Text color="gray.600">
-          <strong>Condition:</strong>{" "}
-          {condition == ">" ? "Supérieur" : condition == "<" ? "Inférieur" : "Égal"}{" "}
+          <strong>Condition:</strong>{' '}
+          {condition == '>'
+            ? 'Supérieur'
+            : condition == '<'
+              ? 'Inférieur'
+              : 'Égal'}{' '}
           à {condition_nbr}
         </Text>
       </Box>

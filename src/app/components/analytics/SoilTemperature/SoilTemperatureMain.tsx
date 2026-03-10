@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { Box, Stack } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import api from "@/app/lib/api";
-import { SensorData } from "@/app/types";
-import SoilTemperatureChart from "./SoilTemperatureChart";
-import SoilTemperatureLastData from "./SoilTemperatureLastData";
+import { Box, Stack } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import api from '@/app/lib/api';
+import { SensorData } from '@/app/types';
+import SoilTemperatureChart from './SoilTemperatureChart';
+import SoilTemperatureLastData from './SoilTemperatureLastData';
 
 export type TemperaturePoint = {
   timestamp: string;
@@ -42,9 +42,9 @@ const SoilTemperatureMain = ({
       });
 
     Promise.all([
-      fetchSeries("/api/sensors/soiltemperaturelow/"),
-      fetchSeries("/api/sensors/soiltemperaturemedium/"),
-      fetchSeries("/api/sensors/soiltemperaturehigh/"),
+      fetchSeries('/api/sensors/soiltemperaturelow/'),
+      fetchSeries('/api/sensors/soiltemperaturemedium/'),
+      fetchSeries('/api/sensors/soiltemperaturehigh/'),
     ])
       .then(([lowRes, medRes, highRes]) => {
         const map = new Map<string, TemperaturePoint>();
@@ -76,14 +76,14 @@ const SoilTemperatureMain = ({
         setLastMedium(medRes.data.at(-1));
         setLastHigh(highRes.data.at(-1));
       })
-      .catch((err) => console.error("Failed to fetch soil temperature:", err))
+      .catch((err) => console.error('Failed to fetch soil temperature:', err))
       .finally(() => setLoading(false));
   }, [startDate, endDate, selectedZone]);
 
   return (
     <Stack
       spacing={2}
-      direction={{ base: "column", md: "row" }}
+      direction={{ base: 'column', md: 'row' }}
       align="start"
       width="100%"
       height="100%"

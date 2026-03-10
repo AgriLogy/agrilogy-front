@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   FormControl,
@@ -15,15 +15,15 @@ import {
   Button,
   VStack,
   useToast,
-} from "@chakra-ui/react";
-import axios from "axios";
+} from '@chakra-ui/react';
+import axios from 'axios';
 
 const LowFlow: React.FC = () => {
   const [formData, setFormData] = useState({
-    alertName: "",
-    alertType: "Water Flow - Low",
+    alertName: '',
+    alertType: 'Water Flow - Low',
     percentage: 1,
-    description: "",
+    description: '',
   });
 
   const toast = useToast();
@@ -35,7 +35,7 @@ const LowFlow: React.FC = () => {
     setFormData((prev) => ({
       ...prev,
       [name]:
-        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+        type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
     }));
   };
 
@@ -48,25 +48,25 @@ const LowFlow: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      await axios.post("/api/alerts/windspeed", formData);
+      await axios.post('/api/alerts/windspeed', formData);
       toast({
-        title: "Alert Created",
-        description: "Wind speed alert successfully added.",
-        status: "success",
+        title: 'Alert Created',
+        description: 'Wind speed alert successfully added.',
+        status: 'success',
         duration: 3000,
         isClosable: true,
       });
       setFormData({
-        alertName: "",
-        alertType: "Water Flow - Low",
+        alertName: '',
+        alertType: 'Water Flow - Low',
         percentage: 1,
-        description: "",
+        description: '',
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to create wind speed alert.",
-        status: "error",
+        title: 'Error',
+        description: 'Failed to create wind speed alert.',
+        status: 'error',
         duration: 3000,
         isClosable: true,
       });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   FormControl,
   FormLabel,
@@ -21,9 +21,9 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-} from "@chakra-ui/react";
-import api from "@/app/lib/api";
-import { ALERT_CHOICES } from "@/app/utils/alertChoices";
+} from '@chakra-ui/react';
+import api from '@/app/lib/api';
+import { ALERT_CHOICES } from '@/app/utils/alertChoices';
 
 interface FormModalUpdateProps {
   isOpen: boolean;
@@ -41,11 +41,11 @@ const FormModalUpdate: React.FC<FormModalUpdateProps> = ({
   refreshAlerts,
 }) => {
   const [formData, setFormData] = useState({
-    id: "", // Add id here
-    name: "",
-    type: "Vitesse du vent",
-    condition: ">",
-    description: "",
+    id: '', // Add id here
+    name: '',
+    type: 'Vitesse du vent',
+    condition: '>',
+    description: '',
     condition_nbr: 0,
   });
 
@@ -63,7 +63,9 @@ const FormModalUpdate: React.FC<FormModalUpdateProps> = ({
     return typeObj ? typeObj.label : type; // Return label if found, else return the value itself
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -89,9 +91,9 @@ const FormModalUpdate: React.FC<FormModalUpdateProps> = ({
     try {
       await api.put(`/api/alert/${formData.id}/`, formData); // Use PUT for update
       toast({
-        title: "Alerte mise à jour",
+        title: 'Alerte mise à jour',
         description: "L'alerte a été mise à jour avec succès.",
-        status: "success",
+        status: 'success',
         duration: 3000,
         isClosable: true,
       });
@@ -101,7 +103,7 @@ const FormModalUpdate: React.FC<FormModalUpdateProps> = ({
       toast({
         title: "Erreur de mise à jour de l'alerte",
         description: "Échec de la mise à jour de l'alerte.",
-        status: "error",
+        status: 'error',
         duration: 3000,
         isClosable: true,
       });
@@ -112,7 +114,7 @@ const FormModalUpdate: React.FC<FormModalUpdateProps> = ({
     <Modal isOpen={isOpen} onClose={onClose} size="lg" isCentered>
       <ModalOverlay backdropFilter="blur(10px)" />
       <ModalContent>
-        <ModalHeader>Modifier l'alerte</ModalHeader>
+        <ModalHeader>Modifier l&apos;alerte</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <VStack spacing={4} align="stretch">
@@ -130,7 +132,11 @@ const FormModalUpdate: React.FC<FormModalUpdateProps> = ({
             {/* Type */}
             <FormControl isReadOnly>
               <FormLabel>Type</FormLabel>
-              <Input name="type" value={getTypeLabel(formData.type)} isReadOnly />
+              <Input
+                name="type"
+                value={getTypeLabel(formData.type)}
+                isReadOnly
+              />
             </FormControl>
 
             {/* Condition */}
@@ -153,7 +159,9 @@ const FormModalUpdate: React.FC<FormModalUpdateProps> = ({
                   min={1}
                   max={100}
                   value={formData.condition_nbr}
-                  onChange={(_, valueAsNumber) => handlecondition_nbrChange(valueAsNumber)}
+                  onChange={(_, valueAsNumber) =>
+                    handlecondition_nbrChange(valueAsNumber)
+                  }
                   w="100px"
                 >
                   <NumberInputField name="condition_nbr" />

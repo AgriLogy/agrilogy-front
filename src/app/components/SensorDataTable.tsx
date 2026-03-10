@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Box,
   Table,
@@ -9,10 +9,10 @@ import {
   Td,
   useBreakpointValue,
   Text,
-} from "@chakra-ui/react";
-import useColorModeStyles from "../utils/useColorModeStyles";
-import { SensorData } from "../data/dashboard/data";
-import EmptyBox from "./common/EmptyBox";
+} from '@chakra-ui/react';
+import useColorModeStyles from '../utils/useColorModeStyles';
+import { SensorData } from '../data/dashboard/data';
+import EmptyBox from './common/EmptyBox';
 
 interface SensorDataTableProps {
   data: SensorData[];
@@ -20,16 +20,14 @@ interface SensorDataTableProps {
 
 const SensorDataTable: React.FC<SensorDataTableProps> = ({ data }) => {
   const { bg, textColor, navBgColor } = useColorModeStyles();
-  const fontSize = useBreakpointValue({ base: "sm", md: "md" });
+  const fontSize = useBreakpointValue({ base: 'sm', md: 'md' });
   const p = useBreakpointValue({ base: 2, md: 4 });
 
   // Get the last 8 records
-  const lastRecords = Array.isArray(data) && data.length > 0 ? data : [];  // Ensure it's an array, and not empty
+  const lastRecords = Array.isArray(data) && data.length > 0 ? data : []; // Ensure it's an array, and not empty
 
   if (lastRecords.length === 0) {
-    return (
-      <EmptyBox/>
-    );
+    return <EmptyBox />;
   }
 
   return (

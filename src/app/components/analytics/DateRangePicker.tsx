@@ -1,14 +1,14 @@
-"use client";
-import React, { useState } from "react";
+'use client';
+import React, { useState } from 'react';
 import {
   Button,
   HStack,
   Input,
   Text,
   useBreakpointValue,
-} from "@chakra-ui/react";
-import { subDays, subWeeks, subMonths, subYears, format } from "date-fns";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
+} from '@chakra-ui/react';
+import { subDays, subWeeks, subMonths, subYears, format } from 'date-fns';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
 
 interface DateRangePickerProps {
   setStartDate: (date: string) => void;
@@ -21,37 +21,37 @@ interface DateRangePickerProps {
 const DateRangePicker: React.FC<DateRangePickerProps> = ({
   setStartDate,
   setEndDate,
-  zones,
-  selectedZone,
-  setSelectedZone,
+  zones: _zones,
+  selectedZone: _selectedZone,
+  setSelectedZone: _setSelectedZone,
 }) => {
   const { textColor } = useColorModeStyles();
   const today = new Date();
-  const formattedToday = format(today, "yyyy-MM-dd");
+  const formattedToday = format(today, 'yyyy-MM-dd');
 
-  const [manualStartDate, setManualStartDate] = useState<string>("");
-  const [manualEndDate, setManualEndDate] = useState<string>("");
+  const [manualStartDate, setManualStartDate] = useState<string>('');
+  const [manualEndDate, setManualEndDate] = useState<string>('');
 
   const handleDateRangeClick = (days: number) => {
-    const startDate = format(subDays(today, days), "yyyy-MM-dd");
+    const startDate = format(subDays(today, days), 'yyyy-MM-dd');
     setStartDate(startDate);
     setEndDate(formattedToday);
   };
 
   const handleWeeksClick = (weeks: number) => {
-    const startDate = format(subWeeks(today, weeks), "yyyy-MM-dd");
+    const startDate = format(subWeeks(today, weeks), 'yyyy-MM-dd');
     setStartDate(startDate);
     setEndDate(formattedToday);
   };
 
   const handleMonthsClick = (months: number) => {
-    const startDate = format(subMonths(today, months), "yyyy-MM-dd");
+    const startDate = format(subMonths(today, months), 'yyyy-MM-dd');
     setStartDate(startDate);
     setEndDate(formattedToday);
   };
 
   const handleYearsClick = (years: number) => {
-    const startDate = format(subYears(today, years), "yyyy-MM-dd");
+    const startDate = format(subYears(today, years), 'yyyy-MM-dd');
     setStartDate(startDate);
     setEndDate(formattedToday);
   };

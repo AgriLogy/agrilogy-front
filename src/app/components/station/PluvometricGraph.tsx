@@ -1,5 +1,5 @@
-"use client";
-import { Box, Spinner, Text, useColorMode } from "@chakra-ui/react";
+'use client';
+import { Box, Spinner, Text, useColorMode } from '@chakra-ui/react';
 import {
   LineChart,
   Line,
@@ -9,15 +9,15 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from "recharts";
+} from 'recharts';
 
 const CustomLegend = (props: any) => (
   <ul
     style={{
-      display: "flex",
-      listStyle: "none",
+      display: 'flex',
+      listStyle: 'none',
       padding: 0,
-      flexWrap: "wrap",
+      flexWrap: 'wrap',
       margin: 0,
       marginLeft: 60,
     }}
@@ -26,19 +26,19 @@ const CustomLegend = (props: any) => (
       <li
         key={`item-${index}`}
         style={{
-          marginRight: "15px",
-          fontSize: "12px",
+          marginRight: '15px',
+          fontSize: '12px',
           color: entry.color,
-          whiteSpace: "nowrap",
+          whiteSpace: 'nowrap',
         }}
       >
         <span
           style={{
-            marginRight: "5px",
+            marginRight: '5px',
             backgroundColor: entry.color,
-            width: "10px",
-            height: "10px",
-            display: "inline-block",
+            width: '10px',
+            height: '10px',
+            display: 'inline-block',
           }}
         />
         {entry.value}
@@ -55,7 +55,7 @@ const CustomTick = ({ x, y, payload }: any) => (
 
 const PluvometricGraph = ({ data }: { data: any }) => {
   const { colorMode } = useColorMode();
-  const chartBg = colorMode === "light" ? "white" : "gray.800";
+  const chartBg = colorMode === 'light' ? 'white' : 'gray.800';
   if (!data) return <Spinner />;
 
   return (
@@ -68,7 +68,7 @@ const PluvometricGraph = ({ data }: { data: any }) => {
       p={2}
     >
       <Text
-        color={colorMode === "light" ? "gray.700" : "gray.200"}
+        color={colorMode === 'light' ? 'gray.700' : 'gray.200'}
         fontSize="lg"
         fontWeight="bold"
         mb={4}
@@ -81,8 +81,47 @@ const PluvometricGraph = ({ data }: { data: any }) => {
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data.sensor_data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="timestamp" tick={<CustomTick />} />
-          <YAxis tick={<CustomTick />} />
+          <XAxis
+            dataKey="timestamp"
+            tick={<CustomTick />}
+            stroke="#666" // Axis line color
+            strokeWidth={1} // Axis line thickness
+            // tick={{                          // Tick styling
+            //   fill: '#666',                  // Tick label color
+            //   fontSize: 17,                  // Tick label font size
+            //   fontFamily: 'Arial, sans-serif' // Tick label font
+            // }}
+            axisLine={{
+              // Main axis line styling
+              stroke: '#666',
+              strokeWidth: 1,
+            }}
+            tickLine={{
+              // Tick line styling
+              stroke: '#666',
+              strokeWidth: 1,
+            }}
+          />
+          <YAxis
+            tick={<CustomTick />}
+            stroke="#666" // Axis line color
+            strokeWidth={1} // Axis line thickness
+            // tick={{                          // Tick styling
+            //   fill: '#666',                  // Tick label color
+            //   fontSize: 17,                  // Tick label font size
+            //   fontFamily: 'Arial, sans-serif' // Tick label font
+            // }}
+            axisLine={{
+              // Main axis line styling
+              stroke: '#666',
+              strokeWidth: 1,
+            }}
+            tickLine={{
+              // Tick line styling
+              stroke: '#666',
+              strokeWidth: 1,
+            }}
+          />
           <Tooltip />
           <Legend content={<CustomLegend />} />
           {/* Line for Pluvometric Data */}

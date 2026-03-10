@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -11,23 +11,23 @@ import {
   Text,
   Select,
   useToast,
-} from "@chakra-ui/react";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import axiosInstance from "@/app/lib/api";
-import "@/app/styles/graphes.css";
+} from '@chakra-ui/react';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import axiosInstance from '@/app/lib/api';
+import '@/app/styles/graphes.css';
 
 const CreateUser = () => {
   const toast = useToast();
   const { bg, textColor, hoverColor, bgColor } = useColorModeStyles();
 
   const [formData, setFormData] = useState({
-    username: "",
-    firstname: "",
-    lastname: "",
-    email: "",
-    phone_number: "",
-    password: "",
-    is_staff: "",
+    username: '',
+    firstname: '',
+    lastname: '',
+    email: '',
+    phone_number: '',
+    password: '',
+    is_staff: '',
   });
 
   const handleChange = (
@@ -41,26 +41,26 @@ const CreateUser = () => {
     e.preventDefault();
     try {
       const response = await axiosInstance.post(
-        "/auth/admin-signup/",
+        '/auth/admin-signup/',
         formData
       );
 
       if (response.status === 201) {
         toast({
-          title: "Success!",
-          description: "Utilisateur enregistré avec succès.",
-          status: "success",
+          title: 'Success!',
+          description: 'Utilisateur enregistré avec succès.',
+          status: 'success',
           duration: 5000,
           isClosable: true,
         });
       }
     } catch (error: any) {
-      console.error("Error registering user:", error);
+      console.error('Error registering user:', error);
       toast({
-        title: "Error",
+        title: 'Error',
         description:
           "Impossible d'enregistrer l'utilisateur. Veuillez réessayer.",
-        status: "error",
+        status: 'error',
         duration: 5000,
         isClosable: true,
       });

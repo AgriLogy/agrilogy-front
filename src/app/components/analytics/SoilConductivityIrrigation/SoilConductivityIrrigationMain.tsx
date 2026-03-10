@@ -1,9 +1,9 @@
-import { Box, Stack } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import api from "@/app/lib/api";
-import SoilConductivityLastData from "./SoilConductivityLastData";
-import SoilConductivityChart from "./SoilConductivityChart";
-import { SensorData } from "@/app/types";
+import { Box, Stack } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import api from '@/app/lib/api';
+import SoilConductivityLastData from './SoilConductivityLastData';
+import SoilConductivityChart from './SoilConductivityChart';
+import { SensorData } from '@/app/types';
 
 const SoilConductivityMain = ({
   filters,
@@ -30,23 +30,23 @@ const SoilConductivityMain = ({
     };
 
     Promise.all([
-      api.get<SensorData[]>("/api/sensors/ecsoillow/", { params }),
-      api.get<SensorData[]>("/api/sensors/ecsoilhigh/", { params }),
-      api.get<SensorData[]>("/api/sensors/waterflow/", { params }),
+      api.get<SensorData[]>('/api/sensors/ecsoillow/', { params }),
+      api.get<SensorData[]>('/api/sensors/ecsoilhigh/', { params }),
+      api.get<SensorData[]>('/api/sensors/waterflow/', { params }),
     ])
       .then(([lowRes, highRes, flowRes]) => {
         setLowData(lowRes.data);
         setHighData(highRes.data);
         setFlowData(flowRes.data);
       })
-      .catch((err) => console.error("Soil conductivity fetch error:", err))
+      .catch((err) => console.error('Soil conductivity fetch error:', err))
       .finally(() => setLoading(false));
   }, [startDate, endDate, selectedZone]);
 
   return (
     <Stack
       spacing={2}
-      direction={{ base: "column", md: "row" }}
+      direction={{ base: 'column', md: 'row' }}
       align="start"
       width="100%"
       height="100%"

@@ -1,5 +1,5 @@
-"use client";
-import React, { useRef } from "react";
+'use client';
+import React, { useRef } from 'react';
 import {
   Flex,
   IconButton,
@@ -14,10 +14,10 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   Button,
-} from "@chakra-ui/react";
-import { FaHome, FaSignOutAlt } from "react-icons/fa";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import { useRouter } from "next/navigation";
+} from '@chakra-ui/react';
+import { FaHome, FaSignOutAlt } from 'react-icons/fa';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { useRouter } from 'next/navigation';
 
 const AdminSidebar = () => {
   const { bg, hoverColor } = useColorModeStyles();
@@ -28,7 +28,7 @@ const AdminSidebar = () => {
   const handleLogout = () => {
     localStorage.clear();
     onClose();
-    router.push("/login");
+    router.push('/login');
   };
 
   return (

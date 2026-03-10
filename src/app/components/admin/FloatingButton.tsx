@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Button,
   IconButton,
@@ -12,8 +12,8 @@ import {
   ModalBody,
   ModalFooter,
   Text,
-} from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
+} from '@chakra-ui/react';
+import { AddIcon } from '@chakra-ui/icons';
 
 const FloatingButton = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -45,7 +45,7 @@ const FloatingButton = () => {
           <ModalFooter>
             <Button
               colorScheme="blue"
-              onClick={() => router.push("/admin/users/create")}
+              onClick={() => router.push('/admin/users/create')}
             >
               Oui
             </Button>

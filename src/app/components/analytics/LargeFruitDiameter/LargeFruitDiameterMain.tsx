@@ -1,10 +1,10 @@
-import { Box, Stack } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { SensorData } from "@/app/types";
-import api from "@/app/lib/api";
-import "@/app/styles/style.css";
-import LargeFruitDiameterChart from "./LargeFruitDiameterChart";
-import LargeFruitDiameterLastData from "./LargeFruitDiameterLastData";
+import { Box, Stack } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { SensorData } from '@/app/types';
+import api from '@/app/lib/api';
+import '@/app/styles/style.css';
+import LargeFruitDiameterChart from './LargeFruitDiameterChart';
+import LargeFruitDiameterLastData from './LargeFruitDiameterLastData';
 
 const LargeFruitDiameterMain = ({
   filters,
@@ -21,7 +21,7 @@ const LargeFruitDiameterMain = ({
 
   useEffect(() => {
     api
-      .get<SensorData[]>("/api/sensors/largefruitdiameter/", {
+      .get<SensorData[]>('/api/sensors/largefruitdiameter/', {
         params: {
           start_date: startDate,
           end_date: endDate,
@@ -29,16 +29,14 @@ const LargeFruitDiameterMain = ({
         },
       })
       .then((res) => setData(res.data))
-      .catch((err) =>
-        console.error("Failed to fetch electricity data:", err)
-      )
+      .catch((err) => console.error('Failed to fetch electricity data:', err))
       .finally(() => setLoading(false));
   }, [startDate, endDate, selectedZone]);
 
   return (
     <Stack
       spacing={2}
-      direction={{ base: "column", md: "row" }}
+      direction={{ base: 'column', md: 'row' }}
       align="start"
       width="100%"
       height="100%"

@@ -1,6 +1,6 @@
-import { Box, Text, VStack, HStack, useColorModeValue } from "@chakra-ui/react";
-import { FaThermometerHalf } from "react-icons/fa";
-import { SensorData } from "@/app/types";
+import { Box, Text, VStack, HStack, useColorModeValue } from '@chakra-ui/react';
+import { FaThermometerHalf } from 'react-icons/fa';
+import { SensorData } from '@/app/types';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -24,7 +24,7 @@ const Row = ({
   entry?: SensorData;
   color: string;
 }) => {
-  const metaColor = useColorModeValue("gray.600", "gray.400");
+  const metaColor = useColorModeValue('gray.600', 'gray.400');
 
   return (
     <Box pl={3} borderLeftWidth="3px" borderLeftColor={color}>
@@ -34,11 +34,11 @@ const Row = ({
             {label}
           </Text>
           <Text color={color}>
-            {entry ? `${entry.value.toFixed(2)} ${entry.default_unit}` : "N/A"}
+            {entry ? `${entry.value.toFixed(2)} ${entry.default_unit}` : 'N/A'}
           </Text>
         </HStack>
         <Text fontSize="sm" color={metaColor}>
-          {entry ? `Maj: ${timeAgo(entry.timestamp)}` : ""}
+          {entry ? `Maj: ${timeAgo(entry.timestamp)}` : ''}
         </Text>
       </VStack>
     </Box>
@@ -54,15 +54,15 @@ const SoilTemperatureLastData = ({
   lastMedium?: SensorData;
   lastHigh?: SensorData;
 }) => {
-  const bgColor = useColorModeValue("orange.50", "orange.900");
-  const headerColor = useColorModeValue("gray.700", "gray.200");
-  const borderColor = useColorModeValue("blackAlpha.200", "whiteAlpha.300");
-  const iconColor = useColorModeValue("orange.600", "orange.300");
+  const bgColor = useColorModeValue('orange.50', 'orange.900');
+  const headerColor = useColorModeValue('gray.700', 'gray.200');
+  const borderColor = useColorModeValue('blackAlpha.200', 'whiteAlpha.300');
+  const iconColor = useColorModeValue('orange.600', 'orange.300');
 
   // series colors (mode-aware)
-  const lowColor = useColorModeValue("blue.600", "blue.300");
-  const medColor = useColorModeValue("teal.600", "teal.300");
-  const highColor = useColorModeValue("red.600", "red.300");
+  const lowColor = useColorModeValue('blue.600', 'blue.300');
+  const medColor = useColorModeValue('teal.600', 'teal.300');
+  const highColor = useColorModeValue('red.600', 'red.300');
 
   return (
     <Box
@@ -85,7 +85,12 @@ const SoilTemperatureLastData = ({
         <HStack justify="center">
           <FaThermometerHalf size={44} color={iconColor} />
         </HStack>
-        <Text fontWeight="bold" fontSize="lg" color={headerColor} textAlign="center">
+        <Text
+          fontWeight="bold"
+          fontSize="lg"
+          color={headerColor}
+          textAlign="center"
+        >
           Dernières mesures
         </Text>
         <Row label="Basse (Low)" entry={lastLow} color={lowColor} />

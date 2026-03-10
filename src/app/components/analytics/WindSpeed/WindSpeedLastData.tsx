@@ -1,6 +1,6 @@
-import { Box, Text, useColorModeValue } from "@chakra-ui/react";
-import { FaBolt } from "react-icons/fa";
-import { SensorData } from "@/app/types";
+import { Box, Text, useColorModeValue } from '@chakra-ui/react';
+import { FaBolt } from 'react-icons/fa';
+import { SensorData } from '@/app/types';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -19,10 +19,10 @@ const WindSpeedLastData = ({ data }: { data: SensorData[] }) => {
   const latest = data[data.length - 1];
 
   // Light/Dark mode colors
-  const bgColor = useColorModeValue("blue.50", "blue.900");
-  const valueColor = useColorModeValue("blue.700", "blue.200");
-  const textColor = useColorModeValue("gray.600", "gray.300");
-  const timeColor = useColorModeValue("gray.500", "gray.400");
+  const bgColor = useColorModeValue('blue.50', 'blue.900');
+  const valueColor = useColorModeValue('blue.700', 'blue.200');
+  const textColor = useColorModeValue('gray.600', 'gray.300');
+  const timeColor = useColorModeValue('gray.500', 'gray.400');
 
   return (
     <Box
@@ -45,10 +45,10 @@ const WindSpeedLastData = ({ data }: { data: SensorData[] }) => {
         Dernière vitesse du vent :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest ? `${latest.value.toFixed(2)} ${latest.default_unit}` : "N/A"}
+        {latest ? `${latest.value.toFixed(2)} ${latest.default_unit}` : 'N/A'}
       </Text>
       <Text fontSize="sm" color={timeColor}>
-        {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ""}
+        {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}
       </Text>
     </Box>
   );

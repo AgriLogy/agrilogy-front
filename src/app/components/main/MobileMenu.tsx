@@ -1,5 +1,5 @@
-"use client";
-import React, { useState, useRef, useEffect } from "react";
+'use client';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Flex,
   IconButton,
@@ -23,24 +23,24 @@ import {
   MenuItem,
   MenuList,
   useDisclosure,
-} from "@chakra-ui/react";
-import { HamburgerIcon, MoonIcon, SunIcon, BellIcon } from "@chakra-ui/icons";
-import { FaUser, FaHome, FaCog } from "react-icons/fa";
-import { IoLogOut } from "react-icons/io5";
-import Image from "next/image";
-import logo from "../../public/logo.png";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import api from "@/app/lib/api";
-import { FaBell, FaSeedling } from "react-icons/fa";
-import { WiDaySunny } from "react-icons/wi";
-import { GiGrapes } from "react-icons/gi";
-import { useRouter } from "next/navigation";
+} from '@chakra-ui/react';
+import { HamburgerIcon, MoonIcon, SunIcon, BellIcon } from '@chakra-ui/icons';
+import { FaUser, FaHome, FaCog } from 'react-icons/fa';
+import { IoLogOut } from 'react-icons/io5';
+import Image from 'next/image';
+import logo from '../../public/logo.png';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import api from '@/app/lib/api';
+import { FaBell, FaSeedling } from 'react-icons/fa';
+import { WiDaySunny } from 'react-icons/wi';
+import { GiGrapes } from 'react-icons/gi';
+import { useRouter } from 'next/navigation';
 
 const MobileMenu = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { bg } = useColorModeStyles();
   const cancelRef = useRef(null);
-  const [username, setUsername] = useState("User");
+  const [username, setUsername] = useState('User');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const router = useRouter();
 
@@ -48,17 +48,17 @@ const MobileMenu = () => {
   const handleLogout = () => {
     localStorage.clear();
     onClose();
-    router.push("/login");
+    router.push('/login');
   };
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await api.get("/api/header/");
+        const response = await api.get('/api/header/');
 
         setUsername(response.data.first_name);
       } catch (error) {
-        console.error("[MobileMenu] Error fetching user data.");
+        console.error('[MobileMenu] Error fetching user data.');
       }
     };
     fetchUser();
@@ -81,7 +81,7 @@ const MobileMenu = () => {
           width={100}
           src={logo}
           alt="Logo"
-          style={{ objectFit: "contain" }}
+          style={{ objectFit: 'contain' }}
         />
       </Link>
 
@@ -103,7 +103,7 @@ const MobileMenu = () => {
             </Link>
             <MenuItem
               onClick={onOpen}
-              icon={<IoLogOut style={{ transform: "scaleX(-1)" }} />}
+              icon={<IoLogOut style={{ transform: 'scaleX(-1)' }} />}
             >
               Log Out
             </MenuItem>
@@ -197,13 +197,13 @@ const MobileMenu = () => {
               </Link>
 
               <Button
-                leftIcon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+                leftIcon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
                 onClick={toggleColorMode}
                 variant="ghost"
                 justifyContent="flex-start"
                 w="full"
               >
-                {colorMode === "light" ? "Mode sombre" : "Mode clair"}
+                {colorMode === 'light' ? 'Mode sombre' : 'Mode clair'}
               </Button>
 
               <Button

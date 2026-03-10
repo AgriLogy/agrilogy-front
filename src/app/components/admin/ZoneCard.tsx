@@ -1,7 +1,7 @@
-import React from "react";
-import { Box, Text, Badge, Tag } from "@chakra-ui/react";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import { ZoneCardType } from "@/app/types";
+import React from 'react';
+import { Box, Text, Badge, Tag } from '@chakra-ui/react';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { ZoneCardType } from '@/app/types';
 
 const ZoneCard = ({ zone, onClick }: ZoneCardType) => {
   const { bg, hoverColor, textColor } = useColorModeStyles();
@@ -13,7 +13,7 @@ const ZoneCard = ({ zone, onClick }: ZoneCardType) => {
       borderWidth="1px"
       borderRadius="xl"
       boxShadow="md"
-      _hover={{ cursor: "pointer", borderColor: hoverColor }}
+      _hover={{ cursor: 'pointer', borderColor: hoverColor }}
       onClick={onClick}
     >
       <Text fontWeight="bold" fontSize="lg" color={textColor}>
@@ -37,7 +37,8 @@ const ZoneCard = ({ zone, onClick }: ZoneCardType) => {
       </Text>
 
       <Text color={textColor} fontSize="sm">
-        🚿 Méthode d&apos;irrigation : <Tag colorScheme="blue">{zone.irrigation_method}</Tag>
+        🚿 Méthode d&apos;irrigation :{' '}
+        <Tag colorScheme="blue">{zone.irrigation_method}</Tag>
       </Text>
 
       <Text color={textColor} fontSize="sm">
@@ -45,7 +46,8 @@ const ZoneCard = ({ zone, onClick }: ZoneCardType) => {
       </Text>
 
       <Text color={textColor} fontSize="sm">
-        🗓️ Dernière irrigation : {new Date(zone.last_irrigation_date).toLocaleDateString("fr-FR")}
+        🗓️ Dernière irrigation :{' '}
+        {new Date(zone.last_irrigation_date).toLocaleDateString('fr-FR')}
       </Text>
     </Box>
   );

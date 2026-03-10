@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { Stack, Box } from "@chakra-ui/react";
-import api from "@/app/lib/api";
-import WaterSoilChart from "./WaterSoilChart";
-import WaterSoilLastData from "./WaterSoilLastData";
+import { useEffect, useState } from 'react';
+import { Stack, Box } from '@chakra-ui/react';
+import api from '@/app/lib/api';
+import WaterSoilChart from './WaterSoilChart';
+import WaterSoilLastData from './WaterSoilLastData';
 
 interface SensorEntry {
   id: number;
@@ -54,10 +54,10 @@ const WaterSoilMain = ({
       });
 
     Promise.all([
-      fetchSensor("/api/sensors/soilmoisturelow"),
-      fetchSensor("/api/sensors/soilmoisturemedium"),
-      fetchSensor("/api/sensors/soilmoisturehigh"),
-      fetchSensor("/api/sensors/waterflow"),
+      fetchSensor('/api/sensors/soilmoisturelow'),
+      fetchSensor('/api/sensors/soilmoisturemedium'),
+      fetchSensor('/api/sensors/soilmoisturehigh'),
+      fetchSensor('/api/sensors/waterflow'),
     ])
       .then(([lowRes, medRes, highRes, waterRes]) => {
         const map = new Map<string, WaterSoilData>();
@@ -97,13 +97,13 @@ const WaterSoilMain = ({
         setSoilHighLast(highRes.data.at(-1));
         setWaterFlowLast(waterRes.data.at(-1));
       })
-      .catch((err) => console.error("Failed to fetch sensor data:", err))
+      .catch((err) => console.error('Failed to fetch sensor data:', err))
       .finally(() => setLoading(false));
   }, [startDate, endDate, selectedZone]);
 
   return (
     <Stack
-      direction={{ base: "column", md: "row" }}
+      direction={{ base: 'column', md: 'row' }}
       width="100%"
       height="100%"
       maxH="400px"

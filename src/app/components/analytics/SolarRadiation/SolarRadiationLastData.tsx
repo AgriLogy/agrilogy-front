@@ -1,6 +1,6 @@
-import { Box, Text, useColorModeValue } from "@chakra-ui/react";
-import { FaSun } from "react-icons/fa";
-import { SensorData } from "@/app/types";
+import { Box, Text, useColorModeValue } from '@chakra-ui/react';
+import { FaSun } from 'react-icons/fa';
+import { SensorData } from '@/app/types';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -18,10 +18,10 @@ const timeAgo = (timestamp: string): string => {
 const SolarRadiationLastData = ({ data }: { data: SensorData[] }) => {
   const latest = data[data.length - 1];
 
-  const bgColor = useColorModeValue("yellow.50", "yellow.900");
-  const valueColor = useColorModeValue("yellow.700", "yellow.200");
-  const textColor = useColorModeValue("gray.600", "gray.300");
-  const timeColor = useColorModeValue("gray.500", "gray.400");
+  const bgColor = useColorModeValue('yellow.50', 'yellow.900');
+  const valueColor = useColorModeValue('yellow.700', 'yellow.200');
+  const textColor = useColorModeValue('gray.600', 'gray.300');
+  const timeColor = useColorModeValue('gray.500', 'gray.400');
 
   return (
     <Box
@@ -44,10 +44,10 @@ const SolarRadiationLastData = ({ data }: { data: SensorData[] }) => {
         Dernière radiation solaire :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest ? `${(latest.value / 1000).toFixed(2)} W/M²` : "N/A"}
+        {latest ? `${(latest.value / 1000).toFixed(2)} W/M²` : 'N/A'}
       </Text>
       <Text fontSize="sm" color={timeColor}>
-        {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ""}
+        {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}
       </Text>
     </Box>
   );

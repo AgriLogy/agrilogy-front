@@ -1,5 +1,5 @@
-import { Box, Text, VStack, useColorModeValue } from "@chakra-ui/react";
-import { WiStrongWind } from "react-icons/wi";
+import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
+import { WiStrongWind } from 'react-icons/wi';
 
 interface WindData {
   timestamp: string;
@@ -31,14 +31,13 @@ const WindRadarLastData = ({
   const latestDirection = windDirectionData[windDirectionData.length - 1];
 
   // Background color with good contrast in light/dark mode
-  const bgColor = useColorModeValue("green.100", "green.800");
+  const bgColor = useColorModeValue('green.100', 'green.800');
 
   // Text colors for readability
-  const titleColor = useColorModeValue("green.900", "green.300");
-  const valueColor = useColorModeValue("gray.800", "gray.200");
-  const noDataColor = useColorModeValue("gray.600", "gray.400");
-  const timeColor = useColorModeValue("gray.500", "gray.400");
-
+  const titleColor = useColorModeValue('green.900', 'green.300');
+  const valueColor = useColorModeValue('gray.800', 'gray.200');
+  const noDataColor = useColorModeValue('gray.600', 'gray.400');
+  const timeColor = useColorModeValue('gray.500', 'gray.400');
 
   return (
     <Box
@@ -65,11 +64,11 @@ const WindRadarLastData = ({
       {latestSpeed && latestDirection ? (
         <VStack spacing={2} mt={4}>
           <Text fontSize="lg" color={valueColor}>
-            Vitesse du vent : {latestSpeed.value.toFixed(2)}{" "}
+            Vitesse du vent : {latestSpeed.value.toFixed(2)}{' '}
             {latestSpeed.default_unit}
           </Text>
           <Text fontSize="lg" color={valueColor}>
-            Direction du vent : {latestDirection.value.toFixed(2)}{" "}
+            Direction du vent : {latestDirection.value.toFixed(2)}{' '}
             {latestDirection.default_unit}
           </Text>
         </VStack>
