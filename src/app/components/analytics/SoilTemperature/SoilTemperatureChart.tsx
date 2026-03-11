@@ -21,7 +21,7 @@ import {
 } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
-import EmptyBox from '../../common/EmptyBox';
+import ChartStateView from '../../common/ChartStateView';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { TemperaturePoint } from './SoilTemperatureMain';
 
@@ -142,116 +142,115 @@ const SoilTemperatureChart = ({
         </HStack>
       </Flex>
 
-      <Box ref={chartRef} height="300px">
-        {loading ? (
-          <EmptyBox text="Chargement..." />
-        ) : chartData.length === 0 ? (
-          <EmptyBox text="Pas de données" />
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={chartData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
+      <ChartStateView
+        loading={loading}
+        empty={chartData.length === 0}
+        chartRef={chartRef}
+        height="300px"
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={chartData}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
 
-              {/* Y-band for ideal irrigation temperature */}
-              {showBand && (
-                <ReferenceArea
-                  x1={xStart}
-                  x2={xEnd}
-                  y1={bestValueMin}
-                  y2={bestValueMax}
-                  fill={bandFill}
-                  stroke={bandStroke}
-                  strokeOpacity={1}
-                  ifOverflow="extendDomain"
-                />
-              )}
+            {/* Y-band for ideal irrigation temperature */}
+            {showBand && (
+              <ReferenceArea
+                x1={xStart}
+                x2={xEnd}
+                y1={bestValueMin}
+                y2={bestValueMax}
+                fill={bandFill}
+                stroke={bandStroke}
+                strokeOpacity={1}
+                ifOverflow="extendDomain"
+              />
+            )}
 
-              <XAxis
-                dataKey="name"
-                angle={0}
-                textAnchor="middle"
-                interval={labelInterval}
-                stroke="#666" // Axis line color
-                strokeWidth={1} // Axis line thickness
-                tick={{
-                  // Tick styling
-                  fill: '#666', // Tick label color
-                  fontSize: 17, // Tick label font size
-                  fontFamily: 'Arial, sans-serif', // Tick label font
-                }}
-                axisLine={{
-                  // Main axis line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-                tickLine={{
-                  // Tick line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-              />
-              <YAxis
-                label={{ angle: -90, position: 'insideLeft' }}
-                domain={['auto', 'auto']}
-                stroke="#666" // Axis line color
-                strokeWidth={1} // Axis line thickness
-                tick={{
-                  // Tick styling
-                  fill: '#666', // Tick label color
-                  fontSize: 17, // Tick label font size
-                  fontFamily: 'Arial, sans-serif', // Tick label font
-                }}
-                axisLine={{
-                  // Main axis line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-                tickLine={{
-                  // Tick line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-              />
-              <Tooltip />
-              <Legend onClick={handleLegendClick} />
+            <XAxis
+              dataKey="name"
+              angle={0}
+              textAnchor="middle"
+              interval={labelInterval}
+              stroke="#666" // Axis line color
+              strokeWidth={1} // Axis line thickness
+              tick={{
+                // Tick styling
+                fill: '#666', // Tick label color
+                fontSize: 17, // Tick label font size
+                fontFamily: 'Arial, sans-serif', // Tick label font
+              }}
+              axisLine={{
+                // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+            />
+            <YAxis
+              label={{ angle: -90, position: 'insideLeft' }}
+              domain={['auto', 'auto']}
+              stroke="#666" // Axis line color
+              strokeWidth={1} // Axis line thickness
+              tick={{
+                // Tick styling
+                fill: '#666', // Tick label color
+                fontSize: 17, // Tick label font size
+                fontFamily: 'Arial, sans-serif', // Tick label font
+              }}
+              axisLine={{
+                // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+            />
+            <Tooltip />
+            <Legend onClick={handleLegendClick} />
 
-              <Line
-                type="monotone"
-                dataKey="low"
-                name="Basse"
-                stroke={showLow ? '#3182CE' : 'gray'}
-                strokeWidth={2}
-                dot={{ r: 3, fill: showLow ? '#3182CE' : 'gray' }}
-                hide={!showLow}
-                isAnimationActive={false}
-              />
-              <Line
-                type="monotone"
-                dataKey="medium"
-                name="Moyenne"
-                stroke={showMedium ? '#2F855A' : 'gray'}
-                strokeWidth={2}
-                dot={{ r: 3, fill: showMedium ? '#2F855A' : 'gray' }}
-                hide={!showMedium}
-                isAnimationActive={false}
-              />
-              <Line
-                type="monotone"
-                dataKey="high"
-                name="Haute"
-                stroke={showHigh ? '#E53E3E' : 'gray'}
-                strokeWidth={2}
-                dot={{ r: 3, fill: showHigh ? '#E53E3E' : 'gray' }}
-                hide={!showHigh}
-                isAnimationActive={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        )}
-      </Box>
+            <Line
+              type="monotone"
+              dataKey="low"
+              name="Basse"
+              stroke={showLow ? '#3182CE' : 'gray'}
+              strokeWidth={2}
+              dot={{ r: 3, fill: showLow ? '#3182CE' : 'gray' }}
+              hide={!showLow}
+              isAnimationActive={false}
+            />
+            <Line
+              type="monotone"
+              dataKey="medium"
+              name="Moyenne"
+              stroke={showMedium ? '#2F855A' : 'gray'}
+              strokeWidth={2}
+              dot={{ r: 3, fill: showMedium ? '#2F855A' : 'gray' }}
+              hide={!showMedium}
+              isAnimationActive={false}
+            />
+            <Line
+              type="monotone"
+              dataKey="high"
+              name="Haute"
+              stroke={showHigh ? '#E53E3E' : 'gray'}
+              strokeWidth={2}
+              dot={{ r: 3, fill: showHigh ? '#E53E3E' : 'gray' }}
+              hide={!showHigh}
+              isAnimationActive={false}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </ChartStateView>
     </Box>
   );
 };

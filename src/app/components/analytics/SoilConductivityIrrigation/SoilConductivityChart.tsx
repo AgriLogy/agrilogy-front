@@ -23,7 +23,7 @@ import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { useRef, useState } from 'react';
-import EmptyBox from '../../common/EmptyBox';
+import ChartStateView from '../../common/ChartStateView';
 
 const SoilConductivityChart = ({
   lowData,
@@ -114,125 +114,124 @@ const SoilConductivityChart = ({
         </HStack>
       </Flex>
 
-      <Box ref={chartRef} height="300px">
-        {loading ? (
-          <EmptyBox text="Chargement..." />
-        ) : chartData.length === 0 ? (
-          <EmptyBox text="Pas de données" />
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart
-              data={chartData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="timestamp"
-                interval={labelInterval}
-                angle={0}
-                textAnchor="middle"
-                stroke="#666" // Axis line color
-                strokeWidth={1} // Axis line thickness
-                tick={{
-                  // Tick styling
-                  fill: '#666', // Tick label color
-                  fontSize: 17, // Tick label font size
-                  fontFamily: 'Arial, sans-serif', // Tick label font
-                }}
-                axisLine={{
-                  // Main axis line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-                tickLine={{
-                  // Tick line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-              />
-              <YAxis
-                yAxisId="left"
-                label={{
-                  value: 'Conductivité',
-                  angle: -90,
-                  position: 'insideLeft',
-                  dy: 70,
-                  fontSize: 18, // Tick label font size
-                  fontFamily: 'Arial, sans-serif', // Tick label font
-                }}
-                stroke="#666" // Axis line color
-                strokeWidth={1} // Axis line thickness
-                tick={{
-                  // Tick styling
-                  fill: '#666', // Tick label color
-                  fontSize: 17, // Tick label font size
-                  fontFamily: 'Arial, sans-serif', // Tick label font
-                }}
-                axisLine={{
-                  // Main axis line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-                tickLine={{
-                  // Tick line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-              />
-              <YAxis
-                yAxisId="right"
-                orientation="right"
-                label={{
-                  value: 'Irrigation',
-                  angle: 90,
-                  position: 'insideRight',
-                  dy: 50,
-                  dx: 19,
-                  fontSize: 18, // Tick label font size
-                }}
-              />
-              <Tooltip />
-              {/* <Legend /> */}
-              <Legend onClick={handleLegendClick} />
+      <ChartStateView
+        loading={loading}
+        empty={chartData.length === 0}
+        chartRef={chartRef}
+        height="300px"
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <ComposedChart
+            data={chartData}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="timestamp"
+              interval={labelInterval}
+              angle={0}
+              textAnchor="middle"
+              stroke="#666" // Axis line color
+              strokeWidth={1} // Axis line thickness
+              tick={{
+                // Tick styling
+                fill: '#666', // Tick label color
+                fontSize: 17, // Tick label font size
+                fontFamily: 'Arial, sans-serif', // Tick label font
+              }}
+              axisLine={{
+                // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+            />
+            <YAxis
+              yAxisId="left"
+              label={{
+                value: 'Conductivité',
+                angle: -90,
+                position: 'insideLeft',
+                dy: 70,
+                fontSize: 18, // Tick label font size
+                fontFamily: 'Arial, sans-serif', // Tick label font
+              }}
+              stroke="#666" // Axis line color
+              strokeWidth={1} // Axis line thickness
+              tick={{
+                // Tick styling
+                fill: '#666', // Tick label color
+                fontSize: 17, // Tick label font size
+                fontFamily: 'Arial, sans-serif', // Tick label font
+              }}
+              axisLine={{
+                // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+            />
+            <YAxis
+              yAxisId="right"
+              orientation="right"
+              label={{
+                value: 'Irrigation',
+                angle: 90,
+                position: 'insideRight',
+                dy: 50,
+                dx: 19,
+                fontSize: 18, // Tick label font size
+              }}
+            />
+            <Tooltip />
+            {/* <Legend /> */}
+            <Legend onClick={handleLegendClick} />
 
-              {/* EC Lines */}
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="low"
-                name="Conductivité Basse"
-                stroke="#1E88E5"
-                strokeWidth={2}
-                strokeOpacity={activeLines.low ? 1 : 0.1}
-                dot={false}
-              />
+            {/* EC Lines */}
+            <Line
+              yAxisId="left"
+              type="monotone"
+              dataKey="low"
+              name="Conductivité Basse"
+              stroke="#1E88E5"
+              strokeWidth={2}
+              strokeOpacity={activeLines.low ? 1 : 0.1}
+              dot={false}
+            />
 
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="high"
-                name="Conductivité Haute"
-                stroke="#2BB673"
-                strokeWidth={2}
-                strokeOpacity={activeLines.high ? 1 : 0.1}
-                dot={false}
-              />
+            <Line
+              yAxisId="left"
+              type="monotone"
+              dataKey="high"
+              name="Conductivité Haute"
+              stroke="#2BB673"
+              strokeWidth={2}
+              strokeOpacity={activeLines.high ? 1 : 0.1}
+              dot={false}
+            />
 
-              <Bar
-                yAxisId="right"
-                dataKey="waterflow"
-                name="Irrigation"
-                fill="#00B0FF"
-                stroke="#0091EA"
-                barSize={10}
-                fillOpacity={activeLines.waterflow ? 0.7 : 0.05}
-              />
+            <Bar
+              yAxisId="right"
+              dataKey="waterflow"
+              name="Irrigation"
+              fill="#00B0FF"
+              stroke="#0091EA"
+              barSize={10}
+              fillOpacity={activeLines.waterflow ? 0.7 : 0.05}
+            />
 
-              <Brush dataKey="timestamp" height={30} stroke="#8884d8" />
-            </ComposedChart>
-          </ResponsiveContainer>
-        )}
-      </Box>
+            <Brush dataKey="timestamp" height={30} stroke="#8884d8" />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </ChartStateView>
     </Box>
   );
 };

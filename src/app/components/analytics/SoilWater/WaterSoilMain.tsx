@@ -110,17 +110,16 @@ const WaterSoilMain = ({
       spacing={4}
     >
       <Box flex={3} p={3}>
-        {!loading && (
-          <WaterSoilChart
-            data={mergedData}
-            thresholds={{
-              critical_min: 20,
-              critical_max: 100,
-              normal_min: 120,
-              normal_max: 380,
-            }}
-          />
-        )}
+        <WaterSoilChart
+          data={mergedData}
+          loading={loading}
+          thresholds={{
+            critical_min: 20,
+            critical_max: 100,
+            normal_min: 120,
+            normal_max: 380,
+          }}
+        />
       </Box>
       <Box flex={1} p={3}>
         <WaterSoilLastData

@@ -28,7 +28,7 @@ const NotificationsMain: React.FC = () => {
     fetchData();
   }, []);
 
-  if (loading) return <EmptyBox />;
+  if (loading) return <EmptyBox variant="loading" />;
 
   return (
     <>

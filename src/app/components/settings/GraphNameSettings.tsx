@@ -90,7 +90,7 @@ const GraphNameSettings = () => {
   return (
     <div>
       {loading ? (
-        <EmptyBox />
+        <EmptyBox variant="loading" />
       ) : (
         <>
           <Text color={textColor}>Paramètres du nom du graphique</Text>

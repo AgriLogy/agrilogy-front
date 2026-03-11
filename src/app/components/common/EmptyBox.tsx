@@ -1,18 +1,37 @@
 import {
   Box,
   Text,
+  Spinner,
+  VStack,
   useBreakpointValue,
   useColorModeValue,
 } from '@chakra-ui/react';
 
-const EmptyBox = ({ text = 'Pas de données' }: { text?: string }) => {
+export type EmptyBoxVariant = 'empty' | 'loading';
+
+const DEFAULT_EMPTY_TEXT = 'Pas de données';
+const DEFAULT_LOADING_TEXT = 'Chargement...';
+
+interface EmptyBoxProps {
+  /** Message shown in the box. Default: "Pas de données" for empty, "Chargement..." for loading */
+  text?: string;
+  /** 'empty' = message only; 'loading' = spinner + message */
+  variant?: EmptyBoxVariant;
+}
+
+const EmptyBox = ({ text, variant = 'empty' }: EmptyBoxProps) => {
   const chartBg = useColorModeValue('white', 'gray.800');
+  const textColor = useColorModeValue('gray.700', 'gray.300');
   const p = useBreakpointValue({ base: 2, md: 4 });
+
+  const displayText =
+    text ?? (variant === 'loading' ? DEFAULT_LOADING_TEXT : DEFAULT_EMPTY_TEXT);
 
   return (
     <Box
       width="100%"
       height="100%"
+      minHeight="200px"
       bg={chartBg}
       borderRadius="md"
       boxShadow="lg"
@@ -22,9 +41,19 @@ const EmptyBox = ({ text = 'Pas de données' }: { text?: string }) => {
       alignItems="center"
       justifyContent="center"
     >
-      <Text>{text}</Text>
+      {variant === 'loading' ? (
+        <VStack spacing={3}>
+          <Spinner size="lg" color="teal.500" thickness="3px" />
+          <Text color={textColor} fontSize="sm">
+            {displayText}
+          </Text>
+        </VStack>
+      ) : (
+        <Text color={textColor}>{displayText}</Text>
+      )}
     </Box>
   );
 };
 
 export default EmptyBox;
+export { DEFAULT_EMPTY_TEXT, DEFAULT_LOADING_TEXT };

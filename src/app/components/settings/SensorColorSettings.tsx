@@ -72,7 +72,7 @@ const SensorColorSettings = () => {
     }
   };
 
-  if (loading) return <EmptyBox />;
+  if (loading) return <EmptyBox variant="loading" />;
 
   return (
     <Box overflowX="auto">

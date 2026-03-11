@@ -23,7 +23,7 @@ import html2canvas from 'html2canvas';
 import { FaDownload, FaCloudRain } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
-import EmptyBox from '../../common/EmptyBox';
+import ChartStateView from '../../common/ChartStateView';
 
 const aggregateData = (data: SensorData[], period: string) => {
   const result: Record<string, number> = {};
@@ -128,95 +128,94 @@ const CumulPrecipitationChart = ({
         </HStack>
       </Flex>
 
-      <Box ref={chartRef} height="300px" borderRadius="md" p={2}>
-        {loading ? (
-          <EmptyBox text="Chargement..." />
-        ) : chartData.length === 0 ? (
-          <EmptyBox text="Pas de données" />
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={chartData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid stroke={gridStroke} strokeDasharray="3 3" />
-              <XAxis
-                dataKey="period"
-                angle={0}
-                textAnchor="middle"
-                interval={labelInterval}
-                // stroke={axisTickColor}
-                // tick={{ fill: axisTickColor }}
-                // tickLine={{ stroke: axisTickColor }}
-                // axisLine={{ stroke: axisTickColor }}
+      <ChartStateView
+        loading={loading}
+        empty={chartData.length === 0}
+        chartRef={chartRef}
+        height="300px"
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={chartData}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid stroke={gridStroke} strokeDasharray="3 3" />
+            <XAxis
+              dataKey="period"
+              angle={0}
+              textAnchor="middle"
+              interval={labelInterval}
+              // stroke={axisTickColor}
+              // tick={{ fill: axisTickColor }}
+              // tickLine={{ stroke: axisTickColor }}
+              // axisLine={{ stroke: axisTickColor }}
 
-                stroke="#666" // Axis line color
-                strokeWidth={1} // Axis line thickness
-                tick={{
-                  // Tick styling
-                  fill: '#666', // Tick label color
-                  fontSize: 17, // Tick label font size
-                  fontFamily: 'Arial, sans-serif', // Tick label font
-                }}
-                axisLine={{
-                  // Main axis line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-                tickLine={{
-                  // Tick line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-              />
-              <YAxis
-                // label={{
-                //   angle: -90,
-                //   value: "mm",
-                //   position: "insideLeft",
-                //   fill: axisTickColor,
-                // }}
-                // stroke={axisTickColor}
-                // tick={{ fill: axisTickColor }}
-                // tickLine={{ stroke: axisTickColor }}
-                // axisLine={{ stroke: axisTickColor }}
-                stroke="#666" // Axis line color
-                strokeWidth={1} // Axis line thickness
-                tick={{
-                  // Tick styling
-                  fill: '#666', // Tick label color
-                  fontSize: 17, // Tick label font size
-                  fontFamily: 'Arial, sans-serif', // Tick label font
-                }}
-                axisLine={{
-                  // Main axis line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-                tickLine={{
-                  // Tick line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-              />
-              <Tooltip
-                contentStyle={tooltipStyle}
-                itemStyle={{ color: axisTickColor }}
-              />
-              <Legend
-                wrapperStyle={{ color: legendTextColor }}
-                // Alternatively, you can customize the payload style for more control
-              />
-              <Bar
-                dataKey="value"
-                name="Précipitations cumulées"
-                fill={colorMode === 'dark' ? '#60a5fa' : '#3b82f6'} // lighter blue in dark mode
-                isAnimationActive={false}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        )}
-      </Box>
+              stroke="#666" // Axis line color
+              strokeWidth={1} // Axis line thickness
+              tick={{
+                // Tick styling
+                fill: '#666', // Tick label color
+                fontSize: 17, // Tick label font size
+                fontFamily: 'Arial, sans-serif', // Tick label font
+              }}
+              axisLine={{
+                // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+            />
+            <YAxis
+              // label={{
+              //   angle: -90,
+              //   value: "mm",
+              //   position: "insideLeft",
+              //   fill: axisTickColor,
+              // }}
+              // stroke={axisTickColor}
+              // tick={{ fill: axisTickColor }}
+              // tickLine={{ stroke: axisTickColor }}
+              // axisLine={{ stroke: axisTickColor }}
+              stroke="#666" // Axis line color
+              strokeWidth={1} // Axis line thickness
+              tick={{
+                // Tick styling
+                fill: '#666', // Tick label color
+                fontSize: 17, // Tick label font size
+                fontFamily: 'Arial, sans-serif', // Tick label font
+              }}
+              axisLine={{
+                // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+            />
+            <Tooltip
+              contentStyle={tooltipStyle}
+              itemStyle={{ color: axisTickColor }}
+            />
+            <Legend
+              wrapperStyle={{ color: legendTextColor }}
+              // Alternatively, you can customize the payload style for more control
+            />
+            <Bar
+              dataKey="value"
+              name="Précipitations cumulées"
+              fill={colorMode === 'dark' ? '#60a5fa' : '#3b82f6'} // lighter blue in dark mode
+              isAnimationActive={false}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartStateView>
     </Box>
   );
 };

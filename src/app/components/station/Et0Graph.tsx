@@ -1,5 +1,5 @@
 'use client';
-import { Box, Spinner, Text } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import {
   LineChart,
   Line,
@@ -10,7 +10,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import useColorModeStyles from '@/app/utils/useColorModeStyles'; // Import the utility
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import ChartStateView from '../common/ChartStateView';
 
 const CustomLegend = (props: any) => (
   <ul
@@ -55,8 +56,12 @@ const CustomTick = ({ x, y, payload }: any) => (
 );
 
 const Et0Graph = ({ data }: { data: any }) => {
-  const { bg, textColor } = useColorModeStyles(); // Use the utility
-  if (!data) return <Spinner />;
+  const { bg, textColor } = useColorModeStyles();
+  const loading = !data;
+  const empty =
+    !!data &&
+    (!data.sensor_data ||
+      (Array.isArray(data.sensor_data) && data.sensor_data.length === 0));
 
   return (
     <Box
@@ -69,43 +74,45 @@ const Et0Graph = ({ data }: { data: any }) => {
     >
       <Text color={textColor} fontSize="lg" fontWeight="bold" mb={4}>
         {/* ET0 */}
-        {data.sensor_names?.et0}
+        {data?.sensor_names?.et0}
       </Text>
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data.sensor_data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis
-            dataKey="timestamp"
-            tick={<CustomTick />}
-            stroke="#666" // Axis line color
-            strokeWidth={1} // Axis line thickness
-            // tick={{                          // Tick styling
-            //   fill: '#666',                  // Tick label color
-            //   fontSize: 17,                  // Tick label font size
-            //   fontFamily: 'Arial, sans-serif' // Tick label font
-            // }}
-            axisLine={{
-              // Main axis line styling
-              stroke: '#666',
-              strokeWidth: 1,
-            }}
-            tickLine={{
-              // Tick line styling
-              stroke: '#666',
-              strokeWidth: 1,
-            }}
-          />
-          <YAxis tick={<CustomTick />} />
-          <Tooltip />
-          <Legend content={<CustomLegend />} />
-          <Line
-            type="monotone"
-            dataKey="et0"
-            stroke={data.sensor_colors?.et0_color}
-            name="ET0"
-          />
-        </LineChart>
-      </ResponsiveContainer>
+      <ChartStateView loading={loading} empty={empty} height={300}>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={data?.sensor_data ?? []}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="timestamp"
+              tick={<CustomTick />}
+              stroke="#666" // Axis line color
+              strokeWidth={1} // Axis line thickness
+              // tick={{                          // Tick styling
+              //   fill: '#666',                  // Tick label color
+              //   fontSize: 17,                  // Tick label font size
+              //   fontFamily: 'Arial, sans-serif' // Tick label font
+              // }}
+              axisLine={{
+                // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+            />
+            <YAxis tick={<CustomTick />} />
+            <Tooltip />
+            <Legend content={<CustomLegend />} />
+            <Line
+              type="monotone"
+              dataKey="et0"
+              stroke={data.sensor_colors?.et0_color}
+              name="ET0"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </ChartStateView>
     </Box>
   );
 };

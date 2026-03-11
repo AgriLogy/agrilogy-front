@@ -20,7 +20,7 @@ import {
 } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
-import EmptyBox from '../../common/EmptyBox';
+import ChartStateView from '../../common/ChartStateView';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 
 interface WeatherData {
@@ -115,111 +115,111 @@ const TempuratureHumidtyChart = ({
           </Button>
         </HStack>
       </Flex>
-      <Box ref={chartRef} height="300px">
-        {loading ? (
-          <EmptyBox text="Chargement..." />
-        ) : mergedData.length === 0 ? (
-          <EmptyBox text="Pas de données disponibles" />
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={mergedData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="timestamp"
-                angle={0}
-                textAnchor="middle"
-                interval={labelInterval}
-                stroke="#666" // Axis line color
-                strokeWidth={1} // Axis line thickness
-                tick={{
-                  // Tick styling
-                  fill: '#666', // Tick label color
-                  fontSize: 17, // Tick label font size
-                  fontFamily: 'Arial, sans-serif', // Tick label font
-                }}
-                axisLine={{
-                  // Main axis line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-                tickLine={{
-                  // Tick line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-              />
-              <YAxis
-                yAxisId="left"
-                label={{
-                  value: 'Température (°C)',
-                  angle: -90,
-                  position: 'insideLeft',
-                  fontSize: 14,
-                  dy: 80,
-                }}
-                stroke="#666" // Axis line color
-                strokeWidth={1} // Axis line thickness
-                tick={{
-                  // Tick styling
-                  fill: '#666', // Tick label color
-                  fontSize: 17, // Tick label font size
-                  fontFamily: 'Arial, sans-serif', // Tick label font
-                }}
-                axisLine={{
-                  // Main axis line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-                tickLine={{
-                  // Tick line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-              />
-              <YAxis
-                yAxisId="right"
-                orientation="right"
-                label={{
-                  value: 'Humidité (%)',
-                  angle: -90,
-                  position: 'insideRight',
-                  fontSize: 14,
-                  dx: 10,
-                }}
-              />
-              <Tooltip />
-              <Legend />
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="humidity"
-                name="Humidité (%)"
-                stroke="#2C7A7B"
-                strokeWidth={2}
-                activeDot={{ r: 6 }}
-              />
-              <Line
-                yAxisId="right"
-                type="monotone"
-                dataKey="temperature"
-                name="Température (°C)"
-                stroke="#D69E2E"
-                strokeWidth={2}
-                activeDot={{ r: 6 }}
-              />
-              <Brush
-                dataKey="timestamp"
-                height={30}
-                stroke="#8884d8"
-                travellerWidth={8}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        )}
-      </Box>
+      <ChartStateView
+        loading={loading}
+        empty={mergedData.length === 0}
+        emptyText="Pas de données disponibles"
+        chartRef={chartRef}
+        height="300px"
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={mergedData}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="timestamp"
+              angle={0}
+              textAnchor="middle"
+              interval={labelInterval}
+              stroke="#666" // Axis line color
+              strokeWidth={1} // Axis line thickness
+              tick={{
+                // Tick styling
+                fill: '#666', // Tick label color
+                fontSize: 17, // Tick label font size
+                fontFamily: 'Arial, sans-serif', // Tick label font
+              }}
+              axisLine={{
+                // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+            />
+            <YAxis
+              yAxisId="left"
+              label={{
+                value: 'Température (°C)',
+                angle: -90,
+                position: 'insideLeft',
+                fontSize: 14,
+                dy: 80,
+              }}
+              stroke="#666" // Axis line color
+              strokeWidth={1} // Axis line thickness
+              tick={{
+                // Tick styling
+                fill: '#666', // Tick label color
+                fontSize: 17, // Tick label font size
+                fontFamily: 'Arial, sans-serif', // Tick label font
+              }}
+              axisLine={{
+                // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+            />
+            <YAxis
+              yAxisId="right"
+              orientation="right"
+              label={{
+                value: 'Humidité (%)',
+                angle: -90,
+                position: 'insideRight',
+                fontSize: 14,
+                dx: 10,
+              }}
+            />
+            <Tooltip />
+            <Legend />
+            <Line
+              yAxisId="left"
+              type="monotone"
+              dataKey="humidity"
+              name="Humidité (%)"
+              stroke="#2C7A7B"
+              strokeWidth={2}
+              activeDot={{ r: 6 }}
+            />
+            <Line
+              yAxisId="right"
+              type="monotone"
+              dataKey="temperature"
+              name="Température (°C)"
+              stroke="#D69E2E"
+              strokeWidth={2}
+              activeDot={{ r: 6 }}
+            />
+            <Brush
+              dataKey="timestamp"
+              height={30}
+              stroke="#8884d8"
+              travellerWidth={8}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </ChartStateView>
     </Box>
   );
 };

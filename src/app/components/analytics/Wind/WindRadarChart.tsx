@@ -9,6 +9,7 @@ import {
   Flex,
   useColorModeValue,
 } from '@chakra-ui/react';
+import ChartStateView from '../../common/ChartStateView';
 import { FaCamera, FaDownload } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import {
@@ -382,19 +383,15 @@ const WindRadarChart = ({
         </HStack>
       </Flex>
 
-      <Box ref={chartRef} height="400px" position="relative">
-        {loading ? (
-          <Flex height="100%" align="center" justify="center">
-            <Text>Chargement...</Text>
-          </Flex>
-        ) : isDataEmpty ? (
-          <Flex height="100%" align="center" justify="center">
-            <Text>Aucune donnée disponible</Text>
-          </Flex>
-        ) : (
-          <PolarArea data={chartData as any} options={chartOptions} />
-        )}
-      </Box>
+      <ChartStateView
+        loading={loading}
+        empty={isDataEmpty}
+        emptyText="Aucune donnée disponible"
+        chartRef={chartRef}
+        height="400px"
+      >
+        <PolarArea data={chartData as any} options={chartOptions} />
+      </ChartStateView>
     </Box>
   );
 };
