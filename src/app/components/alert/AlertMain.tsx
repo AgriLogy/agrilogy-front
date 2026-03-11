@@ -91,7 +91,7 @@ const AlertMain = () => {
     }
   };
 
-  if (loading) return <EmptyBox />;
+  if (loading) return <EmptyBox variant="loading" />;
 
   return (
     <div className="container">

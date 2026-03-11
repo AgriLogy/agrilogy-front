@@ -22,15 +22,18 @@ import html2canvas from 'html2canvas';
 import { FaCamera, FaDownload } from 'react-icons/fa';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { ThresholdBand, WaterSoilData } from '@/app/types';
+import ChartStateView from '../../common/ChartStateView';
 
 const WaterSoilChart = ({
   data,
   thresholds,
   targetAxis = 'left', // which Y axis the bands align to
+  loading = false,
 }: {
   data: WaterSoilData[];
   thresholds: ThresholdBand;
   targetAxis?: 'left' | 'right';
+  loading?: boolean;
 }) => {
   const { critical_min, critical_max, normal_min, normal_max } = thresholds;
 
@@ -93,37 +96,6 @@ const WaterSoilChart = ({
     return [data[0].timestamp, data[data.length - 1].timestamp] as const;
   }, [data]);
 
-  if (!data?.length) {
-    return (
-      <Box>
-        <Flex justify="space-between" align="center" mb={4}>
-          <Text fontSize="xl" fontWeight="bold" mb={4} color={textColor}>
-            Eau disponible
-          </Text>
-          <HStack spacing={2}>
-            <Button
-              aria-label="Capture graphique"
-              colorScheme="teal"
-              variant="ghost"
-              onClick={handleScreenshot}
-            >
-              <FaCamera />
-            </Button>
-            <Button
-              aria-label="Exporter CSV"
-              colorScheme="blue"
-              variant="ghost"
-              onClick={handleDownloadData}
-            >
-              <FaDownload />
-            </Button>
-          </HStack>
-        </Flex>
-        <Text color={textColor}>Aucune donnée à afficher.</Text>
-      </Box>
-    );
-  }
-
   return (
     <Box width="100%" height="100%">
       <Flex justify="space-between" align="center" mb={1}>
@@ -178,8 +150,14 @@ const WaterSoilChart = ({
         </HStack>
       </HStack>
 
-      <Box ref={chartRef}>
-        <ResponsiveContainer width="100%" height={300}>
+      <ChartStateView
+        loading={loading}
+        empty={!data?.length}
+        emptyText="Aucune donnée à afficher."
+        chartRef={chartRef}
+        height={300}
+      >
+        <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
 
@@ -332,7 +310,7 @@ const WaterSoilChart = ({
             {/* Water flow area */}
           </LineChart>
         </ResponsiveContainer>
-      </Box>
+      </ChartStateView>
     </Box>
   );
 };

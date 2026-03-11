@@ -1,5 +1,5 @@
 'use client';
-import { Box, Spinner, Text, useColorMode } from '@chakra-ui/react';
+import { Box, Text, useColorMode } from '@chakra-ui/react';
 import {
   LineChart,
   Line,
@@ -10,6 +10,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import ChartStateView from '../common/ChartStateView';
 
 // Custom legend component
 const CustomLegend = (props: any) => (
@@ -83,8 +84,11 @@ const CustomTooltip = ({ active, payload }: any) => {
 const PrecipitationHumidityGraph = ({ data }: { data: any }) => {
   const { colorMode } = useColorMode();
   const chartBg = colorMode === 'light' ? 'white' : 'gray.800';
-
-  if (!data) return <Spinner />;
+  const loading = !data;
+  const empty =
+    !!data &&
+    (!data.sensor_data ||
+      (Array.isArray(data.sensor_data) && data.sensor_data.length === 0));
 
   return (
     <Box
@@ -101,68 +105,70 @@ const PrecipitationHumidityGraph = ({ data }: { data: any }) => {
         fontWeight="bold"
         mb={4}
       >
-        {data.sensor_names?.precipitation_humidity_rate}
+        {data?.sensor_names?.precipitation_humidity_rate}
       </Text>
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data.sensor_data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis
-            dataKey="timestamp"
-            tick={<CustomTick />}
-            stroke="#666" // Axis line color
-            strokeWidth={1} // Axis line thickness
-            // tick={{                          // Tick styling
-            //   fill: '#666',                  // Tick label color
-            //   fontSize: 17,                  // Tick label font size
-            //   fontFamily: 'Arial, sans-serif' // Tick label font
-            // }}
-            axisLine={{
-              // Main axis line styling
-              stroke: '#666',
-              strokeWidth: 1,
-            }}
-            tickLine={{
-              // Tick line styling
-              stroke: '#666',
-              strokeWidth: 1,
-            }}
-          />
-          <YAxis
-            tick={<CustomTick />}
-            stroke="#666" // Axis line color
-            strokeWidth={1} // Axis line thickness
-            // tick={{                          // Tick styling
-            //   fill: '#666',                  // Tick label color
-            //   fontSize: 17,                  // Tick label font size
-            //   fontFamily: 'Arial, sans-serif' // Tick label font
-            // }}
-            axisLine={{
-              // Main axis line styling
-              stroke: '#666',
-              strokeWidth: 1,
-            }}
-            tickLine={{
-              // Tick line styling
-              stroke: '#666',
-              strokeWidth: 1,
-            }}
-          />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend content={<CustomLegend />} />
-          <Line
-            type="monotone"
-            dataKey="precipitation_rate"
-            stroke={data.sensor_colors?.precipitation_rate_color}
-            name="Precipitation (mm)"
-          />
-          <Line
-            type="monotone"
-            dataKey="humidity_weather"
-            stroke={data.sensor_colors?.humidity_weather_color}
-            name="Humidity (%)"
-          />
-        </LineChart>
-      </ResponsiveContainer>
+      <ChartStateView loading={loading} empty={empty} height={300}>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={data?.sensor_data ?? []}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="timestamp"
+              tick={<CustomTick />}
+              stroke="#666" // Axis line color
+              strokeWidth={1} // Axis line thickness
+              // tick={{                          // Tick styling
+              //   fill: '#666',                  // Tick label color
+              //   fontSize: 17,                  // Tick label font size
+              //   fontFamily: 'Arial, sans-serif' // Tick label font
+              // }}
+              axisLine={{
+                // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+            />
+            <YAxis
+              tick={<CustomTick />}
+              stroke="#666" // Axis line color
+              strokeWidth={1} // Axis line thickness
+              // tick={{                          // Tick styling
+              //   fill: '#666',                  // Tick label color
+              //   fontSize: 17,                  // Tick label font size
+              //   fontFamily: 'Arial, sans-serif' // Tick label font
+              // }}
+              axisLine={{
+                // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend content={<CustomLegend />} />
+            <Line
+              type="monotone"
+              dataKey="precipitation_rate"
+              stroke={data.sensor_colors?.precipitation_rate_color}
+              name="Precipitation (mm)"
+            />
+            <Line
+              type="monotone"
+              dataKey="humidity_weather"
+              stroke={data.sensor_colors?.humidity_weather_color}
+              name="Humidity (%)"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </ChartStateView>
     </Box>
   );
 };

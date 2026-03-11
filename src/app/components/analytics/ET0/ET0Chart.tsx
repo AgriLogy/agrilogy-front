@@ -20,6 +20,7 @@ import {
 } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
+import ChartStateView from '../../common/ChartStateView';
 
 interface Et0Data {
   timestamp: string;
@@ -106,70 +107,70 @@ const EC0Chart = ({
         </HStack>
       </Flex>
 
-      <Box ref={chartRef} height="300px">
-        {loading ? (
-          <Text>Chargement...</Text>
-        ) : chartData.length === 0 ? (
-          <Text>Aucune donnée disponible</Text>
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={chartData}
-              margin={{ top: 10, right: 30, left: 0, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="name"
-                angle={0}
-                textAnchor="middle"
-                interval={labelInterval}
-                stroke="#666" // Axis line color
-                strokeWidth={1} // Axis line thickness
-                tick={{
-                  // Tick styling
-                  fill: '#666', // Tick label color
-                  fontSize: 17, // Tick label font size
-                  fontFamily: 'Arial, sans-serif', // Tick label font
-                }}
-                axisLine={{
-                  // Main axis line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-                tickLine={{
-                  // Tick line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-              />
-              <YAxis
-                stroke="#666" // Axis line color
-                strokeWidth={1} // Axis line thickness
-                tick={{
-                  // Tick styling
-                  fill: '#666', // Tick label color
-                  fontSize: 17, // Tick label font size
-                  fontFamily: 'Arial, sans-serif', // Tick label font
-                }}
-                axisLine={{
-                  // Main axis line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-                tickLine={{
-                  // Tick line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-              />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="Weather" fill="#3182ce" name="ET0 Capteur" />
-              <Bar dataKey="Calculated" fill="#e53e3e" name="ET0 Calculé" />
-            </BarChart>
-          </ResponsiveContainer>
-        )}
-      </Box>
+      <ChartStateView
+        loading={loading}
+        empty={chartData.length === 0}
+        emptyText="Aucune donnée disponible"
+        chartRef={chartRef}
+        height="300px"
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={chartData}
+            margin={{ top: 10, right: 30, left: 0, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="name"
+              angle={0}
+              textAnchor="middle"
+              interval={labelInterval}
+              stroke="#666" // Axis line color
+              strokeWidth={1} // Axis line thickness
+              tick={{
+                // Tick styling
+                fill: '#666', // Tick label color
+                fontSize: 17, // Tick label font size
+                fontFamily: 'Arial, sans-serif', // Tick label font
+              }}
+              axisLine={{
+                // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+            />
+            <YAxis
+              stroke="#666" // Axis line color
+              strokeWidth={1} // Axis line thickness
+              tick={{
+                // Tick styling
+                fill: '#666', // Tick label color
+                fontSize: 17, // Tick label font size
+                fontFamily: 'Arial, sans-serif', // Tick label font
+              }}
+              axisLine={{
+                // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+            />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="Weather" fill="#3182ce" name="ET0 Capteur" />
+            <Bar dataKey="Calculated" fill="#e53e3e" name="ET0 Calculé" />
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartStateView>
     </Box>
   );
 };

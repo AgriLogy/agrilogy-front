@@ -1,5 +1,5 @@
 'use client';
-import { Box, Spinner, Text } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import {
   LineChart,
   Line,
@@ -11,7 +11,8 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from 'recharts';
-import useColorModeStyles from '@/app/utils/useColorModeStyles'; // Import the utility
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import ChartStateView from '../common/ChartStateView';
 
 const CustomLegend = (props: any) => (
   <ul
@@ -56,8 +57,12 @@ const CustomTick = ({ x, y, payload }: any) => (
 );
 
 const WindDirectionGraph = ({ data }: { data: any }) => {
-  const { bg, textColor } = useColorModeStyles(); // Use the utility for styles
-  if (!data) return <Spinner />;
+  const { bg, textColor } = useColorModeStyles();
+  const loading = !data;
+  const empty =
+    !!data &&
+    (!data.sensor_data ||
+      (Array.isArray(data.sensor_data) && data.sensor_data.length === 0));
 
   return (
     <Box
@@ -69,86 +74,88 @@ const WindDirectionGraph = ({ data }: { data: any }) => {
       p={2}
     >
       <Text color={textColor} fontSize="lg" fontWeight="bold" mb={4}>
-        {data.sensor_names?.wind_direction}
+        {data?.sensor_names?.wind_direction}
       </Text>
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data.sensor_data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis
-            dataKey="timestamp"
-            tick={<CustomTick />}
-            stroke="#666" // Axis line color
-            strokeWidth={1} // Axis line thickness
-            // tick={{                          // Tick styling
-            //   fill: '#666',                  // Tick label color
-            //   fontSize: 17,                  // Tick label font size
-            //   fontFamily: 'Arial, sans-serif' // Tick label font
-            // }}
-            axisLine={{
-              // Main axis line styling
-              stroke: '#666',
-              strokeWidth: 1,
-            }}
-            tickLine={{
-              // Tick line styling
-              stroke: '#666',
-              strokeWidth: 1,
-            }}
-          />
-          <YAxis
-            tick={<CustomTick />}
-            domain={[0, 360]}
-            stroke="#666" // Axis line color
-            strokeWidth={1} // Axis line thickness
-            // tick={{                          // Tick styling
-            //   fill: '#666',                  // Tick label color
-            //   fontSize: 17,                  // Tick label font size
-            //   fontFamily: 'Arial, sans-serif' // Tick label font
-            // }}
-            axisLine={{
-              // Main axis line styling
-              stroke: '#666',
-              strokeWidth: 1,
-            }}
-            tickLine={{
-              // Tick line styling
-              stroke: '#666',
-              strokeWidth: 1,
-            }}
-          />
-          <Tooltip />
-          <Legend content={<CustomLegend />} />
+      <ChartStateView loading={loading} empty={empty} height={300}>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={data?.sensor_data ?? []}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="timestamp"
+              tick={<CustomTick />}
+              stroke="#666" // Axis line color
+              strokeWidth={1} // Axis line thickness
+              // tick={{                          // Tick styling
+              //   fill: '#666',                  // Tick label color
+              //   fontSize: 17,                  // Tick label font size
+              //   fontFamily: 'Arial, sans-serif' // Tick label font
+              // }}
+              axisLine={{
+                // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+            />
+            <YAxis
+              tick={<CustomTick />}
+              domain={[0, 360]}
+              stroke="#666" // Axis line color
+              strokeWidth={1} // Axis line thickness
+              // tick={{                          // Tick styling
+              //   fill: '#666',                  // Tick label color
+              //   fontSize: 17,                  // Tick label font size
+              //   fontFamily: 'Arial, sans-serif' // Tick label font
+              // }}
+              axisLine={{
+                // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+            />
+            <Tooltip />
+            <Legend content={<CustomLegend />} />
 
-          {/* Reference lines for cardinal directions */}
-          <ReferenceLine y={0} stroke="red" strokeDasharray="3 3" label="N" />
-          <ReferenceLine
-            y={90}
-            stroke="green"
-            strokeDasharray="3 3"
-            label="E"
-          />
-          <ReferenceLine
-            y={180}
-            stroke="blue"
-            strokeDasharray="3 3"
-            label="S"
-          />
-          <ReferenceLine
-            y={270}
-            stroke="orange"
-            strokeDasharray="3 3"
-            label="W"
-          />
+            {/* Reference lines for cardinal directions */}
+            <ReferenceLine y={0} stroke="red" strokeDasharray="3 3" label="N" />
+            <ReferenceLine
+              y={90}
+              stroke="green"
+              strokeDasharray="3 3"
+              label="E"
+            />
+            <ReferenceLine
+              y={180}
+              stroke="blue"
+              strokeDasharray="3 3"
+              label="S"
+            />
+            <ReferenceLine
+              y={270}
+              stroke="orange"
+              strokeDasharray="3 3"
+              label="W"
+            />
 
-          {/* Line for Wind Direction */}
-          <Line
-            type="monotone"
-            dataKey="wind_direction"
-            stroke={data.sensor_colors?.wind_direction_color}
-            name="Wind Direction (°)"
-          />
-        </LineChart>
-      </ResponsiveContainer>
+            {/* Line for Wind Direction */}
+            <Line
+              type="monotone"
+              dataKey="wind_direction"
+              stroke={data.sensor_colors?.wind_direction_color}
+              name="Wind Direction (°)"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </ChartStateView>
     </Box>
   );
 };

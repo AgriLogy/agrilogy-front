@@ -20,7 +20,7 @@ import {
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
-import EmptyBox from '../../common/EmptyBox';
+import ChartStateView from '../../common/ChartStateView';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 
 const SolarRadiationChart = ({
@@ -105,83 +105,82 @@ const SolarRadiationChart = ({
         </HStack>
       </Flex>
 
-      <Box ref={chartRef} height="300px">
-        {loading ? (
-          <EmptyBox text="Chargement..." />
-        ) : data.length === 0 ? (
-          <EmptyBox text="Pas de données" />
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart
-              data={chartData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="name"
-                angle={0}
-                textAnchor="middle"
-                interval={labelInterval}
-                stroke="#666" // Axis line color
-                strokeWidth={1} // Axis line thickness
-                tick={{
-                  // Tick styling
-                  fill: '#666', // Tick label color
-                  fontSize: 17, // Tick label font size
-                  fontFamily: 'Arial, sans-serif', // Tick label font
-                }}
-                axisLine={{
-                  // Main axis line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-                tickLine={{
-                  // Tick line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-              />
-              <YAxis
-                label={{
-                  angle: -90,
-                  fontSize: 16,
-                  dy: 80,
-                  position: 'insideLeft',
-                }}
-                stroke="#666" // Axis line color
-                strokeWidth={1} // Axis line thickness
-                tick={{
-                  // Tick styling
-                  fill: '#666', // Tick label color
-                  fontSize: 17, // Tick label font size
-                  fontFamily: 'Arial, sans-serif', // Tick label font
-                }}
-                axisLine={{
-                  // Main axis line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-                tickLine={{
-                  // Tick line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-              />
-              <Tooltip />
-              <Legend onClick={handleLegendClick} />
-              <Area
-                type="monotone"
-                dataKey="value"
-                name="Radiation solaire"
-                stroke={showArea ? '#f6c90e' : 'gray'}
-                fill={showArea ? '#f6c90e55' : 'gray'}
-                strokeWidth={2}
-                isAnimationActive={false}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        )}
-      </Box>
+      <ChartStateView
+        loading={loading}
+        empty={data.length === 0}
+        chartRef={chartRef}
+        height="300px"
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart
+            data={chartData}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="name"
+              angle={0}
+              textAnchor="middle"
+              interval={labelInterval}
+              stroke="#666" // Axis line color
+              strokeWidth={1} // Axis line thickness
+              tick={{
+                // Tick styling
+                fill: '#666', // Tick label color
+                fontSize: 17, // Tick label font size
+                fontFamily: 'Arial, sans-serif', // Tick label font
+              }}
+              axisLine={{
+                // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+            />
+            <YAxis
+              label={{
+                angle: -90,
+                fontSize: 16,
+                dy: 80,
+                position: 'insideLeft',
+              }}
+              stroke="#666" // Axis line color
+              strokeWidth={1} // Axis line thickness
+              tick={{
+                // Tick styling
+                fill: '#666', // Tick label color
+                fontSize: 17, // Tick label font size
+                fontFamily: 'Arial, sans-serif', // Tick label font
+              }}
+              axisLine={{
+                // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+            />
+            <Tooltip />
+            <Legend onClick={handleLegendClick} />
+            <Area
+              type="monotone"
+              dataKey="value"
+              name="Radiation solaire"
+              stroke={showArea ? '#f6c90e' : 'gray'}
+              fill={showArea ? '#f6c90e55' : 'gray'}
+              strokeWidth={2}
+              isAnimationActive={false}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </ChartStateView>
     </Box>
   );
 };

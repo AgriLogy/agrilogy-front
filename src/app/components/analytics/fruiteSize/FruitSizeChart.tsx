@@ -20,7 +20,7 @@ import {
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
-import EmptyBox from '../../common/EmptyBox';
+import ChartStateView from '../../common/ChartStateView';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 
 const FruitSizeChart = ({
@@ -105,91 +105,90 @@ const FruitSizeChart = ({
         </HStack>
       </Flex>
 
-      <Box ref={chartRef} height="300px">
-        {loading ? (
-          <EmptyBox text="Chargement..." /> // Assuming you have an EmptyBox component
-        ) : data.length === 0 ? (
-          <EmptyBox text="Pas de données" /> // Assuming you have an EmptyBox component
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={chartData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-              onClick={(e) => {
-                // optional: if you want to toggle bar by clicking legend label only
-                console.log(e);
+      <ChartStateView
+        loading={loading}
+        empty={data.length === 0}
+        chartRef={chartRef}
+        height="300px"
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={chartData}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            onClick={(e) => {
+              // optional: if you want to toggle bar by clicking legend label only
+              console.log(e);
+            }}
+          >
+            <XAxis
+              dataKey="name"
+              angle={0}
+              textAnchor="middle"
+              interval={labelInterval}
+              stroke="#666" // Axis line color
+              strokeWidth={1} // Axis line thickness
+              tick={{
+                // Tick styling
+                fill: '#666', // Tick label color
+                fontSize: 17, // Tick label font size
+                fontFamily: 'Arial, sans-serif', // Tick label font
               }}
-            >
-              <XAxis
-                dataKey="name"
-                angle={0}
-                textAnchor="middle"
-                interval={labelInterval}
-                stroke="#666" // Axis line color
-                strokeWidth={1} // Axis line thickness
-                tick={{
-                  // Tick styling
-                  fill: '#666', // Tick label color
-                  fontSize: 17, // Tick label font size
-                  fontFamily: 'Arial, sans-serif', // Tick label font
-                }}
-                axisLine={{
-                  // Main axis line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-                tickLine={{
-                  // Tick line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-              />
-              <YAxis
-                label={{
-                  // value: "Taille (mm)",
-                  angle: -90,
-                  position: 'insideLeft',
-                }}
-                stroke="#666" // Axis line color
-                strokeWidth={1} // Axis line thickness
-                tick={{
-                  // Tick styling
-                  fill: '#666', // Tick label color
-                  fontSize: 17, // Tick label font size
-                  fontFamily: 'Arial, sans-serif', // Tick label font
-                }}
-                axisLine={{
-                  // Main axis line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-                tickLine={{
-                  // Tick line styling
-                  stroke: '#666',
-                  strokeWidth: 1,
-                }}
-              />
-              <Tooltip />
-              <Legend onClick={handleLegendClick} />
-              <Bar
-                dataKey="value"
-                name="Taille des fruits (mm)"
-                fill={showBar ? '#82ca9d' : 'gray'}
-                activeBar={
-                  <Rectangle
-                    fill={showBar ? 'gold' : 'gray'}
-                    stroke={showBar ? 'purple' : 'gray'}
-                  />
-                }
-                isAnimationActive={false}
-                style={{
-                  pointerEvents: showBar ? 'auto' : 'none',
-                }}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        )}
-      </Box>
+              axisLine={{
+                // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+            />
+            <YAxis
+              label={{
+                // value: "Taille (mm)",
+                angle: -90,
+                position: 'insideLeft',
+              }}
+              stroke="#666" // Axis line color
+              strokeWidth={1} // Axis line thickness
+              tick={{
+                // Tick styling
+                fill: '#666', // Tick label color
+                fontSize: 17, // Tick label font size
+                fontFamily: 'Arial, sans-serif', // Tick label font
+              }}
+              axisLine={{
+                // Main axis line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                // Tick line styling
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+            />
+            <Tooltip />
+            <Legend onClick={handleLegendClick} />
+            <Bar
+              dataKey="value"
+              name="Taille des fruits (mm)"
+              fill={showBar ? '#82ca9d' : 'gray'}
+              activeBar={
+                <Rectangle
+                  fill={showBar ? 'gold' : 'gray'}
+                  stroke={showBar ? 'purple' : 'gray'}
+                />
+              }
+              isAnimationActive={false}
+              style={{
+                pointerEvents: showBar ? 'auto' : 'none',
+              }}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartStateView>
     </Box>
   );
 };
