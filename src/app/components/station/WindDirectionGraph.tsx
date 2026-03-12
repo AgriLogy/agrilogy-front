@@ -13,6 +13,7 @@ import {
 } from 'recharts';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import ChartStateView from '../common/ChartStateView';
+import UnifiedTooltip from '../common/UnifiedTooltip';
 
 const CustomLegend = (props: any) => (
   <ul
@@ -122,7 +123,7 @@ const WindDirectionGraph = ({ data }: { data: any }) => {
                 strokeWidth: 1,
               }}
             />
-            <Tooltip />
+            <Tooltip content={<UnifiedTooltip />} />
             <Legend content={<CustomLegend />} />
 
             {/* Reference lines for cardinal directions */}

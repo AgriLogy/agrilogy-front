@@ -21,6 +21,7 @@ import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
 import ChartStateView from '../../common/ChartStateView';
+import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 
 const PhSoilChart = ({
@@ -167,7 +168,7 @@ const PhSoilChart = ({
                 strokeWidth: 1,
               }}
             />
-            <Tooltip />
+            <Tooltip content={<UnifiedTooltip />} />
             <Legend onClick={handleLegendClick} />
             <Line
               type="monotone"

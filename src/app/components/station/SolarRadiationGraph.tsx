@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import ChartStateView from '../common/ChartStateView';
+import UnifiedTooltip from '../common/UnifiedTooltip';
 
 const CustomLegend = (props: any) => (
   <ul
@@ -125,7 +126,7 @@ const SolarRadiationGraph = ({ data }: { data: any }) => {
                 strokeWidth: 1,
               }}
             />
-            <Tooltip />
+            <Tooltip content={<UnifiedTooltip />} />
             <Legend content={<CustomLegend />} />
             {/* Line for Solar Radiation */}
             <Line

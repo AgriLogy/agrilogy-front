@@ -22,6 +22,7 @@ import {
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import ChartStateView from '../../common/ChartStateView';
+import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { TemperaturePoint } from './SoilTemperatureMain';
 
@@ -215,7 +216,7 @@ const SoilTemperatureChart = ({
                 strokeWidth: 1,
               }}
             />
-            <Tooltip />
+            <Tooltip content={<UnifiedTooltip />} />
             <Legend onClick={handleLegendClick} />
 
             <Line

@@ -21,6 +21,7 @@ import {
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import ChartStateView from '../../common/ChartStateView';
+import UnifiedTooltip from '../../common/UnifiedTooltip';
 
 interface Et0Data {
   timestamp: string;
@@ -164,7 +165,7 @@ const EC0Chart = ({
                 strokeWidth: 1,
               }}
             />
-            <Tooltip />
+            <Tooltip content={<UnifiedTooltip />} />
             <Legend />
             <Bar dataKey="Weather" fill="#3182ce" name="ET0 Capteur" />
             <Bar dataKey="Calculated" fill="#e53e3e" name="ET0 Calculé" />

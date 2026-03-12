@@ -22,6 +22,7 @@ import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { NpkSensorData } from '@/app/types';
 import ChartStateView from '../../common/ChartStateView';
+import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 
 const NpkSizeChart = ({
@@ -182,7 +183,7 @@ const NpkSizeChart = ({
                 strokeWidth: 1,
               }}
             />
-            <Tooltip />
+            <Tooltip content={<UnifiedTooltip />} />
             <Legend onClick={handleLegendClick} />
 
             <Line

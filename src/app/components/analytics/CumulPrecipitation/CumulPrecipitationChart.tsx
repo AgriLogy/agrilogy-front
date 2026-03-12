@@ -24,6 +24,7 @@ import { FaDownload, FaCloudRain } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import ChartStateView from '../../common/ChartStateView';
+import UnifiedTooltip from '../../common/UnifiedTooltip';
 
 const aggregateData = (data: SensorData[], period: string) => {
   const result: Record<string, number> = {};
@@ -95,11 +96,6 @@ const CumulPrecipitationChart = ({
   // Colors for Recharts elements based on color mode
   const axisTickColor = colorMode === 'dark' ? '#ccc' : '#333';
   const gridStroke = colorMode === 'dark' ? '#444' : '#ddd';
-  const tooltipStyle = {
-    backgroundColor: colorMode === 'dark' ? '#333' : '#fff',
-    borderColor: colorMode === 'dark' ? '#555' : '#ccc',
-    color: colorMode === 'dark' ? '#eee' : '#000',
-  };
   const legendTextColor = textColor;
 
   return (
@@ -199,10 +195,7 @@ const CumulPrecipitationChart = ({
                 strokeWidth: 1,
               }}
             />
-            <Tooltip
-              contentStyle={tooltipStyle}
-              itemStyle={{ color: axisTickColor }}
-            />
+            <Tooltip content={<UnifiedTooltip />} />
             <Legend
               wrapperStyle={{ color: legendTextColor }}
               // Alternatively, you can customize the payload style for more control
