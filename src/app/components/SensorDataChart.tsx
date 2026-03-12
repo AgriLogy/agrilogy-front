@@ -19,6 +19,7 @@ import {
 } from 'recharts';
 import { SensorData } from '../data/dashboard/data';
 import EmptyBox from './common/EmptyBox';
+import UnifiedTooltip from './common/UnifiedTooltip';
 // import { calculateET0 } from "../data/dashboard/calculateET0";
 
 interface SensorDataChartProps {
@@ -133,7 +134,7 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="timestamp" tick={<CustomTick />} />
           <YAxis tick={<CustomTick />} />
-          <Tooltip />
+          <Tooltip content={<UnifiedTooltip />} />
           <Legend content={<CustomLegend />} />
           <Line
             type="monotone"

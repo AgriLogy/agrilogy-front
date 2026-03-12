@@ -22,6 +22,7 @@ import { FaCamera, FaDownload } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import ChartStateView from '../../common/ChartStateView';
+import UnifiedTooltip from '../../common/UnifiedTooltip';
 
 type SensorData = { timestamp: string; value: number };
 
@@ -193,7 +194,7 @@ const SensorLeafChart = ({
                 dy: -50,
               }}
             />
-            <Tooltip />
+            <Tooltip content={<UnifiedTooltip />} />
             <Legend onClick={handleLegendClick} />
             <Line
               yAxisId="left"

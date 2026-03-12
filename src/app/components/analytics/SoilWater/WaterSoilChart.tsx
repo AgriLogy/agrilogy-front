@@ -23,6 +23,7 @@ import { FaCamera, FaDownload } from 'react-icons/fa';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { ThresholdBand, WaterSoilData } from '@/app/types';
 import ChartStateView from '../../common/ChartStateView';
+import UnifiedTooltip from '../../common/UnifiedTooltip';
 
 const WaterSoilChart = ({
   data,
@@ -263,7 +264,7 @@ const WaterSoilChart = ({
               }}
             />
 
-            <Tooltip />
+            <Tooltip content={<UnifiedTooltip />} />
             <Legend />
 
             {/* Soil moisture lines */}

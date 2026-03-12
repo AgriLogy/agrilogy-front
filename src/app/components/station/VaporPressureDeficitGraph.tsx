@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import ChartStateView from '../common/ChartStateView';
+import UnifiedTooltip from '../common/UnifiedTooltip';
 
 // Custom legend component
 const CustomLegend = (props: any) => (
@@ -55,27 +56,6 @@ const CustomTick = ({ x, y, payload }: any) => (
     {payload.value}
   </text>
 );
-
-// Custom tooltip for displaying data
-const CustomTooltip = ({ active, payload }: any) => {
-  if (active && payload && payload.length) {
-    return (
-      <div
-        style={{
-          backgroundColor: 'white',
-          border: '1px solid #ccc',
-          padding: '5px',
-          borderRadius: '5px',
-          color: 'rgba(54, 162, 235, 1)',
-        }}
-      >
-        <p>{`Timestamp: ${payload[0].payload.timestamp}`}</p>
-        <p>{`Vapor Pressure Deficit: ${payload[0].value} kPa`}</p>
-      </div>
-    );
-  }
-  return null;
-};
 
 const VaporPressureDeficitGraph = ({ data }: { data: any }) => {
   const { colorMode } = useColorMode();
@@ -148,7 +128,7 @@ const VaporPressureDeficitGraph = ({ data }: { data: any }) => {
                 strokeWidth: 1,
               }}
             />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={<UnifiedTooltip valueUnit=" kPa" />} />
             <Legend content={<CustomLegend />} />
             <Line
               type="monotone"

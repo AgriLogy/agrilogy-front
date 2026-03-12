@@ -12,6 +12,7 @@ import {
 } from 'recharts';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import ChartStateView from '../common/ChartStateView';
+import UnifiedTooltip from '../common/UnifiedTooltip';
 
 const CustomLegend = (props: any) => (
   <ul
@@ -102,7 +103,7 @@ const Et0Graph = ({ data }: { data: any }) => {
               }}
             />
             <YAxis tick={<CustomTick />} />
-            <Tooltip />
+            <Tooltip content={<UnifiedTooltip />} />
             <Legend content={<CustomLegend />} />
             <Line
               type="monotone"

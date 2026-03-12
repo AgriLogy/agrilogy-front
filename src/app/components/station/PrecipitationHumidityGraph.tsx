@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import ChartStateView from '../common/ChartStateView';
+import UnifiedTooltip from '../common/UnifiedTooltip';
 
 // Custom legend component
 const CustomLegend = (props: any) => (
@@ -55,31 +56,6 @@ const CustomTick = ({ x, y, payload }: any) => (
     {payload.value}
   </text>
 );
-
-// Custom tooltip for displaying data
-const CustomTooltip = ({ active, payload }: any) => {
-  if (active && payload && payload.length) {
-    return (
-      <div
-        style={{
-          backgroundColor: 'white',
-          border: '1px solid #ccc',
-          padding: '5px',
-          borderRadius: '5px',
-        }}
-      >
-        <p>{`Timestamp: ${payload[0].payload.timestamp}`}</p>
-        <p style={{ color: 'rgba(75, 192, 192, 1)' }}>
-          {`Precipitation: ${payload[0].payload.precipitation} mm`}{' '}
-        </p>
-        <p
-          style={{ color: 'rgba(255, 159, 64, 1)' }}
-        >{`Humidity: ${payload[1].payload.humidity_weather} %`}</p>
-      </div>
-    );
-  }
-  return null;
-};
 
 const PrecipitationHumidityGraph = ({ data }: { data: any }) => {
   const { colorMode } = useColorMode();
@@ -152,7 +128,7 @@ const PrecipitationHumidityGraph = ({ data }: { data: any }) => {
                 strokeWidth: 1,
               }}
             />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={<UnifiedTooltip />} />
             <Legend content={<CustomLegend />} />
             <Line
               type="monotone"

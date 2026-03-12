@@ -24,6 +24,7 @@ import { SensorData } from '@/app/types';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { useRef, useState } from 'react';
 import ChartStateView from '../../common/ChartStateView';
+import UnifiedTooltip from '../../common/UnifiedTooltip';
 
 const SoilConductivityChart = ({
   lowData,
@@ -191,7 +192,7 @@ const SoilConductivityChart = ({
                 fontSize: 18, // Tick label font size
               }}
             />
-            <Tooltip />
+            <Tooltip content={<UnifiedTooltip />} />
             {/* <Legend /> */}
             <Legend onClick={handleLegendClick} />
 

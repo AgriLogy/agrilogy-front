@@ -21,6 +21,7 @@ import {
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import ChartStateView from '../../common/ChartStateView';
+import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 
 interface WeatherData {
@@ -191,7 +192,7 @@ const TempuratureHumidtyChart = ({
                 dx: 10,
               }}
             />
-            <Tooltip />
+            <Tooltip content={<UnifiedTooltip />} />
             <Legend />
             <Line
               yAxisId="left"

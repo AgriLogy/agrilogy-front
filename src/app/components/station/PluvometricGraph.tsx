@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import ChartStateView from '../common/ChartStateView';
+import UnifiedTooltip from '../common/UnifiedTooltip';
 
 const CustomLegend = (props: any) => (
   <ul
@@ -128,7 +129,7 @@ const PluvometricGraph = ({ data }: { data: any }) => {
                 strokeWidth: 1,
               }}
             />
-            <Tooltip />
+            <Tooltip content={<UnifiedTooltip />} />
             <Legend content={<CustomLegend />} />
             {/* Line for Pluvometric Data */}
             <Line
