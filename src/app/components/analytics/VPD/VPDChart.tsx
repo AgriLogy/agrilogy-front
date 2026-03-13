@@ -9,19 +9,18 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from 'recharts';
-import {
-  Box,
-  Flex,
-  Text,
-  Button,
-  HStack,
-  useBreakpointValue,
-} from '@chakra-ui/react';
+import { Box, Flex, Text, Button, HStack } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import {
+  defaultCartesianGridProps,
+  defaultLineProps,
+  getDefaultXAxisProps,
+  getDefaultYAxisProps,
+} from '@/app/utils/chartAxisConfig';
 
 export interface VPDDataPoint {
   timestamp: string;
@@ -38,10 +37,8 @@ const VPDChart = ({
   const chartRef = useRef<HTMLDivElement>(null);
   const { textColor } = useColorModeStyles();
 
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(Math.max(data.length, 1) / 3),
-    md: Math.ceil(Math.max(data.length, 1) / 5),
-  });
+  const xAxisProps = getDefaultXAxisProps(data, 'timestamp');
+  const yAxisProps = getDefaultYAxisProps(2);
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
@@ -100,38 +97,23 @@ const VPDChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={data}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            margin={{ top: 16, right: 24, left: 8, bottom: 40 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid {...defaultCartesianGridProps} />
             <XAxis
               dataKey="timestamp"
+              {...xAxisProps}
               angle={0}
               textAnchor="middle"
-              interval={labelInterval}
-              stroke="#666"
-              strokeWidth={1}
-              tick={{
-                fill: '#666',
-                fontSize: 17,
-                fontFamily: 'Arial, sans-serif',
-              }}
-              axisLine={{ stroke: '#666', strokeWidth: 1 }}
-              tickLine={{ stroke: '#666', strokeWidth: 1 }}
+              // interval={labelInterval}
             />
             <YAxis
-              stroke="#666"
-              strokeWidth={1}
-              tick={{
-                fill: '#666',
-                fontSize: 17,
-                fontFamily: 'Arial, sans-serif',
-              }}
-              axisLine={{ stroke: '#666', strokeWidth: 1 }}
-              tickLine={{ stroke: '#666', strokeWidth: 1 }}
+              {...yAxisProps}
               label={{
-                value: 'VPD (kPa)',
+                value: 'kPa',
                 angle: -90,
                 position: 'insideLeft',
+                style: { fontSize: 11, fill: '#64748b' },
               }}
             />
             <Tooltip content={<UnifiedTooltip valueUnit=" kPa" />} />
@@ -142,8 +124,7 @@ const VPDChart = ({
               name="VPD (kPa)"
               stroke="#805ad5"
               strokeWidth={2}
-              dot={{ r: 4, fill: '#805ad5' }}
-              activeDot={{ r: 6, stroke: '#553c9a' }}
+              {...defaultLineProps}
               isAnimationActive={false}
             />
           </LineChart>

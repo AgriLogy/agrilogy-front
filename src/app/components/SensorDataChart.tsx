@@ -20,7 +20,13 @@ import {
 import { SensorData } from '../data/dashboard/data';
 import EmptyBox from './common/EmptyBox';
 import UnifiedTooltip from './common/UnifiedTooltip';
-// import { calculateET0 } from "../data/dashboard/calculateET0";
+import {
+  defaultCartesianGridProps,
+  defaultLineProps,
+  defaultTooltipCursor,
+  getDefaultXAxisProps,
+  getDefaultYAxisProps,
+} from '@/app/utils/chartAxisConfig';
 
 interface SensorDataChartProps {
   data: SensorData[];
@@ -64,18 +70,7 @@ const CustomLegend = (props: any) => {
   );
 };
 
-// Custom Tick Component for X and Y Axis
-const CustomTick = ({ x, y, payload }: any) => {
-  return (
-    <text x={x} y={y} textAnchor="middle" fill="#666" fontSize="10">
-      {payload.value}
-    </text>
-  );
-};
-
 const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
-  console.log('okay : ', data);
-  // Ensure data is an array and not empty
   const validData = Array.isArray(data) && data.length > 0 ? data : [];
 
   // Calculate ET0 for each data point
@@ -83,8 +78,9 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
     ...sensorData,
   }));
 
-  // Slice to get only the last 8 entries
   const lastEightData = dataWithET0.slice(-8);
+  const xAxisProps = getDefaultXAxisProps(lastEightData, 'timestamp');
+  const yAxisProps = getDefaultYAxisProps(2);
 
   const chartColor = useColorModeValue('#4A90E2', '#90CDF4');
   const chartBg = useColorModeValue('white', 'gray.800');
@@ -130,25 +126,42 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
         ET0 / H
       </Text>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={lastEightData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="timestamp" tick={<CustomTick />} />
-          <YAxis tick={<CustomTick />} />
-          <Tooltip content={<UnifiedTooltip />} />
+        <LineChart
+          data={lastEightData}
+          margin={{ top: 16, right: 24, left: 8, bottom: 40 }}
+        >
+          <CartesianGrid {...defaultCartesianGridProps} />
+          <XAxis
+            dataKey="timestamp"
+            {...xAxisProps}
+            angle={0}
+            textAnchor="middle"
+            // interval={labelInterval}
+          />
+          <YAxis {...yAxisProps} />
+          <Tooltip content={<UnifiedTooltip />} cursor={defaultTooltipCursor} />
           <Legend content={<CustomLegend />} />
           <Line
             type="monotone"
             dataKey="temperature_weather"
             stroke={chartColor}
-            name="Température de l'air"
+            name="Température de l'air (°C)"
+            {...defaultLineProps}
           />
           <Line
             type="monotone"
             dataKey="solar_radiation"
             stroke="#82ca9d"
             name="Rayonnement Solaire"
+            {...defaultLineProps}
           />
-          <Line type="monotone" dataKey="et0" stroke="#ffc658" name="ET0" />
+          <Line
+            type="monotone"
+            dataKey="et0"
+            stroke="#ffc658"
+            name="ET0"
+            {...defaultLineProps}
+          />
         </LineChart>
       </ResponsiveContainer>
     </Box>

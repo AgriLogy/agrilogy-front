@@ -10,20 +10,19 @@ import {
   Brush,
   CartesianGrid,
 } from 'recharts';
-import {
-  useBreakpointValue,
-  Box,
-  Flex,
-  Text,
-  Button,
-  HStack,
-} from '@chakra-ui/react';
+import { Box, Flex, Text, Button, HStack } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { NpkSensorData } from '@/app/types';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import {
+  defaultCartesianGridProps,
+  defaultTooltipCursor,
+  getDefaultXAxisProps,
+  getDefaultYAxisProps,
+} from '@/app/utils/chartAxisConfig';
 
 const NpkSizeChart = ({
   data,
@@ -42,12 +41,8 @@ const NpkSizeChart = ({
     potassium: item.potassium_value,
   }));
 
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(chartData.length / 3),
-    md: Math.ceil(chartData.length / 5),
-  });
-
-  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
+  const xAxisProps = getDefaultXAxisProps(chartData, 'name');
+  const yAxisProps = getDefaultYAxisProps(2);
 
   const [activeLines, setActiveLines] = useState({
     nitrogen: true,
@@ -129,61 +124,31 @@ const NpkSizeChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid {...defaultCartesianGridProps} />
             <XAxis
               dataKey="name"
+              {...xAxisProps}
               angle={0}
               textAnchor="middle"
-              interval={labelInterval}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
-              }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
+              // interval={labelInterval}
             />
             <YAxis
+              {...yAxisProps}
               label={{
                 value: 'Concentration (mg/kg)',
                 angle: -90,
                 position: 'insideLeft',
-                fontSize: 14,
-                dy: 80, // Push down the label slightly
-              }}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
-              }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
+                fontSize: 12,
+                dy: 60,
+                style: { fill: '#64748b' },
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip
+              content={<UnifiedTooltip />}
+              cursor={defaultTooltipCursor}
+            />
             <Legend onClick={handleLegendClick} />
 
             <Line
@@ -194,7 +159,8 @@ const NpkSizeChart = ({
                 activeLines.nitrogen ? data[0]?.nitrogen_color || '#dba800' : ''
               }
               strokeWidth={2}
-              activeDot={{ r: 6 }}
+              dot={false}
+              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
             />
             <Line
               type="monotone"
@@ -206,7 +172,8 @@ const NpkSizeChart = ({
                   : ''
               }
               strokeWidth={2}
-              activeDot={{ r: 6 }}
+              dot={false}
+              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
             />
             <Line
               type="monotone"
@@ -218,7 +185,8 @@ const NpkSizeChart = ({
                   : ''
               }
               strokeWidth={2}
-              activeDot={{ r: 6 }}
+              dot={false}
+              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
             />
 
             <Brush

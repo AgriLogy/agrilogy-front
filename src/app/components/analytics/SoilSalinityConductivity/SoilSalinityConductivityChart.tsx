@@ -10,20 +10,19 @@ import {
   CartesianGrid,
   Brush,
 } from 'recharts';
-import {
-  Box,
-  Button,
-  Flex,
-  HStack,
-  Text,
-  useBreakpointValue,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { FaCamera, FaDownload } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import {
+  defaultCartesianGridProps,
+  defaultTooltipCursor,
+  getDefaultXAxisProps,
+  getDefaultYAxisProps,
+} from '@/app/utils/chartAxisConfig';
 
 type Props = {
   salinityData: SensorData[];
@@ -43,13 +42,6 @@ const SoilSalinityConductivityChart = ({
     salinity: true,
     conductivity: true,
   });
-
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(Math.max(salinityData.length, conductivityData.length) / 3),
-    md: Math.ceil(Math.max(salinityData.length, conductivityData.length) / 5),
-  });
-  // const _labelAngle = useBreakpointValue({ base: -15, md: 15 });
-  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
 
   const timestamps = Array.from(
     new Set([
@@ -71,6 +63,9 @@ const SoilSalinityConductivityChart = ({
       conductivity_courbe_name: cond?.courbe_name,
     };
   });
+
+  const xAxisProps = getDefaultXAxisProps(chartData, 'name');
+  const yAxisProps = getDefaultYAxisProps(2);
 
   const handleLegendClick = (e: any) => {
     const key = e.dataKey;
@@ -136,61 +131,30 @@ const SoilSalinityConductivityChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid {...defaultCartesianGridProps} />
             <XAxis
               dataKey="name"
+              {...xAxisProps}
               angle={0}
               textAnchor="middle"
-              interval={labelInterval}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
-              }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
+              // interval={labelInterval}
             />
             <YAxis
+              {...yAxisProps}
               label={{
-                // value: "Concentration",
                 angle: -90,
                 position: 'insideLeft',
-                fontSize: 14,
-                dy: 80,
-              }}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
-              }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
+                fontSize: 12,
+                dy: 60,
+                style: { fill: '#64748b' },
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip
+              content={<UnifiedTooltip />}
+              cursor={defaultTooltipCursor}
+            />
             <Legend onClick={handleLegendClick} />
 
             <Line
@@ -201,7 +165,7 @@ const SoilSalinityConductivityChart = ({
               strokeOpacity={activeLines.salinity ? 1 : 0.1}
               strokeWidth={2}
               dot={false}
-              activeDot={{ r: 6 }}
+              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
             />
 
             <Line
@@ -212,7 +176,7 @@ const SoilSalinityConductivityChart = ({
               strokeOpacity={activeLines.conductivity ? 1 : 0.1}
               strokeWidth={2}
               dot={false}
-              activeDot={{ r: 6 }}
+              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
             />
 
             <Brush

@@ -10,17 +10,16 @@ import {
   CartesianGrid,
   Brush,
 } from 'recharts';
-import {
-  Box,
-  Text,
-  Flex,
-  HStack,
-  Button,
-  useBreakpointValue,
-} from '@chakra-ui/react';
+import { Box, Text, Flex, HStack, Button } from '@chakra-ui/react';
 import { FaCamera, FaDownload } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import {
+  defaultCartesianGridProps,
+  defaultTooltipCursor,
+  getDefaultXAxisProps,
+  getDefaultYAxisProps,
+} from '@/app/utils/chartAxisConfig';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 
@@ -47,12 +46,8 @@ const SensorLeafChart = ({
     };
   });
 
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(combinedData.length / 3),
-    md: Math.ceil(combinedData.length / 5),
-  });
-
-  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
+  const xAxisProps = getDefaultXAxisProps(combinedData, 'name');
+  const yAxisProps = getDefaultYAxisProps(2);
 
   const [activeLines, setActiveLines] = useState({
     temperature: true,
@@ -128,73 +123,45 @@ const SensorLeafChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={combinedData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid {...defaultCartesianGridProps} />
             <XAxis
               dataKey="name"
+              {...xAxisProps}
               angle={0}
               textAnchor="middle"
-              interval={labelInterval}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
-              }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
+              // interval={labelInterval}
             />
             <YAxis
               yAxisId="left"
+              {...yAxisProps}
               label={{
                 value: 'Température (°C)',
                 angle: -90,
                 position: 'insideLeft',
-                fontSize: 14,
+                fontSize: 12,
                 dy: 50,
-              }}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
-              }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
+                style: { fill: '#64748b' },
               }}
             />
             <YAxis
               yAxisId="right"
               orientation="right"
+              {...yAxisProps}
               label={{
                 value: 'Humidité (%)',
                 angle: -90,
                 position: 'insideRight',
-                fontSize: 14,
+                fontSize: 12,
                 dy: -50,
+                style: { fill: '#64748b' },
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip
+              content={<UnifiedTooltip />}
+              cursor={defaultTooltipCursor}
+            />
             <Legend onClick={handleLegendClick} />
             <Line
               yAxisId="left"
@@ -203,7 +170,8 @@ const SensorLeafChart = ({
               name="Température (°C)"
               stroke={activeLines.temperature ? '#ff7300' : 'gray'}
               strokeWidth={2}
-              activeDot={{ r: 6 }}
+              dot={false}
+              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
             />
             <Line
               yAxisId="right"
@@ -212,7 +180,8 @@ const SensorLeafChart = ({
               name="Humidité des feuilles (%)"
               stroke={activeLines.moisture ? '#007aff' : 'gray'}
               strokeWidth={2}
-              activeDot={{ r: 6 }}
+              dot={false}
+              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
             />
             <Brush
               dataKey="name"

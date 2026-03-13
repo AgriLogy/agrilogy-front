@@ -5,12 +5,12 @@ import {
   Rectangle,
   XAxis,
   YAxis,
+  CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
 } from 'recharts';
 import {
-  useBreakpointValue,
   Box,
   Flex,
   Text,
@@ -21,6 +21,11 @@ import {
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
+import {
+  defaultCartesianGridProps,
+  getDefaultXAxisProps,
+  getDefaultYAxisProps,
+} from '@/app/utils/chartAxisConfig';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
@@ -40,13 +45,9 @@ const PrecipitationRateChart = ({
     value: item.value,
   }));
 
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(chartData.length / 3),
-    md: Math.ceil(chartData.length / 5),
-  });
-
-  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const { textColor } = useColorModeStyles();
+  const xAxisProps = getDefaultXAxisProps(chartData, 'name');
+  const yAxisProps = getDefaultYAxisProps(2);
 
   // Legend click handler
   const handleLegendClick = (data: any) => {
@@ -116,58 +117,24 @@ const PrecipitationRateChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            onClick={(_e) => {
-              // optional: if you want to toggle bar by clicking legend label only
-            }}
+            margin={{ top: 16, right: 24, left: 8, bottom: 40 }}
+            onClick={(_e) => {}}
           >
+            <CartesianGrid {...defaultCartesianGridProps} />
             <XAxis
               dataKey="name"
+              {...xAxisProps}
               angle={0}
               textAnchor="middle"
-              interval={labelInterval}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
-              }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
+              // interval={labelInterval}
             />
             <YAxis
+              {...yAxisProps}
               label={{
-                // value: "Taille (mm)",
+                value: 'mm/h',
                 angle: -90,
                 position: 'insideLeft',
-              }}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
-              }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
+                style: { fontSize: 11, fill: '#64748b' },
               }}
             />
             <Tooltip content={<UnifiedTooltip />} />

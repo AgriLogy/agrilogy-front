@@ -3,6 +3,7 @@
 import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import React from 'react';
 import { formatNumber } from '@/app/utils/formatNumber';
+import { formatXAxisTimestamp } from '@/app/utils/chartAxisConfig';
 
 /**
  * Recharts payload item passed to tooltip content.
@@ -52,10 +53,14 @@ export type UnifiedTooltipProps = UnifiedTooltipPropsFromRecharts &
   UnifiedTooltipCustomProps;
 
 /**
- * Default formatter for the label: returns as-is (timestamps/periods).
+ * Default formatter for the label: format timestamps as "DD MMM HH:mm", else as-is.
  */
 function defaultLabelFormatter(label: string): string {
-  return String(label ?? '');
+  const s = String(label ?? '');
+  if (!s) return s;
+  const d = new Date(s);
+  if (!Number.isNaN(d.getTime())) return formatXAxisTimestamp(s);
+  return s;
 }
 
 /**

@@ -12,7 +12,6 @@ import {
 import {
   Box,
   Text,
-  useBreakpointValue,
   useColorModeValue,
   Button,
   HStack,
@@ -20,6 +19,11 @@ import {
 } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
+import {
+  defaultCartesianGridProps,
+  getDefaultXAxisProps,
+  getDefaultYAxisProps,
+} from '@/app/utils/chartAxisConfig';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 
@@ -50,11 +54,8 @@ const EC0Chart = ({
   });
 
   const textColor = useColorModeValue('gray.800', 'gray.200');
-  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(chartData.length / 3),
-    md: Math.ceil(chartData.length / 5),
-  });
+  const xAxisProps = getDefaultXAxisProps(chartData, 'name');
+  const yAxisProps = getDefaultYAxisProps(2);
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
@@ -118,53 +119,17 @@ const EC0Chart = ({
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
-            margin={{ top: 10, right: 30, left: 0, bottom: 5 }}
+            margin={{ top: 16, right: 24, left: 8, bottom: 40 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid {...defaultCartesianGridProps} />
             <XAxis
               dataKey="name"
+              {...xAxisProps}
               angle={0}
               textAnchor="middle"
-              interval={labelInterval}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
-              }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
+              // interval={labelInterval}
             />
-            <YAxis
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
-              }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-            />
+            <YAxis {...yAxisProps} />
             <Tooltip content={<UnifiedTooltip />} />
             <Legend />
             <Bar dataKey="Weather" fill="#3182ce" name="ET0 Capteur" />

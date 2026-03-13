@@ -14,7 +14,6 @@ import {
   Flex,
   HStack,
   Button,
-  useBreakpointValue,
   Select,
   useColorMode,
 } from '@chakra-ui/react';
@@ -24,6 +23,11 @@ import { FaDownload, FaCloudRain } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
 import { formatNumber } from '@/app/utils/formatNumber';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import {
+  defaultCartesianGridProps,
+  getPeriodXAxisProps,
+  getDefaultYAxisProps,
+} from '@/app/utils/chartAxisConfig';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 
@@ -64,12 +68,9 @@ const CumulPrecipitationChart = ({
   const [groupBy, setGroupBy] = useState('day');
   const { colorMode } = useColorMode();
   const chartData = aggregateData(data, groupBy);
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(chartData.length / 3),
-    md: Math.ceil(chartData.length / 5),
-  });
-  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const { textColor } = useColorModeStyles();
+  const periodXAxisProps = getPeriodXAxisProps();
+  const yAxisProps = getDefaultYAxisProps(2);
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
@@ -134,66 +135,23 @@ const CumulPrecipitationChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            margin={{ top: 16, right: 24, left: 8, bottom: 40 }}
           >
-            <CartesianGrid stroke={gridStroke} strokeDasharray="3 3" />
+            <CartesianGrid {...defaultCartesianGridProps} stroke={gridStroke} />
             <XAxis
               dataKey="period"
+              {...periodXAxisProps}
               angle={0}
               textAnchor="middle"
-              interval={labelInterval}
-              // stroke={axisTickColor}
-              // tick={{ fill: axisTickColor }}
-              // tickLine={{ stroke: axisTickColor }}
-              // axisLine={{ stroke: axisTickColor }}
-
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
-              }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
+              // interval={labelInterval}
             />
             <YAxis
-              // label={{
-              //   angle: -90,
-              //   value: "mm",
-              //   position: "insideLeft",
-              //   fill: axisTickColor,
-              // }}
-              // stroke={axisTickColor}
-              // tick={{ fill: axisTickColor }}
-              // tickLine={{ stroke: axisTickColor }}
-              // axisLine={{ stroke: axisTickColor }}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
-              }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
+              {...yAxisProps}
+              label={{
+                value: 'mm',
+                angle: -90,
+                position: 'insideLeft',
+                style: { fontSize: 11, fill: '#64748b' },
               }}
             />
             <Tooltip content={<UnifiedTooltip />} />

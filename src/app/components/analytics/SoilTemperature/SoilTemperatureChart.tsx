@@ -11,7 +11,6 @@ import {
   ReferenceArea, // ⬅️ add this
 } from 'recharts';
 import {
-  useBreakpointValue,
   Box,
   Flex,
   Text,
@@ -24,6 +23,12 @@ import html2canvas from 'html2canvas';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import {
+  defaultCartesianGridProps,
+  defaultTooltipCursor,
+  getDefaultXAxisProps,
+  getDefaultYAxisProps,
+} from '@/app/utils/chartAxisConfig';
 import { TemperaturePoint } from './SoilTemperatureMain';
 
 const SoilTemperatureChart = ({
@@ -50,12 +55,8 @@ const SoilTemperatureChart = ({
     high: d.high,
   }));
 
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(Math.max(chartData.length, 1) / 3),
-    md: Math.ceil(Math.max(chartData.length, 1) / 5),
-  });
-
-  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
+  const xAxisProps = getDefaultXAxisProps(chartData, 'name');
+  const yAxisProps = getDefaultYAxisProps(2);
   const { textColor } = useColorModeStyles();
 
   const bandFill = useColorModeValue(
@@ -152,9 +153,9 @@ const SoilTemperatureChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid {...defaultCartesianGridProps} />
 
             {/* Y-band for ideal irrigation temperature */}
             {showBand && (
@@ -172,51 +173,19 @@ const SoilTemperatureChart = ({
 
             <XAxis
               dataKey="name"
+              {...xAxisProps}
               angle={0}
               textAnchor="middle"
-              interval={labelInterval}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
-              }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
+              // interval={labelInterval}
             />
             <YAxis
+              {...yAxisProps}
               label={{ angle: -90, position: 'insideLeft' }}
-              domain={['auto', 'auto']}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
-              }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip
+              content={<UnifiedTooltip />}
+              cursor={defaultTooltipCursor}
+            />
             <Legend onClick={handleLegendClick} />
 
             <Line
@@ -225,7 +194,8 @@ const SoilTemperatureChart = ({
               name="Basse"
               stroke={showLow ? '#3182CE' : 'gray'}
               strokeWidth={2}
-              dot={{ r: 3, fill: showLow ? '#3182CE' : 'gray' }}
+              dot={false}
+              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
               hide={!showLow}
               isAnimationActive={false}
             />
@@ -235,7 +205,8 @@ const SoilTemperatureChart = ({
               name="Moyenne"
               stroke={showMedium ? '#2F855A' : 'gray'}
               strokeWidth={2}
-              dot={{ r: 3, fill: showMedium ? '#2F855A' : 'gray' }}
+              dot={false}
+              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
               hide={!showMedium}
               isAnimationActive={false}
             />
@@ -245,7 +216,8 @@ const SoilTemperatureChart = ({
               name="Haute"
               stroke={showHigh ? '#E53E3E' : 'gray'}
               strokeWidth={2}
-              dot={{ r: 3, fill: showHigh ? '#E53E3E' : 'gray' }}
+              dot={false}
+              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
               hide={!showHigh}
               isAnimationActive={false}
             />

@@ -12,6 +12,13 @@ import {
   ReferenceLine,
 } from 'recharts';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import {
+  defaultCartesianGridProps,
+  defaultLineProps,
+  defaultTooltipCursor,
+  getDefaultXAxisProps,
+  getDefaultYAxisProps,
+} from '@/app/utils/chartAxisConfig';
 import ChartStateView from '../common/ChartStateView';
 import UnifiedTooltip from '../common/UnifiedTooltip';
 
@@ -51,12 +58,6 @@ const CustomLegend = (props: any) => (
   </ul>
 );
 
-const CustomTick = ({ x, y, payload }: any) => (
-  <text x={x} y={y} textAnchor="middle" fill="#666" fontSize="10">
-    {payload.value}
-  </text>
-);
-
 const WindDirectionGraph = ({ data }: { data: any }) => {
   const { bg, textColor } = useColorModeStyles();
   const loading = !data;
@@ -64,6 +65,12 @@ const WindDirectionGraph = ({ data }: { data: any }) => {
     !!data &&
     (!data.sensor_data ||
       (Array.isArray(data.sensor_data) && data.sensor_data.length === 0));
+  const chartData = data?.sensor_data ?? [];
+  const xAxisProps = getDefaultXAxisProps(chartData, 'timestamp');
+  const yAxisProps = {
+    ...getDefaultYAxisProps(0),
+    domain: [0, 360] as [number, number],
+  };
 
   return (
     <Box
@@ -79,54 +86,25 @@ const WindDirectionGraph = ({ data }: { data: any }) => {
       </Text>
       <ChartStateView loading={loading} empty={empty} height={300}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data?.sensor_data ?? []}>
-            <CartesianGrid strokeDasharray="3 3" />
+          <LineChart
+            data={chartData}
+            margin={{ top: 16, right: 24, left: 8, bottom: 40 }}
+          >
+            <CartesianGrid {...defaultCartesianGridProps} />
             <XAxis
               dataKey="timestamp"
-              tick={<CustomTick />}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              // tick={{                          // Tick styling
-              //   fill: '#666',                  // Tick label color
-              //   fontSize: 17,                  // Tick label font size
-              //   fontFamily: 'Arial, sans-serif' // Tick label font
-              // }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
+              {...xAxisProps}
+              angle={0}
+              textAnchor="middle"
+              // interval={labelInterval}
             />
-            <YAxis
-              tick={<CustomTick />}
-              domain={[0, 360]}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              // tick={{                          // Tick styling
-              //   fill: '#666',                  // Tick label color
-              //   fontSize: 17,                  // Tick label font size
-              //   fontFamily: 'Arial, sans-serif' // Tick label font
-              // }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
+            <YAxis {...yAxisProps} />
+            <Tooltip
+              content={<UnifiedTooltip />}
+              cursor={defaultTooltipCursor}
             />
-            <Tooltip content={<UnifiedTooltip />} />
             <Legend content={<CustomLegend />} />
 
-            {/* Reference lines for cardinal directions */}
             <ReferenceLine y={0} stroke="red" strokeDasharray="3 3" label="N" />
             <ReferenceLine
               y={90}
@@ -147,12 +125,12 @@ const WindDirectionGraph = ({ data }: { data: any }) => {
               label="W"
             />
 
-            {/* Line for Wind Direction */}
             <Line
               type="monotone"
               dataKey="wind_direction"
-              stroke={data.sensor_colors?.wind_direction_color}
+              stroke={data?.sensor_colors?.wind_direction_color}
               name="Wind Direction (°)"
+              {...defaultLineProps}
             />
           </LineChart>
         </ResponsiveContainer>

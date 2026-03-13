@@ -9,14 +9,7 @@ import {
   ResponsiveContainer,
   ReferenceArea,
 } from 'recharts';
-import {
-  Box,
-  Button,
-  Flex,
-  HStack,
-  Text,
-  useBreakpointValue,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { useRef, useMemo } from 'react';
 import html2canvas from 'html2canvas';
 import { FaCamera, FaDownload } from 'react-icons/fa';
@@ -24,6 +17,11 @@ import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { ThresholdBand, WaterSoilData } from '@/app/types';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
+import {
+  defaultCartesianGridProps,
+  defaultTooltipCursor,
+  getDefaultXAxisProps,
+} from '@/app/utils/chartAxisConfig';
 
 const WaterSoilChart = ({
   data,
@@ -38,12 +36,7 @@ const WaterSoilChart = ({
 }) => {
   const { critical_min, critical_max, normal_min, normal_max } = thresholds;
 
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(Math.max(data.length, 1) / 3),
-    md: Math.ceil(Math.max(data.length, 1) / 5),
-  });
-
-  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
+  const xAxisProps = getDefaultXAxisProps(data, 'timestamp');
   const chartRef = useRef<HTMLDivElement>(null);
 
   const handleScreenshot = async () => {
@@ -159,8 +152,11 @@ const WaterSoilChart = ({
         height={300}
       >
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
+          <LineChart
+            data={data}
+            margin={{ top: 16, right: 24, left: 8, bottom: 40 }}
+          >
+            <CartesianGrid {...defaultCartesianGridProps} />
 
             {/* Background bands — render BEFORE series so they appear behind */}
             {xStart !== undefined && xEnd !== undefined && (
@@ -194,27 +190,10 @@ const WaterSoilChart = ({
 
             <XAxis
               dataKey="timestamp"
+              {...xAxisProps}
               angle={0}
               textAnchor="middle"
-              interval={labelInterval}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
-              }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
+              // interval={labelInterval}
             />
 
             <YAxis
@@ -264,7 +243,10 @@ const WaterSoilChart = ({
               }}
             />
 
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip
+              content={<UnifiedTooltip />}
+              cursor={defaultTooltipCursor}
+            />
             <Legend />
 
             {/* Soil moisture lines */}
@@ -277,7 +259,9 @@ const WaterSoilChart = ({
               stroke="#0288d1"
               strokeWidth={2}
               fillOpacity={0.5}
-              connectNulls={true} //
+              connectNulls={true}
+              dot={false}
+              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
               isAnimationActive={false}
             />
             <Line
@@ -287,7 +271,8 @@ const WaterSoilChart = ({
               name="Humidité basse (%)"
               stroke="#8884d8"
               strokeWidth={2}
-              activeDot={{ r: 6 }}
+              dot={false}
+              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
             />
             <Line
               yAxisId="left"
@@ -296,7 +281,8 @@ const WaterSoilChart = ({
               name="Humidité moyenne (%)"
               stroke="#82ca9d"
               strokeWidth={2}
-              activeDot={{ r: 6 }}
+              dot={false}
+              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
             />
             <Line
               yAxisId="left"
@@ -305,7 +291,8 @@ const WaterSoilChart = ({
               name="Humidité haute (%)"
               stroke="#ffc658"
               strokeWidth={2}
-              activeDot={{ r: 6 }}
+              dot={false}
+              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
             />
 
             {/* Water flow area */}

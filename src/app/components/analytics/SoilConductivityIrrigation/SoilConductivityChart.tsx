@@ -10,14 +10,7 @@ import {
   Bar,
   ComposedChart,
 } from 'recharts';
-import {
-  Box,
-  Flex,
-  Text,
-  Button,
-  HStack,
-  useBreakpointValue,
-} from '@chakra-ui/react';
+import { Box, Flex, Text, Button, HStack } from '@chakra-ui/react';
 import { FaCamera, FaDownload } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
@@ -25,6 +18,11 @@ import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { useRef, useState } from 'react';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
+import {
+  defaultCartesianGridProps,
+  defaultTooltipCursor,
+  getDefaultXAxisProps,
+} from '@/app/utils/chartAxisConfig';
 
 const SoilConductivityChart = ({
   lowData,
@@ -65,10 +63,7 @@ const SoilConductivityChart = ({
     waterflow: flowMap.get(item.timestamp) ?? null,
   }));
 
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(chartData.length / 3),
-    md: Math.ceil(chartData.length / 5),
-  });
+  const xAxisProps = getDefaultXAxisProps(chartData, 'timestamp');
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
@@ -97,8 +92,6 @@ const SoilConductivityChart = ({
 
     URL.revokeObjectURL(url);
   };
-  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
-
   return (
     <Box width="100%" pr={4} pb={4}>
       <Flex justify="space-between" align="center" mb={4}>
@@ -124,32 +117,15 @@ const SoilConductivityChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid {...defaultCartesianGridProps} />
             <XAxis
               dataKey="timestamp"
-              interval={labelInterval}
+              {...xAxisProps}
               angle={0}
               textAnchor="middle"
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
-              }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
+              // interval={labelInterval}
             />
             <YAxis
               yAxisId="left"
@@ -192,7 +168,10 @@ const SoilConductivityChart = ({
                 fontSize: 18, // Tick label font size
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip
+              content={<UnifiedTooltip />}
+              cursor={defaultTooltipCursor}
+            />
             {/* <Legend /> */}
             <Legend onClick={handleLegendClick} />
 
@@ -206,6 +185,7 @@ const SoilConductivityChart = ({
               strokeWidth={2}
               strokeOpacity={activeLines.low ? 1 : 0.1}
               dot={false}
+              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
             />
 
             <Line
@@ -217,6 +197,7 @@ const SoilConductivityChart = ({
               strokeWidth={2}
               strokeOpacity={activeLines.high ? 1 : 0.1}
               dot={false}
+              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
             />
 
             <Bar
