@@ -29,10 +29,10 @@ export default function GoogleMapWeather() {
     <Loading />
   ) : (
     <Box
-      maxW="100%"
-      maxH={{ base: '300px', md: '500px' }}
-      height="100%"
       width="100%"
+      height={{ base: '300px', md: '400px' }}
+      minH={{ base: '280px', md: '360px' }}
+      maxH={{ base: '300px', md: '500px' }}
       borderRadius="md"
       overflow="hidden"
     >
