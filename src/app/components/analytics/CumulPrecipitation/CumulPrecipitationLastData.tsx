@@ -1,6 +1,7 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { FaCloudRain } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
+import { formatNumber } from '@/app/utils/formatNumber';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -41,10 +42,10 @@ const CumulPrecipitationLastData = ({ data }: { data: SensorData[] }) => {
     >
       <FaCloudRain size={50} color="#3b82f6" />
       <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
-        Dernière précipitation :
+        Dernière irrigation :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest ? `${latest.value.toFixed(2)} mm` : 'N/A'}
+        {latest ? `${formatNumber(latest.value)} mm` : 'N/A'}
       </Text>
       <Text fontSize="sm" color={timeColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}

@@ -123,12 +123,18 @@ const WindSpeedGraph = ({ data }: { data: any }) => {
             />
             <Tooltip content={<UnifiedTooltip />} />
             <Legend content={<CustomLegend />} />
-            {/* Line for Wind Speed */}
             <Line
               type="monotone"
               dataKey="wind_speed"
               stroke={data.sensor_colors?.wind_speed_color}
-              name="Wind Speed (m/s)"
+              name="Vitesse du vent (m/s)"
+            />
+            <Line
+              type="monotone"
+              dataKey="wind_gust"
+              stroke={data.sensor_colors?.wind_gust_color ?? '#ed8936'}
+              name="Rafale du vent (m/s)"
+              strokeDasharray="5 5"
             />
           </LineChart>
         </ResponsiveContainer>

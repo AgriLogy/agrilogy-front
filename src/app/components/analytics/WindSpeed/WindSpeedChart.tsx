@@ -20,23 +20,29 @@ import {
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
+import { roundNumber } from '@/app/utils/formatNumber';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+
+/** Wind speed sensor data may include optional wind_gust (rafale). */
+type WindSpeedSensorData = SensorData & { wind_gust?: number };
 
 const WindSpeedChart = ({
   data,
   loading,
 }: {
-  data: SensorData[];
+  data: WindSpeedSensorData[];
   loading: boolean;
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const [showLine, setShowLine] = useState(true);
+  const [showGust, setShowGust] = useState(true);
 
   const chartData = data.map((item) => ({
     name: item.timestamp,
-    value: item.value,
+    value: roundNumber(item.value),
+    wind_gust: item.wind_gust != null ? roundNumber(item.wind_gust) : undefined,
   }));
 
   const labelInterval = useBreakpointValue({
@@ -48,8 +54,11 @@ const WindSpeedChart = ({
   const { textColor } = useColorModeStyles();
 
   const handleLegendClick = (data: any) => {
-    if (data.value === 'Vitesse du vent') {
+    if (data.value === 'Vitesse du vent (km/h)') {
       setShowLine((prev) => !prev);
+    }
+    if (data.value === 'Rafale du vent (km/h)') {
+      setShowGust((prev) => !prev);
     }
   };
 
@@ -64,9 +73,18 @@ const WindSpeedChart = ({
   };
 
   const handleDownloadData = () => {
-    const csv =
-      'timestamp,value\n' +
-      data.map((d) => `${d.timestamp},${d.value}`).join('\n');
+    const hasGust = data.some(
+      (d) => (d as WindSpeedSensorData).wind_gust != null
+    );
+    const header = hasGust
+      ? 'timestamp,value,wind_gust\n'
+      : 'timestamp,value\n';
+    const rows = data.map((d) => {
+      const row = `${d.timestamp},${d.value}`;
+      const gust = (d as WindSpeedSensorData).wind_gust;
+      return hasGust ? `${row},${gust ?? ''}` : row;
+    });
+    const csv = header + rows.join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -179,6 +197,18 @@ const WindSpeedChart = ({
               dot={{ r: 4, fill: showLine ? '#82ca9d' : 'gray' }}
               activeDot={{ r: 6, stroke: showLine ? '#2f855a' : 'gray' }}
               isAnimationActive={false}
+            />
+            <Line
+              type="monotone"
+              dataKey="wind_gust"
+              name="Rafale du vent (km/h)"
+              stroke={showGust ? '#ed8936' : 'gray'}
+              strokeWidth={2}
+              strokeDasharray="5 5"
+              dot={{ r: 4, fill: showGust ? '#ed8936' : 'gray' }}
+              activeDot={{ r: 6, stroke: showGust ? '#c05621' : 'gray' }}
+              isAnimationActive={false}
+              connectNulls
             />
           </LineChart>
         </ResponsiveContainer>

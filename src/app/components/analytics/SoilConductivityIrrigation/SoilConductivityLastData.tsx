@@ -1,6 +1,7 @@
 import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import { SensorData } from '@/app/types';
 import { FaWater } from 'react-icons/fa';
+import { formatNumber } from '@/app/utils/formatNumber';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 
 const timeAgo = (timestamp: string): string => {
@@ -55,19 +56,19 @@ const SoilConductivityLastData = ({
           {' '}
           {/* Medium blue for low conductivity */}
           Profondeur basse :{' '}
-          {latestLow ? `${latestLow.value.toFixed(2)} µS/cm` : 'N/A'}
+          {latestLow ? `${formatNumber(latestLow.value)} µS/cm` : 'N/A'}
         </Text>
         <Text fontSize="lg" color="#2BB673">
           {' '}
           {/* Vibrant teal-green for high conductivity */}
           Profondeur haute :{' '}
-          {latestHigh ? `${latestHigh.value.toFixed(2)} µS/cm` : 'N/A'}
+          {latestHigh ? `${formatNumber(latestHigh.value)} µS/cm` : 'N/A'}
         </Text>
         <Text fontSize="lg" color="#00B0FF">
           {' '}
           {/* Orange-red for irrigation flow */}
-          Débit irrigation :{' '}
-          {latestFlow ? `${latestFlow.value.toFixed(2)} L/min` : 'N/A'}
+          Irrigation :{' '}
+          {latestFlow ? `${formatNumber(latestFlow.value)} L/min` : 'N/A'}
         </Text>
       </VStack>
       {(latestLow || latestHigh || latestFlow) && (

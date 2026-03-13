@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import {
   LineChart,
   Line,
@@ -10,54 +10,44 @@ import {
   CartesianGrid,
 } from 'recharts';
 import {
-  useBreakpointValue,
   Box,
   Flex,
   Text,
   Button,
   HStack,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
-import { SensorData } from '@/app/types';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 
-const WaterFlowChart = ({
+export interface VPDDataPoint {
+  timestamp: string;
+  vpd: number;
+}
+
+const VPDChart = ({
   data,
   loading,
 }: {
-  data: SensorData[];
+  data: VPDDataPoint[];
   loading: boolean;
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
-  const [showLine, setShowLine] = useState(true);
-
-  const chartData = data.map((item) => ({
-    name: item.timestamp,
-    value: item.value,
-  }));
-
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(chartData.length / 3),
-    md: Math.ceil(chartData.length / 5),
-  });
-
-  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const { textColor } = useColorModeStyles();
 
-  const handleLegendClick = (data: any) => {
-    if (data.value === 'Irrigation (L/min)') {
-      setShowLine((prev) => !prev);
-    }
-  };
+  const labelInterval = useBreakpointValue({
+    base: Math.ceil(Math.max(data.length, 1) / 3),
+    md: Math.ceil(Math.max(data.length, 1) / 5),
+  });
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
       const canvas = await html2canvas(chartRef.current);
       const link = document.createElement('a');
-      link.download = 'WaterFlow_chart.png';
+      link.download = 'vpd_chart.png';
       link.href = canvas.toDataURL();
       link.click();
     }
@@ -65,17 +55,14 @@ const WaterFlowChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      'timestamp,value\n' +
-      data.map((d) => `${d.timestamp},${d.value}`).join('\n');
-
+      'timestamp,vpd_kpa\n' +
+      data.map((d) => `${d.timestamp},${d.vpd}`).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
-
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'WaterFlow_data.csv';
+    link.download = 'vpd_data.csv';
     link.click();
-
     URL.revokeObjectURL(url);
   };
 
@@ -83,7 +70,7 @@ const WaterFlowChart = ({
     <Box width="100%" pr={4} pb={4}>
       <Flex justify="space-between" align="center" mb={4}>
         <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Irrigation
+          Déficit de pression de vapeur (VPD)
         </Text>
         <HStack spacing={2}>
           <Button
@@ -104,7 +91,6 @@ const WaterFlowChart = ({
           </Button>
         </HStack>
       </Flex>
-
       <ChartStateView
         loading={loading}
         empty={data.length === 0}
@@ -113,70 +99,51 @@ const WaterFlowChart = ({
       >
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
-            data={chartData}
+            data={data}
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
-              dataKey="name"
+              dataKey="timestamp"
               angle={0}
               textAnchor="middle"
               interval={labelInterval}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke="#666"
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: '#666',
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
+              axisLine={{ stroke: '#666', strokeWidth: 1 }}
+              tickLine={{ stroke: '#666', strokeWidth: 1 }}
             />
             <YAxis
+              stroke="#666"
+              strokeWidth={1}
+              tick={{
+                fill: '#666',
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
+              }}
+              axisLine={{ stroke: '#666', strokeWidth: 1 }}
+              tickLine={{ stroke: '#666', strokeWidth: 1 }}
               label={{
+                value: 'VPD (kPa)',
                 angle: -90,
-                // fontSize: 16,
-                // dy: 80,
                 position: 'insideLeft',
               }}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
-              }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
-            <Legend onClick={handleLegendClick} />
+            <Tooltip content={<UnifiedTooltip valueUnit=" kPa" />} />
+            <Legend />
             <Line
               type="monotone"
-              dataKey="value"
-              name="Irrigation (L/min)"
-              stroke={showLine ? '#82ca9d' : 'gray'}
+              dataKey="vpd"
+              name="VPD (kPa)"
+              stroke="#805ad5"
               strokeWidth={2}
-              dot={{ r: 4, fill: showLine ? '#82ca9d' : 'gray' }}
-              activeDot={{ r: 6, stroke: showLine ? '#2f855a' : 'gray' }}
+              dot={{ r: 4, fill: '#805ad5' }}
+              activeDot={{ r: 6, stroke: '#553c9a' }}
               isAnimationActive={false}
             />
           </LineChart>
@@ -186,4 +153,4 @@ const WaterFlowChart = ({
   );
 };
 
-export default WaterFlowChart;
+export default VPDChart;

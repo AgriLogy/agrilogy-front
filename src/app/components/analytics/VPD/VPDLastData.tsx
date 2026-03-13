@@ -1,7 +1,6 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
-import { RiWaterFlashFill } from 'react-icons/ri';
-import { SensorData } from '@/app/types';
 import { formatNumber } from '@/app/utils/formatNumber';
+import type { VPDDataPoint } from './VPDChart';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -9,20 +8,18 @@ const timeAgo = (timestamp: string): string => {
   const diffMs = now.getTime() - then.getTime();
   const diffMin = Math.floor(diffMs / 60000);
   const diffH = Math.floor(diffMin / 60);
-
-  if (diffMin < 1) return 'just now';
-  if (diffMin < 60) return `${diffMin} min ago`;
-  if (diffH < 24) return `${diffH} hours ago`;
+  if (diffMin < 1) return "À l'instant";
+  if (diffMin < 60) return `${diffMin} min`;
+  if (diffH < 24) return `${diffH} h`;
   return then.toLocaleDateString();
 };
 
-const WaterFlowLastData = ({ data }: { data: SensorData[] }) => {
+const VPDLastData = ({ data }: { data: VPDDataPoint[] }) => {
   const latest = data[data.length - 1];
-
-  // Light/Dark mode values
-  const bgColor = useColorModeValue('blue.50', 'blue.900');
-  const valueColor = useColorModeValue('blue.700', 'blue.200');
+  const bgColor = useColorModeValue('purple.50', 'purple.900');
+  const valueColor = useColorModeValue('purple.700', 'purple.200');
   const textColor = useColorModeValue('gray.600', 'gray.300');
+  const timeColor = useColorModeValue('gray.500', 'gray.400');
 
   return (
     <Box
@@ -40,20 +37,17 @@ const WaterFlowLastData = ({ data }: { data: SensorData[] }) => {
       alignItems="center"
       textAlign="center"
     >
-      <RiWaterFlashFill size={50} color="#00b4d8" />
       <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
-        Dernière irrigation :
+        Dernier VPD
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest
-          ? `${formatNumber(latest.value)} ${latest.default_unit}`
-          : 'N/A'}
+        {latest ? `${formatNumber(latest.vpd)} kPa` : 'N/A'}
       </Text>
-      <Text fontSize="sm" color={textColor}>
+      <Text fontSize="sm" color={timeColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}
       </Text>
     </Box>
   );
 };
 
-export default WaterFlowLastData;
+export default VPDLastData;

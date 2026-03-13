@@ -2,6 +2,7 @@ import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { GiWaterDrop, GiWaterTank, GiGroundbreaker } from 'react-icons/gi';
 import { FaTachometerAlt } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
+import { formatNumber } from '@/app/utils/formatNumber';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -39,7 +40,7 @@ const SensorBox = ({
         {label}
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {data ? `${data.value.toFixed(2)} ${data.default_unit}` : 'N/A'}
+        {data ? `${formatNumber(data.value)} ${data.default_unit}` : 'N/A'}
       </Text>
       <Text fontSize="sm" color={timeColor}>
         {data ? `Mise à jour : ${timeAgo(data.timestamp)}` : ''}

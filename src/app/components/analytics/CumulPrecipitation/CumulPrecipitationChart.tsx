@@ -22,6 +22,7 @@ import { useRef, useState } from 'react';
 import html2canvas from 'html2canvas';
 import { FaDownload, FaCloudRain } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
+import { formatNumber } from '@/app/utils/formatNumber';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
@@ -83,7 +84,7 @@ const CumulPrecipitationChart = ({
   const handleDownloadData = () => {
     const csv =
       'period,total_precipitation_mm\n' +
-      chartData.map((d) => `${d.period},${d.value.toFixed(2)}`).join('\n');
+      chartData.map((d) => `${d.period},${formatNumber(d.value)}`).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -102,7 +103,7 @@ const CumulPrecipitationChart = ({
     <Box width="100%" pr={4} pb={4} borderRadius="md" p={4}>
       <Flex justify="space-between" align="center" mb={4}>
         <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Cumul de précipitations
+          Irrigation cumulée
         </Text>
         <HStack spacing={2}>
           <Select
@@ -202,7 +203,7 @@ const CumulPrecipitationChart = ({
             />
             <Bar
               dataKey="value"
-              name="Précipitations cumulées"
+              name="Irrigation cumulée"
               fill={colorMode === 'dark' ? '#60a5fa' : '#3b82f6'} // lighter blue in dark mode
               isAnimationActive={false}
             />

@@ -19,6 +19,7 @@ import ET0Main from '../analytics/ET0/ET0Main';
 import SolarRadiationMain from '../analytics/SolarRadiation/SolarRadiationMain';
 import CumulPrecipitationMain from '../analytics/CumulPrecipitation/CumulPrecipitationMain';
 import PrecipitationRateMain from '../analytics/PrecipitationRate/PrecipitationRateMain';
+import VPDMain from '../analytics/VPD/VPDMain';
 
 const StationMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
@@ -91,6 +92,11 @@ const StationMain = () => {
       {activeGraph?.weather_temperature_humidity_status && (
         <Box bg={bg} className="box wide">
           <TempuratureHumidtyMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.weather_temperature_humidity_status && (
+        <Box bg={bg} className="box wide">
+          <VPDMain filters={filters} />
         </Box>
       )}
       {activeGraph?.et0_status && (

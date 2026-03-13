@@ -2,6 +2,7 @@
 
 import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import React from 'react';
+import { formatNumber } from '@/app/utils/formatNumber';
 
 /**
  * Recharts payload item passed to tooltip content.
@@ -66,7 +67,9 @@ function defaultValueFormatter(
   _item: UnifiedTooltipPayloadItem,
   valueUnit?: string
 ): string {
-  const str = value == null ? '—' : String(value);
+  if (value == null) return '—';
+  const num = typeof value === 'number' ? value : Number(value);
+  const str = Number.isNaN(num) ? String(value) : formatNumber(num);
   return valueUnit ? `${str}${valueUnit}` : str;
 }
 

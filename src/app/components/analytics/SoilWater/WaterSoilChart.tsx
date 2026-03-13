@@ -249,7 +249,7 @@ const WaterSoilChart = ({
               orientation="right"
               domain={[0, 'auto']}
               label={{
-                value: 'Débit (L/s)',
+                value: 'Irrigation (L/s)',
                 angle: 90,
                 position: 'inside',
                 dx: 20,
@@ -272,7 +272,7 @@ const WaterSoilChart = ({
               yAxisId="right"
               type="monotone"
               dataKey="waterFlow"
-              name={`Débit d'eau (L/s)`}
+              name="Irrigation (L/s)"
               fill="#b3e5fc"
               stroke="#0288d1"
               strokeWidth={2}
