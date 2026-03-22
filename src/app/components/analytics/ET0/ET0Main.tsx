@@ -1,5 +1,8 @@
-import { Box, Stack } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { Box, Stack, VStack } from '@chakra-ui/react';
+import { useEffect, useMemo, useState } from 'react';
+import ChartDateRangeDragger from '../../common/ChartDateRangeDragger';
+import ChartDateRangeGate from '../../common/ChartDateRangeGate';
+import { sortByTimestamp } from '@/app/utils/chartDateWindow';
 import api from '@/app/lib/api';
 import ET0LastData from './ET0LastData';
 import ET0Chart from './ET0Chart';
@@ -57,6 +60,15 @@ const ET0Main = ({
       .finally(() => setLoading(false));
   }, [startDate, endDate, selectedZone]);
 
+  const sortedWeather = useMemo(
+    () => sortByTimestamp(weatherData),
+    [weatherData]
+  );
+  const timeline = useMemo(
+    () => sortedWeather.map((w) => w.timestamp),
+    [sortedWeather]
+  );
+
   return (
     <Stack
       spacing={2}
@@ -65,13 +77,26 @@ const ET0Main = ({
       width="100%"
       height="100%"
       className="Box"
+      maxH={"560px"}
     >
-      <Box flex={3} p={2} width="100%" height="370px">
-        <ET0Chart
-          weatherData={weatherData}
-          calculatedData={calculatedData}
-          loading={loading}
-        />
+      <Box flex={3} p={2} width="100%" height="100%">
+        <ChartDateRangeGate timeline={timeline}>
+          {({ startIdx, endIdx, setRange }) => (
+            <VStack spacing={0} align="stretch" width="100%">
+              <ET0Chart
+                weatherData={sortedWeather.slice(startIdx, endIdx + 1)}
+                calculatedData={calculatedData}
+                loading={loading}
+              />
+              <ChartDateRangeDragger
+                timestamps={timeline}
+                startIdx={startIdx}
+                endIdx={endIdx}
+                onChange={(r) => setRange(r)}
+              />
+            </VStack>
+          )}
+        </ChartDateRangeGate>
       </Box>
       <Box flex={1} p={3} height="100%" width="100%">
         <ET0LastData

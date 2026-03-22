@@ -1,5 +1,11 @@
-import { Box, Stack } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { Box, Stack, VStack } from '@chakra-ui/react';
+import { useEffect, useMemo, useState } from 'react';
+import ChartDateRangeDragger from '../../common/ChartDateRangeDragger';
+import ChartDateRangeGate from '../../common/ChartDateRangeGate';
+import {
+  filterByTimestampWindow,
+  unionSortedTimestamps,
+} from '@/app/utils/chartDateWindow';
 import { SensorData } from '@/app/types';
 
 import SoilSalinityConductivityLastData from './SoilSalinityConductivityLastData';
@@ -49,6 +55,11 @@ const SoilSalinityConductivityMain = ({
       .finally(() => setLoading(false));
   }, [startDate, endDate, selectedZone]);
 
+  const timeline = useMemo(
+    () => unionSortedTimestamps(Salinitydata, Conductivitydata),
+    [Salinitydata, Conductivitydata]
+  );
+
   return (
     <Stack
       spacing={2}
@@ -59,12 +70,33 @@ const SoilSalinityConductivityMain = ({
       className="Box"
     >
       <Box flex={3} p={2} height={'100%'} width={'100%'}>
-        {/* <SoilSalinityConductivityChart data={data} loading={loading} /> */}
-        <SoilSalinityConductivityChart
-          salinityData={Salinitydata}
-          conductivityData={Conductivitydata}
-          loading={loading}
-        />
+        <ChartDateRangeGate timeline={timeline}>
+          {({ startIdx, endIdx, setRange }) => (
+            <VStack spacing={0} align="stretch" width="100%">
+              <SoilSalinityConductivityChart
+                salinityData={filterByTimestampWindow(
+                  Salinitydata,
+                  timeline,
+                  startIdx,
+                  endIdx
+                )}
+                conductivityData={filterByTimestampWindow(
+                  Conductivitydata,
+                  timeline,
+                  startIdx,
+                  endIdx
+                )}
+                loading={loading}
+              />
+              <ChartDateRangeDragger
+                timestamps={timeline}
+                startIdx={startIdx}
+                endIdx={endIdx}
+                onChange={(r) => setRange(r)}
+              />
+            </VStack>
+          )}
+        </ChartDateRangeGate>
       </Box>
       <Box flex={1} p={3} height={'100%'} width={'100%'}>
         {/* <SoilSalinityConductivityLastData data={data} /> */}

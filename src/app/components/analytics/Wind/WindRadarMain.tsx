@@ -1,5 +1,8 @@
-import { Box, Stack } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { Box, Stack, VStack } from '@chakra-ui/react';
+import { useEffect, useMemo, useState } from 'react';
+import ChartDateRangeDragger from '../../common/ChartDateRangeDragger';
+import ChartDateRangeGate from '../../common/ChartDateRangeGate';
+import { alignWindSeriesByTimestamp } from '@/app/utils/chartDateWindow';
 import api from '@/app/lib/api';
 import WindRadarLastData from './WindRadarLastData';
 import WindRadarChart from './WindRadarChart';
@@ -54,6 +57,14 @@ const WindRadarMain = ({
       .finally(() => setLoading(false));
   }, [startDate, endDate, selectedZone]);
 
+  const { timeline, speedAligned, directionAligned } = useMemo(() => {
+    const { timeline: tl, speed, direction } = alignWindSeriesByTimestamp(
+      speedData,
+      directionData
+    );
+    return { timeline: tl, speedAligned: speed, directionAligned: direction };
+  }, [speedData, directionData]);
+
   return (
     <Stack
       spacing={2}
@@ -64,11 +75,23 @@ const WindRadarMain = ({
       className="Box"
     >
       <Box flex={3} p={2} height="100%" width="100%">
-        <WindRadarChart
-          windSpeedData={speedData}
-          windDirectionData={directionData}
-          loading={loading}
-        />
+        <ChartDateRangeGate timeline={timeline}>
+          {({ startIdx, endIdx, setRange }) => (
+            <VStack spacing={0} align="stretch" width="100%">
+              <WindRadarChart
+                windSpeedData={speedAligned.slice(startIdx, endIdx + 1)}
+                windDirectionData={directionAligned.slice(startIdx, endIdx + 1)}
+                loading={loading}
+              />
+              {/* <ChartDateRangeDragger
+                timestamps={timeline}
+                startIdx={startIdx}
+                endIdx={endIdx}
+                onChange={(r) => setRange(r)}
+              /> */}
+            </VStack>
+          )}
+        </ChartDateRangeGate>
       </Box>
       <Box flex={1} p={3} height="100%" width="100%">
         <WindRadarLastData

@@ -5,7 +5,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  Brush,
   CartesianGrid,
   Bar,
   ComposedChart,
@@ -15,13 +14,18 @@ import { FaCamera, FaDownload } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
+import ChartLegend from '../../common/ChartLegend';
 import {
+  addTimeMsToChartRows,
   defaultCartesianGridProps,
+  defaultBarProps,
+  defaultLegendWrapperStyle,
+  defaultLineProps,
   defaultTooltipCursor,
-  getDefaultXAxisProps,
+  getAdaptiveTimeXAxisProps,
 } from '@/app/utils/chartAxisConfig';
 
 const SoilConductivityChart = ({
@@ -43,8 +47,26 @@ const SoilConductivityChart = ({
   const chartRef = useRef<HTMLDivElement>(null);
   const { textColor } = useColorModeStyles();
 
-  // Convert flow data into a map for quick access
-  const flowMap = new Map(flowData.map((f) => [f.timestamp, f.value]));
+  const chartData = useMemo(() => {
+    const lowMap = new Map(lowData.map((d) => [d.timestamp, d.value]));
+    const highMap = new Map(highData.map((d) => [d.timestamp, d.value]));
+    const flowMap = new Map(flowData.map((f) => [f.timestamp, f.value]));
+    const allTs = Array.from(
+      new Set([
+        ...lowData.map((d) => d.timestamp),
+        ...highData.map((d) => d.timestamp),
+        ...flowData.map((d) => d.timestamp),
+      ])
+    ).sort((a, b) => a.localeCompare(b));
+
+    const rows = allTs.map((timestamp) => ({
+      timestamp,
+      low: lowMap.get(timestamp) ?? null,
+      high: highMap.get(timestamp) ?? null,
+      waterflow: flowMap.get(timestamp) ?? null,
+    }));
+    return addTimeMsToChartRows(rows, 'timestamp');
+  }, [lowData, highData, flowData]);
 
   const handleLegendClick = (e: any) => {
     const key = e.dataKey as keyof typeof activeLines;
@@ -54,16 +76,7 @@ const SoilConductivityChart = ({
     }));
   };
 
-  // Merge EC and flow data into a unified structure
-
-  const chartData = lowData.map((item, index) => ({
-    timestamp: item.timestamp,
-    low: item.value,
-    high: highData[index]?.value ?? null,
-    waterflow: flowMap.get(item.timestamp) ?? null,
-  }));
-
-  const xAxisProps = getDefaultXAxisProps(chartData, 'timestamp');
+  const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'timestamp');
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
@@ -117,100 +130,105 @@ const SoilConductivityChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
+            margin={{ top: 20, right: 10, left: 10, bottom: 30 }}
           >
             <CartesianGrid {...defaultCartesianGridProps} />
-            <XAxis
-              dataKey="timestamp"
-              {...xAxisProps}
-              angle={0}
-              textAnchor="middle"
-              // interval={labelInterval}
-            />
+            <XAxis {...xAxisProps} />
             <YAxis
               yAxisId="left"
               label={{
                 value: 'Conductivité',
                 angle: -90,
                 position: 'insideLeft',
-                dy: 70,
-                fontSize: 18, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                dx: -10,
+                dy: 30,
+                fontSize: 15,
+                fontFamily: 'Arial, sans-serif',
               }}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke="#666"
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: '#666',
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
                 stroke: '#666',
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
                 stroke: '#666',
                 strokeWidth: 1,
               }}
+              
             />
             <YAxis
               yAxisId="right"
               orientation="right"
               label={{
                 value: 'Irrigation',
-                angle: 90,
+                angle: -90,
                 position: 'insideRight',
-                dy: 50,
-                dx: 19,
-                fontSize: 18, // Tick label font size
+                dy: -30,
+                dx: 10,
+                fontSize: 15,
+                fontFamily: 
+                'Arial, sans-serif',
+              }}
+              stroke="#666"
+              strokeWidth={1}
+              tick={{
+                fill: '#666',
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
+              }}
+              axisLine={{
+                stroke: '#666',
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                stroke: '#666',
+                strokeWidth: 1,
               }}
             />
             <Tooltip
               content={<UnifiedTooltip />}
               cursor={defaultTooltipCursor}
             />
-            {/* <Legend /> */}
-            <Legend onClick={handleLegendClick} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={<ChartLegend onClick={handleLegendClick} />}
+            />
 
-            {/* EC Lines */}
             <Line
               yAxisId="left"
               type="monotone"
               dataKey="low"
-              name="Conductivité Basse"
+              name="Conductivité basse (µS/cm)"
               stroke="#1E88E5"
-              strokeWidth={2}
               strokeOpacity={activeLines.low ? 1 : 0.1}
-              dot={false}
-              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
+              {...defaultLineProps}
             />
 
             <Line
               yAxisId="left"
               type="monotone"
               dataKey="high"
-              name="Conductivité Haute"
+              name="Conductivité haute (µS/cm)"
               stroke="#2BB673"
-              strokeWidth={2}
               strokeOpacity={activeLines.high ? 1 : 0.1}
-              dot={false}
-              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
+              {...defaultLineProps}
             />
 
             <Bar
               yAxisId="right"
               dataKey="waterflow"
               name="Irrigation"
-              fill="#00B0FF"
-              stroke="#0091EA"
+              fill="#0ea5e9"
+              fillOpacity={activeLines.waterflow ? 0.65 : 0.06}
               barSize={10}
-              fillOpacity={activeLines.waterflow ? 0.7 : 0.05}
+              {...defaultBarProps}
             />
-
-            <Brush dataKey="timestamp" height={30} stroke="#8884d8" />
           </ComposedChart>
         </ResponsiveContainer>
       </ChartStateView>

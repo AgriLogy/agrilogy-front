@@ -1,4 +1,7 @@
-import { Box, Stack } from '@chakra-ui/react';
+import { Box, Stack, VStack } from '@chakra-ui/react';
+import ChartDateRangeDragger from '../../common/ChartDateRangeDragger';
+import ChartDateRangeGate from '../../common/ChartDateRangeGate';
+import { sortByTimestamp } from '@/app/utils/chartDateWindow';
 import { useEffect, useMemo, useState } from 'react';
 import api from '@/app/lib/api';
 import { calculateVPD } from '@/app/utils/calculateVPD';
@@ -73,6 +76,12 @@ const VPDMain = ({
       .filter((d): d is VPDDataPoint => d != null);
   }, [humidityData, temperatureData]);
 
+  const sortedVpd = useMemo(() => sortByTimestamp(vpdData), [vpdData]);
+  const timeline = useMemo(
+    () => sortedVpd.map((d) => d.timestamp),
+    [sortedVpd]
+  );
+
   return (
     <Stack
       spacing={2}
@@ -83,7 +92,22 @@ const VPDMain = ({
       className="Box"
     >
       <Box flex={3} p={2} height="100%" width="100%">
-        <VPDChart data={vpdData} loading={loading} />
+        <ChartDateRangeGate timeline={timeline}>
+          {({ startIdx, endIdx, setRange }) => (
+            <VStack spacing={0} align="stretch" width="100%">
+              <VPDChart
+                data={sortedVpd.slice(startIdx, endIdx + 1)}
+                loading={loading}
+              />
+              <ChartDateRangeDragger
+                timestamps={timeline}
+                startIdx={startIdx}
+                endIdx={endIdx}
+                onChange={(r) => setRange(r)}
+              />
+            </VStack>
+          )}
+        </ChartDateRangeGate>
       </Box>
       <Box flex={1} p={3} height="100%" width="100%">
         <VPDLastData data={vpdData} />

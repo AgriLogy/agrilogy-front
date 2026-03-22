@@ -13,13 +13,17 @@ import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
+import { formatNumber } from '@/app/utils/formatNumber';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import ChartLegend from '../../common/ChartLegend';
 import {
+  addTimeMsToChartRows,
   defaultCartesianGridProps,
+  defaultLegendWrapperStyle,
   defaultTooltipCursor,
-  getDefaultXAxisProps,
+  getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
 } from '@/app/utils/chartAxisConfig';
 
@@ -33,12 +37,15 @@ const SolarRadiationChart = ({
   const chartRef = useRef<HTMLDivElement>(null);
   const [showArea, setShowArea] = useState(true);
 
-  const chartData = data.map((item) => ({
-    name: item.timestamp,
-    value: item.value,
-  }));
+  const chartData = addTimeMsToChartRows(
+    data.map((item) => ({
+      name: item.timestamp,
+      value: item.value,
+    })),
+    'name'
+  );
 
-  const xAxisProps = getDefaultXAxisProps(chartData, 'name');
+  const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'name');
   const yAxisProps = getDefaultYAxisProps(2);
   const { textColor } = useColorModeStyles();
 
@@ -61,7 +68,7 @@ const SolarRadiationChart = ({
   const handleDownloadData = () => {
     const csv =
       'timestamp,value\n' +
-      data.map((d) => `${d.timestamp},${d.value}`).join('\n');
+      data.map((d) => `${d.timestamp},${formatNumber(d.value)}`).join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -76,12 +83,17 @@ const SolarRadiationChart = ({
 
   return (
     <Box width="100%" pr={4} pb={4}>
-      <Flex justify="space-between" align="center" mb={4}>
+      <Flex
+        justify="space-between"
+        align="center"
+        mb={4}
+        flexWrap="wrap"
+        gap={2}
+      >
         <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          {/* Évolution de la radiation solaire */}
           Rayonnement global
         </Text>
-        <HStack spacing={2}>
+        <HStack spacing={2} flexShrink={0}>
           <Button
             aria-label="Capture graphique"
             colorScheme="teal"
@@ -110,31 +122,29 @@ const SolarRadiationChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
+            margin={{ top: 20, right: 0, left: 40, bottom: 5 }}
           >
             <CartesianGrid {...defaultCartesianGridProps} />
-            <XAxis
-              dataKey="name"
-              {...xAxisProps}
-              angle={0}
-              textAnchor="middle"
-              // interval={labelInterval}
-            />
+            <XAxis {...xAxisProps} />
             <YAxis
               {...yAxisProps}
               label={{
+                value: 'Rayonnement (W/m²)',
                 angle: -90,
-                fontSize: 12,
+                dx: -35,
                 dy: 60,
                 position: 'insideLeft',
-                style: { fill: '#64748b' },
+                style: { fontSize: 14, fill: '#64748b' },
               }}
             />
             <Tooltip
               content={<UnifiedTooltip />}
               cursor={defaultTooltipCursor}
             />
-            <Legend onClick={handleLegendClick} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={<ChartLegend onClick={handleLegendClick} />}
+            />
             <Area
               type="monotone"
               dataKey="value"

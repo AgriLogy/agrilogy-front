@@ -1,6 +1,7 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { FaSun } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
+import { formatNumber } from '@/app/utils/formatNumber';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -44,7 +45,7 @@ const SolarRadiationLastData = ({ data }: { data: SensorData[] }) => {
         Dernière radiation solaire :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest ? `${(latest.value / 1000).toFixed(2)} W/M²` : 'N/A'}
+        {latest ? `${formatNumber(latest.value / 1000)} W/M²` : 'N/A'}
       </Text>
       <Text fontSize="sm" color={timeColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}

@@ -1,5 +1,8 @@
-import { Box, Stack } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { Box, Stack, VStack } from '@chakra-ui/react';
+import { useEffect, useMemo, useState } from 'react';
+import ChartDateRangeDragger from '../../common/ChartDateRangeDragger';
+import ChartDateRangeGate from '../../common/ChartDateRangeGate';
+import { sortByTimestamp } from '@/app/utils/chartDateWindow';
 import { SensorData } from '@/app/types';
 import api from '@/app/lib/api';
 import '@/app/styles/style.css';
@@ -33,6 +36,12 @@ const WaterPressureMain = ({
       .finally(() => setLoading(false));
   }, [startDate, endDate, selectedZone]);
 
+  const sortedData = useMemo(() => sortByTimestamp(data), [data]);
+  const timeline = useMemo(
+    () => sortedData.map((d) => d.timestamp),
+    [sortedData]
+  );
+
   return (
     <Stack
       spacing={2}
@@ -41,9 +50,25 @@ const WaterPressureMain = ({
       width="100%"
       height="100%"
       className="Box"
+      maxH={"560px"}
     >
       <Box flex={3} p={2} height="100%" width="100%">
-        <WaterPressureChart data={data} loading={loading} />
+        <ChartDateRangeGate timeline={timeline}>
+          {({ startIdx, endIdx, setRange }) => (
+            <VStack spacing={0} align="stretch" width="100%">
+              <WaterPressureChart
+                data={sortedData.slice(startIdx, endIdx + 1)}
+                loading={loading}
+              />
+              <ChartDateRangeDragger
+                timestamps={timeline}
+                startIdx={startIdx}
+                endIdx={endIdx}
+                onChange={(r) => setRange(r)}
+              />
+            </VStack>
+          )}
+        </ChartDateRangeGate>
       </Box>
       <Box flex={1} p={3} height="100%" width="100%">
         <WaterPressureLastData data={data} />

@@ -1,6 +1,7 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { FaAppleAlt } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
+import { formatNumber } from '@/app/utils/formatNumber';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -44,7 +45,7 @@ const FruiteSizeLastData = ({ data }: { data: SensorData[] }) => {
         Dernière taille mesurée :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest ? `${latest.value.toFixed(2)} mm` : 'N/A'}
+        {latest ? `${formatNumber(latest.value)} mm` : 'N/A'}
       </Text>
       <Text fontSize="sm" color={textColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}

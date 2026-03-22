@@ -13,12 +13,16 @@ import { Box, Flex, Text, Button, HStack } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import ChartStateView from '../../common/ChartStateView';
+import ChartLegend from '../../common/ChartLegend';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { formatNumber } from '@/app/utils/formatNumber';
 import {
+  addTimeMsToChartRows,
   defaultCartesianGridProps,
+  defaultLegendWrapperStyle,
   defaultLineProps,
-  getDefaultXAxisProps,
+  getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
 } from '@/app/utils/chartAxisConfig';
 
@@ -37,7 +41,8 @@ const VPDChart = ({
   const chartRef = useRef<HTMLDivElement>(null);
   const { textColor } = useColorModeStyles();
 
-  const xAxisProps = getDefaultXAxisProps(data, 'timestamp');
+  const chartData = addTimeMsToChartRows(data, 'timestamp');
+  const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'timestamp');
   const yAxisProps = getDefaultYAxisProps(2);
 
   const handleScreenshot = async () => {
@@ -53,7 +58,7 @@ const VPDChart = ({
   const handleDownloadData = () => {
     const csv =
       'timestamp,vpd_kpa\n' +
-      data.map((d) => `${d.timestamp},${d.vpd}`).join('\n');
+      data.map((d) => `${d.timestamp},${formatNumber(d.vpd)}`).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -90,40 +95,38 @@ const VPDChart = ({
       </Flex>
       <ChartStateView
         loading={loading}
-        empty={data.length === 0}
+        empty={chartData.length === 0}
         chartRef={chartRef}
         height="300px"
       >
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
-            data={data}
-            margin={{ top: 16, right: 24, left: 8, bottom: 40 }}
+            data={chartData}
+            margin={{ top: 16, right: 0, left: 60, bottom: 10 }}
           >
             <CartesianGrid {...defaultCartesianGridProps} />
-            <XAxis
-              dataKey="timestamp"
-              {...xAxisProps}
-              angle={0}
-              textAnchor="middle"
-              // interval={labelInterval}
-            />
+            <XAxis {...xAxisProps} />
             <YAxis
               {...yAxisProps}
               label={{
-                value: 'kPa',
+                value: 'Déficit de pression de vapeur (DPV) (kPa)',
                 angle: -90,
+                dx: -50,
+                dy: 140,
                 position: 'insideLeft',
-                style: { fontSize: 11, fill: '#64748b' },
+                style: { fontSize: 12, fill: '#64748b' },
               }}
             />
             <Tooltip content={<UnifiedTooltip valueUnit=" kPa" />} />
-            <Legend />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={<ChartLegend />}
+            />
             <Line
               type="monotone"
               dataKey="vpd"
-              name="VPD (kPa)"
-              stroke="#805ad5"
-              strokeWidth={2}
+              name="Déficit de pression de vapeur (kPa)"
+              stroke="#3182ce"
               {...defaultLineProps}
               isAnimationActive={false}
             />

@@ -16,11 +16,14 @@ import { SensorData } from '@/app/types';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import ChartLegend from '../../common/ChartLegend';
 import {
+  addTimeMsToChartRows,
   defaultCartesianGridProps,
+  defaultLegendWrapperStyle,
   defaultLineProps,
   defaultTooltipCursor,
-  getDefaultXAxisProps,
+  getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
 } from '@/app/utils/chartAxisConfig';
 
@@ -34,12 +37,15 @@ const ElectricityconsumptionChart = ({
   const chartRef = useRef<HTMLDivElement>(null);
   const [showLine, setShowLine] = useState(true);
 
-  const chartData = data.map((item) => ({
-    name: item.timestamp,
-    value: item.value,
-  }));
+  const chartData = addTimeMsToChartRows(
+    data.map((item) => ({
+      name: item.timestamp,
+      value: item.value,
+    })),
+    'name'
+  );
 
-  const xAxisProps = getDefaultXAxisProps(chartData, 'name');
+  const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'name');
   const yAxisProps = getDefaultYAxisProps(2);
   const { textColor } = useColorModeStyles();
 
@@ -113,20 +119,14 @@ const ElectricityconsumptionChart = ({
             margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
           >
             <CartesianGrid {...defaultCartesianGridProps} />
-            <XAxis
-              dataKey="name"
-              {...xAxisProps}
-              angle={0}
-              textAnchor="middle"
-              // interval={labelInterval}
-            />
+            <XAxis {...xAxisProps} />
             <YAxis
               {...yAxisProps}
               label={{
-                angle: -90,
+                angle: 0,
                 fontSize: 12,
                 dy: 60,
-                position: 'insideLeft',
+                position: 'top',
                 style: { fill: '#64748b' },
               }}
             />
@@ -134,13 +134,15 @@ const ElectricityconsumptionChart = ({
               content={<UnifiedTooltip />}
               cursor={defaultTooltipCursor}
             />
-            <Legend onClick={handleLegendClick} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={<ChartLegend onClick={handleLegendClick} />}
+            />
             <Line
               type="monotone"
               dataKey="value"
-              name="consommation (kWh)"
+              name="Consommation (kWh)"
               stroke={showLine ? '#82ca9d' : 'gray'}
-              strokeWidth={2}
               {...defaultLineProps}
               isAnimationActive={false}
             />

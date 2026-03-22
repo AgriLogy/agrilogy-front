@@ -8,7 +8,6 @@ import {
   Legend,
   ResponsiveContainer,
   CartesianGrid,
-  Brush,
 } from 'recharts';
 import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { FaCamera, FaDownload } from 'react-icons/fa';
@@ -17,10 +16,14 @@ import { SensorData } from '@/app/types';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import ChartLegend from '../../common/ChartLegend';
 import {
+  addTimeMsToChartRows,
   defaultCartesianGridProps,
+  defaultLegendWrapperStyle,
+  defaultLineProps,
   defaultTooltipCursor,
-  getDefaultXAxisProps,
+  getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
 } from '@/app/utils/chartAxisConfig';
 
@@ -50,21 +53,24 @@ const SoilSalinityConductivityChart = ({
     ])
   ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
-  const chartData = timestamps.map((timestamp) => {
-    const sal = salinityData.find((d) => d.timestamp === timestamp);
-    const cond = conductivityData.find((d) => d.timestamp === timestamp);
-    return {
-      name: timestamp,
-      salinity: sal?.value,
-      salinity_color: sal?.color,
-      salinity_courbe_name: sal?.courbe_name,
-      conductivity: cond?.value,
-      conductivity_color: cond?.color,
-      conductivity_courbe_name: cond?.courbe_name,
-    };
-  });
+  const chartData = addTimeMsToChartRows(
+    timestamps.map((timestamp) => {
+      const sal = salinityData.find((d) => d.timestamp === timestamp);
+      const cond = conductivityData.find((d) => d.timestamp === timestamp);
+      return {
+        name: timestamp,
+        salinity: sal?.value,
+        salinity_color: sal?.color,
+        salinity_courbe_name: sal?.courbe_name,
+        conductivity: cond?.value,
+        conductivity_color: cond?.color,
+        conductivity_courbe_name: cond?.courbe_name,
+      };
+    }),
+    'name'
+  );
 
-  const xAxisProps = getDefaultXAxisProps(chartData, 'name');
+  const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'name');
   const yAxisProps = getDefaultYAxisProps(2);
 
   const handleLegendClick = (e: any) => {
@@ -129,23 +135,17 @@ const SoilSalinityConductivityChart = ({
         height="300px"
       >
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
-          >
+            <LineChart
+              data={chartData}
+              margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
+            >
             <CartesianGrid {...defaultCartesianGridProps} />
-            <XAxis
-              dataKey="name"
-              {...xAxisProps}
-              angle={0}
-              textAnchor="middle"
-              // interval={labelInterval}
-            />
+            <XAxis {...xAxisProps} />
             <YAxis
               {...yAxisProps}
               label={{
-                angle: -90,
-                position: 'insideLeft',
+                angle: 0,
+                position: 'top',
                 fontSize: 12,
                 dy: 60,
                 style: { fill: '#64748b' },
@@ -155,39 +155,30 @@ const SoilSalinityConductivityChart = ({
               content={<UnifiedTooltip />}
               cursor={defaultTooltipCursor}
             />
-            <Legend onClick={handleLegendClick} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={<ChartLegend onClick={handleLegendClick} />}
+            />
 
             <Line
               type="monotone"
               dataKey="salinity"
-              name={chartData[0]?.salinity_courbe_name || 'Salinité'}
+              name={chartData[0]?.salinity_courbe_name || 'Salinité (mg/l)'}
               stroke={chartData[0]?.salinity_color || '#dba800'}
               strokeOpacity={activeLines.salinity ? 1 : 0.1}
-              strokeWidth={2}
-              dot={false}
-              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
+              {...defaultLineProps}
             />
 
             <Line
               type="monotone"
               dataKey="conductivity"
-              name={chartData[0]?.conductivity_courbe_name || 'Conductivité'}
+              name={chartData[0]?.conductivity_courbe_name || 'Conductivité (µS/cm)'}
               stroke={chartData[0]?.conductivity_color || '#00a86b'}
               strokeOpacity={activeLines.conductivity ? 1 : 0.1}
-              strokeWidth={2}
-              dot={false}
-              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
-            />
-
-            <Brush
-              y={238}
-              dataKey="name"
-              height={30}
-              stroke="#8884d8"
-              travellerWidth={8}
+              {...defaultLineProps}
             />
           </LineChart>
-        </ResponsiveContainer>
+          </ResponsiveContainer>
       </ChartStateView>
     </Box>
   );

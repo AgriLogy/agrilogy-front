@@ -1,6 +1,7 @@
 import { Box, Text, VStack, HStack, useColorModeValue } from '@chakra-ui/react';
 import { FaThermometerHalf } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
+import { formatNumber } from '@/app/utils/formatNumber';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -34,7 +35,7 @@ const Row = ({
             {label}
           </Text>
           <Text color={color}>
-            {entry ? `${entry.value.toFixed(2)} ${entry.default_unit}` : 'N/A'}
+            {entry ? `${formatNumber(entry.value)} ${entry.default_unit}` : 'N/A'}
           </Text>
         </HStack>
         <Text fontSize="sm" color={metaColor}>

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -8,18 +8,20 @@ import {
   Legend,
   ResponsiveContainer,
   CartesianGrid,
-  Brush,
 } from 'recharts';
 import { Box, Flex, Text, Button, HStack } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import ChartStateView from '../../common/ChartStateView';
+import ChartLegend from '../../common/ChartLegend';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import {
+  addTimeMsToChartRows,
   defaultCartesianGridProps,
+  defaultLegendWrapperStyle,
   defaultLineProps,
-  getDefaultXAxisProps,
+  getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
 } from '@/app/utils/chartAxisConfig';
 
@@ -44,21 +46,32 @@ const TempuratureHumidtyChart = ({
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const { textColor } = useColorModeStyles();
-
-  // Merging humidity and temperature data based on the timestamp
-  const mergedData = humidityData.map((h) => {
-    const tempEntry = temperatureData.find((t) => t.timestamp === h.timestamp);
-    return {
-      timestamp: h.timestamp,
-      humidity: h.value,
-      temperature: tempEntry?.value || null,
-    };
+  const [activeLines, setActiveLines] = useState({
+    humidity: true,
+    temperature: true,
   });
 
-  const xAxisProps = getDefaultXAxisProps(mergedData, 'timestamp');
+  const mergedData = addTimeMsToChartRows(
+    humidityData.map((h) => {
+      const tempEntry = temperatureData.find((t) => t.timestamp === h.timestamp);
+      return {
+        timestamp: h.timestamp,
+        humidity: h.value,
+        temperature: tempEntry?.value || null,
+      };
+    }),
+    'timestamp'
+  );
+
+  const xAxisProps = getAdaptiveTimeXAxisProps(mergedData, 'timestamp');
   const yAxisProps = getDefaultYAxisProps(2);
 
-  // Screenshot capture function
+  const handleLegendClick = (entry: any) => {
+    const key = entry.dataKey as keyof typeof activeLines;
+    if (!key) return;
+    setActiveLines((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
   const handleScreenshot = async () => {
     if (chartRef.current) {
       const canvas = await html2canvas(chartRef.current);
@@ -69,7 +82,6 @@ const TempuratureHumidtyChart = ({
     }
   };
 
-  // CSV data export function
   const handleDownloadData = () => {
     const csv =
       'timestamp,humidity,temperature\n' +
@@ -121,24 +133,20 @@ const TempuratureHumidtyChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={mergedData}
-            margin={{ top: 16, right: 24, left: 8, bottom: 40 }}
+            margin={{ top: 16, right: 35, left: 35, bottom: 20 }}
           >
             <CartesianGrid {...defaultCartesianGridProps} />
-            <XAxis
-              dataKey="timestamp"
-              {...xAxisProps}
-              angle={0}
-              textAnchor="middle"
-              // interval={labelInterval}
-            />
+            <XAxis {...xAxisProps} />
             <YAxis
               yAxisId="left"
               {...yAxisProps}
               label={{
                 value: '°C',
-                // angle: -90,
                 position: 'insideLeft',
-                style: { fontSize: 11, fill: '#64748b' },
+                dy: 0,
+                dx: -40,
+                fontSize: 14,
+                fontFamily: 'Arial, sans-serif',
               }}
             />
             <YAxis
@@ -148,20 +156,28 @@ const TempuratureHumidtyChart = ({
               label={{
                 value: '%',
                 angle: -90,
-                position: 'insideRight',
-                style: { fontSize: 11, fill: '#64748b' },
+                position: 'insideLeft',
+                dy: 0,
+                dx: 70,
+                fontSize: 14,
+                fontFamily: 'Arial, sans-serif',
               }}
             />
             <Tooltip content={<UnifiedTooltip />} />
-            <Legend />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              verticalAlign="bottom"
+              align="center"
+              content={<ChartLegend onClick={handleLegendClick} />}
+            />
             <Line
               yAxisId="left"
               type="monotone"
               dataKey="humidity"
               name="Humidité (%)"
               stroke="#2C7A7B"
-              strokeWidth={2}
               {...defaultLineProps}
+              hide={!activeLines.humidity}
             />
             <Line
               yAxisId="right"
@@ -169,14 +185,8 @@ const TempuratureHumidtyChart = ({
               dataKey="temperature"
               name="Température (°C)"
               stroke="#D69E2E"
-              strokeWidth={2}
               {...defaultLineProps}
-            />
-            <Brush
-              dataKey="timestamp"
-              height={30}
-              stroke="#8884d8"
-              travellerWidth={8}
+              hide={!activeLines.temperature}
             />
           </LineChart>
         </ResponsiveContainer>

@@ -13,13 +13,17 @@ import { Box, Flex, Text, Button, HStack } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
+import { formatNumber } from '@/app/utils/formatNumber';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import ChartLegend from '../../common/ChartLegend';
 import {
+  addTimeMsToChartRows,
   defaultCartesianGridProps,
+  defaultLegendWrapperStyle,
   defaultLineProps,
-  getDefaultXAxisProps,
+  getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
 } from '@/app/utils/chartAxisConfig';
 
@@ -33,13 +37,16 @@ const WaterFlowChart = ({
   const chartRef = useRef<HTMLDivElement>(null);
   const [showLine, setShowLine] = useState(true);
 
-  const chartData = data.map((item) => ({
-    name: item.timestamp,
-    value: item.value,
-  }));
+  const chartData = addTimeMsToChartRows(
+    data.map((item) => ({
+      name: item.timestamp,
+      value: item.value,
+    })),
+    'name'
+  );
 
   const { textColor } = useColorModeStyles();
-  const xAxisProps = getDefaultXAxisProps(chartData, 'name');
+  const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'name');
   const yAxisProps = getDefaultYAxisProps(2);
 
   const handleLegendClick = (data: any) => {
@@ -61,7 +68,7 @@ const WaterFlowChart = ({
   const handleDownloadData = () => {
     const csv =
       'timestamp,value\n' +
-      data.map((d) => `${d.timestamp},${d.value}`).join('\n');
+      data.map((d) => `${d.timestamp},${formatNumber(d.value)}`).join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -109,33 +116,30 @@ const WaterFlowChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
-            margin={{ top: 16, right: 24, left: 8, bottom: 40 }}
+            margin={{ top: 16, right: 0, left: 37, bottom: 0 }}
           >
             <CartesianGrid {...defaultCartesianGridProps} />
-            <XAxis
-              dataKey="name"
-              {...xAxisProps}
-              angle={0}
-              textAnchor="middle"
-              // interval={labelInterval}
-            />
+            <XAxis {...xAxisProps} />
             <YAxis
               {...yAxisProps}
               label={{
-                value: 'L/min',
+                value: 'L / min',
                 angle: -90,
+                dx: -30,
                 position: 'insideLeft',
-                style: { fontSize: 11, fill: '#64748b' },
+                style: { fontSize: 14, fill: '#64748b' },
               }}
             />
             <Tooltip content={<UnifiedTooltip />} />
-            <Legend onClick={handleLegendClick} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={<ChartLegend onClick={handleLegendClick} />}
+            />
             <Line
               type="monotone"
               dataKey="value"
               name="Irrigation (L/min)"
               stroke={showLine ? '#82ca9d' : 'gray'}
-              strokeWidth={2}
               {...defaultLineProps}
               isAnimationActive={false}
             />

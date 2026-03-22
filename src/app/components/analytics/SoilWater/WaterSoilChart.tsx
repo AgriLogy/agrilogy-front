@@ -1,13 +1,14 @@
 import {
-  LineChart,
+  ComposedChart,
   Line,
+  Bar,
+  Area,
   XAxis,
   YAxis,
   Tooltip,
   Legend,
   CartesianGrid,
   ResponsiveContainer,
-  ReferenceArea,
 } from 'recharts';
 import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { useRef, useMemo } from 'react';
@@ -15,18 +16,36 @@ import html2canvas from 'html2canvas';
 import { FaCamera, FaDownload } from 'react-icons/fa';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { ThresholdBand, WaterSoilData } from '@/app/types';
+import { formatNumber } from '@/app/utils/formatNumber';
 import ChartStateView from '../../common/ChartStateView';
-import UnifiedTooltip from '../../common/UnifiedTooltip';
+import ChartLegend, {
+  type ChartLegendPayloadEntry,
+} from '../../common/ChartLegend';
+import UnifiedTooltip, {
+  type UnifiedTooltipPayloadItem,
+} from '../../common/UnifiedTooltip';
 import {
+  addTimeMsToChartRows,
   defaultCartesianGridProps,
+  defaultBarProps,
+  defaultLegendWrapperStyle,
   defaultTooltipCursor,
-  getDefaultXAxisProps,
+  getAdaptiveTimeXAxisProps,
+  chartAxisStyles,
 } from '@/app/utils/chartAxisConfig';
+
+// Series colors matching reference (Prof. 20cm green, 40cm blue, 60cm red, Irrigation dark blue)
+const COLORS = {
+  soilLow: '#22c55e', // Prof. 20 cm
+  soilMedium: '#2563eb', // Prof. 40 cm
+  soilHigh: '#ef4444', // Prof. 60 cm
+  irrigation: '#1e40af',
+} as const;
 
 const WaterSoilChart = ({
   data,
   thresholds,
-  targetAxis = 'left', // which Y axis the bands align to
+  targetAxis = 'left',
   loading = false,
 }: {
   data: WaterSoilData[];
@@ -35,9 +54,8 @@ const WaterSoilChart = ({
   loading?: boolean;
 }) => {
   const { critical_min, critical_max, normal_min, normal_max } = thresholds;
-
-  const xAxisProps = getDefaultXAxisProps(data, 'timestamp');
   const chartRef = useRef<HTMLDivElement>(null);
+  const { textColor } = useColorModeStyles();
 
   const handleScreenshot = async () => {
     if (!chartRef.current) return;
@@ -49,13 +67,7 @@ const WaterSoilChart = ({
   };
 
   const handleDownloadData = () => {
-    const headers = [
-      'timestamp',
-      'soilLow',
-      'soilMedium',
-      'soilHigh',
-      'waterFlow',
-    ];
+    const headers = ['timestamp', 'soilLow', 'soilMedium', 'soilHigh', 'waterFlow'];
     const csv =
       headers.join(',') +
       '\n' +
@@ -70,25 +82,50 @@ const WaterSoilChart = ({
           ].join(',')
         )
         .join('\n');
-
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
-
     const link = document.createElement('a');
     link.href = url;
     link.download = 'water_soil_data.csv';
     link.click();
-
     URL.revokeObjectURL(url);
   };
 
-  const { textColor } = useColorModeStyles();
+  // Left Y-axis is soil moisture % — domain 0–125. Clamp zone bounds so they draw on the chart.
+  const Y_DOMAIN_MAX = 125;
+  const clampY = (v: number) => Math.max(0, Math.min(Y_DOMAIN_MAX, v));
 
-  // X range for the background areas (span the whole chart)
-  const [xStart, xEnd] = useMemo(() => {
-    if (!data?.length) return [undefined, undefined] as const;
-    return [data[0].timestamp, data[data.length - 1].timestamp] as const;
-  }, [data]);
+  // Zone critique: moisture outside safe range (too dry 0..critical_min, too wet critical_max..max)
+  const criticalLowTop = clampY(critical_min);
+  const criticalHighBottom = clampY(critical_max);
+
+  // Zone optimale: target moisture range (normal_min..normal_max). If thresholds are in other units and > 125, use a sensible % range.
+  const optimalMin = normal_min <= Y_DOMAIN_MAX ? normal_min : 50;
+  const optimalMax = normal_max <= Y_DOMAIN_MAX ? normal_max : 100;
+  const optimalBottom = clampY(optimalMin);
+  const optimalTop = clampY(optimalMax);
+  const hasOptimalBand = optimalTop > optimalBottom;
+
+  const hasCriticalLowBand = criticalLowTop > 0;
+  const hasCriticalHighBand = criticalHighBottom < Y_DOMAIN_MAX;
+
+  // Augment data with zone band values for Area backgrounds (constant per row)
+  const chartData = useMemo(
+    () =>
+      addTimeMsToChartRows(
+        data.map((d) => ({
+          ...d,
+          _zoneCritLow: criticalLowTop,
+          _zoneOptTop: optimalTop,
+          _zoneOptBottom: optimalBottom,
+          _zoneCritHigh: Y_DOMAIN_MAX,
+        })),
+        'timestamp'
+      ),
+    [data, criticalLowTop, optimalTop, optimalBottom]
+  );
+
+  const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'timestamp');
 
   return (
     <Box width="100%" height="100%">
@@ -116,30 +153,17 @@ const WaterSoilChart = ({
         </HStack>
       </Flex>
 
-      {/* Inline legend for bands (since Legend payload would override series legend) */}
-      <HStack spacing={4} mb={3}>
-        <HStack spacing={2}>
-          <Box
-            w="12px"
-            h="12px"
-            bg="#ef4444"
-            opacity={0.5}
-            borderRadius="2px"
-          />
+      <HStack spacing={4} mb={3} flexWrap="wrap">
+        <HStack spacing={2} title="Humidité trop basse ou trop haute — risque pour la culture">
+          <Box w="12px" h="12px" bg="#ef4444" opacity={0.5} borderRadius="2px" />
           <Text fontSize="sm" color={textColor}>
-            Zone critique
+            Zone critique (stress hydrique)
           </Text>
         </HStack>
-        <HStack spacing={2}>
-          <Box
-            w="12px"
-            h="12px"
-            bg="#3b82f6"
-            opacity={0.5}
-            borderRadius="2px"
-          />
+        <HStack spacing={2} title="Plage cible d'humidité du sol pour une bonne croissance">
+          <Box w="12px" h="12px" bg="#93c5fd" opacity={0.6} borderRadius="2px" />
           <Text fontSize="sm" color={textColor}>
-            Zone normale
+            Zone optimale ({optimalBottom}–{optimalTop} %)
           </Text>
         </HStack>
       </HStack>
@@ -149,154 +173,191 @@ const WaterSoilChart = ({
         empty={!data?.length}
         emptyText="Aucune donnée à afficher."
         chartRef={chartRef}
-        height={300}
+        height={340}
       >
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={data}
-            margin={{ top: 16, right: 24, left: 8, bottom: 40 }}
+          <ComposedChart
+            data={chartData}
+            margin={{ top: 36, right: 56, left: 56, bottom: 45 }}
           >
             <CartesianGrid {...defaultCartesianGridProps} />
-
-            {/* Background bands — render BEFORE series so they appear behind */}
-            {xStart !== undefined && xEnd !== undefined && (
-              <>
-                {/* Critical band (red) */}
-                <ReferenceArea
-                  x1={xStart}
-                  x2={xEnd}
-                  yAxisId={targetAxis}
-                  y1={critical_min}
-                  y2={critical_max}
-                  fill="#ef4444"
-                  fillOpacity={0.12}
-                  strokeOpacity={0}
-                  ifOverflow="hidden"
-                />
-                {/* Normal band (blue) */}
-                <ReferenceArea
-                  x1={xStart}
-                  x2={xEnd}
-                  yAxisId={targetAxis}
-                  y1={normal_min}
-                  y2={normal_max}
-                  fill="#3b82f6"
-                  fillOpacity={0.12}
-                  strokeOpacity={0}
-                  ifOverflow="hidden"
-                />
-              </>
-            )}
-
-            <XAxis
-              dataKey="timestamp"
-              {...xAxisProps}
-              angle={0}
-              textAnchor="middle"
-              // interval={labelInterval}
-            />
-
+            <XAxis {...xAxisProps} />
             <YAxis
               yAxisId="left"
-              domain={[0, 100]}
+              domain={[0, 125]}
               label={{
+                value: 'Capacité aux Champs (%)',
                 angle: -90,
                 position: 'insideLeft',
+                dy: 90,
+                dx: -50,
+                style: { fontSize: 13, fill: chartAxisStyles.tickFill },
               }}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke={chartAxisStyles.axisStroke}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: chartAxisStyles.tickFill,
+                fontSize: chartAxisStyles.tickFontSize,
+                fontFamily: chartAxisStyles.fontFamily,
               }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
+              axisLine={{ stroke: chartAxisStyles.axisStroke, strokeWidth: 1 }}
+              tickLine={{ stroke: chartAxisStyles.axisStroke, strokeWidth: 1 }}
+              width={40}
+              tickMargin={8}
+              tickFormatter={(v) => formatNumber(v, 2)}
             />
-
             <YAxis
               yAxisId="right"
               orientation="right"
               domain={[0, 'auto']}
               label={{
-                value: 'Irrigation (L/s)',
+                value: 'Irrigation',
                 angle: 90,
-                position: 'inside',
-                dx: 20,
-                fontSize: 18, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                position: 'insideRight',
+                dy: 50,
+                dx: 50,
+                fontSize: 15,
+                fontFamily: 'Arial, sans-serif',
               }}
+              stroke={chartAxisStyles.axisStroke}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: chartAxisStyles.tickFill,
+                fontSize: chartAxisStyles.tickFontSize,
+                fontFamily: chartAxisStyles.fontFamily,
               }}
+              axisLine={{ stroke: chartAxisStyles.axisStroke, strokeWidth: 1 }}
+              tickLine={{ stroke: chartAxisStyles.axisStroke, strokeWidth: 1 }}
+              width={48}
+              tickMargin={8}
+              tickFormatter={(v) => formatNumber(v, 2)}
             />
+
+            {/* Zone bands as Area — render first so they appear behind lines and bars */}
+            {hasCriticalLowBand && (
+              <Area
+                type="monotone"
+                dataKey="_zoneCritLow"
+                baseValue={0}
+                opacity={0.5}
+                fill="#ef4444"
+                fillOpacity={0.55}
+                stroke="none"
+                yAxisId="left"
+                isAnimationActive={false}
+                legendType="none"
+              />
+            )}
+            {hasOptimalBand && (
+              <Area
+              type="monotone"
+              dataKey="_zoneOptTop"
+              baseValue={optimalBottom}
+              fill="#93c5fd"
+              // fillOpacity={0.6}
+              stroke="none"
+              yAxisId="left"
+              isAnimationActive={false}
+              legendType="none"
+              opacity={0.6}
+              />
+            )}
+            {/* {hasCriticalHighBand && (
+              <Area
+                type="monotone"
+                dataKey="_zoneCritHigh"
+                baseValue={criticalHighBottom}
+                fill="#ef4444"
+                fillOpacity={0.55}
+                stroke="none"
+                yAxisId="left"
+                isAnimationActive={false}
+                legendType="none"
+              />
+            )} */}
 
             <Tooltip
-              content={<UnifiedTooltip />}
+              content={(props: { payload?: Array<{ dataKey?: string | number }>; active?: boolean; label?: string }) => {
+                const filtered = props.payload?.filter(
+                  (p) => !String(p.dataKey ?? '').startsWith('_zone')
+                );
+                return (
+                  <UnifiedTooltip
+                    {...props}
+                    payload={filtered as UnifiedTooltipPayloadItem[] | undefined}
+                    valueFormatter={(v) =>
+                      v == null ? '—' : formatNumber(Number(v), 2)
+                    }
+                  />
+                );
+              }}
               cursor={defaultTooltipCursor}
             />
-            <Legend />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={(props) => {
+                const payload = props.payload?.filter(
+                  (entry) =>
+                    entry.dataKey != null &&
+                    !String(entry.dataKey).startsWith('_zone')
+                ) as ChartLegendPayloadEntry[] | undefined;
+                return <ChartLegend payload={payload} />;
+              }}
+            />
 
-            {/* Soil moisture lines */}
-            <Line
+            {/* Irrigation: vertical bars (spikes/mountains) on right axis */}
+            <Bar
               yAxisId="right"
-              type="monotone"
               dataKey="waterFlow"
-              name="Irrigation (L/s)"
-              fill="#b3e5fc"
-              stroke="#0288d1"
-              strokeWidth={2}
-              fillOpacity={0.5}
-              connectNulls={true}
+              name="Irrigation"
+              fill={COLORS.irrigation}
+              barSize={8}
+              fillOpacity={0.75}
+              {...defaultBarProps}
+            />
+
+            {/* Soil moisture: smooth lines, no permanent dots */}
+            <Line
+              yAxisId="left"
+              type="monotone"
+              dataKey="soilLow"
+              name="Prof. 20 cm"
+              stroke={COLORS.soilLow}
+              connectNulls
               dot={false}
-              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
+              activeDot={{ r: 4, strokeWidth: 2, fill: 'white' }}
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
               isAnimationActive={false}
             />
             <Line
               yAxisId="left"
               type="monotone"
-              dataKey="soilLow"
-              name="Humidité basse (%)"
-              stroke="#8884d8"
-              strokeWidth={2}
-              dot={false}
-              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
-            />
-            <Line
-              yAxisId="left"
-              type="monotone"
               dataKey="soilMedium"
-              name="Humidité moyenne (%)"
-              stroke="#82ca9d"
-              strokeWidth={2}
+              name="Prof. 40 cm"
+              stroke={COLORS.soilMedium}
+              connectNulls
               dot={false}
-              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
+              activeDot={{ r: 4, strokeWidth: 2, fill: 'white' }}
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              isAnimationActive={false}
             />
             <Line
               yAxisId="left"
               type="monotone"
               dataKey="soilHigh"
-              name="Humidité haute (%)"
-              stroke="#ffc658"
-              strokeWidth={2}
+              name="Prof. 60 cm"
+              stroke={COLORS.soilHigh}
+              connectNulls
               dot={false}
-              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
+              activeDot={{ r: 4, strokeWidth: 2, fill: 'white' }}
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              isAnimationActive={false}
             />
-
-            {/* Water flow area */}
-          </LineChart>
+          </ComposedChart>
         </ResponsiveContainer>
       </ChartStateView>
     </Box>

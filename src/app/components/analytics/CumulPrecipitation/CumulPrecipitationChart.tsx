@@ -24,21 +24,40 @@ import { SensorData } from '@/app/types';
 import { formatNumber } from '@/app/utils/formatNumber';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import {
+  addTimeMsToChartRows,
+  defaultBarProps,
   defaultCartesianGridProps,
+  defaultLegendWrapperStyle,
+  getAdaptiveTimeXAxisProps,
   getPeriodXAxisProps,
   getDefaultYAxisProps,
 } from '@/app/utils/chartAxisConfig';
 import ChartStateView from '../../common/ChartStateView';
+import ChartLegend from '../../common/ChartLegend';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 
-const aggregateData = (data: SensorData[], period: string) => {
+type GroupBy = 'raw' | 'hour' | 'day' | 'week' | 'month';
+
+const aggregateData = (data: SensorData[], groupBy: GroupBy) => {
   const result: Record<string, number> = {};
+
   data.forEach((d) => {
     const date = new Date(d.timestamp);
+    if (Number.isNaN(date.getTime())) return;
+
     let key = '';
-    if (period === 'day') {
+    if (groupBy === 'raw') {
+      // No resampling: keep incoming timestamps (but still combine duplicates).
+      key = d.timestamp;
+    } else if (groupBy === 'hour') {
+      // Bucket by hour while preserving an ISO timestamp for time-based formatting.
+      const hour = new Date(date);
+      hour.setMinutes(0, 0, 0);
+      key = hour.toISOString();
+    } else if (groupBy === 'day') {
+      // Bucket by calendar day.
       key = date.toISOString().split('T')[0];
-    } else if (period === 'week') {
+    } else if (groupBy === 'week') {
       const year = date.getFullYear();
       const week = Math.ceil(
         ((date.getTime() - new Date(year, 0, 1).getTime()) / 86400000 +
@@ -47,14 +66,29 @@ const aggregateData = (data: SensorData[], period: string) => {
           7
       );
       key = `${year}-W${week}`;
-    } else if (period === 'month') {
+    } else if (groupBy === 'month') {
       key = `${date.getFullYear()}-${(date.getMonth() + 1)
         .toString()
         .padStart(2, '0')}`;
     }
+
+    if (!key) return;
     result[key] = (result[key] || 0) + d.value;
   });
-  return Object.entries(result).map(([period, value]) => ({ period, value }));
+
+  const rows = Object.entries(result).map(([period, value]) => ({
+    period,
+    value,
+  }));
+
+  // For time-like keys, ensure chronological order.
+  if (groupBy === 'raw' || groupBy === 'hour' || groupBy === 'day') {
+    rows.sort(
+      (a, b) => new Date(a.period).getTime() - new Date(b.period).getTime()
+    );
+  }
+
+  return rows;
 };
 
 const CumulPrecipitationChart = ({
@@ -65,11 +99,12 @@ const CumulPrecipitationChart = ({
   loading: boolean;
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
-  const [groupBy, setGroupBy] = useState('day');
+  const [groupBy, setGroupBy] = useState<GroupBy>('day');
   const { colorMode } = useColorMode();
-  const chartData = aggregateData(data, groupBy);
+  const chartData = addTimeMsToChartRows(aggregateData(data, groupBy), 'period');
   const { textColor } = useColorModeStyles();
   const periodXAxisProps = getPeriodXAxisProps();
+  const timeXAxisProps = getAdaptiveTimeXAxisProps(chartData, 'period');
   const yAxisProps = getDefaultYAxisProps(2);
 
   const handleScreenshot = async () => {
@@ -84,7 +119,7 @@ const CumulPrecipitationChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      'period,total_precipitation_mm\n' +
+      `${groupBy},total_precipitation_mm\n` +
       chartData.map((d) => `${d.period},${formatNumber(d.value)}`).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -104,15 +139,17 @@ const CumulPrecipitationChart = ({
     <Box width="100%" pr={4} pb={4} borderRadius="md" p={4}>
       <Flex justify="space-between" align="center" mb={4}>
         <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Irrigation cumulée
+          Irrigation cumulé
         </Text>
         <HStack spacing={2}>
           <Select
             value={groupBy}
-            onChange={(e) => setGroupBy(e.target.value)}
+            onChange={(e) => setGroupBy(e.target.value as GroupBy)}
             bg={colorMode === 'dark' ? 'gray.700' : 'white'}
             color={textColor}
           >
+            <option value="raw">Brut (sans agrégation)</option>
+            <option value="hour">Par heure</option>
             <option value="day">Par jour</option>
             <option value="week">Par semaine</option>
             <option value="month">Par mois</option>
@@ -135,12 +172,16 @@ const CumulPrecipitationChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
-            margin={{ top: 16, right: 24, left: 8, bottom: 40 }}
+            margin={{ top: 16, right: 0, left: 35, bottom: 5 }}
           >
             <CartesianGrid {...defaultCartesianGridProps} stroke={gridStroke} />
             <XAxis
               dataKey="period"
-              {...periodXAxisProps}
+              {...(groupBy === 'week' || groupBy === 'month'
+                ? periodXAxisProps
+                : groupBy === 'day'
+                  ? periodXAxisProps
+                  : timeXAxisProps)}
               angle={0}
               textAnchor="middle"
               // interval={labelInterval}
@@ -150,20 +191,23 @@ const CumulPrecipitationChart = ({
               label={{
                 value: 'mm',
                 angle: -90,
-                position: 'insideLeft',
-                style: { fontSize: 11, fill: '#64748b' },
+                dx: -50,
+                dy: 110,
+                position: 'top',
+                style: { fontSize: 14, fill: '#64748b' },
               }}
             />
             <Tooltip content={<UnifiedTooltip />} />
             <Legend
-              wrapperStyle={{ color: legendTextColor }}
-              // Alternatively, you can customize the payload style for more control
+              wrapperStyle={{ ...defaultLegendWrapperStyle, color: legendTextColor }}
+              content={<ChartLegend />}
             />
             <Bar
               dataKey="value"
-              name="Irrigation cumulée"
+              name="Irrigation cumulé"
               fill={colorMode === 'dark' ? '#60a5fa' : '#3b82f6'} // lighter blue in dark mode
-              isAnimationActive={false}
+              fillOpacity={0.9}
+              {...defaultBarProps}
             />
           </BarChart>
         </ResponsiveContainer>

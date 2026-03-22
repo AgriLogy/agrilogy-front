@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import {
   BarChart,
   Bar,
@@ -20,11 +20,16 @@ import {
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import {
+  addTimeMsToChartRows,
   defaultCartesianGridProps,
-  getDefaultXAxisProps,
+  defaultBarProps,
+  defaultLegendWrapperStyle,
+  getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
 } from '@/app/utils/chartAxisConfig';
+import { formatNumber } from '@/app/utils/formatNumber';
 import ChartStateView from '../../common/ChartStateView';
+import ChartLegend from '../../common/ChartLegend';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 
 interface Et0Data {
@@ -44,17 +49,25 @@ const EC0Chart = ({
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
 
-  const chartData = weatherData.map((item, index) => {
-    const calculated = calculatedData[index]?.value ?? null;
-    return {
-      name: item.timestamp,
-      Weather: item.value,
-      Calculated: calculated,
-    };
-  });
+  const calculatedByTimestamp = useMemo(
+    () => new Map(calculatedData.map((c) => [c.timestamp, c.value])),
+    [calculatedData]
+  );
+
+  const chartData = addTimeMsToChartRows(
+    weatherData.map((item) => {
+      const calculated = calculatedByTimestamp.get(item.timestamp);
+      return {
+        name: item.timestamp,
+        Weather: item.value,
+        Calculated: calculated ?? null,
+      };
+    }),
+    'name'
+  );
 
   const textColor = useColorModeValue('gray.800', 'gray.200');
-  const xAxisProps = getDefaultXAxisProps(chartData, 'name');
+  const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'name');
   const yAxisProps = getDefaultYAxisProps(2);
 
   const handleScreenshot = async () => {
@@ -71,7 +84,15 @@ const EC0Chart = ({
     const csv =
       'timestamp,Weather,Calculated\n' +
       chartData
-        .map((d) => `${d.name},${d.Weather ?? ''},${d.Calculated ?? ''}`)
+        .map((d) => {
+          const w =
+            d.Weather == null ? '' : formatNumber(Number(d.Weather));
+          const c =
+            d.Calculated == null
+              ? ''
+              : formatNumber(Number(d.Calculated));
+          return `${d.name},${w},${c}`;
+        })
         .join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -85,11 +106,17 @@ const EC0Chart = ({
 
   return (
     <Box width="100%" pr={4} pb={4}>
-      <Flex justify="space-between" align="center" mb={4}>
+      <Flex
+        justify="space-between"
+        align="center"
+        mb={4}
+        flexWrap="wrap"
+        gap={2}
+      >
         <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          ET0
+          Évapotranspiration de référence (ET₀)
         </Text>
-        <HStack spacing={2}>
+        <HStack spacing={2} flexShrink={0}>
           <Button
             aria-label="Capture graphique"
             colorScheme="teal"
@@ -115,25 +142,45 @@ const EC0Chart = ({
         emptyText="Aucune donnée disponible"
         chartRef={chartRef}
         height="300px"
+        
       >
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
-            margin={{ top: 16, right: 24, left: 8, bottom: 40 }}
+            margin={{ top: 20, right: 0, left: 40, bottom: 0 }}
           >
             <CartesianGrid {...defaultCartesianGridProps} />
-            <XAxis
-              dataKey="name"
-              {...xAxisProps}
-              angle={0}
-              textAnchor="middle"
-              // interval={labelInterval}
+            <XAxis {...xAxisProps} />
+            <YAxis
+              {...yAxisProps}
+              label={{
+                value: 'ET₀ (mm)',
+                angle: -90,
+                dx: -30,
+                dy: 20,
+                position: 'insideLeft',
+                style: { fontSize: 12, fill: '#64748b' },
+              }}
             />
-            <YAxis {...yAxisProps} />
             <Tooltip content={<UnifiedTooltip />} />
-            <Legend />
-            <Bar dataKey="Weather" fill="#3182ce" name="ET0 Capteur" />
-            <Bar dataKey="Calculated" fill="#e53e3e" name="ET0 Calculé" />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={<ChartLegend />}
+            />
+            <Bar
+              dataKey="Weather"
+              name="ET0 Capteur"
+              fill="#3182ce"
+              fillOpacity={0.9}
+              {...defaultBarProps}
+            />
+            <Bar
+              dataKey="Calculated"
+              name="ET0 Calculé"
+              fill="#e53e3e"
+              fillOpacity={0.85}
+              {...defaultBarProps}
+            />
           </BarChart>
         </ResponsiveContainer>
       </ChartStateView>

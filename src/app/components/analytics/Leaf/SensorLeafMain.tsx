@@ -1,5 +1,11 @@
-import { Box, Stack } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { Box, Stack, VStack } from '@chakra-ui/react';
+import { useEffect, useMemo, useState } from 'react';
+import ChartDateRangeDragger from '../../common/ChartDateRangeDragger';
+import ChartDateRangeGate from '../../common/ChartDateRangeGate';
+import {
+  filterByTimestampWindow,
+  unionSortedTimestamps,
+} from '@/app/utils/chartDateWindow';
 import SensorLeafLastData from './SensorLeafLastData';
 import SensorLeafChart from './SensorLeafChart';
 import api from '@/app/lib/api';
@@ -55,21 +61,49 @@ const SensorLeafMain = ({
     fetchData();
   }, [startDate, endDate, selectedZone]);
 
+  const timeline = useMemo(
+    () => unionSortedTimestamps(moistureData, temperatureData),
+    [moistureData, temperatureData]
+  );
+
   return (
     <Stack
       direction={{ base: 'column', md: 'row' }}
       spacing={2}
       width="100%"
       height="100%"
+      maxH={"560px"}
     >
       <Box flex={3} p={3}>
-        <SensorLeafChart
-          temperatureData={temperatureData}
-          moistureData={moistureData}
-          loading={loading}
-        />
+        <ChartDateRangeGate timeline={timeline}>
+          {({ startIdx, endIdx, setRange }) => (
+            <VStack spacing={0} align="stretch" width="100%">
+              <SensorLeafChart
+                temperatureData={filterByTimestampWindow(
+                  temperatureData,
+                  timeline,
+                  startIdx,
+                  endIdx
+                )}
+                moistureData={filterByTimestampWindow(
+                  moistureData,
+                  timeline,
+                  startIdx,
+                  endIdx
+                )}
+                loading={loading}
+              />
+              <ChartDateRangeDragger
+                timestamps={timeline}
+                startIdx={startIdx}
+                endIdx={endIdx}
+                onChange={(r) => setRange(r)}
+              />
+            </VStack>
+          )}
+        </ChartDateRangeGate>
       </Box>
-      <Box flex={1} p={3}>
+      <Box flex={1} p={3} >
         <SensorLeafLastData
           temperature={temperatureData[temperatureData.length - 1]}
           moisture={moistureData[moistureData.length - 1]}

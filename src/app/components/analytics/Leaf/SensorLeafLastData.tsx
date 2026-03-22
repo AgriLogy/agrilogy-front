@@ -1,5 +1,6 @@
 import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import { WiRaindrop, WiThermometer } from 'react-icons/wi';
+import { formatNumber } from '@/app/utils/formatNumber';
 
 const SensorLeafLastData = ({
   temperature,
@@ -39,7 +40,7 @@ const SensorLeafLastData = ({
           <WiThermometer size={50} color="#FF7300" />
           <Text color={textColor} fontSize="lg" mt={1}>
             Température:{' '}
-            {temperature ? `${temperature.value.toFixed(2)} °C` : 'N/A'}
+            {temperature ? `${formatNumber(temperature.value)} °C` : 'N/A'}
           </Text>
         </Box>
 
@@ -47,7 +48,7 @@ const SensorLeafLastData = ({
           <WiRaindrop size={50} color="#007AFF" />
           <Text color={textColor} fontSize="lg" mt={1}>
             Humidité des feuilles:{' '}
-            {moisture ? `${moisture.value.toFixed(2)} %` : 'N/A'}
+            {moisture ? `${formatNumber(moisture.value)} %` : 'N/A'}
           </Text>
         </Box>
 

@@ -89,6 +89,11 @@ const StationMain = () => {
         />
       </Box>
 
+      {activeGraph?.wind_radar_status && (
+        <Box bg={bg} className="box wide">
+          <WindRadarMain filters={filters} />
+        </Box>
+      )}
       {activeGraph?.weather_temperature_humidity_status && (
         <Box bg={bg} className="box wide">
           <TempuratureHumidtyMain filters={filters} />
@@ -107,11 +112,6 @@ const StationMain = () => {
       {activeGraph?.wind_speed_status && (
         <Box bg={bg} className="box wide">
           <WindSpeedMain filters={filters} />
-        </Box>
-      )}
-      {activeGraph?.wind_radar_status && (
-        <Box bg={bg} className="box wide">
-          <WindRadarMain filters={filters} />
         </Box>
       )}
       {activeGraph?.solar_radiation_status && (

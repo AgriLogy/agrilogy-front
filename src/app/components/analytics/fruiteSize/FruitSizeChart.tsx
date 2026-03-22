@@ -17,10 +17,14 @@ import { SensorData } from '@/app/types';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import ChartLegend from '../../common/ChartLegend';
 import {
+  addTimeMsToChartRows,
   defaultCartesianGridProps,
+  defaultBarProps,
+  defaultLegendWrapperStyle,
   defaultTooltipCursor,
-  getDefaultXAxisProps,
+  getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
 } from '@/app/utils/chartAxisConfig';
 
@@ -34,12 +38,15 @@ const FruitSizeChart = ({
   const chartRef = useRef<HTMLDivElement>(null);
   const [showBar, setShowBar] = useState(true);
 
-  const chartData = data.map((item) => ({
-    name: item.timestamp,
-    value: item.value,
-  }));
+  const chartData = addTimeMsToChartRows(
+    data.map((item) => ({
+      name: item.timestamp,
+      value: item.value,
+    })),
+    'name'
+  );
 
-  const xAxisProps = getDefaultXAxisProps(chartData, 'name');
+  const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'name');
   const yAxisProps = getDefaultYAxisProps(2);
   const { textColor } = useColorModeStyles();
 
@@ -111,21 +118,15 @@ const FruitSizeChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
+            margin={{ top: 20, right: 0, left: 20, bottom: 0 }}
           >
             <CartesianGrid {...defaultCartesianGridProps} />
-            <XAxis
-              dataKey="name"
-              {...xAxisProps}
-              angle={0}
-              textAnchor="middle"
-              // interval={labelInterval}
-            />
+            <XAxis {...xAxisProps} />
             <YAxis
               {...yAxisProps}
               label={{
-                angle: -90,
-                position: 'insideLeft',
+                angle: 0,
+                position: 'top',
                 style: { fill: '#64748b' },
               }}
             />
@@ -133,18 +134,17 @@ const FruitSizeChart = ({
               content={<UnifiedTooltip />}
               cursor={defaultTooltipCursor}
             />
-            <Legend onClick={handleLegendClick} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={<ChartLegend onClick={handleLegendClick} />}
+            />
             <Bar
               dataKey="value"
               name="Taille des fruits (mm)"
-              fill={showBar ? '#82ca9d' : 'gray'}
-              activeBar={
-                <Rectangle
-                  fill={showBar ? 'gold' : 'gray'}
-                  stroke={showBar ? 'purple' : 'gray'}
-                />
-              }
-              isAnimationActive={false}
+              fill={showBar ? '#22c55e' : '#94a3b8'}
+              fillOpacity={showBar ? 0.9 : 0.18}
+              activeBar={<Rectangle radius={[10, 10, 3, 3]} />}
+              {...defaultBarProps}
               style={{
                 pointerEvents: showBar ? 'auto' : 'none',
               }}

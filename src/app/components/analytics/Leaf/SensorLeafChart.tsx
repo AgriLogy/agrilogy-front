@@ -8,16 +8,19 @@ import {
   Legend,
   ResponsiveContainer,
   CartesianGrid,
-  Brush,
 } from 'recharts';
 import { Box, Text, Flex, HStack, Button } from '@chakra-ui/react';
 import { FaCamera, FaDownload } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import ChartLegend from '../../common/ChartLegend';
 import {
+  addTimeMsToChartRows,
   defaultCartesianGridProps,
+  defaultLegendWrapperStyle,
+  defaultLineProps,
   defaultTooltipCursor,
-  getDefaultXAxisProps,
+  getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
 } from '@/app/utils/chartAxisConfig';
 import ChartStateView from '../../common/ChartStateView';
@@ -37,16 +40,19 @@ const SensorLeafChart = ({
   const chartRef = useRef<HTMLDivElement>(null);
   const { textColor } = useColorModeStyles();
 
-  const combinedData = temperatureData.map((t) => {
-    const moisturePoint = moistureData.find((m) => m.timestamp === t.timestamp);
-    return {
-      name: t.timestamp,
-      temperature: t.value,
-      moisture: moisturePoint?.value ?? null,
-    };
-  });
+  const combinedData = addTimeMsToChartRows(
+    temperatureData.map((t) => {
+      const moisturePoint = moistureData.find((m) => m.timestamp === t.timestamp);
+      return {
+        name: t.timestamp,
+        temperature: t.value,
+        moisture: moisturePoint?.value ?? null,
+      };
+    }),
+    'name'
+  );
 
-  const xAxisProps = getDefaultXAxisProps(combinedData, 'name');
+  const xAxisProps = getAdaptiveTimeXAxisProps(combinedData, 'name');
   const yAxisProps = getDefaultYAxisProps(2);
 
   const [activeLines, setActiveLines] = useState({
@@ -123,25 +129,21 @@ const SensorLeafChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={combinedData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
+            margin={{ top: 20, right: 35, left: 35, bottom: 0 }}
           >
             <CartesianGrid {...defaultCartesianGridProps} />
-            <XAxis
-              dataKey="name"
-              {...xAxisProps}
-              angle={0}
-              textAnchor="middle"
-              // interval={labelInterval}
-            />
+            <XAxis {...xAxisProps} />
             <YAxis
               yAxisId="left"
               {...yAxisProps}
               label={{
                 value: 'Température (°C)',
                 angle: -90,
-                position: 'insideLeft',
-                fontSize: 12,
-                dy: 50,
+                position: 'top',
+                fontSize: 13,
+                dx: -45,
+                dy: 110,
+
                 style: { fill: '#64748b' },
               }}
             />
@@ -151,10 +153,11 @@ const SensorLeafChart = ({
               {...yAxisProps}
               label={{
                 value: 'Humidité (%)',
-                angle: -90,
-                position: 'insideRight',
-                fontSize: 12,
-                dy: -50,
+                angle: 90,
+                dx: 70,
+                dy: -30,
+                position: 'insideLeft',
+                fontSize: 13,
                 style: { fill: '#64748b' },
               }}
             />
@@ -162,32 +165,25 @@ const SensorLeafChart = ({
               content={<UnifiedTooltip />}
               cursor={defaultTooltipCursor}
             />
-            <Legend onClick={handleLegendClick} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={<ChartLegend onClick={handleLegendClick} />}
+            />
             <Line
               yAxisId="left"
               type="monotone"
               dataKey="temperature"
-              name="Température (°C)"
+              name="Température feuille (°C)"
               stroke={activeLines.temperature ? '#ff7300' : 'gray'}
-              strokeWidth={2}
-              dot={false}
-              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
+              {...defaultLineProps}
             />
             <Line
               yAxisId="right"
               type="monotone"
               dataKey="moisture"
-              name="Humidité des feuilles (%)"
+              name="Humidité feuille (%)"
               stroke={activeLines.moisture ? '#007aff' : 'gray'}
-              strokeWidth={2}
-              dot={false}
-              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
-            />
-            <Brush
-              dataKey="name"
-              height={30}
-              stroke="#8884d8"
-              travellerWidth={8}
+              {...defaultLineProps}
             />
           </LineChart>
         </ResponsiveContainer>

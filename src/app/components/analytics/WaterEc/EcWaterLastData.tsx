@@ -1,6 +1,7 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { SensorData } from '@/app/types';
 import { GiLightningDome } from 'react-icons/gi';
+import { formatNumber } from '@/app/utils/formatNumber';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -45,7 +46,7 @@ const EcWaterLastData = ({ data }: { data: SensorData[] }) => {
         Dernière consommation :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest ? `${latest.value.toFixed(2)} ${latest.default_unit}` : 'N/A'}
+        {latest ? `${formatNumber(latest.value)} ${latest.default_unit}` : 'N/A'}
       </Text>
       <Text fontSize="sm" color={textColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}

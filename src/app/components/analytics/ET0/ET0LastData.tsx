@@ -1,6 +1,7 @@
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import { GiWaterDrop } from 'react-icons/gi';
+import { formatNumber } from '@/app/utils/formatNumber';
 
 interface ET0Data {
   id: number;
@@ -64,7 +65,7 @@ const ET0LastData = ({
           <Text fontSize="lg" color="blue.600">
             ET0 météo:{' '}
             {latestWeather
-              ? `${latestWeather.value.toFixed(2)} ${
+              ? `${formatNumber(latestWeather.value)} ${
                   latestWeather.default_unit
                 }`
               : 'N/A'}
@@ -72,7 +73,7 @@ const ET0LastData = ({
           <Text fontSize="lg" color="teal.600">
             ET0 calculé:{' '}
             {latestCalculated
-              ? `${latestCalculated.value.toFixed(2)} ${
+              ? `${formatNumber(latestCalculated.value)} ${
                   latestCalculated.default_unit
                 }`
               : 'N/A'}

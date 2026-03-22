@@ -23,10 +23,14 @@ import html2canvas from 'html2canvas';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import ChartLegend from '../../common/ChartLegend';
 import {
+  addTimeMsToChartRows,
   defaultCartesianGridProps,
+  defaultLegendWrapperStyle,
+  defaultLineProps,
   defaultTooltipCursor,
-  getDefaultXAxisProps,
+  getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
 } from '@/app/utils/chartAxisConfig';
 import { TemperaturePoint } from './SoilTemperatureMain';
@@ -48,14 +52,17 @@ const SoilTemperatureChart = ({
   const [showMedium, setShowMedium] = useState(true);
   const [showHigh, setShowHigh] = useState(true);
 
-  const chartData = data.map((d) => ({
-    name: d.timestamp,
-    low: d.low,
-    medium: d.medium,
-    high: d.high,
-  }));
+  const chartData = addTimeMsToChartRows(
+    data.map((d) => ({
+      name: d.timestamp,
+      low: d.low,
+      medium: d.medium,
+      high: d.high,
+    })),
+    'name'
+  );
 
-  const xAxisProps = getDefaultXAxisProps(chartData, 'name');
+  const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'name');
   const yAxisProps = getDefaultYAxisProps(2);
   const { textColor } = useColorModeStyles();
 
@@ -109,8 +116,14 @@ const SoilTemperatureChart = ({
     URL.revokeObjectURL(url);
   };
 
-  const xStart = chartData[0]?.name;
-  const xEnd = chartData[chartData.length - 1]?.name;
+  const xIsNumeric =
+    'type' in xAxisProps && xAxisProps.type === 'number';
+  const xStart = xIsNumeric
+    ? chartData[0]?.timeMs
+    : chartData[0]?.name;
+  const xEnd = xIsNumeric
+    ? chartData[chartData.length - 1]?.timeMs
+    : chartData[chartData.length - 1]?.name;
   const showBand =
     typeof bestValueMin === 'number' &&
     typeof bestValueMax === 'number' &&
@@ -171,53 +184,44 @@ const SoilTemperatureChart = ({
               />
             )}
 
-            <XAxis
-              dataKey="name"
-              {...xAxisProps}
-              angle={0}
-              textAnchor="middle"
-              // interval={labelInterval}
-            />
+            <XAxis {...xAxisProps} />
             <YAxis
               {...yAxisProps}
-              label={{ angle: -90, position: 'insideLeft' }}
+              label={{ angle: 0, position: 'top' }}
             />
             <Tooltip
               content={<UnifiedTooltip />}
               cursor={defaultTooltipCursor}
             />
-            <Legend onClick={handleLegendClick} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={<ChartLegend onClick={handleLegendClick} />}
+            />
 
             <Line
               type="monotone"
               dataKey="low"
-              name="Basse"
+              name="Temp. basse (°C)"
               stroke={showLow ? '#3182CE' : 'gray'}
-              strokeWidth={2}
-              dot={false}
-              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
+              {...defaultLineProps}
               hide={!showLow}
               isAnimationActive={false}
             />
             <Line
               type="monotone"
               dataKey="medium"
-              name="Moyenne"
+              name="Temp. moyenne (°C)"
               stroke={showMedium ? '#2F855A' : 'gray'}
-              strokeWidth={2}
-              dot={false}
-              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
+              {...defaultLineProps}
               hide={!showMedium}
               isAnimationActive={false}
             />
             <Line
               type="monotone"
               dataKey="high"
-              name="Haute"
+              name="Temp. haute (°C)"
               stroke={showHigh ? '#E53E3E' : 'gray'}
-              strokeWidth={2}
-              dot={false}
-              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
+              {...defaultLineProps}
               hide={!showHigh}
               isAnimationActive={false}
             />

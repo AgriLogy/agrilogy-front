@@ -1,5 +1,11 @@
-import { Box, Stack } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { Box, Stack, VStack } from '@chakra-ui/react';
+import { useEffect, useMemo, useState } from 'react';
+import ChartDateRangeDragger from '../../common/ChartDateRangeDragger';
+import ChartDateRangeGate from '../../common/ChartDateRangeGate';
+import {
+  filterByTimestampWindow,
+  unionSortedTimestamps,
+} from '@/app/utils/chartDateWindow';
 import api from '@/app/lib/api';
 import TempuratureHumidtyChart from './TempuratureHumidtyChart';
 import TempuratureHumidtyLastData from './TempuratureHumidtyLastData';
@@ -60,6 +66,11 @@ const TempuratureHumidtyMain = ({
       .finally(() => setLoading(false));
   }, [startDate, endDate, selectedZone]);
 
+  const timeline = useMemo(
+    () => unionSortedTimestamps(humidityData, temperatureData),
+    [humidityData, temperatureData]
+  );
+
   return (
     <Stack
       spacing={2}
@@ -67,14 +78,37 @@ const TempuratureHumidtyMain = ({
       align="start"
       width="100%"
       height="100%"
+      maxH="560px"
       className="Box"
     >
       <Box flex={3} p={2} height="100%" width="100%">
-        <TempuratureHumidtyChart
-          humidityData={humidityData}
-          temperatureData={temperatureData}
-          loading={loading}
-        />
+        <ChartDateRangeGate timeline={timeline}>
+          {({ startIdx, endIdx, setRange }) => (
+            <VStack spacing={0} align="stretch" width="100%">
+              <TempuratureHumidtyChart
+                humidityData={filterByTimestampWindow(
+                  humidityData,
+                  timeline,
+                  startIdx,
+                  endIdx
+                )}
+                temperatureData={filterByTimestampWindow(
+                  temperatureData,
+                  timeline,
+                  startIdx,
+                  endIdx
+                )}
+                loading={loading}
+              />
+              <ChartDateRangeDragger
+                timestamps={timeline}
+                startIdx={startIdx}
+                endIdx={endIdx}
+                onChange={(r) => setRange(r)}
+              />
+            </VStack>
+          )}
+        </ChartDateRangeGate>
       </Box>
       <Box flex={1} p={3} height="100%" width="100%">
         <TempuratureHumidtyLastData

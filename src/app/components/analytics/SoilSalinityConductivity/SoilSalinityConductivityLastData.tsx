@@ -1,6 +1,7 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { FaTint, FaRulerCombined } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
+import { formatNumber } from '@/app/utils/formatNumber';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -53,7 +54,7 @@ const SoilSalinityConductivityLastData = ({
           Dernière salinité :
         </Text>
         <Text fontSize="2xl" color={valueColor}>
-          {latestSalinity ? `${latestSalinity.value.toFixed(2)} mg/l` : 'N/A'}
+          {latestSalinity ? `${formatNumber(latestSalinity.value)} mg/l` : 'N/A'}
         </Text>
         <Text fontSize="sm" color={textColor}>
           {latestSalinity
@@ -71,7 +72,7 @@ const SoilSalinityConductivityLastData = ({
         </Text>
         <Text fontSize="2xl" color={valueColor}>
           {latestConductivity
-            ? `${latestConductivity.value.toFixed(2)} μS/cm`
+            ? `${formatNumber(latestConductivity.value)} μS/cm`
             : 'N/A'}
         </Text>
         <Text fontSize="sm" color={textColor}>

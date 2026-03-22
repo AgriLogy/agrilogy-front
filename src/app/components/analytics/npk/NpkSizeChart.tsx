@@ -7,7 +7,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  Brush,
   CartesianGrid,
 } from 'recharts';
 import { Box, Flex, Text, Button, HStack } from '@chakra-ui/react';
@@ -17,10 +16,14 @@ import { NpkSensorData } from '@/app/types';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import ChartLegend from '../../common/ChartLegend';
 import {
+  addTimeMsToChartRows,
   defaultCartesianGridProps,
+  defaultLegendWrapperStyle,
+  defaultLineProps,
   defaultTooltipCursor,
-  getDefaultXAxisProps,
+  getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
 } from '@/app/utils/chartAxisConfig';
 
@@ -34,14 +37,17 @@ const NpkSizeChart = ({
   const chartRef = useRef<HTMLDivElement>(null);
   const { textColor } = useColorModeStyles();
 
-  const chartData = data.map((item) => ({
-    name: item.timestamp,
-    nitrogen: item.nitrogen_value,
-    phosphorus: item.phosphorus_value,
-    potassium: item.potassium_value,
-  }));
+  const chartData = addTimeMsToChartRows(
+    data.map((item) => ({
+      name: item.timestamp,
+      nitrogen: item.nitrogen_value,
+      phosphorus: item.phosphorus_value,
+      potassium: item.potassium_value,
+    })),
+    'name'
+  );
 
-  const xAxisProps = getDefaultXAxisProps(chartData, 'name');
+  const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'name');
   const yAxisProps = getDefaultYAxisProps(2);
 
   const [activeLines, setActiveLines] = useState({
@@ -122,81 +128,68 @@ const NpkSizeChart = ({
         height="300px"
       >
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
-          >
+            <LineChart
+              data={chartData}
+              margin={{ top: 20, right: 0, left: 30, bottom: 40 }}
+            >
             <CartesianGrid {...defaultCartesianGridProps} />
-            <XAxis
-              dataKey="name"
-              {...xAxisProps}
-              angle={0}
-              textAnchor="middle"
-              // interval={labelInterval}
-            />
+            <XAxis {...xAxisProps} />
             <YAxis
               {...yAxisProps}
+              width={56}
               label={{
                 value: 'Concentration (mg/kg)',
                 angle: -90,
                 position: 'insideLeft',
-                fontSize: 12,
-                dy: 60,
-                style: { fill: '#64748b' },
+                fontSize: 14,
+                dy: 90,
+                dx: -20,
+                fontFamily: 'Arial, sans-serif',
+                fill: '#64748b',
               }}
             />
             <Tooltip
               content={<UnifiedTooltip />}
               cursor={defaultTooltipCursor}
             />
-            <Legend onClick={handleLegendClick} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={<ChartLegend onClick={handleLegendClick} />}
+            />
 
             <Line
               type="monotone"
               dataKey="nitrogen"
-              name={data[0]?.nitrogen_courbe_name || 'Azote (N)'}
+              name={data[0]?.nitrogen_courbe_name || 'Azote N (mg/kg)'}
               stroke={
-                activeLines.nitrogen ? data[0]?.nitrogen_color || '#dba800' : ''
+                activeLines.nitrogen ? data[0]?.nitrogen_color || '#dba800' : 'gray'
               }
-              strokeWidth={2}
-              dot={false}
-              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
+              {...defaultLineProps}
             />
             <Line
               type="monotone"
               dataKey="phosphorus"
-              name={data[0]?.phosphorus_courbe_name || 'Phosphore (P)'}
+              name={data[0]?.phosphorus_courbe_name || 'Phosphore P (mg/kg)'}
               stroke={
                 activeLines.phosphorus
                   ? data[0]?.phosphorus_color || '#00a86b'
-                  : ''
+                  : 'gray'
               }
-              strokeWidth={2}
-              dot={false}
-              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
+              {...defaultLineProps}
             />
             <Line
               type="monotone"
               dataKey="potassium"
-              name={data[0]?.potassium_courbe_name || 'Potassium (K)'}
+              name={data[0]?.potassium_courbe_name || 'Potassium K (mg/kg)'}
               stroke={
                 activeLines.potassium
                   ? data[0]?.potassium_color || '#4682b4'
-                  : ''
+                  : 'gray'
               }
-              strokeWidth={2}
-              dot={false}
-              activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
-            />
-
-            <Brush
-              dataKey="name"
-              height={30}
-              stroke="#8884d8"
-              travellerWidth={8}
+              {...defaultLineProps}
             />
           </LineChart>
-        </ResponsiveContainer>
+          </ResponsiveContainer>
       </ChartStateView>
     </Box>
   );

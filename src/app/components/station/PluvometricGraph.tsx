@@ -11,50 +11,17 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import {
+  addTimeMsToChartRows,
   defaultCartesianGridProps,
+  defaultLegendWrapperStyle,
   defaultLineProps,
   defaultTooltipCursor,
-  getDefaultXAxisProps,
+  getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
 } from '@/app/utils/chartAxisConfig';
+import ChartLegend from '../common/ChartLegend';
 import ChartStateView from '../common/ChartStateView';
 import UnifiedTooltip from '../common/UnifiedTooltip';
-
-const CustomLegend = (props: any) => (
-  <ul
-    style={{
-      display: 'flex',
-      listStyle: 'none',
-      padding: 0,
-      flexWrap: 'wrap',
-      margin: 0,
-      marginLeft: 60,
-    }}
-  >
-    {props.payload.map((entry: any, index: number) => (
-      <li
-        key={`item-${index}`}
-        style={{
-          marginRight: '15px',
-          fontSize: '12px',
-          color: entry.color,
-          whiteSpace: 'nowrap',
-        }}
-      >
-        <span
-          style={{
-            marginRight: '5px',
-            backgroundColor: entry.color,
-            width: '10px',
-            height: '10px',
-            display: 'inline-block',
-          }}
-        />
-        {entry.value}
-      </li>
-    ))}
-  </ul>
-);
 
 const PluvometricGraph = ({ data }: { data: any }) => {
   const { colorMode } = useColorMode();
@@ -64,8 +31,8 @@ const PluvometricGraph = ({ data }: { data: any }) => {
     !!data &&
     (!data.sensor_data ||
       (Array.isArray(data.sensor_data) && data.sensor_data.length === 0));
-  const chartData = data?.sensor_data ?? [];
-  const xAxisProps = getDefaultXAxisProps(chartData, 'timestamp');
+  const chartData = addTimeMsToChartRows(data?.sensor_data ?? [], 'timestamp');
+  const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'timestamp');
   const yAxisProps = getDefaultYAxisProps(2);
 
   return (
@@ -95,24 +62,21 @@ const PluvometricGraph = ({ data }: { data: any }) => {
             margin={{ top: 16, right: 24, left: 8, bottom: 40 }}
           >
             <CartesianGrid {...defaultCartesianGridProps} />
-            <XAxis
-              dataKey="timestamp"
-              {...xAxisProps}
-              angle={0}
-              textAnchor="middle"
-              // interval={labelInterval}
-            />
+            <XAxis {...xAxisProps} />
             <YAxis {...yAxisProps} />
             <Tooltip
               content={<UnifiedTooltip />}
               cursor={defaultTooltipCursor}
             />
-            <Legend content={<CustomLegend />} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={<ChartLegend />}
+            />
             <Line
               type="monotone"
               dataKey="wind_speed"
               stroke={data?.sensor_colors?.wind_speed_color}
-              name="Rainfall (mm)"
+              name="Précipitation (mm)"
               {...defaultLineProps}
             />
           </LineChart>

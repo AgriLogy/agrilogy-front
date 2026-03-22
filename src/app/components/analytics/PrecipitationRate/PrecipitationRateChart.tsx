@@ -21,12 +21,17 @@ import {
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
+import { formatNumber } from '@/app/utils/formatNumber';
 import {
+  addTimeMsToChartRows,
   defaultCartesianGridProps,
-  getDefaultXAxisProps,
+  defaultBarProps,
+  defaultLegendWrapperStyle,
+  getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
 } from '@/app/utils/chartAxisConfig';
 import ChartStateView from '../../common/ChartStateView';
+import ChartLegend from '../../common/ChartLegend';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 
@@ -40,18 +45,20 @@ const PrecipitationRateChart = ({
   const chartRef = useRef<HTMLDivElement>(null);
   const [showBar, setShowBar] = useState(true);
 
-  const chartData = data.map((item) => ({
-    name: item.timestamp,
-    value: item.value,
-  }));
+  const chartData = addTimeMsToChartRows(
+    data.map((item) => ({
+      name: item.timestamp,
+      value: item.value,
+    })),
+    'name'
+  );
 
   const { textColor } = useColorModeStyles();
-  const xAxisProps = getDefaultXAxisProps(chartData, 'name');
+  const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'name');
   const yAxisProps = getDefaultYAxisProps(2);
 
-  // Legend click handler
   const handleLegendClick = (data: any) => {
-    if (data.value === 'Taille des fruits') {
+    if (data.value === 'Taux de précipitation (mm/h)') {
       setShowBar((prev) => !prev);
     }
   };
@@ -69,14 +76,14 @@ const PrecipitationRateChart = ({
   const handleDownloadData = () => {
     const csv =
       'timestamp,value\n' +
-      data.map((d) => `${d.timestamp},${d.value}`).join('\n');
+      data.map((d) => `${d.timestamp},${formatNumber(d.value)}`).join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
 
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'fruit_data.csv';
+    link.download = 'precipitation_rate_data.csv';
     link.click();
 
     URL.revokeObjectURL(url);
@@ -84,11 +91,17 @@ const PrecipitationRateChart = ({
   const { colorMode } = useColorMode();
   return (
     <Box width="100%" pr={4} pb={4}>
-      <Flex justify="space-between" align="center" mb={4}>
+      <Flex
+        justify="space-between"
+        align="center"
+        mb={4}
+        flexWrap="wrap"
+        gap={2}
+      >
         <Text fontSize="xl" fontWeight="bold" color={textColor}>
           Taux de précipitation
         </Text>
-        <HStack spacing={2}>
+        <HStack spacing={2} flexShrink={0}>
           <Button
             aria-label="Capture graphique"
             colorScheme="teal"
@@ -117,39 +130,34 @@ const PrecipitationRateChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
-            margin={{ top: 16, right: 24, left: 8, bottom: 40 }}
+            margin={{ top: 20, right: 0, left: 35, bottom: 5 }}
             onClick={(_e) => {}}
           >
             <CartesianGrid {...defaultCartesianGridProps} />
-            <XAxis
-              dataKey="name"
-              {...xAxisProps}
-              angle={0}
-              textAnchor="middle"
-              // interval={labelInterval}
-            />
+            <XAxis {...xAxisProps} />
             <YAxis
               {...yAxisProps}
               label={{
-                value: 'mm/h',
+                value: 'Précipitation (mm/h)',
                 angle: -90,
+                dx: -30,
+                dy: 50,
                 position: 'insideLeft',
-                style: { fontSize: 11, fill: '#64748b' },
+                style: { fontSize: 12, fill: '#64748b' },
               }}
             />
             <Tooltip content={<UnifiedTooltip />} />
-            <Legend onClick={handleLegendClick} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={<ChartLegend onClick={handleLegendClick} />}
+            />
             <Bar
               dataKey="value"
               name="Taux de précipitation (mm/h)"
               fill={colorMode === 'dark' ? '#60a5fa' : '#3b82f6'}
-              activeBar={
-                <Rectangle
-                  fill={showBar ? 'gold' : 'gray'}
-                  stroke={showBar ? 'purple' : 'gray'}
-                />
-              }
-              isAnimationActive={false}
+              fillOpacity={showBar ? 0.9 : 0.15}
+              activeBar={<Rectangle radius={[10, 10, 3, 3]} />}
+              {...defaultBarProps}
               style={{
                 pointerEvents: showBar ? 'auto' : 'none',
               }}
