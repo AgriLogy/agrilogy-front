@@ -25,6 +25,7 @@ import {
   defaultLineProps,
   getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
+  defaultTooltipCursor,
 } from '@/app/utils/chartAxisConfig';
 
 const WaterFlowChart = ({
@@ -130,7 +131,7 @@ const WaterFlowChart = ({
                 style: { fontSize: 14, fill: '#64748b' },
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip />} cursor={defaultTooltipCursor} />
             <Legend
               wrapperStyle={defaultLegendWrapperStyle}
               content={<ChartLegend onClick={handleLegendClick} />}
@@ -142,6 +143,7 @@ const WaterFlowChart = ({
               stroke={showLine ? '#82ca9d' : 'gray'}
               {...defaultLineProps}
               isAnimationActive={false}
+              hide={!showLine}
             />
           </LineChart>
         </ResponsiveContainer>

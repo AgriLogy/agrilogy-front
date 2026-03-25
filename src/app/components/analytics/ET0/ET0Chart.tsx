@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   BarChart,
   Bar,
@@ -26,6 +26,7 @@ import {
   defaultLegendWrapperStyle,
   getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
+  defaultTooltipCursor,
 } from '@/app/utils/chartAxisConfig';
 import { formatNumber } from '@/app/utils/formatNumber';
 import ChartStateView from '../../common/ChartStateView';
@@ -70,6 +71,22 @@ const EC0Chart = ({
   const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'name');
   const yAxisProps = getDefaultYAxisProps(2);
 
+  const [activeBars, setActiveBars] = useState({
+    Weather: true,
+    Calculated: true,
+  });
+
+  const handleLegendClick = (entry: any) => {
+    const dataKey = entry?.dataKey ? String(entry.dataKey) : null;
+    if (!dataKey) return;
+    if (dataKey === 'Weather') {
+      setActiveBars((prev) => ({ ...prev, Weather: !prev.Weather }));
+    }
+    if (dataKey === 'Calculated') {
+      setActiveBars((prev) => ({ ...prev, Calculated: !prev.Calculated }));
+    }
+  };
+
   const handleScreenshot = async () => {
     if (chartRef.current) {
       const canvas = await html2canvas(chartRef.current);
@@ -85,12 +102,9 @@ const EC0Chart = ({
       'timestamp,Weather,Calculated\n' +
       chartData
         .map((d) => {
-          const w =
-            d.Weather == null ? '' : formatNumber(Number(d.Weather));
+          const w = d.Weather == null ? '' : formatNumber(Number(d.Weather));
           const c =
-            d.Calculated == null
-              ? ''
-              : formatNumber(Number(d.Calculated));
+            d.Calculated == null ? '' : formatNumber(Number(d.Calculated));
           return `${d.name},${w},${c}`;
         })
         .join('\n');
@@ -142,7 +156,6 @@ const EC0Chart = ({
         emptyText="Aucune donnée disponible"
         chartRef={chartRef}
         height="300px"
-        
       >
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
@@ -162,10 +175,10 @@ const EC0Chart = ({
                 style: { fontSize: 12, fill: '#64748b' },
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip />} cursor={defaultTooltipCursor} />
             <Legend
               wrapperStyle={defaultLegendWrapperStyle}
-              content={<ChartLegend />}
+              content={<ChartLegend onClick={handleLegendClick} />}
             />
             <Bar
               dataKey="Weather"
@@ -173,6 +186,7 @@ const EC0Chart = ({
               fill="#3182ce"
               fillOpacity={0.9}
               {...defaultBarProps}
+              hide={!activeBars.Weather}
             />
             <Bar
               dataKey="Calculated"
@@ -180,6 +194,7 @@ const EC0Chart = ({
               fill="#e53e3e"
               fillOpacity={0.85}
               {...defaultBarProps}
+              hide={!activeBars.Calculated}
             />
           </BarChart>
         </ResponsiveContainer>

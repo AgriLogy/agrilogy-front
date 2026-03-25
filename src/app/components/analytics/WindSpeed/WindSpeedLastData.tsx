@@ -1,7 +1,7 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { FaBolt } from 'react-icons/fa';
-import { SensorData } from '@/app/types';
 import { formatNumber } from '@/app/utils/formatNumber';
+import type { WindSpeedSensorRow } from '@/app/utils/windSpeedMerge';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -16,8 +16,9 @@ const timeAgo = (timestamp: string): string => {
   return then.toLocaleDateString();
 };
 
-const WindSpeedLastData = ({ data }: { data: SensorData[] }) => {
+const WindSpeedLastData = ({ data }: { data: WindSpeedSensorRow[] }) => {
   const latest = data[data.length - 1];
+  const gust = latest?.wind_gust;
 
   // Light/Dark mode colors
   const bgColor = useColorModeValue('blue.50', 'blue.900');
@@ -53,6 +54,16 @@ const WindSpeedLastData = ({ data }: { data: SensorData[] }) => {
       <Text fontSize="sm" color={timeColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}
       </Text>
+      {gust != null && Number.isFinite(gust) ? (
+        <>
+          <Text fontWeight="bold" fontSize="md" mt={4} color={textColor}>
+            Dernière rafale :
+          </Text>
+          <Text fontSize="xl" color={valueColor}>
+            {formatNumber(gust)} {latest.default_unit}
+          </Text>
+        </>
+      ) : null}
     </Box>
   );
 };

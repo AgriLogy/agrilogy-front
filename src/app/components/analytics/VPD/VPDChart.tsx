@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -9,11 +9,11 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from 'recharts';
-import { Box, Flex, Text, Button, HStack } from '@chakra-ui/react';
-import { FaDownload, FaCamera } from 'react-icons/fa';
+import { Box, Flex, Text, Button, HStack, Icon } from '@chakra-ui/react';
+import { FaDownload, FaCamera, FaLeaf } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import ChartStateView from '../../common/ChartStateView';
-import ChartLegend from '../../common/ChartLegend';
+import ChartLegend, { type ChartLegendPayloadEntry } from '../../common/ChartLegend';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { formatNumber } from '@/app/utils/formatNumber';
@@ -22,6 +22,7 @@ import {
   defaultCartesianGridProps,
   defaultLegendWrapperStyle,
   defaultLineProps,
+  defaultTooltipCursor,
   getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
 } from '@/app/utils/chartAxisConfig';
@@ -30,6 +31,9 @@ export interface VPDDataPoint {
   timestamp: string;
   vpd: number;
 }
+
+const LEGEND_NAME = 'Déficit de pression de vapeur';
+const Y_TICKS = [0, 0.5, 1, 1.5, 2, 2.5] as const;
 
 const VPDChart = ({
   data,
@@ -43,7 +47,14 @@ const VPDChart = ({
 
   const chartData = addTimeMsToChartRows(data, 'timestamp');
   const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'timestamp');
-  const yAxisProps = getDefaultYAxisProps(2);
+  const yAxisProps = getDefaultYAxisProps(1);
+
+  const [showVpd, setShowVpd] = useState(true);
+
+  const handleLegendClick = (entry: ChartLegendPayloadEntry) => {
+    if (!entry) return;
+    setShowVpd((prev) => !prev);
+  };
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
@@ -71,9 +82,12 @@ const VPDChart = ({
   return (
     <Box width="100%" pr={4} pb={4}>
       <Flex justify="space-between" align="center" mb={4}>
-        <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Déficit de pression de vapeur (VPD)
-        </Text>
+        <HStack spacing={2} align="center">
+          <Icon as={FaLeaf} color="green.500" boxSize={5} aria-hidden />
+          <Text fontSize="xl" fontWeight="bold" color={textColor}>
+            Déficit de pression de vapeur
+          </Text>
+        </HStack>
         <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
@@ -97,37 +111,60 @@ const VPDChart = ({
         loading={loading}
         empty={chartData.length === 0}
         chartRef={chartRef}
-        height="300px"
+        height="340px"
       >
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
-            margin={{ top: 16, right: 0, left: 60, bottom: 10 }}
+            margin={{ top: 16, right: 0, left: 15, bottom: 0 }}
           >
             <CartesianGrid {...defaultCartesianGridProps} />
             <XAxis {...xAxisProps} />
             <YAxis
               {...yAxisProps}
+              domain={[0, 2.5]}
+              ticks={[...Y_TICKS]}
               label={{
                 value: 'Déficit de pression de vapeur (DPV) (kPa)',
                 angle: -90,
-                dx: -50,
-                dy: 140,
-                position: 'insideLeft',
+                dy: 10,
+                dx: -30,
                 style: { fontSize: 12, fill: '#64748b' },
               }}
             />
-            <Tooltip content={<UnifiedTooltip valueUnit=" kPa" />} />
+            <Tooltip
+              cursor={defaultTooltipCursor}
+              content={
+                <UnifiedTooltip
+                  valueFormatter={(v) => {
+                    if (v == null) return '—';
+                    const num = typeof v === 'number' ? v : Number(v);
+                    return Number.isNaN(num)
+                      ? String(v)
+                      : `${formatNumber(num, 1)} kPa`;
+                  }}
+                />
+              }
+            />
             <Legend
               wrapperStyle={defaultLegendWrapperStyle}
-              content={<ChartLegend />}
+              content={<ChartLegend onClick={handleLegendClick} />}
             />
             <Line
-              type="monotone"
+              type="linear"
               dataKey="vpd"
-              name="Déficit de pression de vapeur (kPa)"
+              name={LEGEND_NAME}
               stroke="#3182ce"
               {...defaultLineProps}
+              hide={!showVpd}
+              strokeLinejoin="miter"
+              strokeLinecap="butt"
+              activeDot={{
+                r: 5,
+                strokeWidth: 2,
+                fill: '#3182ce',
+                stroke: '#fff',
+              }}
               isAnimationActive={false}
             />
           </LineChart>

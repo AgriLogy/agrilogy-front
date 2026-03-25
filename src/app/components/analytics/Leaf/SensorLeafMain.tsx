@@ -72,7 +72,7 @@ const SensorLeafMain = ({
       spacing={2}
       width="100%"
       height="100%"
-      maxH={"560px"}
+      maxH={'560px'}
     >
       <Box flex={3} p={3}>
         <ChartDateRangeGate timeline={timeline}>
@@ -103,7 +103,7 @@ const SensorLeafMain = ({
           )}
         </ChartDateRangeGate>
       </Box>
-      <Box flex={1} p={3} >
+      <Box flex={1} p={3}>
         <SensorLeafLastData
           temperature={temperatureData[temperatureData.length - 1]}
           moisture={moistureData[moistureData.length - 1]}

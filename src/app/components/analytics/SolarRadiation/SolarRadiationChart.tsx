@@ -155,6 +155,7 @@ const SolarRadiationChart = ({
               dot={false}
               activeDot={{ r: 5, strokeWidth: 2, fill: 'white' }}
               isAnimationActive={false}
+              hide={!showArea}
             />
           </AreaChart>
         </ResponsiveContainer>

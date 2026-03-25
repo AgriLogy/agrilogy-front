@@ -5,7 +5,7 @@ import { sortByTimestamp } from '@/app/utils/chartDateWindow';
 import { useEffect, useMemo, useState } from 'react';
 import api from '@/app/lib/api';
 import { calculateVPD } from '@/app/utils/calculateVPD';
-import VPDChart, { VPDDataPoint } from './VPDChart';
+import VPDChart, { type VPDDataPoint } from './VPDChart';
 import VPDLastData from './VPDLastData';
 
 interface WeatherData {
@@ -62,8 +62,8 @@ const VPDMain = ({
       .finally(() => setLoading(false));
   }, [startDate, endDate, selectedZone]);
 
-  const vpdData: VPDDataPoint[] = useMemo(() => {
-    return humidityData
+  const series = useMemo((): VPDDataPoint[] => {
+    const rows = humidityData
       .map((h) => {
         const tempEntry = temperatureData.find(
           (t) => t.timestamp === h.timestamp
@@ -74,12 +74,12 @@ const VPDMain = ({
         return { timestamp: h.timestamp, vpd };
       })
       .filter((d): d is VPDDataPoint => d != null);
+    return sortByTimestamp(rows);
   }, [humidityData, temperatureData]);
 
-  const sortedVpd = useMemo(() => sortByTimestamp(vpdData), [vpdData]);
   const timeline = useMemo(
-    () => sortedVpd.map((d) => d.timestamp),
-    [sortedVpd]
+    () => series.map((d) => d.timestamp),
+    [series]
   );
 
   return (
@@ -90,13 +90,14 @@ const VPDMain = ({
       width="100%"
       height="100%"
       className="Box"
+      maxH={"560px"}
     >
       <Box flex={3} p={2} height="100%" width="100%">
         <ChartDateRangeGate timeline={timeline}>
           {({ startIdx, endIdx, setRange }) => (
             <VStack spacing={0} align="stretch" width="100%">
               <VPDChart
-                data={sortedVpd.slice(startIdx, endIdx + 1)}
+                data={series.slice(startIdx, endIdx + 1)}
                 loading={loading}
               />
               <ChartDateRangeDragger
@@ -110,7 +111,7 @@ const VPDMain = ({
         </ChartDateRangeGate>
       </Box>
       <Box flex={1} p={3} height="100%" width="100%">
-        <VPDLastData data={vpdData} />
+        <VPDLastData data={series} />
       </Box>
     </Stack>
   );

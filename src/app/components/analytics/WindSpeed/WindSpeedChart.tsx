@@ -12,12 +12,14 @@ import {
 import { Box, Flex, Text, Button, HStack } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
-import { SensorData } from '@/app/types';
 import { roundNumber } from '@/app/utils/formatNumber';
+import type { WindSpeedSensorRow } from '@/app/utils/windSpeedMerge';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
-import ChartLegend from '../../common/ChartLegend';
+import ChartLegend, {
+  type ChartLegendPayloadEntry,
+} from '../../common/ChartLegend';
 import {
   addTimeMsToChartRows,
   defaultCartesianGridProps,
@@ -25,16 +27,43 @@ import {
   defaultLineProps,
   getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
+  defaultTooltipCursor,
 } from '@/app/utils/chartAxisConfig';
 
-/** Wind speed sensor data may include optional wind_gust (rafale). */
-type WindSpeedSensorData = SensorData & { wind_gust?: number };
+type WindSpeedRowExtras = WindSpeedSensorRow & {
+  gust?: number;
+  windGust?: number;
+  rafale?: number;
+};
+
+/** `wind_gust` from merged gust series, optional separate API, or fields on windspeed rows. */
+function pickWindGustKmH(row: WindSpeedRowExtras): number | undefined {
+  const o = row as unknown as Record<string, unknown>;
+  const keys = [
+    'wind_gust',
+    'wind_gust_kmh',
+    'wind_gust_ms',
+    'gust',
+    'windGust',
+    'rafale',
+    'wind_rafale',
+    'gust_speed',
+    'wind_gust_speed',
+  ];
+  for (const k of keys) {
+    const v = o[k];
+    if (v == null) continue;
+    const n = typeof v === 'number' ? v : Number(String(v).replace(',', '.'));
+    if (Number.isFinite(n)) return n;
+  }
+  return undefined;
+}
 
 const WindSpeedChart = ({
   data,
   loading,
 }: {
-  data: WindSpeedSensorData[];
+  data: WindSpeedSensorRow[];
   loading: boolean;
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
@@ -42,11 +71,18 @@ const WindSpeedChart = ({
   const [showGust, setShowGust] = useState(true);
 
   const chartData = addTimeMsToChartRows(
-    data.map((item) => ({
-      name: item.timestamp,
-      value: roundNumber(item.value),
-      wind_gust: item.wind_gust != null ? roundNumber(item.wind_gust) : undefined,
-    })),
+    data.map((item) => {
+      const gustRaw = pickWindGustKmH(item);
+      return {
+        name: item.timestamp,
+        value: roundNumber(item.value),
+        // Recharts: null = gap; connectNulls joins non-null segments
+        wind_gust:
+          gustRaw != null && Number.isFinite(gustRaw)
+            ? roundNumber(gustRaw)
+            : null,
+      };
+    }),
     'name'
   );
 
@@ -55,13 +91,13 @@ const WindSpeedChart = ({
   const yAxisProps = getDefaultYAxisProps(2);
 
   const SPEED_LABEL = 'Vitesse du vent (km/h)';
-  const GUST_LABEL = 'Ravale du vent (km/h)';
+  const GUST_LABEL = 'Rafale de vent (km/h)';
 
-  const handleLegendClick = (data: any) => {
-    if (data.value === SPEED_LABEL) {
+  const handleLegendClick = (entry: ChartLegendPayloadEntry) => {
+    if (entry.value === SPEED_LABEL) {
       setShowLine((prev) => !prev);
     }
-    if (data.value === GUST_LABEL) {
+    if (entry.value === GUST_LABEL) {
       setShowGust((prev) => !prev);
     }
   };
@@ -77,15 +113,13 @@ const WindSpeedChart = ({
   };
 
   const handleDownloadData = () => {
-    const hasGust = data.some(
-      (d) => (d as WindSpeedSensorData).wind_gust != null
-    );
+    const hasGust = data.some((d) => pickWindGustKmH(d) != null);
     const header = hasGust
       ? 'timestamp,value,wind_gust\n'
       : 'timestamp,value\n';
     const rows = data.map((d) => {
       const row = `${d.timestamp},${d.value}`;
-      const gust = (d as WindSpeedSensorData).wind_gust;
+      const gust = pickWindGustKmH(d);
       return hasGust ? `${row},${gust ?? ''}` : row;
     });
     const csv = header + rows.join('\n');
@@ -151,7 +185,7 @@ const WindSpeedChart = ({
                 style: { fontSize: 14, fill: '#64748b' },
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip />} cursor={defaultTooltipCursor} />
             <Legend
               wrapperStyle={defaultLegendWrapperStyle}
               content={<ChartLegend onClick={handleLegendClick} />}
@@ -163,16 +197,18 @@ const WindSpeedChart = ({
               stroke={showLine ? '#82ca9d' : 'gray'}
               {...defaultLineProps}
               isAnimationActive={false}
+              hide={!showLine}
             />
             <Line
               type="monotone"
               dataKey="wind_gust"
               name={GUST_LABEL}
+              {...defaultLineProps}
               stroke={showGust ? '#ed8936' : 'gray'}
               strokeDasharray="5 5"
-              {...defaultLineProps}
               isAnimationActive={false}
               connectNulls
+              hide={!showGust}
             />
           </LineChart>
         </ResponsiveContainer>

@@ -29,6 +29,7 @@ import {
   defaultLegendWrapperStyle,
   getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
+  defaultTooltipCursor,
 } from '@/app/utils/chartAxisConfig';
 import ChartStateView from '../../common/ChartStateView';
 import ChartLegend from '../../common/ChartLegend';
@@ -146,7 +147,7 @@ const PrecipitationRateChart = ({
                 style: { fontSize: 12, fill: '#64748b' },
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip />} cursor={defaultTooltipCursor} />
             <Legend
               wrapperStyle={defaultLegendWrapperStyle}
               content={<ChartLegend onClick={handleLegendClick} />}
@@ -161,6 +162,7 @@ const PrecipitationRateChart = ({
               style={{
                 pointerEvents: showBar ? 'auto' : 'none',
               }}
+              hide={!showBar}
             />
           </BarChart>
         </ResponsiveContainer>

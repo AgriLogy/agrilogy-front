@@ -145,6 +145,7 @@ const LargeFruitDiameterChart = ({
               stroke={showLine ? '#82ca9d' : 'gray'}
               {...defaultLineProps}
               isAnimationActive={false}
+              hide={!showLine}
             />
           </LineChart>
         </ResponsiveContainer>

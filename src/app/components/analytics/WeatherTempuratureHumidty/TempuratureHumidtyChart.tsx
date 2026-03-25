@@ -23,6 +23,7 @@ import {
   defaultLineProps,
   getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
+  defaultTooltipCursor,
 } from '@/app/utils/chartAxisConfig';
 
 interface WeatherData {
@@ -53,7 +54,9 @@ const TempuratureHumidtyChart = ({
 
   const mergedData = addTimeMsToChartRows(
     humidityData.map((h) => {
-      const tempEntry = temperatureData.find((t) => t.timestamp === h.timestamp);
+      const tempEntry = temperatureData.find(
+        (t) => t.timestamp === h.timestamp
+      );
       return {
         timestamp: h.timestamp,
         humidity: h.value,
@@ -163,7 +166,7 @@ const TempuratureHumidtyChart = ({
                 fontFamily: 'Arial, sans-serif',
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip />} cursor={defaultTooltipCursor} />
             <Legend
               wrapperStyle={defaultLegendWrapperStyle}
               verticalAlign="bottom"

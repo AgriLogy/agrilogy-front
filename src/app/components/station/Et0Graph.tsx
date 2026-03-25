@@ -1,5 +1,6 @@
 'use client';
 import { Box, Text } from '@chakra-ui/react';
+import { useState } from 'react';
 import {
   LineChart,
   Line,
@@ -18,6 +19,7 @@ import {
   defaultLineProps,
   getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
+  defaultTooltipCursor,
 } from '@/app/utils/chartAxisConfig';
 import ChartLegend from '../common/ChartLegend';
 import ChartStateView from '../common/ChartStateView';
@@ -39,6 +41,12 @@ const Et0Graph = ({ data }: { data: any }) => {
   const chartData = addTimeMsToChartRows(data?.sensor_data ?? [], 'timestamp');
   const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'timestamp');
   const yAxisProps = getDefaultYAxisProps(2);
+
+  const [showEt0, setShowEt0] = useState(true);
+
+  const handleLegendClick = () => {
+    setShowEt0((prev) => !prev);
+  };
 
   return (
     <Box
@@ -62,10 +70,10 @@ const Et0Graph = ({ data }: { data: any }) => {
             <CartesianGrid {...defaultCartesianGridProps} />
             <XAxis {...xAxisProps} />
             <YAxis {...yAxisProps} />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip />} cursor={defaultTooltipCursor} />
             <Legend
               wrapperStyle={defaultLegendWrapperStyle}
-              content={<ChartLegend />}
+              content={<ChartLegend onClick={handleLegendClick} />}
             />
             <Line
               type="monotone"
@@ -73,6 +81,7 @@ const Et0Graph = ({ data }: { data: any }) => {
               stroke={data.sensor_colors?.et0_color}
               name="ET₀ (mm)"
               {...defaultLineProps}
+              hide={!showEt0}
             />
           </LineChart>
         </ResponsiveContainer>

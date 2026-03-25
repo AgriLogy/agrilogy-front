@@ -49,13 +49,25 @@ const NpkLastData = ({ data }: { data: NpkSensorData[] }) => {
       {latest ? (
         <VStack spacing={1} mt={3}>
           <Text fontSize="lg" color={latest.nitrogen_color}>
-            Azote (N): {latest.nitrogen_value != null ? formatNumber(latest.nitrogen_value) : 'N/A'} mg/kg
+            Azote (N):{' '}
+            {latest.nitrogen_value != null
+              ? formatNumber(latest.nitrogen_value)
+              : 'N/A'}{' '}
+            mg/kg
           </Text>
           <Text fontSize="lg" color={latest.phosphorus_color}>
-            Phosphore (P): {latest.phosphorus_value != null ? formatNumber(latest.phosphorus_value) : 'N/A'} mg/kg
+            Phosphore (P):{' '}
+            {latest.phosphorus_value != null
+              ? formatNumber(latest.phosphorus_value)
+              : 'N/A'}{' '}
+            mg/kg
           </Text>
           <Text fontSize="lg" color={latest.potassium_color}>
-            Potassium (K): {latest.potassium_value != null ? formatNumber(latest.potassium_value) : 'N/A'} mg/kg
+            Potassium (K):{' '}
+            {latest.potassium_value != null
+              ? formatNumber(latest.potassium_value)
+              : 'N/A'}{' '}
+            mg/kg
           </Text>
         </VStack>
       ) : (

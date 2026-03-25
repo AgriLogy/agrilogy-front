@@ -5,6 +5,12 @@ import ChartDateRangeGate from '../../common/ChartDateRangeGate';
 import { sortByTimestamp } from '@/app/utils/chartDateWindow';
 import { SensorData } from '@/app/types';
 import api from '@/app/lib/api';
+import { logOptionalApiFailure } from '@/app/utils/apiClientErrors';
+import {
+  fetchWindGustRows,
+  mergeGustIntoSpeedRows,
+  type WindSpeedSensorRow,
+} from '@/app/utils/windSpeedMerge';
 import '@/app/styles/style.css';
 import WindSpeedChart from './WindSpeedChart';
 import WindSpeedLastData from './WindSpeedLastData';
@@ -19,21 +25,37 @@ const WindSpeedMain = ({
   };
 }) => {
   const { startDate, endDate, selectedZone } = filters;
-  const [data, setData] = useState<SensorData[]>([]);
+  const [data, setData] = useState<WindSpeedSensorRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api
-      .get<SensorData[]>('/api/sensors/windspeed/', {
-        params: {
-          start_date: startDate,
-          end_date: endDate,
-          zone: selectedZone,
-        },
-      })
-      .then((res) => setData(res.data))
-      .catch((err) => console.error('Failed to fetch electricity data:', err))
-      .finally(() => setLoading(false));
+    const params = {
+      start_date: startDate,
+      end_date: endDate,
+      zone: selectedZone,
+    };
+    let cancelled = false;
+
+    (async () => {
+      setLoading(true);
+      try {
+        const [speedRes, gustRows] = await Promise.all([
+          api.get<SensorData[]>('/api/sensors/windspeed/', { params }),
+          fetchWindGustRows(params),
+        ]);
+        if (cancelled) return;
+        const merged = mergeGustIntoSpeedRows(speedRes.data ?? [], gustRows);
+        setData(merged);
+      } catch (error) {
+        logOptionalApiFailure('WindSpeedMain: windspeed', error);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [startDate, endDate, selectedZone]);
 
   const sortedData = useMemo(() => sortByTimestamp(data), [data]);
@@ -50,7 +72,7 @@ const WindSpeedMain = ({
       width="100%"
       height="100%"
       className="Box"
-      maxH={"550px"}
+      maxH={'550px'}
     >
       <Box flex={3} p={2} height="100%" width="100%">
         <ChartDateRangeGate timeline={timeline}>

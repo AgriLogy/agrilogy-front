@@ -1,5 +1,6 @@
 'use client';
 import { Box, Text } from '@chakra-ui/react';
+import { useState } from 'react';
 import {
   LineChart,
   Line,
@@ -39,6 +40,12 @@ const WindDirectionGraph = ({ data }: { data: any }) => {
     domain: [0, 360] as [number, number],
   };
 
+  const [showWindDirection, setShowWindDirection] = useState(true);
+
+  const handleLegendClick = () => {
+    setShowWindDirection((prev) => !prev);
+  };
+
   return (
     <Box
       width="100%"
@@ -66,7 +73,7 @@ const WindDirectionGraph = ({ data }: { data: any }) => {
             />
             <Legend
               wrapperStyle={defaultLegendWrapperStyle}
-              content={<ChartLegend />}
+              content={<ChartLegend onClick={handleLegendClick} />}
             />
 
             <ReferenceLine y={0} stroke="red" strokeDasharray="3 3" label="N" />
@@ -95,6 +102,7 @@ const WindDirectionGraph = ({ data }: { data: any }) => {
               stroke={data?.sensor_colors?.wind_direction_color}
               name="Direction du vent (°)"
               {...defaultLineProps}
+              hide={!showWindDirection}
             />
           </LineChart>
         </ResponsiveContainer>

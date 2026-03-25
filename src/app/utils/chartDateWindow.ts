@@ -1,5 +1,7 @@
 /** Stable sort by ISO timestamp string (use before building a slider timeline). */
-export function sortByTimestamp<T extends { timestamp: string }>(rows: T[]): T[] {
+export function sortByTimestamp<T extends { timestamp: string }>(
+  rows: T[]
+): T[] {
   return [...rows].sort((a, b) => a.timestamp.localeCompare(b.timestamp));
 }
 

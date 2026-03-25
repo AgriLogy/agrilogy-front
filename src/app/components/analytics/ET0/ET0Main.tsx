@@ -77,7 +77,7 @@ const ET0Main = ({
       width="100%"
       height="100%"
       className="Box"
-      maxH={"560px"}
+      maxH={'560px'}
     >
       <Box flex={3} p={2} width="100%" height="100%">
         <ChartDateRangeGate timeline={timeline}>

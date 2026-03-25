@@ -1,5 +1,6 @@
 'use client';
 import { Box, Text, useColorMode } from '@chakra-ui/react';
+import { useState } from 'react';
 import {
   LineChart,
   Line,
@@ -34,6 +35,16 @@ const PluvometricGraph = ({ data }: { data: any }) => {
   const chartData = addTimeMsToChartRows(data?.sensor_data ?? [], 'timestamp');
   const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'timestamp');
   const yAxisProps = getDefaultYAxisProps(2);
+
+  const [showWindSpeed, setShowWindSpeed] = useState(true);
+
+  const handleLegendClick = (entry: any) => {
+    const dataKey = entry?.dataKey ? String(entry.dataKey) : null;
+    if (!dataKey) return;
+    if (dataKey === 'wind_speed') {
+      setShowWindSpeed((prev) => !prev);
+    }
+  };
 
   return (
     <Box
@@ -70,7 +81,7 @@ const PluvometricGraph = ({ data }: { data: any }) => {
             />
             <Legend
               wrapperStyle={defaultLegendWrapperStyle}
-              content={<ChartLegend />}
+              content={<ChartLegend onClick={handleLegendClick} />}
             />
             <Line
               type="monotone"
@@ -78,6 +89,7 @@ const PluvometricGraph = ({ data }: { data: any }) => {
               stroke={data?.sensor_colors?.wind_speed_color}
               name="Précipitation (mm)"
               {...defaultLineProps}
+              hide={!showWindSpeed}
             />
           </LineChart>
         </ResponsiveContainer>

@@ -459,9 +459,6 @@ const WindRadarChart = ({
 
 export default WindRadarChart;
 
-
-
-
 // 'use client';
 
 // import React, { useRef } from 'react';
@@ -518,10 +515,6 @@ export default WindRadarChart;
 //   return LABELS_16_POINT[index];
 // };
 
-
-
-
-
 // /* ---------------- STACKED POLAR PLUGIN ---------------- */
 
 // const stackedPolarAreaPlugin = {
@@ -555,11 +548,6 @@ export default WindRadarChart;
 //     }
 //   },
 // };
-
-
-
-
-
 
 // /* ---------------- RADIAL COLOR BACKGROUND ---------------- */
 
@@ -600,11 +588,6 @@ export default WindRadarChart;
 //   },
 // };
 
-
-
-
-
-
 // ChartJS.register(
 //   RadialLinearScale,
 //   ArcElement,
@@ -614,19 +597,11 @@ export default WindRadarChart;
 //   radialSpeedBackgroundPlugin
 // );
 
-
-
-
-
 // interface WindData {
 //   timestamp: string;
 //   value: number;
 //   default_unit: string;
 // }
-
-
-
-
 
 // const prepareWindRoseData = (
 //   speedData: WindData[],
@@ -701,9 +676,6 @@ export default WindRadarChart;
 
 //   });
 
-
-
-
 //   const datasets = SPEED_BINS.map((bin) => {
 
 //     const realPercentages = LABELS_16_POINT.map(
@@ -725,9 +697,6 @@ export default WindRadarChart;
 //     };
 //   });
 
-
-
-
 //   const maxStacked = Math.max(
 //     ...LABELS_16_POINT.map((dir) =>
 //       SPEED_BINS.reduce((sum, bin) => sum + pctMap[dir][bin.label], 0)
@@ -744,12 +713,6 @@ export default WindRadarChart;
 //     maxStacked,
 //   };
 // };
-
-
-
-
-
-
 
 // const WindRadarChart = ({
 //   windSpeedData,
@@ -775,17 +738,10 @@ export default WindRadarChart;
 //     'rgba(26,32,44,0.85)'
 //   );
 
-
-
-
 //   const { chartData, pctMap, countsMap, maxStacked } =
 //     prepareWindRoseData(windSpeedData, windDirectionData);
 
 //   const isDataEmpty = !chartData || chartData.datasets.length === 0;
-
-
-
-
 
 //   const chartOptions: ChartOptions<'polarArea'> = {
 
@@ -830,8 +786,6 @@ export default WindRadarChart;
 //       },
 //     },
 
-
-
 //     plugins: {
 
 //       legend: {
@@ -862,8 +816,6 @@ export default WindRadarChart;
 //         },
 //       },
 
-
-
 //       tooltip: {
 
 //         callbacks: {
@@ -885,10 +837,6 @@ export default WindRadarChart;
 //     },
 //   };
 
-
-
-
-
 //   const handleScreenshot = async () => {
 
 //     if (!chartRef.current) return;
@@ -903,8 +851,6 @@ export default WindRadarChart;
 //     link.href = canvas.toDataURL();
 //     link.click();
 //   };
-
-
 
 //   const handleDownloadData = () => {
 
@@ -945,10 +891,6 @@ export default WindRadarChart;
 //     URL.revokeObjectURL(url);
 //   };
 
-
-
-
-
 //   return (
 
 //     <Box width="100%" pr={4} pb={4}>
@@ -983,10 +925,6 @@ export default WindRadarChart;
 //         </HStack>
 //       </Flex>
 
-
-
-
-
 //       <ChartStateView
 //         loading={loading}
 //         empty={isDataEmpty}
@@ -1004,12 +942,6 @@ export default WindRadarChart;
 // };
 
 // export default WindRadarChart;
-
-
-
-
-
-
 
 // 'use client';
 

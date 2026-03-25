@@ -110,14 +110,13 @@ const WaterSoilMain = ({
 
   return (
     <Stack
-  
       direction={{ base: 'column', md: 'row' }}
       width="100%"
       height="100%"
-      maxH="560px"
+      maxH="760px"
       spacing={4}
     >
-      <Box flex={3}   p={3}>
+      <Box flex={3} p={3}>
         <ChartDateRangeGate timeline={timeline}>
           {({ startIdx, endIdx, setRange }) => (
             <VStack spacing={0} align="stretch" width="100%">

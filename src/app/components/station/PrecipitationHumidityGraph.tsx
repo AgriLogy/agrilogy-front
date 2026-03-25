@@ -1,5 +1,6 @@
 'use client';
 import { Box, Text, useColorMode } from '@chakra-ui/react';
+import { useState } from 'react';
 import {
   LineChart,
   Line,
@@ -35,6 +36,28 @@ const PrecipitationHumidityGraph = ({ data }: { data: any }) => {
   const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'timestamp');
   const yAxisProps = getDefaultYAxisProps(2);
 
+  const [activeLines, setActiveLines] = useState({
+    precipitation_rate: true,
+    humidity_weather: true,
+  });
+
+  const handleLegendClick = (entry: any) => {
+    const dataKey = entry?.dataKey ? String(entry.dataKey) : null;
+    if (!dataKey) return;
+    if (dataKey === 'precipitation_rate') {
+      setActiveLines((prev) => ({
+        ...prev,
+        precipitation_rate: !prev.precipitation_rate,
+      }));
+    }
+    if (dataKey === 'humidity_weather') {
+      setActiveLines((prev) => ({
+        ...prev,
+        humidity_weather: !prev.humidity_weather,
+      }));
+    }
+  };
+
   return (
     <Box
       width="100%"
@@ -67,7 +90,7 @@ const PrecipitationHumidityGraph = ({ data }: { data: any }) => {
             />
             <Legend
               wrapperStyle={defaultLegendWrapperStyle}
-              content={<ChartLegend />}
+              content={<ChartLegend onClick={handleLegendClick} />}
             />
             <Line
               type="monotone"
@@ -75,6 +98,7 @@ const PrecipitationHumidityGraph = ({ data }: { data: any }) => {
               stroke={data?.sensor_colors?.precipitation_rate_color}
               name="Précipitation (mm)"
               {...defaultLineProps}
+              hide={!activeLines.precipitation_rate}
             />
             <Line
               type="monotone"
@@ -82,6 +106,7 @@ const PrecipitationHumidityGraph = ({ data }: { data: any }) => {
               stroke={data?.sensor_colors?.humidity_weather_color}
               name="Humidité (%)"
               {...defaultLineProps}
+              hide={!activeLines.humidity_weather}
             />
           </LineChart>
         </ResponsiveContainer>

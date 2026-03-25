@@ -86,7 +86,6 @@ const SoilTemperatureMain = ({
 
   return (
     <Stack
-      
       direction={{ base: 'column', md: 'row' }}
       align="start"
       width="100%"

@@ -31,6 +31,7 @@ import Image from 'next/image';
 import logo from '../../public/logo.png';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import api from '@/app/lib/api';
+import { logOptionalApiFailure } from '@/app/utils/apiClientErrors';
 import { FaBell, FaSeedling } from 'react-icons/fa';
 import { WiDaySunny } from 'react-icons/wi';
 import { GiGrapes } from 'react-icons/gi';
@@ -58,7 +59,7 @@ const MobileMenu = () => {
 
         setUsername(response.data.first_name);
       } catch (error) {
-        console.error('[MobileMenu] Error fetching user data.');
+        logOptionalApiFailure('MobileMenu: header', error);
       }
     };
     fetchUser();

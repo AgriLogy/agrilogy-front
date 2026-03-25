@@ -72,16 +72,29 @@ export default function ChartDateRangeDragger({
         gap={2}
         mb={2}
       >
-        <Text fontSize="xs" fontWeight="semibold" color={muted} letterSpacing="wide">
+        <Text
+          fontSize="xs"
+          fontWeight="semibold"
+          color={muted}
+          letterSpacing="wide"
+        >
           {label}
         </Text>
-        <Text fontSize="sm" fontWeight="medium" color="gray.700" _dark={{ color: 'gray.200' }}>
+        <Text
+          fontSize="sm"
+          fontWeight="medium"
+          color="gray.700"
+          _dark={{ color: 'gray.200' }}
+        >
           {from && to ? `${formatTick(from)} → ${formatTick(to)}` : '—'}
         </Text>
       </Flex>
 
       <RangeSlider
-        aria-label={['Début de la période affichée', 'Fin de la période affichée']}
+        aria-label={[
+          'Début de la période affichée',
+          'Fin de la période affichée',
+        ]}
         min={0}
         max={maxIdx}
         step={1}

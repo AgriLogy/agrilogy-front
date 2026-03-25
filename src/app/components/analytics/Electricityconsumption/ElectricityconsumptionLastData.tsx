@@ -45,7 +45,9 @@ const ElectricityconsumptionLastData = ({ data }: { data: SensorData[] }) => {
         Dernière consommation :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest ? `${formatNumber(latest.value)} ${latest.default_unit}` : 'N/A'}
+        {latest
+          ? `${formatNumber(latest.value)} ${latest.default_unit}`
+          : 'N/A'}
       </Text>
       <Text fontSize="sm" color={textColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}

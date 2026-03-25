@@ -31,7 +31,7 @@ export const defaultCartesianGridProps = {
 };
 
 /** Hover marker: small circle, white fill, stroke for visibility. Use for Line activeDot. */
-export const defaultActiveDot = { r: 4, strokeWidth: 2, fill: 'white' };
+export const defaultActiveDot = { r: 5, strokeWidth: 2, fill: 'black' };
 
 /**
  * Default Line props: smooth continuous line, no dots by default.
@@ -107,13 +107,18 @@ const pad2 = (n: number) => n.toString().padStart(2, '0');
  * - Last tick: date ("2 Jun") if the range crosses into another calendar day; otherwise time
  * - First tick of a new calendar day (vs previous tick): date label
  */
-export function formatZoomedTimeAxisTick(value: string, allTicks: string[]): string {
+export function formatZoomedTimeAxisTick(
+  value: string,
+  allTicks: string[]
+): string {
   const d = new Date(value);
   if (Number.isNaN(d.getTime()) || allTicks.length === 0) return String(value);
 
   let idx = allTicks.indexOf(value);
   if (idx === -1) {
-    idx = allTicks.findIndex((t) => Math.abs(new Date(t).getTime() - d.getTime()) < 1);
+    idx = allTicks.findIndex(
+      (t) => Math.abs(new Date(t).getTime() - d.getTime()) < 1
+    );
   }
   if (idx === -1) return formatXAxisTimestamp(value);
 
@@ -148,7 +153,10 @@ export function formatZoomedTimeAxisTick(value: string, allTicks: string[]): str
 }
 
 /** Same rules as {@link formatZoomedTimeAxisTick} for numeric `type="number"` X-axes (ms since epoch). */
-export function formatZoomedTimeAxisTickMs(valueMs: number, allTicksMs: number[]): string {
+export function formatZoomedTimeAxisTickMs(
+  valueMs: number,
+  allTicksMs: number[]
+): string {
   const d = new Date(valueMs);
   if (Number.isNaN(d.getTime()) || allTicksMs.length === 0) return '';
 
@@ -303,7 +311,11 @@ export type AdaptiveTimeXAxisOptions = {
 };
 
 /** Hourly (or stepped) tick positions in ms for Recharts `type="number"` X-axis. */
-function generateTimeTicksMs(startMs: number, endMs: number, stepMs: number): number[] {
+function generateTimeTicksMs(
+  startMs: number,
+  endMs: number,
+  stepMs: number
+): number[] {
   const step = Math.max(stepMs, 60 * 60 * 1000);
   const ticks: number[] = [];
   for (let t = startMs; t <= endMs; t += step) {
@@ -315,6 +327,55 @@ function generateTimeTicksMs(startMs: number, endMs: number, stepMs: number): nu
     }
   }
   return ticks;
+}
+
+/**
+ * Sorted unique timestamps (ms) from rows — same instants as plotted points.
+ * Prefer `timeMs` when present (same value the Line uses on the X axis) so it always
+ * matches Recharts’ tooltip resolution; avoids ISO re-parse drift vs `timeMs`.
+ */
+function getSortedUniqueTimeMsFromData(
+  data: Array<object>,
+  dataKey: string
+): number[] {
+  const set = new Set<number>();
+  for (const row of data) {
+    const rec = row as Record<string, unknown>;
+    const msFromRow = rec[CHART_TIME_MS_KEY];
+    if (typeof msFromRow === 'number' && Number.isFinite(msFromRow)) {
+      set.add(msFromRow);
+      continue;
+    }
+    const raw = rec[dataKey];
+    const ms =
+      typeof raw === 'string' || typeof raw === 'number'
+        ? new Date(raw).getTime()
+        : NaN;
+    if (Number.isFinite(ms)) set.add(ms);
+  }
+  return Array.from(set).sort((a, b) => a - b);
+}
+
+/** True if any two consecutive samples are closer than 24h (hourly / sub-daily series). */
+function hasSubDailySampleSpacing(sortedUniqueMs: number[]): boolean {
+  if (sortedUniqueMs.length < 2) return false;
+  const dayMs = 24 * 60 * 60 * 1000;
+  for (let i = 1; i < sortedUniqueMs.length; i++) {
+    if (sortedUniqueMs[i] - sortedUniqueMs[i - 1] < dayMs) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function mergeSortedUniqueMs(...lists: number[][]): number[] {
+  const set = new Set<number>();
+  for (const list of lists) {
+    for (const n of list) {
+      if (Number.isFinite(n)) set.add(n);
+    }
+  }
+  return Array.from(set).sort((a, b) => a - b);
 }
 
 /**
@@ -330,18 +391,42 @@ export function getAdaptiveTimeXAxisProps(
   const visual = getTimeAxisVisualProps();
   const zoomThresholdHours = options.zoomThresholdHours ?? 24 * 7;
   const thresholdMs = zoomThresholdHours * 60 * 60 * 1000;
+  /** Use numeric time axis for sub-daily data up to ~1 month (not only ≤7 days). */
+  const maxSubDailySpanMs = 31 * 24 * 60 * 60 * 1000;
 
   const range = getTimeMsRangeFromData(data, dataKey);
   const spanMs = range ? range.maxMs - range.minMs : Number.POSITIVE_INFINITY;
-  const zoomed = range != null && spanMs <= thresholdMs && data.length > 0;
+  const uniqueMs = getSortedUniqueTimeMsFromData(data, dataKey);
+  const subDaily =
+    uniqueMs.length >= 2 && hasSubDailySampleSpacing(uniqueMs);
+  const zoomed =
+    range != null &&
+    data.length > 0 &&
+    (spanMs <= thresholdMs || (subDaily && spanMs <= maxSubDailySpanMs));
 
   if (zoomed && range) {
     const { minMs, maxMs } = range;
     const spanHours = spanMs / (60 * 60 * 1000);
     const stepHours =
-      spanHours <= 12 ? 1 : spanHours <= 24 ? 2 : spanHours <= 48 ? 3 : spanHours <= 96 ? 4 : 6;
+      spanHours <= 12
+        ? 1
+        : spanHours <= 24
+          ? 2
+          : spanHours <= 48
+            ? 3
+            : spanHours <= 96
+              ? 4
+              : 6;
     const stepMsVal = stepHours * 60 * 60 * 1000;
-    const ticksMs = generateTimeTicksMs(minMs, maxMs, stepMsVal);
+    /** Visual tick cadence only (does not include every sample time). */
+    const sparseTicksMs = generateTimeTicksMs(minMs, maxMs, stepMsVal);
+    /**
+     * Every real sample `timeMs` must be a tick value: sparse steps alone miss sample
+     * times (e.g. across midnight). Merging does not add data points.
+     */
+    const dataTimeMs = uniqueMs;
+    const ticksMs = mergeSortedUniqueMs(sparseTicksMs, dataTimeMs);
+    const sparseLabelSet = new Set(sparseTicksMs);
 
     let domainMin = minMs;
     let domainMax = maxMs;
@@ -357,7 +442,10 @@ export function getAdaptiveTimeXAxisProps(
       dataKey: CHART_TIME_MS_KEY,
       domain: [domainMin, domainMax] as [number, number],
       ticks: ticksMs,
-      tickFormatter: (v: number) => formatZoomedTimeAxisTickMs(v, ticksMs),
+      tickFormatter: (v: number) =>
+        sparseLabelSet.has(v)
+          ? formatZoomedTimeAxisTickMs(v, ticksMs)
+          : '',
       allowDecimals: false,
       interval: 0,
       minTickGap: 0,

@@ -116,11 +116,8 @@ const SoilTemperatureChart = ({
     URL.revokeObjectURL(url);
   };
 
-  const xIsNumeric =
-    'type' in xAxisProps && xAxisProps.type === 'number';
-  const xStart = xIsNumeric
-    ? chartData[0]?.timeMs
-    : chartData[0]?.name;
+  const xIsNumeric = 'type' in xAxisProps && xAxisProps.type === 'number';
+  const xStart = xIsNumeric ? chartData[0]?.timeMs : chartData[0]?.name;
   const xEnd = xIsNumeric
     ? chartData[chartData.length - 1]?.timeMs
     : chartData[chartData.length - 1]?.name;
@@ -166,7 +163,7 @@ const SoilTemperatureChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
+            margin={{ top: 20, right: 0, left: 20, bottom: 0 }}
           >
             <CartesianGrid {...defaultCartesianGridProps} />
 
@@ -185,10 +182,7 @@ const SoilTemperatureChart = ({
             )}
 
             <XAxis {...xAxisProps} />
-            <YAxis
-              {...yAxisProps}
-              label={{ angle: 0, position: 'top' }}
-            />
+            <YAxis {...yAxisProps} label={{ angle: 0, position: 'top' }} />
             <Tooltip
               content={<UnifiedTooltip />}
               cursor={defaultTooltipCursor}

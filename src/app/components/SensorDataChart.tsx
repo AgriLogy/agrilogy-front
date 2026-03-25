@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Text,
@@ -29,7 +29,7 @@ import {
   getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
 } from '@/app/utils/chartAxisConfig';
-import ChartLegend from './common/ChartLegend';
+import ChartLegend, { type ChartLegendPayloadEntry } from './common/ChartLegend';
 
 interface SensorDataChartProps {
   data: SensorData[];
@@ -43,7 +43,10 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
     ...sensorData,
   }));
 
-  const lastEightData = addTimeMsToChartRows(dataWithET0.slice(-8), 'timestamp');
+  const lastEightData = addTimeMsToChartRows(
+    dataWithET0.slice(-8),
+    'timestamp'
+  );
   const xAxisProps = getAdaptiveTimeXAxisProps(lastEightData, 'timestamp');
   const yAxisProps = getDefaultYAxisProps(2);
 
@@ -51,6 +54,28 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
   const chartBg = useColorModeValue('white', 'gray.800');
   const p = useBreakpointValue({ base: 2, md: 4 });
   const { colorMode } = useColorMode();
+
+  const [activeLines, setActiveLines] = useState({
+    temperature_weather: true,
+    solar_radiation: true,
+    et0: true,
+  });
+
+  const handleLegendClick = (entry: ChartLegendPayloadEntry) => {
+    const dataKey = entry.dataKey ? String(entry.dataKey) : null;
+    if (!dataKey) return;
+    if (
+      dataKey !== 'temperature_weather' &&
+      dataKey !== 'solar_radiation' &&
+      dataKey !== 'et0'
+    ) {
+      return;
+    }
+    setActiveLines((prev) => ({
+      ...prev,
+      [dataKey]: !prev[dataKey as keyof typeof prev],
+    }));
+  };
 
   if (validData.length === 0) {
     return (
@@ -101,7 +126,7 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
           <Tooltip content={<UnifiedTooltip />} cursor={defaultTooltipCursor} />
           <Legend
             wrapperStyle={defaultLegendWrapperStyle}
-            content={<ChartLegend />}
+            content={<ChartLegend onClick={handleLegendClick} />}
           />
           <Line
             type="monotone"
@@ -109,6 +134,7 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
             stroke={chartColor}
             name="Température de l'air (°C)"
             {...defaultLineProps}
+            hide={!activeLines.temperature_weather}
           />
           <Line
             type="monotone"
@@ -116,6 +142,7 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
             stroke="#82ca9d"
             name="Rayonnement solaire (W/m²)"
             {...defaultLineProps}
+            hide={!activeLines.solar_radiation}
           />
           <Line
             type="monotone"
@@ -123,6 +150,7 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
             stroke="#ffc658"
             name="ET₀ (mm)"
             {...defaultLineProps}
+            hide={!activeLines.et0}
           />
         </LineChart>
       </ResponsiveContainer>

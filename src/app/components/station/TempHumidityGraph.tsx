@@ -1,5 +1,6 @@
 'use client';
 import { Box, Text } from '@chakra-ui/react';
+import { useState } from 'react';
 import {
   LineChart,
   Line,
@@ -18,6 +19,7 @@ import {
   defaultLineProps,
   getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
+  defaultTooltipCursor,
 } from '@/app/utils/chartAxisConfig';
 import ChartLegend from '../common/ChartLegend';
 import ChartStateView from '../common/ChartStateView';
@@ -33,6 +35,28 @@ const TempHumidityGraph = ({ data }: { data: any }) => {
   const chartData = addTimeMsToChartRows(data?.sensor_data ?? [], 'timestamp');
   const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'timestamp');
   const yAxisProps = getDefaultYAxisProps(2);
+
+  const [activeLines, setActiveLines] = useState({
+    temperature_weather: true,
+    humidity_weather: true,
+  });
+
+  const handleLegendClick = (entry: any) => {
+    const dataKey = entry?.dataKey ? String(entry.dataKey) : null;
+    if (!dataKey) return;
+    if (dataKey === 'temperature_weather') {
+      setActiveLines((prev) => ({
+        ...prev,
+        temperature_weather: !prev.temperature_weather,
+      }));
+    }
+    if (dataKey === 'humidity_weather') {
+      setActiveLines((prev) => ({
+        ...prev,
+        humidity_weather: !prev.humidity_weather,
+      }));
+    }
+  };
 
   return (
     <Box
@@ -55,10 +79,10 @@ const TempHumidityGraph = ({ data }: { data: any }) => {
             <CartesianGrid {...defaultCartesianGridProps} />
             <XAxis {...xAxisProps} />
             <YAxis {...yAxisProps} />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip />} cursor={defaultTooltipCursor} />
             <Legend
               wrapperStyle={defaultLegendWrapperStyle}
-              content={<ChartLegend />}
+              content={<ChartLegend onClick={handleLegendClick} />}
             />
             <Line
               type="monotone"
@@ -66,6 +90,7 @@ const TempHumidityGraph = ({ data }: { data: any }) => {
               stroke={data.sensor_colors?.temperature_weather_color}
               name="Température (°C)"
               {...defaultLineProps}
+              hide={!activeLines.temperature_weather}
             />
             <Line
               type="monotone"
@@ -73,6 +98,7 @@ const TempHumidityGraph = ({ data }: { data: any }) => {
               stroke={data.sensor_colors?.humidity_weather_color}
               name="Humidité (%)"
               {...defaultLineProps}
+              hide={!activeLines.humidity_weather}
             />
           </LineChart>
         </ResponsiveContainer>

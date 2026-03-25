@@ -128,10 +128,10 @@ const NpkSizeChart = ({
         height="300px"
       >
         <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={chartData}
-              margin={{ top: 20, right: 0, left: 30, bottom: 40 }}
-            >
+          <LineChart
+            data={chartData}
+            margin={{ top: 20, right: 0, left: 30, bottom: 0 }}
+          >
             <CartesianGrid {...defaultCartesianGridProps} />
             <XAxis {...xAxisProps} />
             <YAxis
@@ -162,9 +162,12 @@ const NpkSizeChart = ({
               dataKey="nitrogen"
               name={data[0]?.nitrogen_courbe_name || 'Azote N (mg/kg)'}
               stroke={
-                activeLines.nitrogen ? data[0]?.nitrogen_color || '#dba800' : 'gray'
+                activeLines.nitrogen
+                  ? data[0]?.nitrogen_color || '#dba800'
+                  : 'gray'
               }
               {...defaultLineProps}
+              hide={!activeLines.nitrogen}
             />
             <Line
               type="monotone"
@@ -176,6 +179,7 @@ const NpkSizeChart = ({
                   : 'gray'
               }
               {...defaultLineProps}
+              hide={!activeLines.phosphorus}
             />
             <Line
               type="monotone"
@@ -187,9 +191,10 @@ const NpkSizeChart = ({
                   : 'gray'
               }
               {...defaultLineProps}
+              hide={!activeLines.potassium}
             />
           </LineChart>
-          </ResponsiveContainer>
+        </ResponsiveContainer>
       </ChartStateView>
     </Box>
   );

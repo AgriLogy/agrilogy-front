@@ -148,6 +148,7 @@ const FruitSizeChart = ({
               style={{
                 pointerEvents: showBar ? 'auto' : 'none',
               }}
+              hide={!showBar}
             />
           </BarChart>
         </ResponsiveContainer>

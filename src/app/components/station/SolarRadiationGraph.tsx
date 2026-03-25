@@ -1,5 +1,6 @@
 'use client';
 import { Box, Text, useColorMode } from '@chakra-ui/react';
+import { useState } from 'react';
 import {
   LineChart,
   Line,
@@ -35,6 +36,12 @@ const SolarRadiationGraph = ({ data }: { data: any }) => {
   const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'timestamp');
   const yAxisProps = getDefaultYAxisProps(2);
 
+  const [showSolar, setShowSolar] = useState(true);
+
+  const handleLegendClick = () => {
+    setShowSolar((prev) => !prev);
+  };
+
   return (
     <Box
       width="100%"
@@ -67,7 +74,7 @@ const SolarRadiationGraph = ({ data }: { data: any }) => {
             />
             <Legend
               wrapperStyle={defaultLegendWrapperStyle}
-              content={<ChartLegend />}
+              content={<ChartLegend onClick={handleLegendClick} />}
             />
             <Line
               type="monotone"
@@ -75,6 +82,7 @@ const SolarRadiationGraph = ({ data }: { data: any }) => {
               stroke={data?.sensor_colors?.solar_radiation_color}
               name="Rayonnement solaire (W/m²)"
               {...defaultLineProps}
+              hide={!showSolar}
             />
           </LineChart>
         </ResponsiveContainer>

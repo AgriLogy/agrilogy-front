@@ -21,6 +21,7 @@ import {
   defaultLineProps,
   getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
+  defaultTooltipCursor,
 } from '@/app/utils/chartAxisConfig';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
@@ -115,7 +116,7 @@ const PhSoilChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
-            margin={{ top: 16, right: 0, left: 40, bottom: 30 }}
+            margin={{ top: 16, right: 0, left: 40, bottom: 0 }}
           >
             <CartesianGrid {...defaultCartesianGridProps} />
             <XAxis {...xAxisProps} />
@@ -132,7 +133,7 @@ const PhSoilChart = ({
                 fill: '#64748b',
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip />} cursor={defaultTooltipCursor} />
             <Legend
               wrapperStyle={defaultLegendWrapperStyle}
               content={<ChartLegend onClick={handleLegendClick} />}
@@ -144,6 +145,7 @@ const PhSoilChart = ({
               stroke={showLine ? '#82ca9d' : 'gray'}
               {...defaultLineProps}
               isAnimationActive={false}
+              hide={!showLine}
             />
           </LineChart>
         </ResponsiveContainer>

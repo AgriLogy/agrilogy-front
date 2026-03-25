@@ -42,7 +42,9 @@ const SensorLeafChart = ({
 
   const combinedData = addTimeMsToChartRows(
     temperatureData.map((t) => {
-      const moisturePoint = moistureData.find((m) => m.timestamp === t.timestamp);
+      const moisturePoint = moistureData.find(
+        (m) => m.timestamp === t.timestamp
+      );
       return {
         name: t.timestamp,
         temperature: t.value,
@@ -176,6 +178,7 @@ const SensorLeafChart = ({
               name="Température feuille (°C)"
               stroke={activeLines.temperature ? '#ff7300' : 'gray'}
               {...defaultLineProps}
+              hide={!activeLines.temperature}
             />
             <Line
               yAxisId="right"
@@ -184,6 +187,7 @@ const SensorLeafChart = ({
               name="Humidité feuille (%)"
               stroke={activeLines.moisture ? '#007aff' : 'gray'}
               {...defaultLineProps}
+              hide={!activeLines.moisture}
             />
           </LineChart>
         </ResponsiveContainer>

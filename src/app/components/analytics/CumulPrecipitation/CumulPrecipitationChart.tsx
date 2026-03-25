@@ -31,6 +31,7 @@ import {
   getAdaptiveTimeXAxisProps,
   getPeriodXAxisProps,
   getDefaultYAxisProps,
+  defaultTooltipCursor,
 } from '@/app/utils/chartAxisConfig';
 import ChartStateView from '../../common/ChartStateView';
 import ChartLegend from '../../common/ChartLegend';
@@ -100,8 +101,12 @@ const CumulPrecipitationChart = ({
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const [groupBy, setGroupBy] = useState<GroupBy>('day');
+  const [showValue, setShowValue] = useState(true);
   const { colorMode } = useColorMode();
-  const chartData = addTimeMsToChartRows(aggregateData(data, groupBy), 'period');
+  const chartData = addTimeMsToChartRows(
+    aggregateData(data, groupBy),
+    'period'
+  );
   const { textColor } = useColorModeStyles();
   const periodXAxisProps = getPeriodXAxisProps();
   const timeXAxisProps = getAdaptiveTimeXAxisProps(chartData, 'period');
@@ -134,6 +139,10 @@ const CumulPrecipitationChart = ({
   const axisTickColor = colorMode === 'dark' ? '#ccc' : '#333';
   const gridStroke = colorMode === 'dark' ? '#444' : '#ddd';
   const legendTextColor = textColor;
+
+  const handleLegendClick = () => {
+    setShowValue((prev) => !prev);
+  };
 
   return (
     <Box width="100%" pr={4} pb={4} borderRadius="md" p={4}>
@@ -197,10 +206,13 @@ const CumulPrecipitationChart = ({
                 style: { fontSize: 14, fill: '#64748b' },
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip />} cursor={defaultTooltipCursor} />
             <Legend
-              wrapperStyle={{ ...defaultLegendWrapperStyle, color: legendTextColor }}
-              content={<ChartLegend />}
+              wrapperStyle={{
+                ...defaultLegendWrapperStyle,
+                color: legendTextColor,
+              }}
+              content={<ChartLegend onClick={handleLegendClick} />}
             />
             <Bar
               dataKey="value"
@@ -208,6 +220,7 @@ const CumulPrecipitationChart = ({
               fill={colorMode === 'dark' ? '#60a5fa' : '#3b82f6'} // lighter blue in dark mode
               fillOpacity={0.9}
               {...defaultBarProps}
+              hide={!showValue}
             />
           </BarChart>
         </ResponsiveContainer>

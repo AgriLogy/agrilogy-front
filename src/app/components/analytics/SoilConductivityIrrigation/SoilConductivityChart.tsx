@@ -130,7 +130,7 @@ const SoilConductivityChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={chartData}
-            margin={{ top: 20, right: 10, left: 10, bottom: 30 }}
+            margin={{ top: 20, right: 11, left: 11, bottom: 0 }}
           >
             <CartesianGrid {...defaultCartesianGridProps} />
             <XAxis {...xAxisProps} />
@@ -140,8 +140,8 @@ const SoilConductivityChart = ({
                 value: 'Conductivité',
                 angle: -90,
                 position: 'insideLeft',
-                dx: -10,
-                dy: 30,
+                // dx: -10,
+                dy: 40,
                 fontSize: 15,
                 fontFamily: 'Arial, sans-serif',
               }}
@@ -160,7 +160,6 @@ const SoilConductivityChart = ({
                 stroke: '#666',
                 strokeWidth: 1,
               }}
-              
             />
             <YAxis
               yAxisId="right"
@@ -172,8 +171,7 @@ const SoilConductivityChart = ({
                 dy: -30,
                 dx: 10,
                 fontSize: 15,
-                fontFamily: 
-                'Arial, sans-serif',
+                fontFamily: 'Arial, sans-serif',
               }}
               stroke="#666"
               strokeWidth={1}
@@ -208,6 +206,7 @@ const SoilConductivityChart = ({
               stroke="#1E88E5"
               strokeOpacity={activeLines.low ? 1 : 0.1}
               {...defaultLineProps}
+              hide={!activeLines.low}
             />
 
             <Line
@@ -218,6 +217,7 @@ const SoilConductivityChart = ({
               stroke="#2BB673"
               strokeOpacity={activeLines.high ? 1 : 0.1}
               {...defaultLineProps}
+              hide={!activeLines.high}
             />
 
             <Bar
@@ -228,6 +228,7 @@ const SoilConductivityChart = ({
               fillOpacity={activeLines.waterflow ? 0.65 : 0.06}
               barSize={10}
               {...defaultBarProps}
+              hide={!activeLines.waterflow}
             />
           </ComposedChart>
         </ResponsiveContainer>

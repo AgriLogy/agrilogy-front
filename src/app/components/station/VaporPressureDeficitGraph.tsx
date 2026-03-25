@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Text, useColorMode } from '@chakra-ui/react';
 import {
   LineChart,
@@ -18,6 +18,7 @@ import {
   defaultLineProps,
   getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
+  defaultTooltipCursor,
 } from '@/app/utils/chartAxisConfig';
 import ChartLegend from '../common/ChartLegend';
 import ChartStateView from '../common/ChartStateView';
@@ -35,6 +36,12 @@ const VaporPressureDeficitGraph = ({ data }: { data: any }) => {
 
   const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'timestamp');
   const yAxisProps = getDefaultYAxisProps(2);
+
+  const [showPressure, setShowPressure] = useState(true);
+
+  const handleLegendClick = () => {
+    setShowPressure((prev) => !prev);
+  };
 
   return (
     <Box
@@ -70,17 +77,30 @@ const VaporPressureDeficitGraph = ({ data }: { data: any }) => {
                 style: { fontSize: 12, fill: '#64748b' },
               }}
             />
-            <Tooltip content={<UnifiedTooltip valueUnit=" kPa" />} />
+            <Tooltip
+              content={<UnifiedTooltip valueUnit=" kPa" />}
+              cursor={defaultTooltipCursor}
+            />
             <Legend
               wrapperStyle={defaultLegendWrapperStyle}
-              content={<ChartLegend />}
+              content={<ChartLegend onClick={handleLegendClick} />}
             />
             <Line
-              type="monotone"
+              type="linear"
               dataKey="pressure_weather"
               stroke={data.sensor_colors?.pressure_weather_color ?? '#3182ce'}
               name="Déficit de pression de vapeur (kPa)"
               {...defaultLineProps}
+              hide={!showPressure}
+              strokeLinejoin="miter"
+              strokeLinecap="butt"
+              activeDot={{
+                r: 5,
+                strokeWidth: 2,
+                fill: data.sensor_colors?.pressure_weather_color ?? '#3182ce',
+                stroke: '#fff',
+              }}
+              isAnimationActive={false}
             />
           </LineChart>
         </ResponsiveContainer>

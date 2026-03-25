@@ -16,7 +16,9 @@ import { SensorData } from '../data/dashboard/data';
 import EmptyBox from './common/EmptyBox';
 
 const n = (v: number | undefined | null, decimals = 2) =>
-  v == null || Number.isNaN(Number(v)) ? '—' : formatNumber(Number(v), decimals);
+  v == null || Number.isNaN(Number(v))
+    ? '—'
+    : formatNumber(Number(v), decimals);
 
 interface SensorDataTableProps {
   data: SensorData[];

@@ -35,7 +35,9 @@ const Row = ({
             {label}
           </Text>
           <Text color={color}>
-            {entry ? `${formatNumber(entry.value)} ${entry.default_unit}` : 'N/A'}
+            {entry
+              ? `${formatNumber(entry.value)} ${entry.default_unit}`
+              : 'N/A'}
           </Text>
         </HStack>
         <Text fontSize="sm" color={metaColor}>

@@ -4,6 +4,7 @@ import { Box, HStack, Text, useColorModeValue } from '@chakra-ui/react';
 
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import api from '@/app/lib/api';
+import { logOptionalApiFailure } from '@/app/utils/apiClientErrors';
 import '@/app/styles/style.css';
 
 import DateRangePicker from '../analytics/DateRangePicker';
@@ -37,7 +38,7 @@ const PlantMain = () => {
         setZones(res.data || []);
         if (res.data.length > 0) setSelectedZone(res.data[0].id);
       } catch (error) {
-        console.error('Failed to fetch zones', error);
+        logOptionalApiFailure('PlantMain: zones', error);
       }
     };
     fetchZones();

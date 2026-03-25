@@ -135,10 +135,10 @@ const SoilSalinityConductivityChart = ({
         height="300px"
       >
         <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={chartData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
-            >
+          <LineChart
+            data={chartData}
+            margin={{ top: 20, right: 0, left: 20, bottom: 0 }}
+          >
             <CartesianGrid {...defaultCartesianGridProps} />
             <XAxis {...xAxisProps} />
             <YAxis
@@ -167,18 +167,22 @@ const SoilSalinityConductivityChart = ({
               stroke={chartData[0]?.salinity_color || '#dba800'}
               strokeOpacity={activeLines.salinity ? 1 : 0.1}
               {...defaultLineProps}
+              hide={!activeLines.salinity}
             />
 
             <Line
               type="monotone"
               dataKey="conductivity"
-              name={chartData[0]?.conductivity_courbe_name || 'Conductivité (µS/cm)'}
+              name={
+                chartData[0]?.conductivity_courbe_name || 'Conductivité (µS/cm)'
+              }
               stroke={chartData[0]?.conductivity_color || '#00a86b'}
               strokeOpacity={activeLines.conductivity ? 1 : 0.1}
               {...defaultLineProps}
+              hide={!activeLines.conductivity}
             />
           </LineChart>
-          </ResponsiveContainer>
+        </ResponsiveContainer>
       </ChartStateView>
     </Box>
   );

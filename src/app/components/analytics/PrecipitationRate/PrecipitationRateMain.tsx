@@ -51,7 +51,7 @@ const PrecipitationRateMain = ({
       align="start"
       width="100%"
       height="100%"
-      maxH={"560px"}
+      maxH={'560px'}
       className="Box"
     >
       <Box flex={3} p={2} height="100%" width="100%">

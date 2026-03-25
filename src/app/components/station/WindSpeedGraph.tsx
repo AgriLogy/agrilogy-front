@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Text } from '@chakra-ui/react';
 import {
   LineChart,
@@ -19,6 +19,7 @@ import {
   defaultLineProps,
   getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
+  defaultTooltipCursor,
 } from '@/app/utils/chartAxisConfig';
 import ChartLegend from '../common/ChartLegend';
 import ChartStateView from '../common/ChartStateView';
@@ -35,6 +36,22 @@ const WindSpeedGraph = ({ data }: { data: any }) => {
 
   const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'timestamp');
   const yAxisProps = getDefaultYAxisProps(2);
+
+  const [activeLines, setActiveLines] = useState({
+    wind_speed: true,
+    wind_gust: true,
+  });
+
+  const handleLegendClick = (entry: any) => {
+    const dataKey = entry?.dataKey ? String(entry.dataKey) : null;
+    if (!dataKey) return;
+    if (dataKey === 'wind_speed') {
+      setActiveLines((prev) => ({ ...prev, wind_speed: !prev.wind_speed }));
+    }
+    if (dataKey === 'wind_gust') {
+      setActiveLines((prev) => ({ ...prev, wind_gust: !prev.wind_gust }));
+    }
+  };
 
   return (
     <Box
@@ -65,10 +82,10 @@ const WindSpeedGraph = ({ data }: { data: any }) => {
                 style: { fontSize: 12, fill: '#64748b' },
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip />} cursor={defaultTooltipCursor} />
             <Legend
               wrapperStyle={defaultLegendWrapperStyle}
-              content={<ChartLegend />}
+              content={<ChartLegend onClick={handleLegendClick} />}
             />
             <Line
               type="monotone"
@@ -76,14 +93,16 @@ const WindSpeedGraph = ({ data }: { data: any }) => {
               stroke={data.sensor_colors?.wind_speed_color}
               name="Vitesse du vent (m/s)"
               {...defaultLineProps}
+              hide={!activeLines.wind_speed}
             />
             <Line
               type="monotone"
               dataKey="wind_gust"
               stroke={data.sensor_colors?.wind_gust_color ?? '#ed8936'}
-              name="Ravale du vent (m/s)"
+              name="Rafale de vent (m/s)"
               strokeDasharray="5 5"
               {...defaultLineProps}
+              hide={!activeLines.wind_gust}
             />
           </LineChart>
         </ResponsiveContainer>

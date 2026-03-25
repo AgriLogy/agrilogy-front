@@ -54,7 +54,9 @@ const SoilSalinityConductivityLastData = ({
           Dernière salinité :
         </Text>
         <Text fontSize="2xl" color={valueColor}>
-          {latestSalinity ? `${formatNumber(latestSalinity.value)} mg/l` : 'N/A'}
+          {latestSalinity
+            ? `${formatNumber(latestSalinity.value)} mg/l`
+            : 'N/A'}
         </Text>
         <Text fontSize="sm" color={textColor}>
           {latestSalinity

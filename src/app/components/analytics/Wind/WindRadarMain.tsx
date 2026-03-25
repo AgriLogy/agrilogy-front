@@ -58,10 +58,11 @@ const WindRadarMain = ({
   }, [startDate, endDate, selectedZone]);
 
   const { timeline, speedAligned, directionAligned } = useMemo(() => {
-    const { timeline: tl, speed, direction } = alignWindSeriesByTimestamp(
-      speedData,
-      directionData
-    );
+    const {
+      timeline: tl,
+      speed,
+      direction,
+    } = alignWindSeriesByTimestamp(speedData, directionData);
     return { timeline: tl, speedAligned: speed, directionAligned: direction };
   }, [speedData, directionData]);
 
