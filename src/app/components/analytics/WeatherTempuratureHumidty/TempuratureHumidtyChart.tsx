@@ -166,7 +166,10 @@ const TempuratureHumidtyChart = ({
                 fontFamily: 'Arial, sans-serif',
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} cursor={defaultTooltipCursor} />
+            <Tooltip
+              content={<UnifiedTooltip />}
+              cursor={defaultTooltipCursor}
+            />
             <Legend
               wrapperStyle={defaultLegendWrapperStyle}
               verticalAlign="bottom"

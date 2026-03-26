@@ -397,8 +397,7 @@ export function getAdaptiveTimeXAxisProps(
   const range = getTimeMsRangeFromData(data, dataKey);
   const spanMs = range ? range.maxMs - range.minMs : Number.POSITIVE_INFINITY;
   const uniqueMs = getSortedUniqueTimeMsFromData(data, dataKey);
-  const subDaily =
-    uniqueMs.length >= 2 && hasSubDailySampleSpacing(uniqueMs);
+  const subDaily = uniqueMs.length >= 2 && hasSubDailySampleSpacing(uniqueMs);
   const zoomed =
     range != null &&
     data.length > 0 &&
@@ -443,9 +442,7 @@ export function getAdaptiveTimeXAxisProps(
       domain: [domainMin, domainMax] as [number, number],
       ticks: ticksMs,
       tickFormatter: (v: number) =>
-        sparseLabelSet.has(v)
-          ? formatZoomedTimeAxisTickMs(v, ticksMs)
-          : '',
+        sparseLabelSet.has(v) ? formatZoomedTimeAxisTickMs(v, ticksMs) : '',
       allowDecimals: false,
       interval: 0,
       minTickGap: 0,

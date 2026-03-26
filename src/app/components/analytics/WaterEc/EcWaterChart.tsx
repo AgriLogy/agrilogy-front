@@ -131,7 +131,10 @@ const EcWaterChart = ({
                 style: { fontSize: 14, fill: '#64748b' },
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} cursor={defaultTooltipCursor} />
+            <Tooltip
+              content={<UnifiedTooltip />}
+              cursor={defaultTooltipCursor}
+            />
             <Legend
               wrapperStyle={defaultLegendWrapperStyle}
               content={<ChartLegend onClick={handleLegendClick} />}

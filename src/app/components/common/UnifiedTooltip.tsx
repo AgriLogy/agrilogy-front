@@ -225,7 +225,11 @@ const UnifiedTooltip: React.FC<UnifiedTooltipProps> = ({
             item
           );
           return (
-            <HStack key={`${item.dataKey ?? index}-${name}`} align="center" spacing={2}>
+            <HStack
+              key={`${item.dataKey ?? index}-${name}`}
+              align="center"
+              spacing={2}
+            >
               <Box
                 w="8px"
                 h="8px"

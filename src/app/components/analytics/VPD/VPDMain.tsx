@@ -77,10 +77,7 @@ const VPDMain = ({
     return sortByTimestamp(rows);
   }, [humidityData, temperatureData]);
 
-  const timeline = useMemo(
-    () => series.map((d) => d.timestamp),
-    [series]
-  );
+  const timeline = useMemo(() => series.map((d) => d.timestamp), [series]);
 
   return (
     <Stack
@@ -90,7 +87,7 @@ const VPDMain = ({
       width="100%"
       height="100%"
       className="Box"
-      maxH={"560px"}
+      maxH={'560px'}
     >
       <Box flex={3} p={2} height="100%" width="100%">
         <ChartDateRangeGate timeline={timeline}>

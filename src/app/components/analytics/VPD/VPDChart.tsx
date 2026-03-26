@@ -13,7 +13,9 @@ import { Box, Flex, Text, Button, HStack, Icon } from '@chakra-ui/react';
 import { FaDownload, FaCamera, FaLeaf } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import ChartStateView from '../../common/ChartStateView';
-import ChartLegend, { type ChartLegendPayloadEntry } from '../../common/ChartLegend';
+import ChartLegend, {
+  type ChartLegendPayloadEntry,
+} from '../../common/ChartLegend';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { formatNumber } from '@/app/utils/formatNumber';

@@ -1,4 +1,39 @@
-import { ComposedChart, Line, Area, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ResponsiveContainer, } from 'recharts'; import { Box, Button, Flex, HStack, Text, useColorModeValue, } from '@chakra-ui/react'; import { useRef, useMemo } from 'react'; import html2canvas from 'html2canvas'; import { FaCamera, FaDownload } from 'react-icons/fa'; import useColorModeStyles from '@/app/utils/useColorModeStyles'; import { ThresholdBand, WaterSoilData } from '@/app/types'; import { formatNumber } from '@/app/utils/formatNumber'; import ChartStateView from '../../common/ChartStateView'; import ChartLegend, { type ChartLegendPayloadEntry, } from '../../common/ChartLegend'; import UnifiedTooltip, { type UnifiedTooltipPayloadItem, } from '../../common/UnifiedTooltip'; import { addTimeMsToChartRows, defaultCartesianGridProps, defaultLegendWrapperStyle,
+import {
+  ComposedChart,
+  Line,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  CartesianGrid,
+  ResponsiveContainer,
+} from 'recharts';
+import {
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Text,
+  useColorModeValue,
+} from '@chakra-ui/react';
+import { useRef, useMemo } from 'react';
+import html2canvas from 'html2canvas';
+import { FaCamera, FaDownload } from 'react-icons/fa';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { ThresholdBand, WaterSoilData } from '@/app/types';
+import { formatNumber } from '@/app/utils/formatNumber';
+import ChartStateView from '../../common/ChartStateView';
+import ChartLegend, {
+  type ChartLegendPayloadEntry,
+} from '../../common/ChartLegend';
+import UnifiedTooltip, {
+  type UnifiedTooltipPayloadItem,
+} from '../../common/UnifiedTooltip';
+import {
+  addTimeMsToChartRows,
+  defaultCartesianGridProps,
+  defaultLegendWrapperStyle,
   defaultTooltipCursor,
   getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
@@ -18,9 +53,11 @@ export const SOIL_SERIES_LABELS = {
 // Distinct, accessible palette (WCAG-friendly contrast on white/dark)
 const COLORS = {
   soilLow: '#16a34a',
-  soilMedium: '#2563eb',
+  soilMedium: '#FFA500',
+  // soilMedium: '#2563eb',
   soilHigh: '#dc2626',
   irrigation: '#1d4ed8',
+  // irrigation: '#000435',
 } as const;
 
 /** Humidité du sol (axe gauche %) : rouge 0→seuil, bleu seuil→fin du domaine. */
@@ -250,12 +287,12 @@ const WaterSoilChart = ({
                 <stop
                   offset="0%"
                   stopColor={COLORS.irrigation}
-                  stopOpacity={0.8}
+                  stopOpacity={1}
                 />
                 <stop
                   offset="100%"
                   stopColor={COLORS.irrigation}
-                  stopOpacity={0.1}
+                  stopOpacity={1}
                 />
               </linearGradient>
             </defs>

@@ -29,7 +29,9 @@ import {
   getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
 } from '@/app/utils/chartAxisConfig';
-import ChartLegend, { type ChartLegendPayloadEntry } from './common/ChartLegend';
+import ChartLegend, {
+  type ChartLegendPayloadEntry,
+} from './common/ChartLegend';
 
 interface SensorDataChartProps {
   data: SensorData[];
