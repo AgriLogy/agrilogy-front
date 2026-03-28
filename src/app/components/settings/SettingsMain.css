@@ -22,15 +22,15 @@
 .text-box {
   margin: 3px;
   border-radius: 5px;
-  padding: 10px;
+  padding: 6px;
   /* flex-wrap: wrap; */
   /* display: flex; */
   /* justify-content: center; */
   /* align-items: center; */
   background-color: var(--chakra-colors-gray-200); /* Light mode background */
   border: 1px solid #ccc;
-  font-size: 24px;
-  font-weight: bold;
+  font-size: 14px;
+  font-weight: 500;
   /* overflow: hidden; */
   /* text-overflow: ellipsis; */
   /* white-space: nowrap; */

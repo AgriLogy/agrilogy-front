@@ -1,6 +1,6 @@
 'use client';
 import { Grid, GridItem } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../components/main/Header';
 import Navbar from '../components/main/Sidebar';
 import useColorModeStyles from '../utils/useColorModeStyles';
@@ -8,6 +8,13 @@ import SettingsMain from '../components/settings/SettingsMain';
 
 const Page = () => {
   const { textColor, navBgColor } = useColorModeStyles();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <Grid

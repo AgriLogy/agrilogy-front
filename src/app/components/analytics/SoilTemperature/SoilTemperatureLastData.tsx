@@ -1,6 +1,7 @@
 import { Box, Text, VStack, HStack, useColorModeValue } from '@chakra-ui/react';
 import { FaThermometerHalf } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
+import { getUnitOverride } from '@/app/utils/unitOverrides';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -19,10 +20,12 @@ const Row = ({
   label,
   entry,
   color,
+  sensorKey,
 }: {
   label: string;
   entry?: SensorData;
   color: string;
+  sensorKey: string;
 }) => {
   const metaColor = useColorModeValue('gray.600', 'gray.400');
 
@@ -34,7 +37,9 @@ const Row = ({
             {label}
           </Text>
           <Text color={color}>
-            {entry ? `${entry.value.toFixed(2)} ${entry.default_unit}` : 'N/A'}
+            {entry
+              ? `${entry.value.toFixed(2)} ${getUnitOverride(sensorKey, entry.default_unit)}`
+              : 'N/A'}
           </Text>
         </HStack>
         <Text fontSize="sm" color={metaColor}>
@@ -93,9 +98,24 @@ const SoilTemperatureLastData = ({
         >
           Dernières mesures
         </Text>
-        <Row label="Basse (Low)" entry={lastLow} color={lowColor} />
-        <Row label="Moyenne (Medium)" entry={lastMedium} color={medColor} />
-        <Row label="Haute (High)" entry={lastHigh} color={highColor} />
+        <Row
+          label="Basse (Low)"
+          entry={lastLow}
+          color={lowColor}
+          sensorKey="soil_temp_low"
+        />
+        <Row
+          label="Moyenne (Medium)"
+          entry={lastMedium}
+          color={medColor}
+          sensorKey="soil_temp_medium"
+        />
+        <Row
+          label="Haute (High)"
+          entry={lastHigh}
+          color={highColor}
+          sensorKey="soil_temp_high"
+        />
       </VStack>
     </Box>
   );

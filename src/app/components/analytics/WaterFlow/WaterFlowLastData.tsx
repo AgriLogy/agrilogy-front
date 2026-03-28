@@ -1,6 +1,7 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { RiWaterFlashFill } from 'react-icons/ri';
 import { SensorData } from '@/app/types';
+import { getUnitOverride } from '@/app/utils/unitOverrides';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -17,6 +18,7 @@ const timeAgo = (timestamp: string): string => {
 
 const WaterFlowLastData = ({ data }: { data: SensorData[] }) => {
   const latest = data[data.length - 1];
+  const unit = getUnitOverride('water_flow', latest?.default_unit);
 
   // Light/Dark mode values
   const bgColor = useColorModeValue('blue.50', 'blue.900');
@@ -44,7 +46,7 @@ const WaterFlowLastData = ({ data }: { data: SensorData[] }) => {
         Dernière consommation :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest ? `${latest.value.toFixed(2)} ${latest.default_unit}` : 'N/A'}
+        {latest ? `${latest.value.toFixed(2)} ${unit}` : 'N/A'}
       </Text>
       <Text fontSize="sm" color={textColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}

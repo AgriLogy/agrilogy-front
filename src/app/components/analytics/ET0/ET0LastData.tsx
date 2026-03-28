@@ -1,6 +1,7 @@
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import { GiWaterDrop } from 'react-icons/gi';
+import { getUnitOverride } from '@/app/utils/unitOverrides';
 
 interface ET0Data {
   id: number;
@@ -31,6 +32,8 @@ const ET0LastData = ({
 }) => {
   const latestWeather = weatherData[weatherData.length - 1];
   const latestCalculated = calculatedData[calculatedData.length - 1];
+  const weatherUnit = getUnitOverride('et0', latestWeather?.default_unit);
+  const calculatedUnit = getUnitOverride('et0', latestCalculated?.default_unit);
 
   // Light/dark mode colors
   const bgColor = useColorModeValue('blue.50', 'blue.900');
@@ -64,17 +67,13 @@ const ET0LastData = ({
           <Text fontSize="lg" color="blue.600">
             ET0 météo:{' '}
             {latestWeather
-              ? `${latestWeather.value.toFixed(2)} ${
-                  latestWeather.default_unit
-                }`
+              ? `${latestWeather.value.toFixed(2)} ${weatherUnit}`
               : 'N/A'}
           </Text>
           <Text fontSize="lg" color="teal.600">
             ET0 calculé:{' '}
             {latestCalculated
-              ? `${latestCalculated.value.toFixed(2)} ${
-                  latestCalculated.default_unit
-                }`
+              ? `${latestCalculated.value.toFixed(2)} ${calculatedUnit}`
               : 'N/A'}
           </Text>
         </VStack>

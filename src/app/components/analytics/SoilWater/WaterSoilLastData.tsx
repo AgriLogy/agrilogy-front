@@ -2,6 +2,7 @@ import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { GiWaterDrop, GiWaterTank, GiGroundbreaker } from 'react-icons/gi';
 import { FaTachometerAlt } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
+import { getUnitOverride } from '@/app/utils/unitOverrides';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -20,10 +21,12 @@ const SensorBox = ({
   icon,
   label,
   data,
+  sensorKey,
 }: {
   icon: JSX.Element;
   label: string;
   data?: SensorData;
+  sensorKey: string;
   color: string;
 }) => {
   const valueColor = useColorModeValue('blue.700', 'blue.200');
@@ -39,7 +42,9 @@ const SensorBox = ({
         {label}
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {data ? `${data.value.toFixed(2)} ${data.default_unit}` : 'N/A'}
+        {data
+          ? `${data.value.toFixed(2)} ${getUnitOverride(sensorKey, data.default_unit)}`
+          : 'N/A'}
       </Text>
       <Text fontSize="sm" color={timeColor}>
         {data ? `Mise à jour : ${timeAgo(data.timestamp)}` : ''}
@@ -84,6 +89,7 @@ const WaterSoilLastData = ({
           icon={<GiGroundbreaker size={40} color="#9c6644" />}
           label="Humidité du Sol - Bas"
           data={soilLow}
+          sensorKey="soil_moisture_low"
           color="#9c6644"
         />
       )}
@@ -94,6 +100,7 @@ const WaterSoilLastData = ({
           icon={<GiWaterDrop size={40} color="#2b6cb0" />}
           label="Humidité du Sol - Moyen"
           data={soilMedium}
+          sensorKey="soil_moisture_medium"
           color="#2b6cb0"
         />
       )}
@@ -104,6 +111,7 @@ const WaterSoilLastData = ({
           icon={<GiWaterTank size={40} color="#38a169" />}
           label="Humidité du Sol - Haut"
           data={soilHigh}
+          sensorKey="soil_moisture_high"
           color="#38a169"
         />
       )}
@@ -114,6 +122,7 @@ const WaterSoilLastData = ({
           icon={<FaTachometerAlt size={40} color="#e53e3e" />}
           label="Irrigation"
           data={waterFlow}
+          sensorKey="water_flow"
           color="#e53e3e"
         />
       )}

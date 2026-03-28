@@ -2,6 +2,10 @@
 
 import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import React from 'react';
+import {
+  getUnitOverrideFromDataKey,
+  getUnitOverrideFromSeriesName,
+} from '@/app/utils/unitOverrides';
 
 /**
  * Recharts payload item passed to tooltip content.
@@ -63,11 +67,18 @@ function defaultLabelFormatter(label: string): string {
 function defaultValueFormatter(
   value: number | string,
   _name: string,
-  _item: UnifiedTooltipPayloadItem,
+  item: UnifiedTooltipPayloadItem,
   valueUnit?: string
 ): string {
   const str = value == null ? '—' : String(value);
-  return valueUnit ? `${str}${valueUnit}` : str;
+  const payloadUnit =
+    typeof item?.payload?.default_unit === 'string'
+      ? String(item.payload.default_unit)
+      : undefined;
+  const baseUnit = valueUnit ?? payloadUnit ?? '';
+  const fromKey = getUnitOverrideFromDataKey(item?.dataKey, baseUnit);
+  const unit = getUnitOverrideFromSeriesName(String(item?.name ?? ''), fromKey);
+  return unit ? `${str} ${unit}` : str;
 }
 
 /**
