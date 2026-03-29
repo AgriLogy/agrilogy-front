@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -24,6 +24,8 @@ import { SensorData } from '@/app/types';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
 
 type Props = {
   salinityData: SensorData[];
@@ -38,6 +40,7 @@ const SoilSalinityConductivityChart = ({
 }: Props) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const { textColor } = useColorModeStyles();
+  const unitRev = useUnitOverridesRevision();
 
   const [activeLines, setActiveLines] = useState({
     salinity: true,
@@ -51,26 +54,36 @@ const SoilSalinityConductivityChart = ({
   // const _labelAngle = useBreakpointValue({ base: -15, md: 15 });
   const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
 
-  const timestamps = Array.from(
-    new Set([
-      ...salinityData.map((d) => d.timestamp),
-      ...conductivityData.map((d) => d.timestamp),
-    ])
-  ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+  const chartData = useMemo(() => {
+    const timestamps = Array.from(
+      new Set([
+        ...salinityData.map((d) => d.timestamp),
+        ...conductivityData.map((d) => d.timestamp),
+      ])
+    ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
-  const chartData = timestamps.map((timestamp) => {
-    const sal = salinityData.find((d) => d.timestamp === timestamp);
-    const cond = conductivityData.find((d) => d.timestamp === timestamp);
-    return {
-      name: timestamp,
-      salinity: sal?.value,
-      salinity_color: sal?.color,
-      salinity_courbe_name: sal?.courbe_name,
-      conductivity: cond?.value,
-      conductivity_color: cond?.color,
-      conductivity_courbe_name: cond?.courbe_name,
-    };
-  });
+    return timestamps.map((timestamp) => {
+      const sal = salinityData.find((d) => d.timestamp === timestamp);
+      const cond = conductivityData.find((d) => d.timestamp === timestamp);
+      const sv = sal?.value;
+      const cv = cond?.value;
+      return {
+        name: timestamp,
+        salinity:
+          sv != null && Number.isFinite(sv)
+            ? calibrateChartValue('soil_salinity', sv)
+            : sv,
+        salinity_color: sal?.color,
+        salinity_courbe_name: sal?.courbe_name,
+        conductivity:
+          cv != null && Number.isFinite(cv)
+            ? calibrateChartValue('soil_conductivity', cv)
+            : cv,
+        conductivity_color: cond?.color,
+        conductivity_courbe_name: cond?.courbe_name,
+      };
+    });
+  }, [salinityData, conductivityData, unitRev]);
 
   const handleLegendClick = (e: any) => {
     const key = e.dataKey;
@@ -190,7 +203,7 @@ const SoilSalinityConductivityChart = ({
                 strokeWidth: 1,
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
             <Legend onClick={handleLegendClick} />
 
             <Line

@@ -18,6 +18,8 @@ import {
   useBreakpointValue,
 } from '@chakra-ui/react';
 import { useRef, useMemo } from 'react';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
 import html2canvas from 'html2canvas';
 import { FaCamera, FaDownload } from 'react-icons/fa';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
@@ -37,10 +39,46 @@ const WaterSoilChart = ({
   loading?: boolean;
 }) => {
   const { critical_min, critical_max, normal_min, normal_max } = thresholds;
+  const unitRev = useUnitOverridesRevision();
+
+  const displayData = useMemo(
+    () =>
+      data.map((d) => ({
+        ...d,
+        soilLow:
+          d.soilLow != null && Number.isFinite(d.soilLow)
+            ? calibrateChartValue('soil_moisture_low', d.soilLow)
+            : d.soilLow,
+        soilMedium:
+          d.soilMedium != null && Number.isFinite(d.soilMedium)
+            ? calibrateChartValue('soil_moisture_medium', d.soilMedium)
+            : d.soilMedium,
+        soilHigh:
+          d.soilHigh != null && Number.isFinite(d.soilHigh)
+            ? calibrateChartValue('soil_moisture_high', d.soilHigh)
+            : d.soilHigh,
+        waterFlow:
+          d.waterFlow != null && Number.isFinite(d.waterFlow)
+            ? calibrateChartValue('water_flow', d.waterFlow)
+            : d.waterFlow,
+      })),
+    [data, unitRev]
+  );
+
+  const bandKey = 'soil_moisture_medium' as const;
+  const calibratedBands = useMemo(
+    () => ({
+      critical_min: calibrateChartValue(bandKey, critical_min),
+      critical_max: calibrateChartValue(bandKey, critical_max),
+      normal_min: calibrateChartValue(bandKey, normal_min),
+      normal_max: calibrateChartValue(bandKey, normal_max),
+    }),
+    [critical_min, critical_max, normal_min, normal_max, unitRev]
+  );
 
   const labelInterval = useBreakpointValue({
-    base: Math.ceil(Math.max(data.length, 1) / 3),
-    md: Math.ceil(Math.max(data.length, 1) / 5),
+    base: Math.ceil(Math.max(displayData.length, 1) / 3),
+    md: Math.ceil(Math.max(displayData.length, 1) / 5),
   });
 
   const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
@@ -66,7 +104,7 @@ const WaterSoilChart = ({
     const csv =
       headers.join(',') +
       '\n' +
-      data
+      displayData
         .map((d) =>
           [
             d.timestamp,
@@ -93,9 +131,12 @@ const WaterSoilChart = ({
 
   // X range for the background areas (span the whole chart)
   const [xStart, xEnd] = useMemo(() => {
-    if (!data?.length) return [undefined, undefined] as const;
-    return [data[0].timestamp, data[data.length - 1].timestamp] as const;
-  }, [data]);
+    if (!displayData?.length) return [undefined, undefined] as const;
+    return [
+      displayData[0].timestamp,
+      displayData[displayData.length - 1].timestamp,
+    ] as const;
+  }, [displayData]);
 
   return (
     <Box width="100%" height="100%">
@@ -153,13 +194,13 @@ const WaterSoilChart = ({
 
       <ChartStateView
         loading={loading}
-        empty={!data?.length}
+        empty={!displayData?.length}
         emptyText="Aucune donnée à afficher."
         chartRef={chartRef}
         height={300}
       >
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data}>
+          <LineChart data={displayData}>
             <CartesianGrid strokeDasharray="3 3" />
 
             {/* Background bands — render BEFORE series so they appear behind */}
@@ -170,8 +211,8 @@ const WaterSoilChart = ({
                   x1={xStart}
                   x2={xEnd}
                   yAxisId={targetAxis}
-                  y1={critical_min}
-                  y2={critical_max}
+                  y1={calibratedBands.critical_min}
+                  y2={calibratedBands.critical_max}
                   fill="#ef4444"
                   fillOpacity={0.12}
                   strokeOpacity={0}
@@ -182,8 +223,8 @@ const WaterSoilChart = ({
                   x1={xStart}
                   x2={xEnd}
                   yAxisId={targetAxis}
-                  y1={normal_min}
-                  y2={normal_max}
+                  y1={calibratedBands.normal_min}
+                  y2={calibratedBands.normal_max}
                   fill="#3b82f6"
                   fillOpacity={0.12}
                   strokeOpacity={0}
@@ -264,7 +305,7 @@ const WaterSoilChart = ({
               }}
             />
 
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
             <Legend />
 
             {/* Soil moisture lines */}

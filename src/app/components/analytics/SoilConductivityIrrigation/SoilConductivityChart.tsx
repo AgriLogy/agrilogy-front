@@ -22,9 +22,11 @@ import { FaCamera, FaDownload } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
 
 const SoilConductivityChart = ({
   lowData,
@@ -44,9 +46,7 @@ const SoilConductivityChart = ({
   });
   const chartRef = useRef<HTMLDivElement>(null);
   const { textColor } = useColorModeStyles();
-
-  // Convert flow data into a map for quick access
-  const flowMap = new Map(flowData.map((f) => [f.timestamp, f.value]));
+  const unitRev = useUnitOverridesRevision();
 
   const handleLegendClick = (e: any) => {
     const key = e.dataKey as keyof typeof activeLines;
@@ -56,14 +56,25 @@ const SoilConductivityChart = ({
     }));
   };
 
-  // Merge EC and flow data into a unified structure
-
-  const chartData = lowData.map((item, index) => ({
-    timestamp: item.timestamp,
-    low: item.value,
-    high: highData[index]?.value ?? null,
-    waterflow: flowMap.get(item.timestamp) ?? null,
-  }));
+  const chartData = useMemo(() => {
+    const flowMap = new Map(flowData.map((f) => [f.timestamp, f.value]));
+    return lowData.map((item, index) => {
+      const wf = flowMap.get(item.timestamp);
+      const hv = highData[index]?.value;
+      return {
+        timestamp: item.timestamp,
+        low: calibrateChartValue('soil_conductivity', item.value),
+        high:
+          hv != null && Number.isFinite(hv)
+            ? calibrateChartValue('soil_conductivity', hv)
+            : null,
+        waterflow:
+          wf != null && Number.isFinite(wf)
+            ? calibrateChartValue('water_flow', wf)
+            : null,
+      };
+    });
+  }, [lowData, highData, flowData, unitRev]);
 
   const labelInterval = useBreakpointValue({
     base: Math.ceil(chartData.length / 3),
@@ -192,7 +203,7 @@ const SoilConductivityChart = ({
                 fontSize: 18, // Tick label font size
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
             {/* <Legend /> */}
             <Legend onClick={handleLegendClick} />
 

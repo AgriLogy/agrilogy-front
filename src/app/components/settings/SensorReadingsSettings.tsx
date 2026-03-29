@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
+  chakra,
   Flex,
   FormControl,
   FormLabel,
@@ -26,7 +27,21 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { FaCheck, FaPen, FaTimes } from 'react-icons/fa';
-import { getAllSensorsCatalog } from '@/app/utils/sensorCatalog';
+import {
+  getAllSensorsCatalog,
+  getReadingLabelOptions,
+  getTypeLabelOptions,
+  getUnitSelectOptions,
+} from '@/app/utils/sensorCatalog';
+import { composeCalibrationWithUnitChange } from '@/app/utils/sensorUnitConversion';
+import { notifyUnitOverridesChanged } from '@/app/hooks/useUnitOverridesRevision';
+import { getDefaultCalibrationForSensorKey } from '@/app/utils/sensorCalibrationDefaults';
+import { fetchLastSensorSample } from '@/app/utils/fetchSensorLastValue';
+import {
+  formatCalibratedReading,
+  getUnitOverride,
+} from '@/app/utils/unitOverrides';
+import api from '@/app/lib/api';
 
 type UnitSettingRow = {
   key: string;
@@ -40,28 +55,48 @@ type UnitSettingRow = {
 
 const STORAGE_KEY = 'frontendUnitOverrides';
 
+type RowOverridePayload = Pick<
+  UnitSettingRow,
+  'readingLabel' | 'typeLabel' | 'unit' | 'scaleA' | 'offsetB'
+>;
+
+function mergeSelectOptions(options: string[], current: string): string[] {
+  const s = new Set(options);
+  const t = current.trim();
+  if (t) s.add(t);
+  return [...s].sort((a, b) =>
+    a.localeCompare(b, 'fr', { sensitivity: 'base' })
+  );
+}
+
 function getDefaultRows(): UnitSettingRow[] {
-  return getAllSensorsCatalog(false).map((item) => ({
-    key: item.key,
-    readingLabel: item.readingLabel,
-    typeLabel: item.typeLabel,
-    unit: item.defaultUnit,
-    scaleA: 1,
-    offsetB: 0,
-    lastValue: '—',
-  }));
+  return getAllSensorsCatalog(false).map((item) => {
+    const spec = getDefaultCalibrationForSensorKey(item.key);
+    return {
+      key: item.key,
+      readingLabel: item.readingLabel,
+      typeLabel: item.typeLabel,
+      unit: item.defaultUnit,
+      scaleA: spec.scaleA,
+      offsetB: spec.offsetB,
+      lastValue: '—',
+    };
+  });
 }
 
 function getMountedRows(): UnitSettingRow[] {
-  return getAllSensorsCatalog(true).map((item) => ({
-    key: item.key,
-    readingLabel: item.readingLabel,
-    typeLabel: item.typeLabel,
-    unit: item.defaultUnit,
-    scaleA: 1,
-    offsetB: 0,
-    lastValue: '—',
-  }));
+  return getAllSensorsCatalog(true).map((item) => {
+    const spec = getDefaultCalibrationForSensorKey(item.key);
+    return {
+      key: item.key,
+      readingLabel: item.readingLabel,
+      typeLabel: item.typeLabel,
+      unit: item.defaultUnit,
+      scaleA: spec.scaleA,
+      offsetB: spec.offsetB,
+      lastValue: '—',
+    };
+  });
 }
 
 function loadRows(): UnitSettingRow[] {
@@ -72,15 +107,19 @@ function loadRows(): UnitSettingRow[] {
   try {
     const parsed = JSON.parse(raw) as Record<
       string,
-      Pick<UnitSettingRow, 'readingLabel' | 'unit' | 'scaleA' | 'offsetB'>
+      Partial<RowOverridePayload>
     >;
-    return defaults.map((row) => ({
-      ...row,
-      readingLabel: parsed[row.key]?.readingLabel ?? row.readingLabel,
-      unit: parsed[row.key]?.unit ?? row.unit,
-      scaleA: parsed[row.key]?.scaleA ?? row.scaleA,
-      offsetB: parsed[row.key]?.offsetB ?? row.offsetB,
-    }));
+    return defaults.map((row) => {
+      const spec = getDefaultCalibrationForSensorKey(row.key);
+      return {
+        ...row,
+        readingLabel: parsed[row.key]?.readingLabel ?? row.readingLabel,
+        typeLabel: parsed[row.key]?.typeLabel ?? row.typeLabel,
+        unit: parsed[row.key]?.unit ?? row.unit,
+        scaleA: parsed[row.key]?.scaleA ?? spec.scaleA,
+        offsetB: parsed[row.key]?.offsetB ?? spec.offsetB,
+      };
+    });
   } catch {
     return defaults;
   }
@@ -89,11 +128,14 @@ function loadRows(): UnitSettingRow[] {
 const SensorReadingsSettings = () => {
   const toast = useToast();
   const [rows, setRows] = useState<UnitSettingRow[]>(() => getDefaultRows());
+  const [search, setSearch] = useState('');
+  const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
+  const [selectedZoneId, setSelectedZoneId] = useState<number | null>(null);
+  const [loadingLast, setLoadingLast] = useState(false);
   const [editingKey, setEditingKey] = useState<string | null>(null);
-  const [draft, setDraft] = useState<
-    Pick<UnitSettingRow, 'readingLabel' | 'unit' | 'scaleA' | 'offsetB'>
-  >({
+  const [draft, setDraft] = useState<RowOverridePayload>({
     readingLabel: '',
+    typeLabel: '',
     unit: '',
     scaleA: 1,
     offsetB: 0,
@@ -104,12 +146,64 @@ const SensorReadingsSettings = () => {
     setRows(loadRows());
   }, []);
 
+  useEffect(() => {
+    api
+      .get<{ id: number; name: string }[]>('/api/zones-names-per-user/')
+      .then((res) => {
+        const list = res.data ?? [];
+        setZones(list);
+        setSelectedZoneId((z) => (z == null && list.length ? list[0].id : z));
+      })
+      .catch(() => {});
+  }, []);
+
+  const refreshLastValues = useCallback(async () => {
+    if (selectedZoneId == null) return;
+    setLoadingLast(true);
+    try {
+      const catalog = getMountedRows();
+      const next = await Promise.all(
+        catalog.map(async (row) => {
+          const sample = await fetchLastSensorSample(row.key, selectedZoneId);
+          if (!sample) {
+            return { key: row.key, text: '—' as string };
+          }
+          const unit = getUnitOverride(row.key, sample.defaultUnit);
+          const val = formatCalibratedReading(row.key, sample.rawValue);
+          return { key: row.key, text: `${val} ${unit}`.trim() };
+        })
+      );
+      const map = new Map(next.map((n) => [n.key, n.text]));
+      setRows((prev) =>
+        prev.map((r) => ({ ...r, lastValue: map.get(r.key) ?? '—' }))
+      );
+    } finally {
+      setLoadingLast(false);
+    }
+  }, [selectedZoneId]);
+
+  useEffect(() => {
+    if (selectedZoneId == null) return;
+    void refreshLastValues();
+  }, [selectedZoneId, refreshLastValues]);
+
+  const filteredRows = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return rows;
+    return rows.filter((row) => {
+      const hay =
+        `${row.readingLabel} ${row.typeLabel} ${row.key} ${row.unit}`.toLowerCase();
+      return hay.includes(q);
+    });
+  }, [rows, search]);
+
   const hasChanges = useMemo(() => {
     return rows.some((row) => {
       const defaults = getDefaultRows().find((d) => d.key === row.key);
       return defaults
         ? defaults.unit !== row.unit ||
             defaults.readingLabel !== row.readingLabel ||
+            defaults.typeLabel !== row.typeLabel ||
             defaults.scaleA !== row.scaleA ||
             defaults.offsetB !== row.offsetB
         : false;
@@ -120,6 +214,7 @@ const SensorReadingsSettings = () => {
     setEditingKey(row.key);
     setDraft({
       readingLabel: row.readingLabel,
+      typeLabel: row.typeLabel,
       unit: row.unit,
       scaleA: row.scaleA,
       offsetB: row.offsetB,
@@ -137,6 +232,7 @@ const SensorReadingsSettings = () => {
           ? {
               ...row,
               readingLabel: draft.readingLabel,
+              typeLabel: draft.typeLabel,
               unit: draft.unit,
               scaleA: Number.isFinite(draft.scaleA) ? draft.scaleA : row.scaleA,
               offsetB: Number.isFinite(draft.offsetB)
@@ -149,18 +245,17 @@ const SensorReadingsSettings = () => {
         (acc, row) => {
           acc[row.key] = {
             readingLabel: row.readingLabel,
+            typeLabel: row.typeLabel,
             unit: row.unit,
             scaleA: row.scaleA,
             offsetB: row.offsetB,
           };
           return acc;
         },
-        {} as Record<
-          string,
-          Pick<UnitSettingRow, 'readingLabel' | 'unit' | 'scaleA' | 'offsetB'>
-        >
+        {} as Record<string, RowOverridePayload>
       );
       localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      notifyUnitOverridesChanged();
       return next;
     });
     setEditingKey(null);
@@ -178,23 +273,58 @@ const SensorReadingsSettings = () => {
     [rows, editingKey]
   );
 
+  const catalogDefaultUnitForEdit = useMemo(() => {
+    if (!editingRow) return undefined;
+    return getAllSensorsCatalog(true).find((c) => c.key === editingRow.key)
+      ?.defaultUnit;
+  }, [editingRow]);
+
+  const readingLabelOptions = useMemo(
+    () => mergeSelectOptions(getReadingLabelOptions(true), draft.readingLabel),
+    [draft.readingLabel, editingKey, rows.length]
+  );
+
+  const typeLabelOptions = useMemo(
+    () => mergeSelectOptions(getTypeLabelOptions(true), draft.typeLabel),
+    [draft.typeLabel, editingKey, rows.length]
+  );
+
+  const unitOptions = useMemo(
+    () => mergeSelectOptions(getUnitSelectOptions(true), draft.unit),
+    [draft.unit, editingKey, rows.length]
+  );
+
+  const modalSelectProps = {
+    rounded: 'md' as const,
+    borderWidth: '1px' as const,
+    w: '100%' as const,
+    h: '10' as const,
+    px: 3,
+    bg: 'white',
+    _dark: { bg: 'gray.800', borderColor: 'whiteAlpha.300' },
+  };
+
+  const toolbarSelectProps = {
+    ...modalSelectProps,
+    maxW: '280px' as const,
+  };
+
   const handleSave = () => {
     const payload = rows.reduce(
       (acc, row) => {
         acc[row.key] = {
           readingLabel: row.readingLabel,
+          typeLabel: row.typeLabel,
           unit: row.unit,
           scaleA: row.scaleA,
           offsetB: row.offsetB,
         };
         return acc;
       },
-      {} as Record<
-        string,
-        Pick<UnitSettingRow, 'readingLabel' | 'unit' | 'scaleA' | 'offsetB'>
-      >
+      {} as Record<string, RowOverridePayload>
     );
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    notifyUnitOverridesChanged();
     toast({
       title: 'Unites enregistrees',
       description: 'Modifications appliquees en frontend uniquement.',
@@ -206,7 +336,9 @@ const SensorReadingsSettings = () => {
 
   const handleReset = () => {
     localStorage.removeItem(STORAGE_KEY);
+    notifyUnitOverridesChanged();
     setRows(getMountedRows());
+    void refreshLastValues();
     toast({
       title: 'Reinitialise',
       description: 'Les unites par defaut ont ete restaurees.',
@@ -223,6 +355,48 @@ const SensorReadingsSettings = () => {
       border="1px solid #e2e8f0"
       bg="white"
     >
+      <Flex
+        gap={3}
+        flexWrap="wrap"
+        align="center"
+        p={3}
+        borderBottomWidth="1px"
+      >
+        <Input
+          placeholder="Rechercher un capteur (libellé, type, clé)…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          maxW="360px"
+          size="sm"
+        />
+        <Flex align="center" gap={2}>
+          <Text fontSize="sm" whiteSpace="nowrap">
+            Zone
+          </Text>
+          <chakra.select
+            {...toolbarSelectProps}
+            value={selectedZoneId ?? ''}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+              setSelectedZoneId(e.target.value ? Number(e.target.value) : null)
+            }
+          >
+            {zones.length === 0 && <option value="">—</option>}
+            {zones.map((z) => (
+              <option key={z.id} value={z.id}>
+                {z.name}
+              </option>
+            ))}
+          </chakra.select>
+        </Flex>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => void refreshLastValues()}
+          isLoading={loadingLast}
+        >
+          Actualiser les dernières valeurs
+        </Button>
+      </Flex>
       <Table size="md" variant="simple">
         <Thead>
           <Tr bg="#edf2f7">
@@ -236,7 +410,7 @@ const SensorReadingsSettings = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {rows.map((row) => (
+          {filteredRows.map((row) => (
             <Tr key={row.key}>
               <Td minW="220px">{row.readingLabel}</Td>
               <Td>{row.typeLabel}</Td>
@@ -283,24 +457,73 @@ const SensorReadingsSettings = () => {
             <Flex direction="column" gap={3}>
               <FormControl>
                 <FormLabel>Libellé de la lecture</FormLabel>
-                <Input
+                <chakra.select
+                  {...modalSelectProps}
                   value={draft.readingLabel}
-                  onChange={(e) =>
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                     setDraft((prev) => ({
                       ...prev,
                       readingLabel: e.target.value,
                     }))
                   }
-                />
+                >
+                  {readingLabelOptions.map((label) => (
+                    <option key={label} value={label}>
+                      {label}
+                    </option>
+                  ))}
+                </chakra.select>
+              </FormControl>
+              <FormControl>
+                <FormLabel>Type</FormLabel>
+                <chakra.select
+                  {...modalSelectProps}
+                  value={draft.typeLabel}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                    setDraft((prev) => ({
+                      ...prev,
+                      typeLabel: e.target.value,
+                    }))
+                  }
+                >
+                  {typeLabelOptions.map((label) => (
+                    <option key={label} value={label}>
+                      {label}
+                    </option>
+                  ))}
+                </chakra.select>
               </FormControl>
               <FormControl>
                 <FormLabel>Unité</FormLabel>
-                <Input
+                <chakra.select
+                  {...modalSelectProps}
                   value={draft.unit}
-                  onChange={(e) =>
-                    setDraft((prev) => ({ ...prev, unit: e.target.value }))
-                  }
-                />
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                    const newUnit = e.target.value;
+                    setDraft((prev) => {
+                      const { scaleA, offsetB } =
+                        composeCalibrationWithUnitChange(
+                          prev.scaleA,
+                          prev.offsetB,
+                          prev.unit,
+                          newUnit,
+                          catalogDefaultUnitForEdit
+                        );
+                      return {
+                        ...prev,
+                        unit: newUnit,
+                        scaleA,
+                        offsetB,
+                      };
+                    });
+                  }}
+                >
+                  {unitOptions.map((u) => (
+                    <option key={u} value={u}>
+                      {u}
+                    </option>
+                  ))}
+                </chakra.select>
               </FormControl>
               <FormControl>
                 <FormLabel>Facteur d&apos;échelle (a)</FormLabel>
@@ -330,6 +553,14 @@ const SensorReadingsSettings = () => {
                   }
                 />
               </FormControl>
+              <Text fontSize="xs" color="gray.500">
+                Conformément au PDF « change.the.unite.of.sensors…1.3.pdf » :
+                valeur réelle = valeur brute × a + b. Le changement d&apos;unité
+                recalcule a et b via `sensorUnitConversion` (équations du PDF).
+                Rayonnement MJ/m² : le facteur 0,0036 correspond à une
+                intégration sur 1 h (voir PDF). Défauts a,b :{' '}
+                `sensorCalibrationDefaults`.
+              </Text>
             </Flex>
           </ModalBody>
           <ModalFooter gap={2}>

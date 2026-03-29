@@ -1,6 +1,9 @@
 import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import { WiStrongWind } from 'react-icons/wi';
-import { getUnitOverride } from '@/app/utils/unitOverrides';
+import {
+  formatCalibratedReading,
+  getUnitOverride,
+} from '@/app/utils/unitOverrides';
 
 interface WindData {
   timestamp: string;
@@ -70,10 +73,13 @@ const WindRadarLastData = ({
       {latestSpeed && latestDirection ? (
         <VStack spacing={2} mt={4}>
           <Text fontSize="lg" color={valueColor}>
-            Vitesse du vent : {latestSpeed.value.toFixed(2)} {speedUnit}
+            Vitesse du vent :{' '}
+            {formatCalibratedReading('wind_speed', latestSpeed.value)}{' '}
+            {speedUnit}
           </Text>
           <Text fontSize="lg" color={valueColor}>
-            Direction du vent : {latestDirection.value.toFixed(2)}{' '}
+            Direction du vent :{' '}
+            {formatCalibratedReading('wind_direction', latestDirection.value)}{' '}
             {directionUnit}
           </Text>
         </VStack>

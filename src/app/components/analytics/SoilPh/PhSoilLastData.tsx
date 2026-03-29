@@ -1,7 +1,10 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { FaFlask } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
-import { getUnitOverride } from '@/app/utils/unitOverrides';
+import {
+  formatCalibratedReading,
+  getUnitOverride,
+} from '@/app/utils/unitOverrides';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -46,7 +49,9 @@ const PhSoilLastData = ({ data }: { data: SensorData[] }) => {
         Dernière mesure :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest ? `${latest.value.toFixed(2)} ${unit}` : 'N/A'}
+        {latest
+          ? `${formatCalibratedReading('soil_ph', latest.value)} ${unit}`
+          : 'N/A'}
       </Text>
       <Text fontSize="sm" color={textColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}

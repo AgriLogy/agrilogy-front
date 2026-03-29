@@ -1,6 +1,7 @@
 // app/layout.tsx
 import { Providers } from './providers';
 import { Metadata } from 'next';
+import { ColorModeScript } from '@chakra-ui/react';
 
 export const metadata: Metadata = {
   title: 'Agrilogy',
@@ -17,6 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
+        <ColorModeScript initialColorMode="light" />
         <Providers>{children}</Providers>
       </body>
     </html>

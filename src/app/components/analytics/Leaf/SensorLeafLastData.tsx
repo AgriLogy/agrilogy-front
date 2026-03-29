@@ -1,5 +1,9 @@
 import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import { WiRaindrop, WiThermometer } from 'react-icons/wi';
+import {
+  formatCalibratedReading,
+  getUnitOverride,
+} from '@/app/utils/unitOverrides';
 
 const SensorLeafLastData = ({
   temperature,
@@ -39,7 +43,9 @@ const SensorLeafLastData = ({
           <WiThermometer size={50} color="#FF7300" />
           <Text color={textColor} fontSize="lg" mt={1}>
             Température:{' '}
-            {temperature ? `${temperature.value.toFixed(2)} °C` : 'N/A'}
+            {temperature
+              ? `${formatCalibratedReading('leaf_temperature', temperature.value)} ${getUnitOverride('leaf_temperature', '°C')}`
+              : 'N/A'}
           </Text>
         </Box>
 
@@ -47,7 +53,9 @@ const SensorLeafLastData = ({
           <WiRaindrop size={50} color="#007AFF" />
           <Text color={textColor} fontSize="lg" mt={1}>
             Humidité des feuilles:{' '}
-            {moisture ? `${moisture.value.toFixed(2)} %` : 'N/A'}
+            {moisture
+              ? `${formatCalibratedReading('leaf_moisture', moisture.value)} ${getUnitOverride('leaf_moisture', '%')}`
+              : 'N/A'}
           </Text>
         </Box>
 

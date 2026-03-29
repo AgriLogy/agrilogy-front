@@ -1,7 +1,10 @@
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import { GiWaterDrop } from 'react-icons/gi';
-import { getUnitOverride } from '@/app/utils/unitOverrides';
+import {
+  formatCalibratedReading,
+  getUnitOverride,
+} from '@/app/utils/unitOverrides';
 
 interface ET0Data {
   id: number;
@@ -67,13 +70,13 @@ const ET0LastData = ({
           <Text fontSize="lg" color="blue.600">
             ET0 météo:{' '}
             {latestWeather
-              ? `${latestWeather.value.toFixed(2)} ${weatherUnit}`
+              ? `${formatCalibratedReading('et0', latestWeather.value)} ${weatherUnit}`
               : 'N/A'}
           </Text>
           <Text fontSize="lg" color="teal.600">
             ET0 calculé:{' '}
             {latestCalculated
-              ? `${latestCalculated.value.toFixed(2)} ${calculatedUnit}`
+              ? `${formatCalibratedReading('et0', latestCalculated.value)} ${calculatedUnit}`
               : 'N/A'}
           </Text>
         </VStack>

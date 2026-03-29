@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -23,6 +23,8 @@ import { SensorData } from '@/app/types';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
 
 const ElectricityconsumptionChart = ({
   data,
@@ -33,11 +35,17 @@ const ElectricityconsumptionChart = ({
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const [showLine, setShowLine] = useState(true);
+  const unitRev = useUnitOverridesRevision();
 
-  const chartData = data.map((item) => ({
-    name: item.timestamp,
-    value: item.value,
-  }));
+  const chartData = useMemo(
+    () =>
+      data.map((item) => ({
+        name: item.timestamp,
+        value: calibrateChartValue('electricity_consumption', item.value),
+        default_unit: item.default_unit,
+      })),
+    [data, unitRev]
+  );
 
   const labelInterval = useBreakpointValue({
     base: Math.ceil(chartData.length / 3),
@@ -66,7 +74,7 @@ const ElectricityconsumptionChart = ({
   const handleDownloadData = () => {
     const csv =
       'timestamp,value\n' +
-      data.map((d) => `${d.timestamp},${d.value}`).join('\n');
+      chartData.map((d) => `${d.name},${d.value}`).join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -149,7 +157,7 @@ const ElectricityconsumptionChart = ({
               axisLine={{ stroke: '#666', strokeWidth: 1 }}
               tickLine={{ stroke: '#666', strokeWidth: 1 }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
             <Legend onClick={handleLegendClick} />
             <Line
               type="monotone"

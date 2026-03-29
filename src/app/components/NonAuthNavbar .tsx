@@ -22,7 +22,7 @@ const NonAuthNavbar = () => {
       top={0}
       zIndex={10}
     >
-      <Image src={logo} alt="Logo" height={50} />
+      <Image src={logo} alt="Logo" height={50} priority />
 
       <Spacer />
       <IconButton

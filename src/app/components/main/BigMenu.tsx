@@ -40,7 +40,7 @@ const BigMenu = () => {
       height="60px"
     >
       <Link href="/">
-        <Image height={40} src={logo} alt="Logo" />
+        <Image height={40} src={logo} alt="Logo" priority />
       </Link>
       <Flex align="center" gap={4}>
         <Tooltip label="Notifications">

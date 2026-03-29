@@ -1,7 +1,10 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { FaBolt } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
-import { getUnitOverride } from '@/app/utils/unitOverrides';
+import {
+  formatCalibratedReading,
+  getUnitOverride,
+} from '@/app/utils/unitOverrides';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -47,7 +50,9 @@ const WindSpeedLastData = ({ data }: { data: SensorData[] }) => {
         Dernière vitesse du vent :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest ? `${latest.value.toFixed(2)} ${unit}` : 'N/A'}
+        {latest
+          ? `${formatCalibratedReading('wind_speed', latest.value)} ${unit}`
+          : 'N/A'}
       </Text>
       <Text fontSize="sm" color={timeColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}

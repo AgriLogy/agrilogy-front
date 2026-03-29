@@ -81,6 +81,7 @@ const MobileMenu = () => {
           width={100}
           src={logo}
           alt="Logo"
+          priority
           style={{ objectFit: 'contain' }}
         />
       </Link>

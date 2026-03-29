@@ -2,7 +2,10 @@ import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { GiWaterDrop, GiWaterTank, GiGroundbreaker } from 'react-icons/gi';
 import { FaTachometerAlt } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
-import { getUnitOverride } from '@/app/utils/unitOverrides';
+import {
+  formatCalibratedReading,
+  getUnitOverride,
+} from '@/app/utils/unitOverrides';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -43,7 +46,7 @@ const SensorBox = ({
       </Text>
       <Text fontSize="2xl" color={valueColor}>
         {data
-          ? `${data.value.toFixed(2)} ${getUnitOverride(sensorKey, data.default_unit)}`
+          ? `${formatCalibratedReading(sensorKey, data.value)} ${getUnitOverride(sensorKey, data.default_unit)}`
           : 'N/A'}
       </Text>
       <Text fontSize="sm" color={timeColor}>

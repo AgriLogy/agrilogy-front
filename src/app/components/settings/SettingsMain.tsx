@@ -4,7 +4,10 @@ import './SettingsMain.css';
 import { Box, HStack, Text, Button } from '@chakra-ui/react';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import SensorReadingsSettings from '@/app/components/settings/SensorReadingsSettings';
-import SensorSearchDirectory from './SensorSearchDirectory';
+import FarmSettingsSection from '@/app/components/settings/FarmSettingsSection';
+import SuperAdminUsersSettings from '@/app/components/settings/SuperAdminUsersSettings';
+import SensorDirectorySettings from '@/app/components/settings/SensorDirectorySettings';
+import SensorGroupsSettings from '@/app/components/settings/SensorGroupsSettings';
 
 const SettingsMain = () => {
   const { bg, textColor } = useColorModeStyles();
@@ -71,16 +74,10 @@ const SettingsMain = () => {
       </Box>
       <Box bg={bg} className="wide text-box">
         {activeTab === 'readings' && <SensorReadingsSettings />}
-        {activeTab === 'users' && <SensorSearchDirectory />}
-        {activeTab === 'sensors' && <SensorSearchDirectory allowAdd />}
-        {activeTab !== 'readings' &&
-          activeTab !== 'users' &&
-          activeTab !== 'sensors' && (
-            <Text fontSize="sm" color="gray.500">
-              Section {tabs.find((t) => t.key === activeTab)?.label} en
-              preparation.
-            </Text>
-          )}
+        {activeTab === 'farms' && <FarmSettingsSection />}
+        {activeTab === 'users' && <SuperAdminUsersSettings />}
+        {activeTab === 'sensors' && <SensorDirectorySettings />}
+        {activeTab === 'groups' && <SensorGroupsSettings />}
       </Box>
     </div>
   );

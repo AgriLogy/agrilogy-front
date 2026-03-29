@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -24,6 +24,8 @@ import { NpkSensorData } from '@/app/types';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
 
 const NpkSizeChart = ({
   data,
@@ -34,13 +36,18 @@ const NpkSizeChart = ({
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const { textColor } = useColorModeStyles();
+  const unitRev = useUnitOverridesRevision();
 
-  const chartData = data.map((item) => ({
-    name: item.timestamp,
-    nitrogen: item.nitrogen_value,
-    phosphorus: item.phosphorus_value,
-    potassium: item.potassium_value,
-  }));
+  const chartData = useMemo(
+    () =>
+      data.map((item) => ({
+        name: item.timestamp,
+        nitrogen: calibrateChartValue('npk_n', item.nitrogen_value),
+        phosphorus: calibrateChartValue('npk_p', item.phosphorus_value),
+        potassium: calibrateChartValue('npk_k', item.potassium_value),
+      })),
+    [data, unitRev]
+  );
 
   const labelInterval = useBreakpointValue({
     base: Math.ceil(chartData.length / 3),
@@ -76,11 +83,8 @@ const NpkSizeChart = ({
   const handleDownloadData = () => {
     const csv =
       'timestamp,nitrogen,phosphorus,potassium\n' +
-      data
-        .map(
-          (d) =>
-            `${d.timestamp},${d.nitrogen_value},${d.phosphorus_value},${d.potassium_value}`
-        )
+      chartData
+        .map((d) => `${d.name},${d.nitrogen},${d.phosphorus},${d.potassium}`)
         .join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -183,7 +187,7 @@ const NpkSizeChart = ({
                 strokeWidth: 1,
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
             <Legend onClick={handleLegendClick} />
 
             <Line

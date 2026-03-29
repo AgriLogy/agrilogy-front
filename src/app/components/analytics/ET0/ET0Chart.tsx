@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import {
   BarChart,
   Bar,
@@ -22,6 +22,8 @@ import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
 
 interface Et0Data {
   timestamp: string;
@@ -39,15 +41,23 @@ const EC0Chart = ({
   loading: boolean;
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
+  const unitRev = useUnitOverridesRevision();
 
-  const chartData = weatherData.map((item, index) => {
-    const calculated = calculatedData[index]?.value ?? null;
-    return {
-      name: item.timestamp,
-      Weather: item.value,
-      Calculated: calculated,
-    };
-  });
+  const chartData = useMemo(
+    () =>
+      weatherData.map((item, index) => {
+        const calculated = calculatedData[index]?.value ?? null;
+        return {
+          name: item.timestamp,
+          Weather: calibrateChartValue('et0', item.value),
+          Calculated:
+            calculated != null && Number.isFinite(calculated)
+              ? calibrateChartValue('et0', calculated)
+              : null,
+        };
+      }),
+    [weatherData, calculatedData, unitRev]
+  );
 
   const textColor = useColorModeValue('gray.800', 'gray.200');
   const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
@@ -165,7 +175,7 @@ const EC0Chart = ({
                 strokeWidth: 1,
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
             <Legend />
             <Bar dataKey="Weather" fill="#3182ce" name="ET0 Capteur" />
             <Bar dataKey="Calculated" fill="#e53e3e" name="ET0 Calculé" />

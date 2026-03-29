@@ -1,7 +1,10 @@
 import { Box, Text, VStack, HStack, useColorModeValue } from '@chakra-ui/react';
 import { FaThermometerHalf } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
-import { getUnitOverride } from '@/app/utils/unitOverrides';
+import {
+  formatCalibratedReading,
+  getUnitOverride,
+} from '@/app/utils/unitOverrides';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -38,7 +41,7 @@ const Row = ({
           </Text>
           <Text color={color}>
             {entry
-              ? `${entry.value.toFixed(2)} ${getUnitOverride(sensorKey, entry.default_unit)}`
+              ? `${formatCalibratedReading(sensorKey, entry.value)} ${getUnitOverride(sensorKey, entry.default_unit)}`
               : 'N/A'}
           </Text>
         </HStack>

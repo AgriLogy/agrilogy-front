@@ -1,6 +1,9 @@
 import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import { WiHumidity, WiThermometer } from 'react-icons/wi';
-import { getUnitOverride } from '@/app/utils/unitOverrides';
+import {
+  formatCalibratedReading,
+  getUnitOverride,
+} from '@/app/utils/unitOverrides';
 
 interface WeatherData {
   timestamp: string;
@@ -68,7 +71,7 @@ const TempuratureHumidtyLastData = ({
           <Text fontSize="lg" color="red.400">
             <WiThermometer size={24} style={{ display: 'inline' }} />{' '}
             Température :
-            {` ${latestTemperature.value.toFixed(2)} ${temperatureUnit}`}
+            {` ${formatCalibratedReading('temperature_weather', latestTemperature.value)} ${temperatureUnit}`}
           </Text>
         ) : (
           <Text color={textColor}>Température : N/A</Text>
@@ -77,7 +80,7 @@ const TempuratureHumidtyLastData = ({
         {latestHumidity ? (
           <Text fontSize="lg" color="blue.400">
             <WiHumidity size={24} style={{ display: 'inline' }} /> Humidité :
-            {` ${latestHumidity.value.toFixed(2)} ${humidityUnit}`}
+            {` ${formatCalibratedReading('humidity_weather', latestHumidity.value)} ${humidityUnit}`}
           </Text>
         ) : (
           <Text color={textColor}>Humidité : N/A</Text>

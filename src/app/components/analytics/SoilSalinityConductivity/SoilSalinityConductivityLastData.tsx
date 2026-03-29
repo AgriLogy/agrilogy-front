@@ -1,6 +1,10 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { FaTint, FaRulerCombined } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
+import {
+  formatCalibratedReading,
+  getUnitOverride,
+} from '@/app/utils/unitOverrides';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -53,7 +57,9 @@ const SoilSalinityConductivityLastData = ({
           Dernière salinité :
         </Text>
         <Text fontSize="2xl" color={valueColor}>
-          {latestSalinity ? `${latestSalinity.value.toFixed(2)} mg/l` : 'N/A'}
+          {latestSalinity
+            ? `${formatCalibratedReading('soil_salinity', latestSalinity.value)} ${getUnitOverride('soil_salinity', 'mg/l')}`
+            : 'N/A'}
         </Text>
         <Text fontSize="sm" color={textColor}>
           {latestSalinity
@@ -71,7 +77,7 @@ const SoilSalinityConductivityLastData = ({
         </Text>
         <Text fontSize="2xl" color={valueColor}>
           {latestConductivity
-            ? `${latestConductivity.value.toFixed(2)} μS/cm`
+            ? `${formatCalibratedReading('soil_conductivity', latestConductivity.value)} ${getUnitOverride('soil_conductivity', 'µS/cm')}`
             : 'N/A'}
         </Text>
         <Text fontSize="sm" color={textColor}>

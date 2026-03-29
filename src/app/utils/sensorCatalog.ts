@@ -8,6 +8,11 @@ export type SensorCatalogItem = {
 
 const CUSTOM_SENSORS_KEY = 'customSensorsCatalog';
 
+/**
+ * Unités par défaut alignées sur le PDF
+ * `change.the.unite.of.sensors.from.paramtere.user.1.3.pdf` ( PARAMETERAGE ).
+ * Si l’API renvoie une autre unité, l’utilisateur peut ajuster via Réglages → Lectures.
+ */
 export const SENSOR_CATALOG: SensorCatalogItem[] = [
   {
     key: 'solar_radiation',
@@ -31,17 +36,24 @@ export const SENSOR_CATALOG: SensorCatalogItem[] = [
     category: 'lecture',
   },
   {
+    key: 'pressure_weather',
+    readingLabel: 'Pression atmosphérique',
+    typeLabel: 'Météo',
+    defaultUnit: 'hPa',
+    category: 'lecture',
+  },
+  {
     key: 'wind_speed',
     readingLabel: 'Vitesse du vent',
     typeLabel: 'Vitesse du vent',
-    defaultUnit: 'km/h',
+    defaultUnit: 'm/s',
     category: 'lecture',
   },
   {
     key: 'wind_gust',
     readingLabel: 'Vitesse de rafale',
     typeLabel: 'Vitesse de rafale',
-    defaultUnit: 'km/h',
+    defaultUnit: 'm/s',
     category: 'lecture',
   },
   {
@@ -72,18 +84,33 @@ export const SENSOR_CATALOG: SensorCatalogItem[] = [
     defaultUnit: 'mm/h',
     category: 'lecture',
   },
+  // PDF « mm » = cumul ; ici l’app suit le taux (mm/h) côté API.
   {
     key: 'water_flow',
     readingLabel: 'Débit eau / irrigation',
     typeLabel: 'Débit',
-    defaultUnit: 'L/min',
+    defaultUnit: 'm³/h',
+    category: 'lecture',
+  },
+  {
+    key: 'irrigation_cumulative',
+    readingLabel: 'Irrigation cumulée',
+    typeLabel: 'Irrigation',
+    defaultUnit: 'm³/ha',
+    category: 'lecture',
+  },
+  {
+    key: 'water_level',
+    readingLabel: "Niveau d'eau",
+    typeLabel: 'Eau',
+    defaultUnit: 'm',
     category: 'lecture',
   },
   {
     key: 'water_pressure',
     readingLabel: "Pression d'eau",
     typeLabel: 'Pression',
-    defaultUnit: 'bar',
+    defaultUnit: 'kPa',
     category: 'lecture',
   },
   {
@@ -216,7 +243,7 @@ export const SENSOR_CATALOG: SensorCatalogItem[] = [
     key: 'electricity_consumption',
     readingLabel: 'Consommation électrique',
     typeLabel: 'Électricité',
-    defaultUnit: 'kWh',
+    defaultUnit: 'Wh',
     category: 'lecture',
   },
 ];
@@ -253,4 +280,76 @@ export function getAllSensorsCatalog(
   for (const row of SENSOR_CATALOG) map.set(row.key, row);
   for (const row of custom) map.set(row.key, row);
   return Array.from(map.values());
+}
+
+/** Unités usuelles en complément des `defaultUnit` du catalogue (sélecteurs réglages). */
+const ADDITIONAL_UNIT_SUGGESTIONS: string[] = [
+  '°F',
+  'K',
+  'm/s',
+  'mph',
+  'm³/h',
+  'L/h',
+  'mL/min',
+  'hPa',
+  'kPa',
+  'MPa',
+  'Pa',
+  'dS/m',
+  'mS/cm',
+  'ppt',
+  'µg/m³',
+  'mg/m³',
+  'lux',
+  'mol/m²/s',
+  'J/cm²',
+  'MJ/m²',
+  'Wh',
+  'cm',
+  'm',
+  'm³/ha',
+  'L/ha',
+  'km',
+  't/ha',
+  'kg/ha',
+  'g/L',
+  'g/kg',
+  'ppm',
+  'ppb',
+  '—',
+];
+
+function sortFr(a: string, b: string) {
+  return a.localeCompare(b, 'fr', { sensitivity: 'base' });
+}
+
+/** Tous les libellés de lecture (noms côté capteurs / catalogue), triés. */
+export function getReadingLabelOptions(includeCustom = true): string[] {
+  const seen = new Set<string>();
+  for (const item of getAllSensorsCatalog(includeCustom)) {
+    const v = item.readingLabel.trim();
+    if (v) seen.add(v);
+  }
+  return [...seen].sort(sortFr);
+}
+
+/** Tous les types (libellé type) du catalogue, triés. */
+export function getTypeLabelOptions(includeCustom = true): string[] {
+  const seen = new Set<string>();
+  for (const item of getAllSensorsCatalog(includeCustom)) {
+    const v = item.typeLabel.trim();
+    if (v) seen.add(v);
+  }
+  return [...seen].sort(sortFr);
+}
+
+/** Unités : catalogue + suggestions courantes. */
+export function getUnitSelectOptions(includeCustom = true): string[] {
+  const seen = new Set<string>();
+  for (const item of getAllSensorsCatalog(includeCustom)) {
+    const v = item.defaultUnit.trim();
+    if (v) seen.add(v);
+  }
+  for (const u of ADDITIONAL_UNIT_SUGGESTIONS) seen.add(u);
+  return [...seen].sort(sortFr);
 }

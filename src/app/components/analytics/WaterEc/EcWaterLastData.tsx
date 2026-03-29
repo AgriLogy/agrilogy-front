@@ -1,7 +1,10 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { SensorData } from '@/app/types';
 import { GiLightningDome } from 'react-icons/gi';
-import { getUnitOverride } from '@/app/utils/unitOverrides';
+import {
+  formatCalibratedReading,
+  getUnitOverride,
+} from '@/app/utils/unitOverrides';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -47,7 +50,9 @@ const EcWaterLastData = ({ data }: { data: SensorData[] }) => {
         Dernière consommation :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest ? `${latest.value.toFixed(2)} ${unit}` : 'N/A'}
+        {latest
+          ? `${formatCalibratedReading('water_ec', latest.value)} ${unit}`
+          : 'N/A'}
       </Text>
       <Text fontSize="sm" color={textColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}

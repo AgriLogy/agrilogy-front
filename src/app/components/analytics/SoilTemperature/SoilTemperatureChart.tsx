@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -24,6 +24,8 @@ import html2canvas from 'html2canvas';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
 import { TemperaturePoint } from './SoilTemperatureMain';
 
 const SoilTemperatureChart = ({
@@ -38,17 +40,46 @@ const SoilTemperatureChart = ({
   bestValueMax: number;
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
+  const unitRev = useUnitOverridesRevision();
 
   const [showLow, setShowLow] = useState(true);
   const [showMedium, setShowMedium] = useState(true);
   const [showHigh, setShowHigh] = useState(true);
 
-  const chartData = data.map((d) => ({
-    name: d.timestamp,
-    low: d.low,
-    medium: d.medium,
-    high: d.high,
-  }));
+  const chartData = useMemo(
+    () =>
+      data.map((d) => ({
+        name: d.timestamp,
+        low:
+          d.low != null && Number.isFinite(d.low)
+            ? calibrateChartValue('soil_temp_low', d.low)
+            : d.low,
+        medium:
+          d.medium != null && Number.isFinite(d.medium)
+            ? calibrateChartValue('soil_temp_medium', d.medium)
+            : d.medium,
+        high:
+          d.high != null && Number.isFinite(d.high)
+            ? calibrateChartValue('soil_temp_high', d.high)
+            : d.high,
+      })),
+    [data, unitRev]
+  );
+
+  const bandY1 = useMemo(
+    () =>
+      typeof bestValueMin === 'number' && Number.isFinite(bestValueMin)
+        ? calibrateChartValue('soil_temp_medium', bestValueMin)
+        : bestValueMin,
+    [bestValueMin, unitRev]
+  );
+  const bandY2 = useMemo(
+    () =>
+      typeof bestValueMax === 'number' && Number.isFinite(bestValueMax)
+        ? calibrateChartValue('soil_temp_medium', bestValueMax)
+        : bestValueMax,
+    [bestValueMax, unitRev]
+  );
 
   const labelInterval = useBreakpointValue({
     base: Math.ceil(Math.max(chartData.length, 1) / 3),
@@ -111,9 +142,9 @@ const SoilTemperatureChart = ({
   const xStart = chartData[0]?.name;
   const xEnd = chartData[chartData.length - 1]?.name;
   const showBand =
-    typeof bestValueMin === 'number' &&
-    typeof bestValueMax === 'number' &&
-    bestValueMin < bestValueMax &&
+    typeof bandY1 === 'number' &&
+    typeof bandY2 === 'number' &&
+    bandY1 < bandY2 &&
     xStart &&
     xEnd;
 
@@ -161,8 +192,8 @@ const SoilTemperatureChart = ({
               <ReferenceArea
                 x1={xStart}
                 x2={xEnd}
-                y1={bestValueMin}
-                y2={bestValueMax}
+                y1={bandY1}
+                y2={bandY2}
                 fill={bandFill}
                 stroke={bandStroke}
                 strokeOpacity={1}
@@ -216,7 +247,7 @@ const SoilTemperatureChart = ({
                 strokeWidth: 1,
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
             <Legend onClick={handleLegendClick} />
 
             <Line

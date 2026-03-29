@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import {
   LineChart,
   Line,
@@ -23,6 +23,8 @@ import html2canvas from 'html2canvas';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
 
 interface WeatherData {
   id: number;
@@ -45,16 +47,25 @@ const TempuratureHumidtyChart = ({
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const { textColor } = useColorModeStyles();
+  const unitRev = useUnitOverridesRevision();
 
-  // Merging humidity and temperature data based on the timestamp
-  const mergedData = humidityData.map((h) => {
-    const tempEntry = temperatureData.find((t) => t.timestamp === h.timestamp);
-    return {
-      timestamp: h.timestamp,
-      humidity: h.value,
-      temperature: tempEntry?.value || null,
-    };
-  });
+  const mergedData = useMemo(
+    () =>
+      humidityData.map((h) => {
+        const tempEntry = temperatureData.find(
+          (t) => t.timestamp === h.timestamp
+        );
+        return {
+          timestamp: h.timestamp,
+          humidity: calibrateChartValue('humidity_weather', h.value),
+          temperature:
+            tempEntry != null && tempEntry.value != null
+              ? calibrateChartValue('temperature_weather', tempEntry.value)
+              : null,
+        };
+      }),
+    [humidityData, temperatureData, unitRev]
+  );
 
   // Label interval and angle adjustments for responsive chart
   const labelInterval = useBreakpointValue({
@@ -192,7 +203,7 @@ const TempuratureHumidtyChart = ({
                 dx: 10,
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
             <Legend />
             <Line
               yAxisId="left"

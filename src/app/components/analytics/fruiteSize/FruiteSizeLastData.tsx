@@ -1,4 +1,8 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
+import {
+  formatCalibratedReading,
+  getUnitOverride,
+} from '@/app/utils/unitOverrides';
 import { FaAppleAlt } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
 
@@ -44,7 +48,9 @@ const FruiteSizeLastData = ({ data }: { data: SensorData[] }) => {
         Dernière taille mesurée :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest ? `${latest.value.toFixed(2)} mm` : 'N/A'}
+        {latest
+          ? `${formatCalibratedReading('fruit_size', latest.value)} ${getUnitOverride('fruit_size', 'mm')}`
+          : 'N/A'}
       </Text>
       <Text fontSize="sm" color={textColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}
