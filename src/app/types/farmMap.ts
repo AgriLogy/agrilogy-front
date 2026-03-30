@@ -5,6 +5,10 @@
 
 export const FARM_SECTORS_STORAGE_KEY = 'agrilogy-farm-sectors-geojson';
 
+/** Placed sensor markers on the farm map (linked to a drawn sector). */
+export const FARM_MAP_SENSOR_PLACEMENTS_KEY =
+  'agrilogy-farm-map-sensor-placements';
+
 /** Prefix for future dynamic sources/layers (avoid collisions with Draw internals). */
 export const FUTURE_AGRILOGY_LAYER_PREFIX = 'agrilogy-v2-';
 
@@ -22,3 +26,17 @@ export interface FarmSectorProperties {
   /** Hook for irrigation zones, sensor ids, etc. */
   meta?: Record<string, unknown>;
 }
+
+export type FarmMapSensorPlacement = {
+  id: string;
+  /** Mapbox Draw feature id of the polygon this sensor belongs to. */
+  sectorId: string;
+  sensorKey: string;
+  lng: number;
+  lat: number;
+  /** Offset from sector polygon centroid — garde le capteur “collé” à la zone quand le polygone est déplacé/édité. */
+  relLng?: number;
+  relLat?: number;
+  /** API zone id used when fetching live readings (falls back to global zone if missing). */
+  zoneId?: number | null;
+};

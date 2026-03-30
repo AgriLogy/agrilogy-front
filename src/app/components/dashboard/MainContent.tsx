@@ -9,7 +9,7 @@ import WeatherDashboard from './WeatherDashboard';
 const MainContent = () => {
   const { bg, textColor } = useColorModeStyles();
   return (
-    <div className="container">
+    <div className="container text-yellow-200">
       <Box bg={bg} className="header">
         <Text color={textColor}>Tableau de board</Text>
       </Box>

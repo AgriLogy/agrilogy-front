@@ -26,7 +26,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env*.local
+# .env*.local
 
 # vercel
 .vercel
@@ -53,9 +53,9 @@ staticfiles/
 *.pyd
 
 # Environment variables
-.env
-.env.local
-.env.*.local
+# .env
+# .env.local
+# .env.*.local
 
 # VS Code settings
 .vscode/

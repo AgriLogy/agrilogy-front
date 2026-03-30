@@ -25,14 +25,7 @@ export default function GoogleMapWeather() {
   const content = loading ? (
     <Loading />
   ) : (
-    <Box
-      width="100%"
-      height={{ base: 'auto', md: 'auto' }}
-      minH={{ base: '320px', md: '420px' }}
-      maxH="none"
-      borderRadius="md"
-      overflow="hidden"
-    >
+    <Box width="100%" overflow="visible">
       <FarmSectorsMap lat={lat} lon={lon} />
     </Box>
   );
@@ -40,7 +33,7 @@ export default function GoogleMapWeather() {
   return (
     <Box width="100%" height="100%" p={p} overflowX="auto">
       <DashboardCard
-        title="Exploitation & secteurs (Mapbox)"
+        title="Explorez les zones et les capteurs"
         content={content}
       />
     </Box>

@@ -13,7 +13,6 @@
   justify-content: left;
   align-items: center;
   height: 50px;
-  background-color: var(--chakra-colors-gray-200); /* Light mode background */
   padding-left: 10px;
   font-size: medium;
   font-weight: 800;
@@ -22,7 +21,6 @@
 .box {
   margin: 3px;
   border-radius: 5px;
-  background-color: var(--chakra-colors-gray-200); /* for light mode */
   border: 1px solid #ccc;
   font-size: 24px;
   font-weight: bold;
@@ -56,20 +54,4 @@
   }
 }
 
-/* Dark mode support */
-:root {
-  --chakra-colors-gray-200: #edf2f7; /* Light mode */
-  --chakra-colors-gray-700: #4a5568; /* Dark mode */
-}
-
-@media (prefers-color-scheme: dark) {
-  .header {
-    background-color: var(--chakra-colors-gray-700); /* Dark mode background */
-    color: white; /* Optional: set text color for dark mode */
-  }
-
-  .box {
-    background-color: var(--chakra-colors-gray-700); /* Dark mode background */
-    color: white; /* Optional: set text color for dark mode */
-  }
-}
+/* Fond : Chakra (useColorModeStyles / Box bg) — évite le gris systématique gray-200 */
