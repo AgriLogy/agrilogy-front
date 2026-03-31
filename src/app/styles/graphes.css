@@ -13,7 +13,7 @@
   justify-content: left;
   align-items: center;
   height: 50px;
-  background-color: var(--chakra-colors-gray-200); /* Light mode background */
+  background-color: #fff;
   border: 1px solid #ccc;
   padding-left: 10px;
   font-size: medium;
@@ -33,7 +33,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--chakra-colors-gray-200); /* Light mode background */
+  background-color: #fff;
   border: 1px solid #ccc;
   height: 400px;
   font-size: 24px;
@@ -70,19 +70,15 @@
 }
 
 /* Dark mode support */
-:root {
-  --chakra-colors-gray-200: #edf2f7; /* Light mode */
-  --chakra-colors-gray-700: #4a5568; /* Dark mode */
-}
 
 @media (prefers-color-scheme: dark) {
   .header {
-    background-color: var(--chakra-colors-gray-700); /* Dark mode background */
-    color: white; /* Optional: set text color for dark mode */
+    background-color: #fff;
+    color: #1a202c;
   }
 
   .box {
-    background-color: var(--chakra-colors-gray-700); /* Dark mode background */
-    color: white; /* Optional: set text color for dark mode */
+    background-color: #fff;
+    color: #1a202c;
   }
 }

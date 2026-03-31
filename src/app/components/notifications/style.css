@@ -89,7 +89,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--chakra-colors-gray-200); /* Light mode background */
+  background-color: #fff;
   border: 1px solid #ccc;
   height: 400px;
   font-size: 24px;

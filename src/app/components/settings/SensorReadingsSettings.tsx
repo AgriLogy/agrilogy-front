@@ -33,7 +33,10 @@ import {
   getTypeLabelOptions,
   getUnitSelectOptions,
 } from '@/app/utils/sensorCatalog';
-import { composeCalibrationWithUnitChange } from '@/app/utils/sensorUnitConversion';
+import {
+  composeCalibrationWithUnitChange,
+  getCompatibleUnitOptions,
+} from '@/app/utils/sensorUnitConversion';
 import { notifyUnitOverridesChanged } from '@/app/hooks/useUnitOverridesRevision';
 import { getDefaultCalibrationForSensorKey } from '@/app/utils/sensorCalibrationDefaults';
 import { fetchLastSensorSample } from '@/app/utils/fetchSensorLastValue';
@@ -289,10 +292,15 @@ const SensorReadingsSettings = () => {
     [draft.typeLabel, editingKey, rows.length]
   );
 
-  const unitOptions = useMemo(
-    () => mergeSelectOptions(getUnitSelectOptions(true), draft.unit),
-    [draft.unit, editingKey, rows.length]
-  );
+  const unitOptions = useMemo(() => {
+    const baseUnit =
+      catalogDefaultUnitForEdit ?? editingRow?.unit ?? draft.unit;
+    const compatible = getCompatibleUnitOptions(
+      baseUnit,
+      getUnitSelectOptions(true)
+    );
+    return mergeSelectOptions(compatible, draft.unit);
+  }, [catalogDefaultUnitForEdit, editingRow?.unit, draft.unit]);
 
   const modalSelectProps = {
     rounded: 'md' as const,
@@ -399,7 +407,7 @@ const SensorReadingsSettings = () => {
       </Flex>
       <Table size="md" variant="simple">
         <Thead>
-          <Tr bg="#edf2f7">
+          <Tr bg="white" borderBottomWidth="1px" borderColor="gray.200">
             <Th>Libellé de la lecture</Th>
             <Th>Type</Th>
             <Th>Unité</Th>

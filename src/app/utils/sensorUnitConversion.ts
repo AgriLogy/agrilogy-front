@@ -276,3 +276,35 @@ export function composeCalibrationWithUnitChange(
     offsetB: prevOffsetB * step.k + step.c,
   };
 }
+
+/**
+ * Return only units compatible with `baseUnit`.
+ * If `baseUnit` is not in the conversion graph (e.g. %, pH), keep only itself.
+ */
+export function getCompatibleUnitOptions(
+  baseUnit: string,
+  candidates: string[]
+): string[] {
+  const base = baseUnit.trim();
+  if (!base) return [];
+
+  const out = new Set<string>([base]);
+  const baseAxis = axisIdFromUnitLabel(base);
+
+  for (const raw of candidates) {
+    const candidate = raw.trim();
+    if (!candidate) continue;
+
+    if (normalizeUnitString(candidate) === normalizeUnitString(base)) {
+      out.add(candidate);
+      continue;
+    }
+
+    if (!baseAxis) continue;
+    if (getLinearStepBetweenUnits(base, candidate)) out.add(candidate);
+  }
+
+  return [...out].sort((a, b) =>
+    a.localeCompare(b, 'fr', { sensitivity: 'base' })
+  );
+}

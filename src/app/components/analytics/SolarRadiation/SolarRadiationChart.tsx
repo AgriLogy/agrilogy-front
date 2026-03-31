@@ -39,15 +39,22 @@ const SolarRadiationChart = ({
 
   const chartData = useMemo(
     () =>
-      data.map((item) => ({
-        name: item.timestamp,
-        value: calibrateChartValue(
-          'solar_radiation',
-          item.value,
-          (v) => v / 1000
-        ),
-        default_unit: item.default_unit,
-      })),
+      [...data]
+        .sort((a, b) => {
+          const ta = Date.parse(a.timestamp);
+          const tb = Date.parse(b.timestamp);
+          if (!Number.isFinite(ta) || !Number.isFinite(tb)) return 0;
+          return ta - tb;
+        })
+        .map((item) => ({
+          name: item.timestamp,
+          value: calibrateChartValue(
+            'solar_radiation',
+            item.value,
+            (v) => v / 1000
+          ),
+          default_unit: item.default_unit,
+        })),
     [data, unitRev]
   );
 
@@ -187,7 +194,8 @@ const SolarRadiationChart = ({
               dataKey="value"
               name="Radiation solaire"
               stroke={showArea ? '#f6c90e' : 'gray'}
-              fill={showArea ? '#f6c90e55' : 'gray'}
+              fill={showArea ? '#f6c90e' : 'gray'}
+              fillOpacity={showArea ? 0.35 : 0.2}
               strokeWidth={2}
               isAnimationActive={false}
             />

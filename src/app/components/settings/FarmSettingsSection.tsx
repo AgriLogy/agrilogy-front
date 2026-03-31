@@ -169,9 +169,12 @@ const FarmSettingsSection = () => {
                   <Box
                     w="200px"
                     h="100px"
-                    bg="gray.200"
+                    bg="white"
+                    borderWidth="1px"
+                    borderStyle="dashed"
+                    borderColor="gray.300"
                     borderRadius="md"
-                    _dark={{ bg: 'gray.700' }}
+                    _dark={{ bg: 'gray.800', borderColor: 'gray.600' }}
                   />
                 )}
                 <Input
