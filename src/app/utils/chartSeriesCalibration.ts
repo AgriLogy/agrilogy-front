@@ -2,7 +2,7 @@ import { applySensorCalibration } from '@/app/utils/unitOverrides';
 
 /**
  * Same rule as dashboards: valeur affichée = f(valeur brute) puis calibration linéaire.
- * `preTransform` matches any per-sensor API scaling (e.g. solar ÷ 1000) applied before a,b.
+ * Optional `preTransform` for edge cases where the API encoding differs from the unit assumed by a,b.
  */
 export function calibrateChartValue(
   sensorKey: string,

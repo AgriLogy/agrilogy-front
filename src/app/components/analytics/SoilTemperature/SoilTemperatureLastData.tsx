@@ -3,8 +3,10 @@ import { FaThermometerHalf } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
 import {
   formatCalibratedReading,
-  getUnitOverride,
+  resolveAxisUnit,
 } from '@/app/utils/unitOverrides';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -41,8 +43,8 @@ const Row = ({
           </Text>
           <Text color={color}>
             {entry
-              ? `${formatCalibratedReading(sensorKey, entry.value)} ${getUnitOverride(sensorKey, entry.default_unit)}`
-              : 'N/A'}
+              ? `${formatCalibratedReading(sensorKey, entry.value)} ${resolveAxisUnit(sensorKey, entry.default_unit)}`
+              : 'Non disponible'}
           </Text>
         </HStack>
         <Text fontSize="sm" color={metaColor}>
@@ -62,6 +64,7 @@ const SoilTemperatureLastData = ({
   lastMedium?: SensorData;
   lastHigh?: SensorData;
 }) => {
+  useUnitOverridesRevision();
   const bgColor = useColorModeValue('orange.50', 'orange.900');
   const headerColor = useColorModeValue('gray.700', 'gray.200');
   const borderColor = useColorModeValue('blackAlpha.200', 'whiteAlpha.300');
@@ -120,6 +123,7 @@ const SoilTemperatureLastData = ({
           sensorKey="soil_temp_high"
         />
       </VStack>
+      <LastDataAddAlertButton />
     </Box>
   );
 };

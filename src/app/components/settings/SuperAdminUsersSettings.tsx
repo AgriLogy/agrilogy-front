@@ -42,7 +42,8 @@ const PLACEMENT_TYPES = ['user', 'admin'] as const;
 
 const SuperAdminUsersSettings = () => {
   const toast = useToast();
-  const { textColor } = useColorModeStyles();
+  const { textColor, bgColor, borderColor, mutedTextColor } =
+    useColorModeStyles();
   const [users, setUsers] = useState<ListedUser[]>([]);
   const [loading, setLoading] = useState(true);
   const catalog = useMemo(() => getAllSensorsCatalog(true), []);
@@ -166,7 +167,7 @@ const SuperAdminUsersSettings = () => {
 
   return (
     <Box>
-      <Text fontSize="sm" color="gray.500" mb={3}>
+      <Text fontSize="sm" color={mutedTextColor} mb={3}>
         Super-admin : créez des comptes avec rôle utilisateur ou administrateur,
         et choisissez quelles lectures (capteurs) ils peuvent voir. Les
         préférences capteurs sont stockées localement ; l’API peut ignorer des
@@ -177,6 +178,8 @@ const SuperAdminUsersSettings = () => {
         as="form"
         onSubmit={createUser}
         borderWidth="1px"
+        borderColor={borderColor}
+        bg={bgColor}
         borderRadius="md"
         p={4}
         mb={6}
@@ -211,8 +214,7 @@ const SuperAdminUsersSettings = () => {
               borderWidth="1px"
               h="8"
               px={2}
-              bg="white"
-              _dark={{ bg: 'gray.800' }}
+              bg={bgColor}
               value={role}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                 setRole(e.target.value as 'user' | 'admin')
@@ -237,7 +239,7 @@ const SuperAdminUsersSettings = () => {
             >
               <Text as="span" fontSize="xs">
                 {c.readingLabel}{' '}
-                <Text as="span" color="gray.500">
+                <Text as="span" color={mutedTextColor}>
                   ({c.key})
                 </Text>
               </Text>

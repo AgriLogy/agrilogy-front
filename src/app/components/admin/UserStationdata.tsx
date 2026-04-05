@@ -24,7 +24,11 @@ type Props = {
 
 const UserStationdata: React.FC<Props> = ({ user }) => {
   const { bg, textColor } = useColorModeStyles();
-  const [data, setData] = useState<any[]>([]);
+  const [stationPayload, setStationPayload] = useState<{
+    sensor_data?: any[];
+    sensor_names?: Record<string, string>;
+    sensor_colors?: Record<string, string>;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>(
@@ -43,8 +47,11 @@ const UserStationdata: React.FC<Props> = ({ user }) => {
           `api/admin-user-data/`,
           payload
         );
-        console.log('API Response:', response.data.sensor_data); // Inspect the structure
-        setData(response.data.sensor_data || []);
+        setStationPayload(
+          response.data ?? {
+            sensor_data: [],
+          }
+        );
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
       }
@@ -61,9 +68,11 @@ const UserStationdata: React.FC<Props> = ({ user }) => {
     );
   }
 
-  if (!data.length) {
+  if (!stationPayload?.sensor_data?.length) {
     return <EmptyBox />;
   }
+
+  const data = stationPayload;
 
   return (
     <div className="container">

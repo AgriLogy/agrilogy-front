@@ -66,9 +66,10 @@ import { FaSun } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
 import {
   formatCalibratedReading,
-  getUnitOverride,
+  resolveAxisUnit,
 } from '@/app/utils/unitOverrides';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -116,12 +117,13 @@ const SolarRadiationLastData = ({ data }: { data: SensorData[] }) => {
       </Text>
       <Text fontSize="2xl" color={valueColor}>
         {latest
-          ? `${formatCalibratedReading('solar_radiation', latest.value / 1000)} ${getUnitOverride('solar_radiation', 'kW/m²')}`
-          : 'N/A'}
+          ? `${formatCalibratedReading('solar_radiation', latest.value)} ${resolveAxisUnit('solar_radiation', latest?.default_unit)}`
+          : 'Non disponible'}
       </Text>
       <Text fontSize="sm" color={timeColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}
       </Text>
+      <LastDataAddAlertButton />
     </Box>
   );
 };

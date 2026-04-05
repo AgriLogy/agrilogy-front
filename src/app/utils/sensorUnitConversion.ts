@@ -29,6 +29,45 @@ export function normalizeUnitString(raw: string): string {
   return s;
 }
 
+/**
+ * Map free-form / i18n unit labels to catalogue strings our conversion graph knows.
+ * Prevents composeCalibrationWithUnitChange from failing (leaving stale a,b while the label changes).
+ */
+export function expandUnitLabelForAxisLookup(unit: string): string {
+  const t = unit.normalize('NFKC').trim();
+  if (!t) return unit;
+  const compact = t.replace(/\s+/g, '');
+  const tl = t.toLowerCase();
+
+  // ---- débit volumique (m³/h catalogue) : "m³" seul = souvent m³/h en irrigation
+  if (/^m(\^3|³|3)$/i.test(compact)) return 'm³/h';
+  if (/^m(\^3|³|3)\/h$/i.test(compact)) return 'm³/h';
+
+  // ASCII m^3/h
+  if (/^m\^3\/h$/i.test(compact)) return 'm³/h';
+
+  // litres / temps (FR/EN)
+  if (
+    /lit(?:er|re)s?\/h/i.test(tl) ||
+    /^l\/h$/i.test(compact) ||
+    /^lph$/i.test(compact)
+  ) {
+    return 'L/h';
+  }
+  if (
+    /lit(?:er|re)s?\/min/i.test(tl) ||
+    /^l\/min$/i.test(compact) ||
+    /^lpm$/i.test(compact)
+  ) {
+    return 'L/min';
+  }
+
+  // "liter" / "l" seul : en irrigation, L/min est le débit courant (évite ×60 vs m³/h par rapport à L/h)
+  if (/^(l|lit(?:er|re)s?)$/i.test(tl)) return 'L/min';
+
+  return t;
+}
+
 /** Internal quantity axis id (not an SI string). */
 type Axis =
   | 't_c'
@@ -37,6 +76,7 @@ type Axis =
   | 'm_s'
   | 'kmh'
   | 'w_m2'
+  | 'kw_m2'
   | 'mj_m2'
   | 'pa'
   | 'hpa'
@@ -79,6 +119,8 @@ function toAxisId(normalized: string): Axis | null {
     // solar
     w_m2: 'w_m2',
     wm2: 'w_m2',
+    kw_m2: 'kw_m2',
+    kwm2: 'kw_m2',
     mj_m2: 'mj_m2',
     mjm2: 'mj_m2',
     // pressure
@@ -132,7 +174,8 @@ function toAxisId(normalized: string): Axis | null {
 }
 
 export function axisIdFromUnitLabel(unit: string): Axis | null {
-  return toAxisId(normalizeUnitString(unit));
+  const expanded = expandUnitLabelForAxisLookup(unit);
+  return toAxisId(normalizeUnitString(expanded));
 }
 
 type Adj = Array<{ to: Axis; k: number; c: number }>;
@@ -144,6 +187,8 @@ function buildAdjacency(): Map<Axis, Adj> {
     { from: 't_c', to: 't_k', k: 1, c: 273.15 },
     // PDF — vent km/h = m/s × 3.6
     { from: 'm_s', to: 'kmh', k: 3.6, c: 0 },
+    // kW/m² ↔ W/m² (same axis family as graph calibration: raw API is W/m²)
+    { from: 'w_m2', to: 'kw_m2', k: 0.001, c: 0 },
     // PDF — MJ/m² = W/m² × durée_h × 0,0036 → facteur 0,0036 = cas durée = 1 h
     { from: 'w_m2', to: 'mj_m2', k: 0.0036, c: 0 },
     // PDF — pression météo
@@ -200,8 +245,8 @@ export function getLinearStepBetweenUnits(
   unitFrom: string,
   unitTo: string
 ): LinearStep | null {
-  const start = axisIdFromUnitLabel(unitFrom);
-  const end = axisIdFromUnitLabel(unitTo);
+  const start = axisIdFromUnitLabel(unitFrom.trim());
+  const end = axisIdFromUnitLabel(unitTo.trim());
   if (!start || !end) return null;
   if (start === end) return { k: 1, c: 0 };
 

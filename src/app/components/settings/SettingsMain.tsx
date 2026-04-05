@@ -10,7 +10,8 @@ import SensorDirectorySettings from '@/app/components/settings/SensorDirectorySe
 import SensorGroupsSettings from '@/app/components/settings/SensorGroupsSettings';
 
 const SettingsMain = () => {
-  const { bg, textColor } = useColorModeStyles();
+  const { bg, textColor, borderColor, tabAccent, iconColor } =
+    useColorModeStyles();
   const [activeTab, setActiveTab] = React.useState<
     'farms' | 'users' | 'sensors' | 'readings' | 'groups'
   >('readings');
@@ -50,16 +51,15 @@ const SettingsMain = () => {
                 onClick={() => setActiveTab(tab.key)}
                 variant="ghost"
                 size="sm"
-                color={isActive ? '#2b6cb0' : 'gray.600'}
-                borderBottom={
-                  isActive ? '2px solid #2b6cb0' : '2px solid transparent'
-                }
+                color={isActive ? tabAccent : iconColor}
+                borderBottomWidth="2px"
+                borderBottomColor={isActive ? tabAccent : 'transparent'}
                 borderRadius="0"
                 textTransform="uppercase"
                 fontSize="xs"
                 fontWeight="700"
                 letterSpacing="0.3px"
-                _hover={{ color: '#2b6cb0' }}
+                _hover={{ color: tabAccent }}
               >
                 {tab.label}
               </Button>
@@ -67,12 +67,24 @@ const SettingsMain = () => {
           })}
         </HStack>
       </Box>
-      <Box bg={bg} className="header">
+      <Box
+        bg={bg}
+        className="header"
+        borderWidth="1px"
+        borderColor={borderColor}
+        borderStyle="solid"
+      >
         <Text color={textColor}>
           {tabs.find((t) => t.key === activeTab)?.label ?? 'Lectures'}
         </Text>
       </Box>
-      <Box bg={bg} className="wide text-box">
+      <Box
+        bg={bg}
+        className="wide text-box"
+        borderWidth="1px"
+        borderColor={borderColor}
+        borderStyle="solid"
+      >
         {activeTab === 'readings' && <SensorReadingsSettings />}
         {activeTab === 'farms' && <FarmSettingsSection />}
         {activeTab === 'users' && <SuperAdminUsersSettings />}

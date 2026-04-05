@@ -4,8 +4,10 @@ import { FaTachometerAlt } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
 import {
   formatCalibratedReading,
-  getUnitOverride,
+  resolveAxisUnit,
 } from '@/app/utils/unitOverrides';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -14,9 +16,9 @@ const timeAgo = (timestamp: string): string => {
   const diffMin = Math.floor(diffMs / 60000);
   const diffH = Math.floor(diffMin / 60);
 
-  if (diffMin < 1) return 'just now';
-  if (diffMin < 60) return `${diffMin} min ago`;
-  if (diffH < 24) return `${diffH} hours ago`;
+  if (diffMin < 1) return "à l'instant";
+  if (diffMin < 60) return `${diffMin} min.`;
+  if (diffH < 24) return `${diffH} heures`;
   return then.toLocaleDateString();
 };
 
@@ -46,8 +48,8 @@ const SensorBox = ({
       </Text>
       <Text fontSize="2xl" color={valueColor}>
         {data
-          ? `${formatCalibratedReading(sensorKey, data.value)} ${getUnitOverride(sensorKey, data.default_unit)}`
-          : 'N/A'}
+          ? `${formatCalibratedReading(sensorKey, data.value)} ${resolveAxisUnit(sensorKey, data.default_unit)}`
+          : 'Non disponible'}
       </Text>
       <Text fontSize="sm" color={timeColor}>
         {data ? `Mise à jour : ${timeAgo(data.timestamp)}` : ''}
@@ -67,6 +69,7 @@ const WaterSoilLastData = ({
   soilHigh?: SensorData;
   waterFlow?: SensorData;
 }) => {
+  useUnitOverridesRevision();
   const bgColor = useColorModeValue('blue.50', 'blue.900');
 
   return (
@@ -129,6 +132,7 @@ const WaterSoilLastData = ({
           color="#e53e3e"
         />
       )}
+      <LastDataAddAlertButton />
     </Box>
   );
 };

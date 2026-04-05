@@ -24,7 +24,8 @@ import {
 
 const FarmSettingsSection = () => {
   const toast = useToast();
-  const { textColor, bg } = useColorModeStyles();
+  const { textColor, bg, bgColor, borderColor, mutedTextColor } =
+    useColorModeStyles();
   const [username, setUsername] = useState('');
   const [zones, setZones] = useState<ZoneWrapper[]>([]);
   const [loading, setLoading] = useState(true);
@@ -134,7 +135,7 @@ const FarmSettingsSection = () => {
 
   return (
     <VStack align="stretch" spacing={4}>
-      <Text fontSize="sm" color="gray.500">
+      <Text fontSize="sm" color={mutedTextColor}>
         Les fermes correspondent aux zones renvoyées par l&apos;API. Le nom est
         enregistré sur le serveur ; l&apos;image est stockée localement dans le
         navigateur (aperçu par poste).
@@ -146,7 +147,14 @@ const FarmSettingsSection = () => {
         const zone = zw.zone;
         const img = getFarmImageDataUrl(zone.id);
         return (
-          <Box key={zw.id} p={4} borderRadius="md" borderWidth="1px" bg={bg}>
+          <Box
+            key={zw.id}
+            p={4}
+            borderRadius="md"
+            borderWidth="1px"
+            borderColor={borderColor}
+            bg={bg}
+          >
             <Heading size="sm" mb={3} color={textColor}>
               Ferme — zone #{zone.id}
             </Heading>
@@ -169,12 +177,11 @@ const FarmSettingsSection = () => {
                   <Box
                     w="200px"
                     h="100px"
-                    bg="white"
+                    bg={bgColor}
                     borderWidth="1px"
                     borderStyle="dashed"
-                    borderColor="gray.300"
+                    borderColor={borderColor}
                     borderRadius="md"
-                    _dark={{ bg: 'gray.800', borderColor: 'gray.600' }}
                   />
                 )}
                 <Input

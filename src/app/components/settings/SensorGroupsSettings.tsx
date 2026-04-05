@@ -36,7 +36,8 @@ import {
 
 const SensorGroupsSettings = () => {
   const toast = useToast();
-  const { textColor } = useColorModeStyles();
+  const { textColor, bgColor, borderColor, mutedTextColor } =
+    useColorModeStyles();
   const [groups, setGroups] = useState<SensorGroup[]>([]);
   const [newName, setNewName] = useState('');
   const catalog = useMemo(() => getAllSensorsCatalog(true), []);
@@ -93,17 +94,17 @@ const SensorGroupsSettings = () => {
   const selectProps = {
     rounded: 'md' as const,
     borderWidth: '1px' as const,
+    borderColor,
     w: '100%' as const,
     maxW: '320px' as const,
     h: '10' as const,
     px: 3,
-    bg: 'white',
-    _dark: { bg: 'gray.800', borderColor: 'whiteAlpha.300' },
+    bg: bgColor,
   };
 
   return (
     <Box>
-      <Text fontSize="sm" color="gray.500" mb={3}>
+      <Text fontSize="sm" color={mutedTextColor} mb={3}>
         Regroupez des capteurs pour les retrouver plus vite. Les groupes sont
         enregistrés localement sur cet appareil.
       </Text>
@@ -165,7 +166,7 @@ const SensorGroupsSettings = () => {
               onClick={() => removeGroup(g.id)}
             />
           </Flex>
-          <Text fontSize="xs" color="gray.500" mb={2}>
+          <Text fontSize="xs" color={mutedTextColor} mb={2}>
             Capteurs dans ce groupe
           </Text>
           <HStack spacing={1} flexWrap="wrap" mb={2}>
@@ -181,7 +182,7 @@ const SensorGroupsSettings = () => {
               </Badge>
             ))}
             {g.sensorKeys.length === 0 && (
-              <Text fontSize="sm" color="gray.400">
+              <Text fontSize="sm" color={mutedTextColor}>
                 Aucun capteur — ajoutez-en ci-dessous.
               </Text>
             )}

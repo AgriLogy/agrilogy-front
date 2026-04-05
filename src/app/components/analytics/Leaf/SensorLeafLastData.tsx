@@ -2,8 +2,10 @@ import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import { WiRaindrop, WiThermometer } from 'react-icons/wi';
 import {
   formatCalibratedReading,
-  getUnitOverride,
+  resolveAxisUnit,
 } from '@/app/utils/unitOverrides';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 const SensorLeafLastData = ({
   temperature,
@@ -12,6 +14,7 @@ const SensorLeafLastData = ({
   temperature?: { value: number; timestamp: string };
   moisture?: { value: number; timestamp: string };
 }) => {
+  useUnitOverridesRevision();
   // const bgColor = useColorModeValue("green.50", "green.900");
   // const textColor = useColorModeValue("gray.700", "gray.200");
   const bgColor = useColorModeValue('blue.50', 'blue.900');
@@ -44,8 +47,8 @@ const SensorLeafLastData = ({
           <Text color={textColor} fontSize="lg" mt={1}>
             Température:{' '}
             {temperature
-              ? `${formatCalibratedReading('leaf_temperature', temperature.value)} ${getUnitOverride('leaf_temperature', '°C')}`
-              : 'N/A'}
+              ? `${formatCalibratedReading('leaf_temperature', temperature.value)} ${resolveAxisUnit('leaf_temperature')}`
+              : 'Non disponible'}
           </Text>
         </Box>
 
@@ -54,8 +57,8 @@ const SensorLeafLastData = ({
           <Text color={textColor} fontSize="lg" mt={1}>
             Humidité des feuilles:{' '}
             {moisture
-              ? `${formatCalibratedReading('leaf_moisture', moisture.value)} ${getUnitOverride('leaf_moisture', '%')}`
-              : 'N/A'}
+              ? `${formatCalibratedReading('leaf_moisture', moisture.value)} ${resolveAxisUnit('leaf_moisture')}`
+              : 'Non disponible'}
           </Text>
         </Box>
 
@@ -66,6 +69,7 @@ const SensorLeafLastData = ({
           </Text>
         )}
       </VStack>
+      <LastDataAddAlertButton />
     </Box>
   );
 };

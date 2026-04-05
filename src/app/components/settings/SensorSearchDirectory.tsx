@@ -31,12 +31,14 @@ import {
   saveCustomSensorsCatalog,
   type SensorCatalogItem,
 } from '@/app/utils/sensorCatalog';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
 
 const SensorSearchDirectory = ({
   allowAdd = false,
 }: {
   allowAdd?: boolean;
 }) => {
+  const { mutedTextColor } = useColorModeStyles();
   const toast = useToast();
   const [query, setQuery] = useState('');
   const [catalog, setCatalog] = useState<SensorCatalogItem[]>(SENSOR_CATALOG);
@@ -127,7 +129,7 @@ const SensorSearchDirectory = ({
           </Button>
         )}
       </Flex>
-      <Text fontSize="sm" color="gray.500" mb={2}>
+      <Text fontSize="sm" color={mutedTextColor} mb={2}>
         {rows.length} capteur(s) trouvé(s)
       </Text>
       <Table size="sm" variant="simple">

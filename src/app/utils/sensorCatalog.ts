@@ -282,6 +282,12 @@ export function getAllSensorsCatalog(
   return Array.from(map.values());
 }
 
+/** Default unit for a sensor key (base + custom catalogue). Empty if unknown. */
+export function getCatalogDefaultUnit(sensorKey: string): string {
+  const item = getAllSensorsCatalog(true).find((s) => s.key === sensorKey);
+  return item?.defaultUnit?.trim() ?? '';
+}
+
 /** Unités usuelles en complément des `defaultUnit` du catalogue (sélecteurs réglages). */
 const ADDITIONAL_UNIT_SUGGESTIONS: string[] = [
   '°F',
@@ -290,6 +296,7 @@ const ADDITIONAL_UNIT_SUGGESTIONS: string[] = [
   'mph',
   'm³/h',
   'L/h',
+  'L/min',
   'mL/min',
   'hPa',
   'kPa',

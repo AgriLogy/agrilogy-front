@@ -4,8 +4,10 @@ import { FaWater } from 'react-icons/fa';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import {
   formatCalibratedReading,
-  getUnitOverride,
+  resolveAxisUnit,
 } from '@/app/utils/unitOverrides';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -27,6 +29,7 @@ const SoilConductivityLastData = ({
   highData: SensorData[];
   flowData: SensorData[];
 }) => {
+  useUnitOverridesRevision();
   const latestLow = lowData[lowData.length - 1];
   const latestHigh = highData[highData.length - 1];
   const latestFlow = flowData[flowData.length - 1];
@@ -60,24 +63,24 @@ const SoilConductivityLastData = ({
           {/* Medium blue for low conductivity */}
           Profondeur basse :{' '}
           {latestLow
-            ? `${formatCalibratedReading('soil_conductivity', latestLow.value)} ${getUnitOverride('soil_conductivity', 'µS/cm')}`
-            : 'N/A'}
+            ? `${formatCalibratedReading('soil_conductivity', latestLow.value)} ${resolveAxisUnit('soil_conductivity', latestLow.default_unit)}`
+            : 'Non disponible'}
         </Text>
         <Text fontSize="lg" color="#2BB673">
           {' '}
           {/* Vibrant teal-green for high conductivity */}
           Profondeur haute :{' '}
           {latestHigh
-            ? `${formatCalibratedReading('soil_conductivity', latestHigh.value)} ${getUnitOverride('soil_conductivity', 'µS/cm')}`
-            : 'N/A'}
+            ? `${formatCalibratedReading('soil_conductivity', latestHigh.value)} ${resolveAxisUnit('soil_conductivity', latestHigh.default_unit)}`
+            : 'Non disponible'}
         </Text>
         <Text fontSize="lg" color="#00B0FF">
           {' '}
           {/* Orange-red for irrigation flow */}
           Débit irrigation :{' '}
           {latestFlow
-            ? `${formatCalibratedReading('water_flow', latestFlow.value)} ${getUnitOverride('water_flow', 'L/min')}`
-            : 'N/A'}
+            ? `${formatCalibratedReading('water_flow', latestFlow.value)} ${resolveAxisUnit('water_flow', latestFlow.default_unit)}`
+            : 'Non disponible'}
         </Text>
       </VStack>
       {(latestLow || latestHigh || latestFlow) && (
@@ -91,6 +94,7 @@ const SoilConductivityLastData = ({
           )}
         </Text>
       )}
+      <LastDataAddAlertButton />
     </Box>
   );
 };

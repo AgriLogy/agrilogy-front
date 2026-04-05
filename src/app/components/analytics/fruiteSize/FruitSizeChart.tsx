@@ -25,6 +25,8 @@ import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
 
 const FruitSizeChart = ({
   data,
@@ -41,7 +43,7 @@ const FruitSizeChart = ({
     () =>
       data.map((item) => ({
         name: item.timestamp,
-        value: calibrateChartValue('fruit_size', item.value),
+        fruit_size: calibrateChartValue('fruit_size', item.value),
         default_unit: item.default_unit,
       })),
     [data, unitRev]
@@ -54,10 +56,11 @@ const FruitSizeChart = ({
 
   const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const { textColor } = useColorModeStyles();
+  const { axis, mutedSeries } = useChartAxisColors();
+  const fruitUnit = resolveAxisUnit('fruit_size', data[0]?.default_unit);
 
-  // Legend click handler
-  const handleLegendClick = (data: any) => {
-    if (data.value === 'Taille des fruits') {
+  const handleLegendClick = (payload: { dataKey?: unknown }) => {
+    if (payload?.dataKey === 'fruit_size') {
       setShowBar((prev) => !prev);
     }
   };
@@ -74,8 +77,8 @@ const FruitSizeChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      'timestamp,value\n' +
-      chartData.map((d) => `${d.name},${d.value}`).join('\n');
+      'timestamp,fruit_size\n' +
+      chartData.map((d) => `${d.name},${d.fruit_size}`).join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -124,70 +127,61 @@ const FruitSizeChart = ({
           <BarChart
             data={chartData}
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            onClick={(e) => {
-              // optional: if you want to toggle bar by clicking legend label only
-              console.log(e);
-            }}
+            onClick={() => {}}
           >
             <XAxis
               dataKey="name"
               angle={0}
               textAnchor="middle"
               interval={labelInterval}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
             <YAxis
               label={{
-                // value: "Taille (mm)",
+                value: fruitUnit,
                 angle: -90,
                 position: 'insideLeft',
               }}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
             <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
             <Legend onClick={handleLegendClick} />
             <Bar
-              dataKey="value"
-              name="Taille des fruits (mm)"
-              fill={showBar ? '#82ca9d' : 'gray'}
+              dataKey="fruit_size"
+              name={`Taille des fruits (${fruitUnit})`}
+              fill={showBar ? '#82ca9d' : mutedSeries}
               activeBar={
                 <Rectangle
-                  fill={showBar ? 'gold' : 'gray'}
-                  stroke={showBar ? 'purple' : 'gray'}
+                  fill={showBar ? 'gold' : mutedSeries}
+                  stroke={showBar ? 'purple' : mutedSeries}
                 />
               }
               isAnimationActive={false}

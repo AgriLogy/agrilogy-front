@@ -3,8 +3,10 @@ import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import { GiWaterDrop } from 'react-icons/gi';
 import {
   formatCalibratedReading,
-  getUnitOverride,
+  resolveAxisUnit,
 } from '@/app/utils/unitOverrides';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 interface ET0Data {
   id: number;
@@ -33,10 +35,11 @@ const ET0LastData = ({
   weatherData: ET0Data[];
   calculatedData: ET0Data[];
 }) => {
+  useUnitOverridesRevision();
   const latestWeather = weatherData[weatherData.length - 1];
   const latestCalculated = calculatedData[calculatedData.length - 1];
-  const weatherUnit = getUnitOverride('et0', latestWeather?.default_unit);
-  const calculatedUnit = getUnitOverride('et0', latestCalculated?.default_unit);
+  const weatherUnit = resolveAxisUnit('et0', latestWeather?.default_unit);
+  const calculatedUnit = resolveAxisUnit('et0', latestCalculated?.default_unit);
 
   // Light/dark mode colors
   const bgColor = useColorModeValue('blue.50', 'blue.900');
@@ -71,18 +74,18 @@ const ET0LastData = ({
             ET0 météo:{' '}
             {latestWeather
               ? `${formatCalibratedReading('et0', latestWeather.value)} ${weatherUnit}`
-              : 'N/A'}
+              : 'Non disponible'}
           </Text>
           <Text fontSize="lg" color="teal.600">
             ET0 calculé:{' '}
             {latestCalculated
               ? `${formatCalibratedReading('et0', latestCalculated.value)} ${calculatedUnit}`
-              : 'N/A'}
+              : 'Non disponible'}
           </Text>
         </VStack>
       ) : (
         <Text mt={3} fontSize="md" color={noDataColor}>
-          N/A
+          Non disponible
         </Text>
       )}
 
@@ -100,6 +103,7 @@ const ET0LastData = ({
               : timeAgo(latestCalculated.timestamp)}
         </Text>
       )}
+      <LastDataAddAlertButton />
     </Box>
   );
 };

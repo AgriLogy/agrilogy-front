@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import {
   Box,
   Text,
@@ -22,6 +22,11 @@ import {
   Chart,
 } from 'chart.js';
 import { PolarArea } from 'react-chartjs-2';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import {
+  applySensorCalibration,
+  resolveAxisUnit,
+} from '@/app/utils/unitOverrides';
 
 // Helper: get pixel radius from scale value (Chart.js 4 radial scale)
 function getRadiusForValue(scale: any, value: number): number {
@@ -80,14 +85,37 @@ interface WindData {
   default_unit: string;
 }
 
-// Exact color palette from your target image
-const SPEED_BINS = [
-  { label: '< 2 m/s', min: 0, max: 2, color: '#7cb5ec' },
-  { label: '2 - 4 m/s', min: 2, max: 4, color: '#434348' },
-  { label: '4 - 6 m/s', min: 4, max: 6, color: '#90ed7d' },
-  { label: '6 - 8 m/s', min: 6, max: 8, color: '#f7a35c' },
-  { label: '> 8 m/s', min: 8, max: Infinity, color: '#8085e9' },
-];
+/** Bin edges in raw API space (catalog default m/s); labels follow unit overrides. */
+const SPEED_BINS_RAW = [
+  { min: 0, max: 2, color: '#7cb5ec' },
+  { min: 2, max: 4, color: '#434348' },
+  { min: 4, max: 6, color: '#90ed7d' },
+  { min: 6, max: 8, color: '#f7a35c' },
+  { min: 8, max: Infinity, color: '#8085e9' },
+] as const;
+
+type SpeedBin = { label: string; min: number; max: number; color: string };
+
+function buildSpeedBinsWithLabels(axisUnit: string): SpeedBin[] {
+  const unit = axisUnit;
+  const fmt = (v: number) =>
+    Number.isFinite(v)
+      ? applySensorCalibration('wind_speed', v).toFixed(1)
+      : '';
+  return SPEED_BINS_RAW.map((b, i) => {
+    const first = i === 0;
+    const last = i === SPEED_BINS_RAW.length - 1;
+    let label: string;
+    if (first) {
+      label = `< ${fmt(2)} ${unit}`.trim();
+    } else if (last) {
+      label = `> ${fmt(8)} ${unit}`.trim();
+    } else {
+      label = `${fmt(b.min)} – ${fmt(b.max)} ${unit}`.trim();
+    }
+    return { label, min: b.min, max: b.max, color: b.color };
+  });
+}
 
 const LABELS_16_POINT = [
   'N',
@@ -116,12 +144,14 @@ const getCompassSector = (degrees: number): string => {
 
 const prepareWindRoseData = (
   speedData: WindData[],
-  directionData: WindData[]
+  directionData: WindData[],
+  speedBins: SpeedBin[],
+  segmentBorderColor: string
 ) => {
   const countsMap: Record<string, Record<string, number>> = {};
   LABELS_16_POINT.forEach((dir) => {
     countsMap[dir] = {};
-    SPEED_BINS.forEach((bin) => {
+    speedBins.forEach((bin) => {
       countsMap[dir][bin.label] = 0;
     });
   });
@@ -142,7 +172,7 @@ const prepareWindRoseData = (
     ) {
       const sector = getCompassSector(direction.value);
       const speedVal = speed.value;
-      const matchingBin = SPEED_BINS.find(
+      const matchingBin = speedBins.find(
         (b) => speedVal >= b.min && speedVal < b.max
       );
 
@@ -166,14 +196,14 @@ const prepareWindRoseData = (
   const pctMap: Record<string, Record<string, number>> = {};
   LABELS_16_POINT.forEach((dir) => {
     pctMap[dir] = {};
-    SPEED_BINS.forEach((bin) => {
+    speedBins.forEach((bin) => {
       pctMap[dir][bin.label] =
         (countsMap[dir][bin.label] / totalValidPoints) * 100;
     });
   });
 
   // Build datasets with actual percentages (stacking handled by plugin)
-  const datasets = SPEED_BINS.map((bin) => {
+  const datasets = speedBins.map((bin) => {
     const realPercentages = LABELS_16_POINT.map(
       (dir) => pctMap[dir][bin.label]
     );
@@ -185,14 +215,14 @@ const prepareWindRoseData = (
       realData: realPercentages,
       realCounts: realCounts,
       backgroundColor: LABELS_16_POINT.map(() => bin.color),
-      borderColor: LABELS_16_POINT.map(() => '#ffffff'),
+      borderColor: LABELS_16_POINT.map(() => segmentBorderColor),
       borderWidth: 1,
     };
   });
 
   const maxStacked = Math.max(
     ...LABELS_16_POINT.map((dir) =>
-      SPEED_BINS.reduce((sum, bin) => sum + pctMap[dir][bin.label], 0)
+      speedBins.reduce((sum, bin) => sum + pctMap[dir][bin.label], 0)
     )
   );
 
@@ -217,6 +247,11 @@ const WindRadarChart = ({
   loading: boolean;
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
+  const unitRev = useUnitOverridesRevision();
+  const speedBins = useMemo(() => {
+    const u = resolveAxisUnit('wind_speed', windSpeedData[0]?.default_unit);
+    return buildSpeedBinsWithLabels(u);
+  }, [unitRev, windSpeedData]);
   const textColor = useColorModeValue('gray.800', 'gray.200');
   const gridColor = useColorModeValue(
     'rgba(0, 0, 0, 0.1)',
@@ -230,10 +265,20 @@ const WindRadarChart = ({
     'rgba(255, 255, 255, 0.85)',
     'rgba(26, 32, 44, 0.85)'
   );
+  const roseSegmentBorder = useColorModeValue(
+    '#ffffff',
+    'rgba(15, 23, 42, 0.85)'
+  );
 
-  const { chartData, pctMap, countsMap, maxStacked } = prepareWindRoseData(
-    windSpeedData,
-    windDirectionData
+  const { chartData, pctMap, countsMap, maxStacked } = useMemo(
+    () =>
+      prepareWindRoseData(
+        windSpeedData,
+        windDirectionData,
+        speedBins,
+        roseSegmentBorder
+      ),
+    [windSpeedData, windDirectionData, speedBins, roseSegmentBorder]
   );
   const isDataEmpty = !chartData || chartData.datasets.length === 0;
 
@@ -333,14 +378,14 @@ const WindRadarChart = ({
 
     const headers = [
       'Direction',
-      ...SPEED_BINS.map((b) => `${b.label} (%)`),
-      ...SPEED_BINS.map((b) => `${b.label} (Count)`),
+      ...speedBins.map((b) => `${b.label} (%)`),
+      ...speedBins.map((b) => `${b.label} (Count)`),
     ];
     const rows = LABELS_16_POINT.map((dir) => {
-      const pctData = SPEED_BINS.map(
+      const pctData = speedBins.map(
         (bin) => pctMap[dir][bin.label].toFixed(2) + '%'
       );
-      const countData = SPEED_BINS.map((bin) =>
+      const countData = speedBins.map((bin) =>
         countsMap[dir][bin.label].toString()
       );
       return [dir, ...pctData, ...countData].join(',');

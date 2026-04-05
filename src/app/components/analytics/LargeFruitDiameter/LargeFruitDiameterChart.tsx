@@ -25,6 +25,8 @@ import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
 
 const LargeFruitDiameterChart = ({
   data,
@@ -41,7 +43,10 @@ const LargeFruitDiameterChart = ({
     () =>
       data.map((item) => ({
         name: item.timestamp,
-        value: calibrateChartValue('large_fruit_diameter', item.value),
+        large_fruit_diameter: calibrateChartValue(
+          'large_fruit_diameter',
+          item.value
+        ),
         default_unit: item.default_unit,
       })),
     [data, unitRev]
@@ -54,9 +59,14 @@ const LargeFruitDiameterChart = ({
 
   const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const { textColor } = useColorModeStyles();
+  const { axis, mutedSeries, grid } = useChartAxisColors();
+  const diamUnit = resolveAxisUnit(
+    'large_fruit_diameter',
+    data[0]?.default_unit
+  );
 
-  const handleLegendClick = (data: any) => {
-    if (data.value === 'Consommation') {
+  const handleLegendClick = (payload: { dataKey?: unknown }) => {
+    if (payload?.dataKey === 'large_fruit_diameter') {
       setShowLine((prev) => !prev);
     }
   };
@@ -73,8 +83,8 @@ const LargeFruitDiameterChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      'timestamp,value\n' +
-      chartData.map((d) => `${d.name},${d.value}`).join('\n');
+      'timestamp,large_fruit_diameter\n' +
+      chartData.map((d) => `${d.name},${d.large_fruit_diameter}`).join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -124,55 +134,49 @@ const LargeFruitDiameterChart = ({
             data={chartData}
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
             <XAxis
               dataKey="name"
               angle={0}
               textAnchor="middle"
               interval={labelInterval}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
             <YAxis
               label={{
-                // value: "Diamètre (mm)",
+                value: diamUnit,
                 angle: -90,
                 fontSize: 16,
                 dy: 80,
                 position: 'insideLeft',
               }}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
@@ -180,12 +184,12 @@ const LargeFruitDiameterChart = ({
             <Legend onClick={handleLegendClick} />
             <Line
               type="monotone"
-              dataKey="value"
-              name="Diamètre (mm)"
-              stroke={showLine ? '#82ca9d' : 'gray'}
+              dataKey="large_fruit_diameter"
+              name={`Diamètre (${diamUnit})`}
+              stroke={showLine ? '#82ca9d' : mutedSeries}
               strokeWidth={2}
-              dot={{ r: 4, fill: showLine ? '#82ca9d' : 'gray' }}
-              activeDot={{ r: 6, stroke: showLine ? '#2f855a' : 'gray' }}
+              dot={{ r: 4, fill: showLine ? '#82ca9d' : mutedSeries }}
+              activeDot={{ r: 6, stroke: showLine ? '#2f855a' : mutedSeries }}
               isAnimationActive={false}
             />
           </LineChart>

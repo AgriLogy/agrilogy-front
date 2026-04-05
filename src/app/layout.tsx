@@ -2,6 +2,7 @@
 import { Providers } from './providers';
 import { Metadata } from 'next';
 import { ColorModeScript } from '@chakra-ui/react';
+import { chakraColorModeConfig } from './colorModeConfig';
 
 export const metadata: Metadata = {
   title: 'Agrilogy',
@@ -18,7 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
-        <ColorModeScript initialColorMode="light" />
+        <ColorModeScript
+          initialColorMode={chakraColorModeConfig.initialColorMode}
+        />
         <Providers>{children}</Providers>
       </body>
     </html>

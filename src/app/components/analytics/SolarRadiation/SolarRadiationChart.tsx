@@ -25,6 +25,8 @@ import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
 
 const SolarRadiationChart = ({
   data,
@@ -48,11 +50,8 @@ const SolarRadiationChart = ({
         })
         .map((item) => ({
           name: item.timestamp,
-          value: calibrateChartValue(
-            'solar_radiation',
-            item.value,
-            (v) => v / 1000
-          ),
+          // Raw API = W/m². Use catalog dataKey so tooltip units match lecture overrides.
+          solar_radiation: calibrateChartValue('solar_radiation', item.value),
           default_unit: item.default_unit,
         })),
     [data, unitRev]
@@ -65,6 +64,8 @@ const SolarRadiationChart = ({
 
   const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const { textColor } = useColorModeStyles();
+  const { axis, mutedSeries, grid } = useChartAxisColors();
+  const solarUnit = resolveAxisUnit('solar_radiation', data[0]?.default_unit);
 
   const handleLegendClick = (payload: any) => {
     if (payload.value === 'Radiation solaire') {
@@ -84,8 +85,8 @@ const SolarRadiationChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      'timestamp,value\n' +
-      chartData.map((d) => `${d.name},${d.value}`).join('\n');
+      'timestamp,solar_radiation\n' +
+      chartData.map((d) => `${d.name},${d.solar_radiation}`).join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -136,54 +137,49 @@ const SolarRadiationChart = ({
             data={chartData}
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
             <XAxis
               dataKey="name"
               angle={0}
               textAnchor="middle"
               interval={labelInterval}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
             <YAxis
               label={{
+                value: solarUnit,
                 angle: -90,
                 fontSize: 16,
                 dy: 80,
                 position: 'insideLeft',
               }}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
@@ -191,10 +187,10 @@ const SolarRadiationChart = ({
             <Legend onClick={handleLegendClick} />
             <Area
               type="monotone"
-              dataKey="value"
-              name="Radiation solaire"
-              stroke={showArea ? '#f6c90e' : 'gray'}
-              fill={showArea ? '#f6c90e' : 'gray'}
+              dataKey="solar_radiation"
+              name={`Radiation solaire (${solarUnit})`}
+              stroke={showArea ? '#f6c90e' : mutedSeries}
+              fill={showArea ? '#f6c90e' : mutedSeries}
               fillOpacity={showArea ? 0.35 : 0.2}
               strokeWidth={2}
               isAnimationActive={false}

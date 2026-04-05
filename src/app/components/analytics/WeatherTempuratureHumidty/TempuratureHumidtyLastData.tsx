@@ -2,8 +2,10 @@ import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import { WiHumidity, WiThermometer } from 'react-icons/wi';
 import {
   formatCalibratedReading,
-  getUnitOverride,
+  resolveAxisUnit,
 } from '@/app/utils/unitOverrides';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 interface WeatherData {
   timestamp: string;
@@ -31,13 +33,14 @@ const TempuratureHumidtyLastData = ({
   humidityData: WeatherData[];
   temperatureData: WeatherData[];
 }) => {
+  useUnitOverridesRevision();
   const latestHumidity = humidityData[humidityData.length - 1];
   const latestTemperature = temperatureData[temperatureData.length - 1];
-  const temperatureUnit = getUnitOverride(
+  const temperatureUnit = resolveAxisUnit(
     'temperature_weather',
     latestTemperature?.default_unit
   );
-  const humidityUnit = getUnitOverride(
+  const humidityUnit = resolveAxisUnit(
     'humidity_weather',
     latestHumidity?.default_unit
   );
@@ -74,7 +77,7 @@ const TempuratureHumidtyLastData = ({
             {` ${formatCalibratedReading('temperature_weather', latestTemperature.value)} ${temperatureUnit}`}
           </Text>
         ) : (
-          <Text color={textColor}>Température : N/A</Text>
+          <Text color={textColor}>Température : non disponible</Text>
         )}
 
         {latestHumidity ? (
@@ -83,7 +86,7 @@ const TempuratureHumidtyLastData = ({
             {` ${formatCalibratedReading('humidity_weather', latestHumidity.value)} ${humidityUnit}`}
           </Text>
         ) : (
-          <Text color={textColor}>Humidité : N/A</Text>
+          <Text color={textColor}>Humidité : non disponible</Text>
         )}
 
         {latestTemperature && (
@@ -92,6 +95,7 @@ const TempuratureHumidtyLastData = ({
           </Text>
         )}
       </VStack>
+      <LastDataAddAlertButton />
     </Box>
   );
 };

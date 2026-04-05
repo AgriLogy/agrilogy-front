@@ -1,4 +1,8 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Flex,
   IconButton,
@@ -7,80 +11,164 @@ import {
   MenuList,
   MenuItem,
   Tooltip,
-  Link,
   useColorMode,
-  Button,
+  Avatar,
+  Text,
+  HStack,
+  Box,
+  Divider,
 } from '@chakra-ui/react';
 import { BellIcon, MoonIcon, SunIcon } from '@chakra-ui/icons';
-import { FaCog, FaUser } from 'react-icons/fa';
+import { FaCog } from 'react-icons/fa';
 import Image from 'next/image';
 import api from '@/app/lib/api';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import logo from '../../public/logo.png';
 
+const HEADER_H = '64px';
+
 const BigMenu = () => {
   const { colorMode, toggleColorMode } = useColorMode();
-  const { bg, hoverColor } = useColorModeStyles();
-  const [username, setUsername] = useState('User');
+  const { hoverColor, headerBarBg, headerBarBorder, textColor } =
+    useColorModeStyles();
+  const [username, setUsername] = useState('');
+  const router = useRouter();
 
   useEffect(() => {
     api
       .get('/api/header/')
-      .then((response) => setUsername(response.data.username))
-      .catch((error) => console.error('Error fetching header data', error));
+      .then((response) => setUsername(response.data.username ?? ''))
+      .catch(() => setUsername(''));
   }, []);
+
+  const initial = username?.trim()?.charAt(0)?.toUpperCase() || '?';
 
   return (
     <Flex
+      as="header"
       justify="space-between"
       align="center"
-      px={6}
-      py={3}
-      bg={bg}
-      height="60px"
+      px={{ base: 4, md: 6 }}
+      h={HEADER_H}
+      minH={HEADER_H}
+      bg={headerBarBg}
+      borderBottom="1px solid"
+      borderColor={headerBarBorder}
+      boxShadow="0 1px 0 rgba(0,0,0,0.03)"
+      _dark={{ boxShadow: '0 1px 0 rgba(255,255,255,0.06)' }}
     >
-      <Link href="/">
-        <Image height={40} src={logo} alt="Logo" priority />
+      <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
+        <Image
+          height={40}
+          width={140}
+          src={logo}
+          alt="Agrilogy"
+          priority
+          style={{ objectFit: 'contain' }}
+        />
       </Link>
-      <Flex align="center" gap={4}>
-        <Tooltip label="Notifications">
-          <Link href="/notifications">
-            <IconButton
-              icon={<BellIcon />}
-              aria-label="Notifications"
-              variant="ghost"
-              _hover={{ color: hoverColor }}
-            />
-          </Link>
-        </Tooltip>
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            icon={<FaUser />}
-            aria-label="Profile"
+
+      <HStack spacing={{ base: 1, md: 2 }} align="center">
+        <Tooltip label="Notifications" hasArrow openDelay={300}>
+          <IconButton
+            icon={<BellIcon boxSize={5} />}
+            aria-label="Notifications"
             variant="ghost"
+            size="md"
+            borderRadius="xl"
+            onClick={() => router.push('/notifications')}
+            _hover={{ bg: 'blackAlpha.50', color: hoverColor }}
+            _dark={{ _hover: { bg: 'whiteAlpha.100', color: hoverColor } }}
           />
-          <MenuList>
-            <MenuItem>Bonjour {username}</MenuItem>
-            <Link href="/settings">
-              <Button
-                leftIcon={<FaCog />}
-                variant="ghost"
-                justifyContent="flex-start"
-                w="full"
-              >
-                Paramètres
-              </Button>
-            </Link>
+        </Tooltip>
+
+        <Divider orientation="vertical" h={6} borderColor={headerBarBorder} />
+
+        <Menu placement="bottom-end" gutter={8}>
+          <MenuButton
+            py={1}
+            px={2}
+            borderRadius="xl"
+            transition="background 0.15s ease"
+            _hover={{ bg: 'blackAlpha.50' }}
+            _dark={{ _hover: { bg: 'whiteAlpha.100' } }}
+            _expanded={{ bg: 'blackAlpha.50' }}
+          >
+            <HStack spacing={3}>
+              <Avatar
+                size="sm"
+                name={username || 'Utilisateur'}
+                bg="green.500"
+              />
+              <Box display={{ base: 'none', lg: 'block' }} textAlign="left">
+                <Text
+                  fontSize="sm"
+                  fontWeight="semibold"
+                  color={textColor}
+                  noOfLines={1}
+                  maxW="160px"
+                >
+                  {username || 'Utilisateur'}
+                </Text>
+                <Text
+                  fontSize="xs"
+                  color="gray.500"
+                  _dark={{ color: 'gray.400' }}
+                >
+                  Compte
+                </Text>
+              </Box>
+            </HStack>
+          </MenuButton>
+          <MenuList
+            borderRadius="xl"
+            py={2}
+            boxShadow="lg"
+            border="1px solid"
+            borderColor={headerBarBorder}
+            minW="220px"
+          >
+            <MenuItem
+              isDisabled
+              fontSize="sm"
+              opacity={0.9}
+              _hover={{ bg: 'transparent' }}
+            >
+              Bonjour{username ? `, ${username}` : ''}
+            </MenuItem>
+            <MenuItem
+              as={Link}
+              href="/settings"
+              icon={<FaCog />}
+              borderRadius="md"
+              mx={1}
+            >
+              Paramètres
+            </MenuItem>
           </MenuList>
         </Menu>
-        <IconButton
-          icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-          aria-label="Toggle Color Mode"
-          variant="ghost"
-          onClick={toggleColorMode}
-        />
-      </Flex>
+
+        <Tooltip
+          label={colorMode === 'light' ? 'Mode sombre' : 'Mode clair'}
+          hasArrow
+          openDelay={300}
+        >
+          <IconButton
+            icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+            aria-label={
+              colorMode === 'light'
+                ? 'Activer le mode sombre'
+                : 'Activer le mode clair'
+            }
+            variant="ghost"
+            size="md"
+            borderRadius="xl"
+            onClick={toggleColorMode}
+            _hover={{ bg: 'blackAlpha.50', color: hoverColor }}
+            _dark={{ _hover: { bg: 'whiteAlpha.100', color: hoverColor } }}
+          />
+        </Tooltip>
+      </HStack>
     </Flex>
   );
 };

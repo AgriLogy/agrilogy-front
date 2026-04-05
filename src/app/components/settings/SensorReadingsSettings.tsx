@@ -25,6 +25,7 @@ import {
   Thead,
   Tr,
   useToast,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { FaCheck, FaPen, FaTimes } from 'react-icons/fa';
 import {
@@ -42,7 +43,7 @@ import { getDefaultCalibrationForSensorKey } from '@/app/utils/sensorCalibration
 import { fetchLastSensorSample } from '@/app/utils/fetchSensorLastValue';
 import {
   formatCalibratedReading,
-  getUnitOverride,
+  resolveAxisUnit,
 } from '@/app/utils/unitOverrides';
 import api from '@/app/lib/api';
 
@@ -143,6 +144,10 @@ const SensorReadingsSettings = () => {
     scaleA: 1,
     offsetB: 0,
   });
+  const panelBg = useColorModeValue('white', 'gray.800');
+  const panelBorder = useColorModeValue('gray.200', 'gray.600');
+  const theadBg = useColorModeValue('white', 'gray.900');
+  const mutedTextColor = useColorModeValue('gray.600', 'gray.400');
 
   // Avoid hydration mismatch: read localStorage only after mount.
   useEffect(() => {
@@ -171,7 +176,7 @@ const SensorReadingsSettings = () => {
           if (!sample) {
             return { key: row.key, text: '—' as string };
           }
-          const unit = getUnitOverride(row.key, sample.defaultUnit);
+          const unit = resolveAxisUnit(row.key, sample.defaultUnit);
           const val = formatCalibratedReading(row.key, sample.rawValue);
           return { key: row.key, text: `${val} ${unit}`.trim() };
         })
@@ -305,11 +310,11 @@ const SensorReadingsSettings = () => {
   const modalSelectProps = {
     rounded: 'md' as const,
     borderWidth: '1px' as const,
+    borderColor: panelBorder,
     w: '100%' as const,
     h: '10' as const,
     px: 3,
-    bg: 'white',
-    _dark: { bg: 'gray.800', borderColor: 'whiteAlpha.300' },
+    bg: panelBg,
   };
 
   const toolbarSelectProps = {
@@ -360,8 +365,10 @@ const SensorReadingsSettings = () => {
     <Box
       overflowX="auto"
       borderRadius="md"
-      border="1px solid #e2e8f0"
-      bg="white"
+      borderWidth="1px"
+      borderStyle="solid"
+      borderColor={panelBorder}
+      bg={panelBg}
     >
       <Flex
         gap={3}
@@ -407,7 +414,7 @@ const SensorReadingsSettings = () => {
       </Flex>
       <Table size="md" variant="simple">
         <Thead>
-          <Tr bg="white" borderBottomWidth="1px" borderColor="gray.200">
+          <Tr bg={theadBg} borderBottomWidth="1px" borderColor={panelBorder}>
             <Th>Libellé de la lecture</Th>
             <Th>Type</Th>
             <Th>Unité</Th>
@@ -561,7 +568,7 @@ const SensorReadingsSettings = () => {
                   }
                 />
               </FormControl>
-              <Text fontSize="xs" color="gray.500">
+              <Text fontSize="xs" color={mutedTextColor}>
                 Conformément au PDF « change.the.unite.of.sensors…1.3.pdf » :
                 valeur réelle = valeur brute × a + b. Le changement d&apos;unité
                 recalcule a et b via `sensorUnitConversion` (équations du PDF).

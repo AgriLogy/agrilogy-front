@@ -1,10 +1,12 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import {
   formatCalibratedReading,
-  getUnitOverride,
+  resolveAxisUnit,
 } from '@/app/utils/unitOverrides';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import { FaAppleAlt } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -13,13 +15,14 @@ const timeAgo = (timestamp: string): string => {
   const diffMin = Math.floor(diffMs / 60000);
   const diffH = Math.floor(diffMin / 60);
 
-  if (diffMin < 1) return 'just now';
-  if (diffMin < 60) return `${diffMin} min ago`;
-  if (diffH < 24) return `${diffH} hours ago`;
+  if (diffMin < 1) return "à l'instant";
+  if (diffMin < 60) return `${diffMin} min.`;
+  if (diffH < 24) return `${diffH} heures`;
   return then.toLocaleDateString();
 };
 
 const LargeFruitDiameterLastData = ({ data }: { data: SensorData[] }) => {
+  useUnitOverridesRevision();
   const latest = data[data.length - 1];
 
   // Dynamic colors for light/dark modes
@@ -49,12 +52,13 @@ const LargeFruitDiameterLastData = ({ data }: { data: SensorData[] }) => {
       </Text>
       <Text fontSize="2xl" color={valueColor}>
         {latest
-          ? `${formatCalibratedReading('large_fruit_diameter', latest.value)} ${getUnitOverride('large_fruit_diameter', 'mm')}`
-          : 'N/A'}
+          ? `${formatCalibratedReading('large_fruit_diameter', latest.value)} ${resolveAxisUnit('large_fruit_diameter', latest?.default_unit)}`
+          : 'Non disponible'}
       </Text>
       <Text fontSize="sm" color={textColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}
       </Text>
+      <LastDataAddAlertButton />
     </Box>
   );
 };

@@ -1,4 +1,7 @@
-import { SENSOR_CATALOG } from '@/app/utils/sensorCatalog';
+import {
+  SENSOR_CATALOG,
+  getCatalogDefaultUnit,
+} from '@/app/utils/sensorCatalog';
 
 const UNIT_OVERRIDES_KEY = 'frontendUnitOverrides';
 
@@ -18,6 +21,7 @@ export type UnitOverrideMap = Record<string, UnitOverrideValue>;
 
 const DATA_KEY_TO_SENSOR_KEY: Record<string, string> = {
   wind_speed: 'wind_speed',
+  wind_direction: 'wind_direction',
   wind_gust: 'wind_gust',
   value: 'value',
   temperature_weather: 'temperature_weather',
@@ -26,11 +30,17 @@ const DATA_KEY_TO_SENSOR_KEY: Record<string, string> = {
   humidity: 'humidity_weather',
   solar_radiation: 'solar_radiation',
   precipitation_rate: 'precipitation_rate',
+  leaf_temperature: 'leaf_temperature',
+  leaf_moisture: 'leaf_moisture',
   et0: 'et0',
+  /** ET0 chart: two series, same sensor calibration */
+  et0_sensor: 'et0',
+  et0_calculated: 'et0',
   vpd: 'vpd',
   pressure_weather: 'pressure_weather',
   waterFlow: 'water_flow',
   waterflow: 'water_flow',
+  water_flow: 'water_flow',
   phwater: 'water_ph',
   waterec: 'water_ec',
   soilLow: 'soil_moisture_low',
@@ -41,6 +51,11 @@ const DATA_KEY_TO_SENSOR_KEY: Record<string, string> = {
   high: 'soil_temp_high',
   salinity: 'soil_salinity',
   conductivity: 'soil_conductivity',
+  soil_salinity: 'soil_salinity',
+  soil_conductivity: 'soil_conductivity',
+  /** Soil EC chart (low/high probes); avoid `low`/`high` — those map to soil temperature. */
+  ec_low: 'soil_conductivity',
+  ec_high: 'soil_conductivity',
   nitrogen: 'npk_n',
   phosphorus: 'npk_p',
   potassium: 'npk_k',
@@ -57,14 +72,28 @@ const NAME_TO_SENSOR_KEY: Record<string, string> = {
   'direction du vent (°)': 'wind_direction',
   'rayonnement solaire (w/m²)': 'solar_radiation',
   'radiation solaire': 'solar_radiation',
+  'rayonnement solaire': 'solar_radiation',
+  'solar radiation (w/m²)': 'solar_radiation',
+  'wind speed (m/s)': 'wind_speed',
+  'wind direction (°)': 'wind_direction',
+  'temperature (°c)': 'temperature_weather',
+  'humidity (%)': 'humidity_weather',
+  'precipitation (mm)': 'precipitation_rate',
+  'vapor pressure deficit (kpa)': 'pressure_weather',
   'et₀ (mm)': 'et0',
+  'et0 capteur': 'et0',
+  'et0 calculé': 'et0',
   'taux de précipitation (mm/h)': 'precipitation_rate',
+  'précipitations cumulées': 'precipitation_rate',
   'irrigation (l/min)': 'water_flow',
   'pression (bar)': 'water_pressure',
   'pression (kpa)': 'water_pressure',
   'ph (-)': 'water_ph',
   'ph sol (-)': 'soil_ph',
   'conductivité électrique (µs/cm)': 'water_ec',
+  'conductivité basse': 'soil_conductivity',
+  'conductivité haute': 'soil_conductivity',
+  irrigation: 'water_flow',
 };
 
 export function getUnitOverrideMap(): UnitOverrideMap {
@@ -93,22 +122,36 @@ export function getUnitOverride(
   return fallback ?? '';
 }
 
+/**
+ * Axis / legend label unit: user override, else API default, else catalogue default.
+ * Use everywhere a chart exposes a sensor so Réglages stays consistent.
+ */
+export function resolveAxisUnit(
+  sensorKey: string | undefined,
+  apiDefaultUnit?: string | null
+): string {
+  if (!sensorKey) return '';
+  const fromApi = apiDefaultUnit?.trim();
+  const fromCatalog = getCatalogDefaultUnit(sensorKey);
+  return getUnitOverride(sensorKey, fromApi || fromCatalog || undefined);
+}
+
 export function getUnitOverrideFromDataKey(
   dataKey: string | undefined,
   fallback?: string
 ): string {
-  if (!dataKey) return fallback ?? '';
+  if (!dataKey) return fallback?.trim() || '';
   const sensorKey = DATA_KEY_TO_SENSOR_KEY[dataKey] ?? dataKey;
-  return getUnitOverride(sensorKey, fallback);
+  return resolveAxisUnit(sensorKey, fallback);
 }
 
 export function getUnitOverrideFromSeriesName(
   seriesName: string | undefined,
   fallback?: string
 ): string {
-  if (!seriesName) return fallback ?? '';
+  if (!seriesName) return fallback?.trim() || '';
   const key = NAME_TO_SENSOR_KEY[seriesName.toLowerCase()];
-  return key ? getUnitOverride(key, fallback) : (fallback ?? '');
+  return key ? resolveAxisUnit(key, fallback) : fallback?.trim() || '';
 }
 
 export function getCalibrationForSensorKey(sensorKey: string): {
@@ -144,6 +187,14 @@ export function applySensorCalibration(
   return raw * scaleA + offsetB;
 }
 
+function formatCalibratedWaterFlow(v: number): string {
+  const a = Math.abs(v);
+  if (a >= 1000) return v.toLocaleString('fr-FR', { maximumFractionDigits: 0 });
+  if (a >= 100) return v.toLocaleString('fr-FR', { maximumFractionDigits: 1 });
+  if (a >= 1) return v.toLocaleString('fr-FR', { maximumFractionDigits: 2 });
+  return v.toLocaleString('fr-FR', { maximumFractionDigits: 3 });
+}
+
 export function formatCalibratedReading(
   sensorKey: string | undefined,
   raw: number | null | undefined,
@@ -153,6 +204,7 @@ export function formatCalibratedReading(
   if (raw == null || !Number.isFinite(raw)) return fallback;
   const v = applySensorCalibration(sensorKey, raw);
   if (!Number.isFinite(v)) return fallback;
+  if (sensorKey === 'water_flow') return formatCalibratedWaterFlow(v);
   return v.toFixed(decimals);
 }
 

@@ -41,6 +41,7 @@ import {
   type SensorInstanceOverride,
   type SensorInstanceOverridesMap,
 } from '@/app/utils/sensorInstanceOverrides';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
 
 const PLACEMENT_OPTIONS = [
   'Sol',
@@ -53,6 +54,7 @@ const PLACEMENT_OPTIONS = [
 ];
 
 const SensorDirectorySettings = () => {
+  const { mutedTextColor } = useColorModeStyles();
   const toast = useToast();
   const [query, setQuery] = useState('');
   const [catalog, setCatalog] = useState<SensorCatalogItem[]>(SENSOR_CATALOG);
@@ -176,7 +178,7 @@ const SensorDirectorySettings = () => {
           Ajouter capteur
         </Button>
       </Flex>
-      <Text fontSize="sm" color="gray.500" mb={2}>
+      <Text fontSize="sm" color={mutedTextColor} mb={2}>
         {rows.length} capteur(s) affiché(s)
       </Text>
       <Table size="sm" variant="simple">
@@ -315,7 +317,7 @@ const SensorDirectorySettings = () => {
               Visible dans les listes
             </Checkbox>
             {editKey && isBuiltIn(editKey) && (
-              <Text fontSize="xs" color="gray.500" mt={3}>
+              <Text fontSize="xs" color={mutedTextColor} mt={3}>
                 Capteur catalogue : les métadonnées sont surchargées localement
                 uniquement.
               </Text>

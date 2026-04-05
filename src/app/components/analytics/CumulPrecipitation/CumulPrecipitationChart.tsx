@@ -18,16 +18,24 @@ import {
   Select,
   useColorMode,
 } from '@chakra-ui/react';
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import html2canvas from 'html2canvas';
 import { FaDownload, FaCloudRain } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
+import {
+  formatCalibratedReading,
+  resolveAxisUnit,
+} from '@/app/utils/unitOverrides';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
 
-const aggregateData = (data: SensorData[], period: string) => {
-  const result: Record<string, number> = {};
+/** Sum raw API values per bucket, then apply lecture calibration once (PDF: v = a×raw+b). */
+function aggregateCalibratedPrecip(data: SensorData[], period: string) {
+  const sumRawByKey: Record<string, number> = {};
   data.forEach((d) => {
     const date = new Date(d.timestamp);
     let key = '';
@@ -47,10 +55,16 @@ const aggregateData = (data: SensorData[], period: string) => {
         .toString()
         .padStart(2, '0')}`;
     }
-    result[key] = (result[key] || 0) + d.value;
+    const raw =
+      typeof d.value === 'number' && Number.isFinite(d.value) ? d.value : 0;
+    sumRawByKey[key] = (sumRawByKey[key] || 0) + raw;
   });
-  return Object.entries(result).map(([period, value]) => ({ period, value }));
-};
+  return Object.entries(sumRawByKey).map(([periodKey, sumRaw]) => ({
+    period: periodKey,
+    sumRaw,
+    precipitation_rate: calibrateChartValue('precipitation_rate', sumRaw),
+  }));
+}
 
 const CumulPrecipitationChart = ({
   data,
@@ -62,13 +76,22 @@ const CumulPrecipitationChart = ({
   const chartRef = useRef<HTMLDivElement>(null);
   const [groupBy, setGroupBy] = useState('day');
   const { colorMode } = useColorMode();
-  const chartData = aggregateData(data, groupBy);
+  const unitRev = useUnitOverridesRevision();
+  const chartData = useMemo(
+    () => aggregateCalibratedPrecip(data, groupBy),
+    [data, groupBy, unitRev]
+  );
   const labelInterval = useBreakpointValue({
     base: Math.ceil(chartData.length / 3),
     md: Math.ceil(chartData.length / 5),
   });
   const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const { textColor } = useColorModeStyles();
+  const { axis, grid } = useChartAxisColors();
+  const precipUnit = resolveAxisUnit(
+    'precipitation_rate',
+    data[0]?.default_unit
+  );
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
@@ -82,8 +105,10 @@ const CumulPrecipitationChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      'period,total_precipitation_mm\n' +
-      chartData.map((d) => `${d.period},${d.value.toFixed(2)}`).join('\n');
+      'period,precipitation_calibrated_sum\n' +
+      chartData
+        .map((d) => `${d.period},${Number(d.precipitation_rate).toFixed(2)}`)
+        .join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -93,9 +118,6 @@ const CumulPrecipitationChart = ({
     URL.revokeObjectURL(url);
   };
 
-  // Colors for Recharts elements based on color mode
-  const axisTickColor = colorMode === 'dark' ? '#ccc' : '#333';
-  const gridStroke = colorMode === 'dark' ? '#444' : '#ddd';
   const legendTextColor = textColor;
 
   return (
@@ -135,74 +157,78 @@ const CumulPrecipitationChart = ({
             data={chartData}
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
-            <CartesianGrid stroke={gridStroke} strokeDasharray="3 3" />
+            <CartesianGrid stroke={grid} strokeDasharray="3 3" />
             <XAxis
               dataKey="period"
               angle={0}
               textAnchor="middle"
               interval={labelInterval}
-              // stroke={axisTickColor}
-              // tick={{ fill: axisTickColor }}
-              // tickLine={{ stroke: axisTickColor }}
-              // axisLine={{ stroke: axisTickColor }}
-
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
             <YAxis
-              // label={{
-              //   angle: -90,
-              //   value: "mm",
-              //   position: "insideLeft",
-              //   fill: axisTickColor,
-              // }}
-              // stroke={axisTickColor}
-              // tick={{ fill: axisTickColor }}
-              // tickLine={{ stroke: axisTickColor }}
-              // axisLine={{ stroke: axisTickColor }}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              label={{
+                value: `Σ (${precipUnit})`,
+                angle: -90,
+                position: 'insideLeft',
+                style: { fill: axis, fontSize: 12 },
+              }}
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip
+              content={
+                <UnifiedTooltip
+                  valueFormatter={(_v, _n, item) => {
+                    const p = item.payload as {
+                      sumRaw?: number;
+                      precipitation_rate?: number;
+                    };
+                    const sr = p?.sumRaw;
+                    if (typeof sr === 'number' && Number.isFinite(sr)) {
+                      return `${formatCalibratedReading('precipitation_rate', sr)} ${precipUnit}`.trim();
+                    }
+                    const pr = p?.precipitation_rate;
+                    return typeof pr === 'number' && Number.isFinite(pr)
+                      ? `${pr.toFixed(2)} ${precipUnit}`.trim()
+                      : '—';
+                  }}
+                />
+              }
+            />
             <Legend
               wrapperStyle={{ color: legendTextColor }}
               // Alternatively, you can customize the payload style for more control
             />
             <Bar
-              dataKey="value"
-              name="Précipitations cumulées"
+              dataKey="precipitation_rate"
+              name={`Précipitations cumulées (Σ ${precipUnit})`}
               fill={colorMode === 'dark' ? '#60a5fa' : '#3b82f6'} // lighter blue in dark mode
               isAnimationActive={false}
             />

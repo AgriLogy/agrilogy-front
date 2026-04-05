@@ -13,7 +13,6 @@
   justify-content: left;
   align-items: center;
   height: 50px;
-  background-color: #fff;
   padding-left: 10px;
   font-size: medium;
   font-weight: 800;
@@ -22,8 +21,6 @@
 .box {
   margin: 3px;
   border-radius: 5px;
-  background-color: #fff;
-  border: 1px solid #ccc;
   font-size: 24px;
   font-weight: bold;
   overflow: hidden;
@@ -47,29 +44,10 @@
   .box {
     display: flex;
     flex-wrap: wrap;
-    border: 1px solid #ccc;
     height: 400px;
     grid-column: span 2;
     width: 100%;
     height: auto;
     margin: 2px 0;
-  }
-}
-
-/* Dark mode support */
-:root {
-  --chakra-colors-gray-200: #edf2f7; /* Light mode */
-  --chakra-colors-gray-700: #4a5568; /* Dark mode */
-}
-
-@media (prefers-color-scheme: dark) {
-  .header {
-    background-color: #fff;
-    color: #1a202c;
-  }
-
-  .box {
-    background-color: #fff;
-    color: #1a202c;
   }
 }

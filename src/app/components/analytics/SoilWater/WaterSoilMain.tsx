@@ -112,6 +112,7 @@ const WaterSoilMain = ({
       <Box flex={3} p={3}>
         <WaterSoilChart
           data={mergedData}
+          waterFlowDefaultUnit={waterFlowLast?.default_unit}
           loading={loading}
           thresholds={{
             critical_min: 20,

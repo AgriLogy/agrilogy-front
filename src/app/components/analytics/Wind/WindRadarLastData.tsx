@@ -2,8 +2,10 @@ import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import { WiStrongWind } from 'react-icons/wi';
 import {
   formatCalibratedReading,
-  getUnitOverride,
+  resolveAxisUnit,
 } from '@/app/utils/unitOverrides';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 interface WindData {
   timestamp: string;
@@ -31,10 +33,11 @@ const WindRadarLastData = ({
   windSpeedData: WindData[];
   windDirectionData: WindData[];
 }) => {
+  useUnitOverridesRevision();
   const latestSpeed = windSpeedData[windSpeedData.length - 1];
   const latestDirection = windDirectionData[windDirectionData.length - 1];
-  const speedUnit = getUnitOverride('wind_speed', latestSpeed?.default_unit);
-  const directionUnit = getUnitOverride(
+  const speedUnit = resolveAxisUnit('wind_speed', latestSpeed?.default_unit);
+  const directionUnit = resolveAxisUnit(
     'wind_direction',
     latestDirection?.default_unit
   );
@@ -85,7 +88,7 @@ const WindRadarLastData = ({
         </VStack>
       ) : (
         <Text mt={4} fontSize="md" color={noDataColor}>
-          N/A
+          Non disponible
         </Text>
       )}
 
@@ -94,6 +97,7 @@ const WindRadarLastData = ({
           Mise à jour : {timeAgo(latestSpeed.timestamp)}
         </Text>
       )}
+      <LastDataAddAlertButton />
     </Box>
   );
 };

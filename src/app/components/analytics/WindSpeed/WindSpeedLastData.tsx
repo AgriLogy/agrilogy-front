@@ -3,8 +3,10 @@ import { FaBolt } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
 import {
   formatCalibratedReading,
-  getUnitOverride,
+  resolveAxisUnit,
 } from '@/app/utils/unitOverrides';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -21,7 +23,8 @@ const timeAgo = (timestamp: string): string => {
 
 const WindSpeedLastData = ({ data }: { data: SensorData[] }) => {
   const latest = data[data.length - 1];
-  const unit = getUnitOverride('wind_speed', latest?.default_unit);
+  useUnitOverridesRevision();
+  const unit = resolveAxisUnit('wind_speed', latest?.default_unit);
 
   // Light/Dark mode colors
   const bgColor = useColorModeValue('blue.50', 'blue.900');
@@ -52,11 +55,12 @@ const WindSpeedLastData = ({ data }: { data: SensorData[] }) => {
       <Text fontSize="2xl" color={valueColor}>
         {latest
           ? `${formatCalibratedReading('wind_speed', latest.value)} ${unit}`
-          : 'N/A'}
+          : 'Non disponible'}
       </Text>
       <Text fontSize="sm" color={timeColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}
       </Text>
+      <LastDataAddAlertButton />
     </Box>
   );
 };

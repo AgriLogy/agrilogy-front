@@ -25,6 +25,8 @@ import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
 
 const WaterPressureChart = ({
   data,
@@ -41,11 +43,14 @@ const WaterPressureChart = ({
     () =>
       data.map((item) => ({
         name: item.timestamp,
-        value: calibrateChartValue('water_pressure', item.value),
+        // Use catalog key as dataKey so UnifiedTooltip resolves water_pressure (not generic `value`).
+        water_pressure: calibrateChartValue('water_pressure', item.value),
         default_unit: item.default_unit,
       })),
     [data, unitRev]
   );
+
+  const pressureUnit = resolveAxisUnit('water_pressure', data[0]?.default_unit);
 
   const labelInterval = useBreakpointValue({
     base: Math.ceil(chartData.length / 3),
@@ -54,9 +59,10 @@ const WaterPressureChart = ({
 
   const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const { textColor } = useColorModeStyles();
+  const { axis, mutedSeries, grid } = useChartAxisColors();
 
-  const handleLegendClick = (data: any) => {
-    if (data.value === 'Consommation') {
+  const handleLegendClick = (payload: { dataKey?: unknown }) => {
+    if (payload?.dataKey === 'water_pressure') {
       setShowLine((prev) => !prev);
     }
   };
@@ -74,7 +80,7 @@ const WaterPressureChart = ({
   const handleDownloadData = () => {
     const csv =
       'timestamp,value\n' +
-      chartData.map((d) => `${d.name},${d.value}`).join('\n');
+      chartData.map((d) => `${d.name},${d.water_pressure}`).join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -124,54 +130,47 @@ const WaterPressureChart = ({
             data={chartData}
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
             <XAxis
               dataKey="name"
               angle={0}
               textAnchor="middle"
               interval={labelInterval}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
             <YAxis
               label={{
+                value: pressureUnit,
                 angle: -90,
-                // fontSize: 16,
-                // dy: 80,
                 position: 'insideLeft',
               }}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
@@ -179,12 +178,12 @@ const WaterPressureChart = ({
             <Legend onClick={handleLegendClick} />
             <Line
               type="monotone"
-              dataKey="value"
-              name="Pression d'eau (Bar/S)"
-              stroke={showLine ? '#82ca9d' : 'gray'}
+              dataKey="water_pressure"
+              name={`Pression d'eau (${pressureUnit})`}
+              stroke={showLine ? '#82ca9d' : mutedSeries}
               strokeWidth={2}
-              dot={{ r: 4, fill: showLine ? '#82ca9d' : 'gray' }}
-              activeDot={{ r: 6, stroke: showLine ? '#2f855a' : 'gray' }}
+              dot={{ r: 4, fill: showLine ? '#82ca9d' : mutedSeries }}
+              activeDot={{ r: 6, stroke: showLine ? '#2f855a' : mutedSeries }}
               isAnimationActive={false}
             />
           </LineChart>

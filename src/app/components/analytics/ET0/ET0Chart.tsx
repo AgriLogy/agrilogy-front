@@ -24,6 +24,8 @@ import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
 
 interface Et0Data {
   timestamp: string;
@@ -49,8 +51,8 @@ const EC0Chart = ({
         const calculated = calculatedData[index]?.value ?? null;
         return {
           name: item.timestamp,
-          Weather: calibrateChartValue('et0', item.value),
-          Calculated:
+          et0_sensor: calibrateChartValue('et0', item.value),
+          et0_calculated:
             calculated != null && Number.isFinite(calculated)
               ? calibrateChartValue('et0', calculated)
               : null,
@@ -60,6 +62,7 @@ const EC0Chart = ({
   );
 
   const textColor = useColorModeValue('gray.800', 'gray.200');
+  const { axis, grid } = useChartAxisColors();
   const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const labelInterval = useBreakpointValue({
     base: Math.ceil(chartData.length / 3),
@@ -78,9 +81,9 @@ const EC0Chart = ({
 
   const handleDownloadData = () => {
     const csv =
-      'timestamp,Weather,Calculated\n' +
+      'timestamp,et0_sensor,et0_calculated\n' +
       chartData
-        .map((d) => `${d.name},${d.Weather ?? ''},${d.Calculated ?? ''}`)
+        .map((d) => `${d.name},${d.et0_sensor ?? ''},${d.et0_calculated ?? ''}`)
         .join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -91,6 +94,11 @@ const EC0Chart = ({
     link.click();
     URL.revokeObjectURL(url);
   };
+
+  const et0Unit = resolveAxisUnit(
+    'et0',
+    weatherData[0]?.default_unit ?? calculatedData[0]?.default_unit
+  );
 
   return (
     <Box width="100%" pr={4} pb={4}>
@@ -130,55 +138,58 @@ const EC0Chart = ({
             data={chartData}
             margin={{ top: 10, right: 30, left: 0, bottom: 5 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
             <XAxis
               dataKey="name"
               angle={0}
               textAnchor="middle"
               interval={labelInterval}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
             <YAxis
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              label={{ value: et0Unit, angle: -90, position: 'insideLeft' }}
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
             <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
             <Legend />
-            <Bar dataKey="Weather" fill="#3182ce" name="ET0 Capteur" />
-            <Bar dataKey="Calculated" fill="#e53e3e" name="ET0 Calculé" />
+            <Bar
+              dataKey="et0_sensor"
+              fill="#3182ce"
+              name={`ET0 Capteur (${et0Unit})`}
+            />
+            <Bar
+              dataKey="et0_calculated"
+              fill="#e53e3e"
+              name={`ET0 Calculé (${et0Unit})`}
+            />
           </BarChart>
         </ResponsiveContainer>
       </ChartStateView>

@@ -1,5 +1,8 @@
 'use client';
 import { Box, Text, useColorMode } from '@chakra-ui/react';
+import { useCalibratedStationChartRows } from '@/app/hooks/useCalibratedStationChartRows';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
 import {
   LineChart,
   Line,
@@ -12,6 +15,7 @@ import {
 } from 'recharts';
 import ChartStateView from '../common/ChartStateView';
 import UnifiedTooltip from '../common/UnifiedTooltip';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
 
 const CustomLegend = (props: any) => (
   <ul
@@ -49,20 +53,32 @@ const CustomLegend = (props: any) => (
   </ul>
 );
 
-const CustomTick = ({ x, y, payload }: any) => (
-  <text x={x} y={y} textAnchor="middle" fill="#666" fontSize="10">
-    {payload.value}
-  </text>
-);
+const PLUVIO_FIELDS = [
+  { dataKey: 'precipitation_rate', sensorKey: 'precipitation_rate' },
+] as const;
 
 const PluvometricGraph = ({ data }: { data: any }) => {
   const { colorMode } = useColorMode();
+  const { axis, grid } = useChartAxisColors();
+  useUnitOverridesRevision();
+
+  const CustomTick = ({ x, y, payload }: any) => (
+    <text x={x} y={y} textAnchor="middle" fill={axis} fontSize="10">
+      {payload.value}
+    </text>
+  );
   const chartBg = colorMode === 'light' ? 'white' : 'gray.800';
   const loading = !data;
   const empty =
     !!data &&
     (!data.sensor_data ||
       (Array.isArray(data.sensor_data) && data.sensor_data.length === 0));
+
+  const chartRows = useCalibratedStationChartRows(
+    data?.sensor_data,
+    PLUVIO_FIELDS
+  );
+  const lineUnit = resolveAxisUnit('precipitation_rate');
 
   return (
     <Box
@@ -79,64 +95,47 @@ const PluvometricGraph = ({ data }: { data: any }) => {
         fontWeight="bold"
         mb={4}
       >
-        {/* {data.sensor_names.precipitation_humidity_rate}
-         */}
-        {/* {data.sensor_names?.Pluviometrie} */}
-        hadi khass twli bars
+        {data?.sensor_names?.pluviometrie ?? 'Pluviométrie'}
       </Text>
       <ChartStateView loading={loading} empty={empty} height={300}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data.sensor_data}>
-            <CartesianGrid strokeDasharray="3 3" />
+          <LineChart data={chartRows}>
+            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
             <XAxis
               dataKey="timestamp"
               tick={<CustomTick />}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              // tick={{                          // Tick styling
-              //   fill: '#666',                  // Tick label color
-              //   fontSize: 17,                  // Tick label font size
-              //   fontFamily: 'Arial, sans-serif' // Tick label font
-              // }}
+              stroke={axis}
+              strokeWidth={1}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
             <YAxis
               tick={<CustomTick />}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              // tick={{                          // Tick styling
-              //   fill: '#666',                  // Tick label color
-              //   fontSize: 17,                  // Tick label font size
-              //   fontFamily: 'Arial, sans-serif' // Tick label font
-              // }}
+              stroke={axis}
+              strokeWidth={1}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
             <Legend content={<CustomLegend />} />
             {/* Line for Pluvometric Data */}
             <Line
               type="monotone"
-              dataKey="wind_speed"
-              stroke={data.sensor_colors?.wind_speed_color}
-              name="Rainfall (mm)"
+              dataKey="precipitation_rate"
+              stroke={data.sensor_colors?.precipitation_rate_color}
+              name={`Précipitation (${lineUnit})`}
             />
           </LineChart>
         </ResponsiveContainer>

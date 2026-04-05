@@ -20,20 +20,32 @@ import {
 import { useRef, useMemo } from 'react';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
+import { calibratedValueInAxisUnit } from '@/app/utils/calibratedValueInAxisUnit';
+import {
+  formatCalibratedReading,
+  resolveAxisUnit,
+} from '@/app/utils/unitOverrides';
+import { getCatalogDefaultUnit } from '@/app/utils/sensorCatalog';
 import html2canvas from 'html2canvas';
 import { FaCamera, FaDownload } from 'react-icons/fa';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { ThresholdBand, WaterSoilData } from '@/app/types';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
+
+const MOISTURE_AXIS_UNIT = '%';
 
 const WaterSoilChart = ({
   data,
+  waterFlowDefaultUnit,
   thresholds,
   targetAxis = 'left', // which Y axis the bands align to
   loading = false,
 }: {
   data: WaterSoilData[];
+  /** API default_unit for the water_flow series (merged rows omit it). */
+  waterFlowDefaultUnit?: string;
   thresholds: ThresholdBand;
   targetAxis?: 'left' | 'right';
   loading?: boolean;
@@ -45,17 +57,36 @@ const WaterSoilChart = ({
     () =>
       data.map((d) => ({
         ...d,
+        rawSoilLow: d.soilLow,
+        rawSoilMedium: d.soilMedium,
+        rawSoilHigh: d.soilHigh,
+        rawWaterFlow: d.waterFlow,
         soilLow:
           d.soilLow != null && Number.isFinite(d.soilLow)
-            ? calibrateChartValue('soil_moisture_low', d.soilLow)
+            ? calibratedValueInAxisUnit(
+                'soil_moisture_low',
+                d.soilLow,
+                MOISTURE_AXIS_UNIT,
+                MOISTURE_AXIS_UNIT
+              )
             : d.soilLow,
         soilMedium:
           d.soilMedium != null && Number.isFinite(d.soilMedium)
-            ? calibrateChartValue('soil_moisture_medium', d.soilMedium)
+            ? calibratedValueInAxisUnit(
+                'soil_moisture_medium',
+                d.soilMedium,
+                MOISTURE_AXIS_UNIT,
+                MOISTURE_AXIS_UNIT
+              )
             : d.soilMedium,
         soilHigh:
           d.soilHigh != null && Number.isFinite(d.soilHigh)
-            ? calibrateChartValue('soil_moisture_high', d.soilHigh)
+            ? calibratedValueInAxisUnit(
+                'soil_moisture_high',
+                d.soilHigh,
+                MOISTURE_AXIS_UNIT,
+                MOISTURE_AXIS_UNIT
+              )
             : d.soilHigh,
         waterFlow:
           d.waterFlow != null && Number.isFinite(d.waterFlow)
@@ -68,13 +99,38 @@ const WaterSoilChart = ({
   const bandKey = 'soil_moisture_medium' as const;
   const calibratedBands = useMemo(
     () => ({
-      critical_min: calibrateChartValue(bandKey, critical_min),
-      critical_max: calibrateChartValue(bandKey, critical_max),
-      normal_min: calibrateChartValue(bandKey, normal_min),
-      normal_max: calibrateChartValue(bandKey, normal_max),
+      critical_min: calibratedValueInAxisUnit(
+        bandKey,
+        critical_min,
+        MOISTURE_AXIS_UNIT,
+        MOISTURE_AXIS_UNIT
+      ),
+      critical_max: calibratedValueInAxisUnit(
+        bandKey,
+        critical_max,
+        MOISTURE_AXIS_UNIT,
+        MOISTURE_AXIS_UNIT
+      ),
+      normal_min: calibratedValueInAxisUnit(
+        bandKey,
+        normal_min,
+        MOISTURE_AXIS_UNIT,
+        MOISTURE_AXIS_UNIT
+      ),
+      normal_max: calibratedValueInAxisUnit(
+        bandKey,
+        normal_max,
+        MOISTURE_AXIS_UNIT,
+        MOISTURE_AXIS_UNIT
+      ),
     }),
     [critical_min, critical_max, normal_min, normal_max, unitRev]
   );
+
+  const flowUnit = resolveAxisUnit('water_flow', waterFlowDefaultUnit);
+  const humLowUnit = resolveAxisUnit('soil_moisture_low');
+  const humMedUnit = resolveAxisUnit('soil_moisture_medium');
+  const humHighUnit = resolveAxisUnit('soil_moisture_high');
 
   const labelInterval = useBreakpointValue({
     base: Math.ceil(Math.max(displayData.length, 1) / 3),
@@ -128,6 +184,7 @@ const WaterSoilChart = ({
   };
 
   const { textColor } = useColorModeStyles();
+  const { axis, grid } = useChartAxisColors();
 
   // X range for the background areas (span the whole chart)
   const [xStart, xEnd] = useMemo(() => {
@@ -201,7 +258,7 @@ const WaterSoilChart = ({
       >
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={displayData}>
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
 
             {/* Background bands — render BEFORE series so they appear behind */}
             {xStart !== undefined && xEnd !== undefined && (
@@ -238,22 +295,19 @@ const WaterSoilChart = ({
               angle={0}
               textAnchor="middle"
               interval={labelInterval}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
@@ -262,25 +316,23 @@ const WaterSoilChart = ({
               yAxisId="left"
               domain={[0, 100]}
               label={{
+                value: `${MOISTURE_AXIS_UNIT} (axe commun)`,
                 angle: -90,
                 position: 'insideLeft',
               }}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
@@ -290,22 +342,67 @@ const WaterSoilChart = ({
               orientation="right"
               domain={[0, 'auto']}
               label={{
-                value: 'Débit (L/s)',
+                value: flowUnit,
                 angle: 90,
                 position: 'inside',
                 dx: 20,
-                fontSize: 18, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fontSize: 18,
+                fontFamily: 'Arial, sans-serif',
               }}
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
+              axisLine={{ stroke: axis, strokeWidth: 1 }}
+              tickLine={{ stroke: axis, strokeWidth: 1 }}
             />
 
-            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
+            <Tooltip
+              content={
+                <UnifiedTooltip
+                  valueFormatter={(_value, _name, item) => {
+                    const p = item.payload as Record<string, unknown>;
+                    const dk = String(item.dataKey ?? '');
+                    if (
+                      dk === 'soilLow' &&
+                      typeof p.rawSoilLow === 'number' &&
+                      Number.isFinite(p.rawSoilLow)
+                    ) {
+                      return `${formatCalibratedReading('soil_moisture_low', p.rawSoilLow)} ${humLowUnit}`.trim();
+                    }
+                    if (
+                      dk === 'soilMedium' &&
+                      typeof p.rawSoilMedium === 'number' &&
+                      Number.isFinite(p.rawSoilMedium)
+                    ) {
+                      return `${formatCalibratedReading('soil_moisture_medium', p.rawSoilMedium)} ${humMedUnit}`.trim();
+                    }
+                    if (
+                      dk === 'soilHigh' &&
+                      typeof p.rawSoilHigh === 'number' &&
+                      Number.isFinite(p.rawSoilHigh)
+                    ) {
+                      return `${formatCalibratedReading('soil_moisture_high', p.rawSoilHigh)} ${humHighUnit}`.trim();
+                    }
+                    if (
+                      dk === 'waterFlow' &&
+                      typeof p.rawWaterFlow === 'number' &&
+                      Number.isFinite(p.rawWaterFlow)
+                    ) {
+                      return `${formatCalibratedReading('water_flow', p.rawWaterFlow)} ${flowUnit}`.trim();
+                    }
+                    const n =
+                      typeof _value === 'number' ? _value : Number(_value);
+                    return Number.isFinite(n)
+                      ? n.toFixed(2)
+                      : String(_value ?? '—');
+                  }}
+                />
+              }
+            />
             <Legend />
 
             {/* Soil moisture lines */}
@@ -313,7 +410,7 @@ const WaterSoilChart = ({
               yAxisId="right"
               type="monotone"
               dataKey="waterFlow"
-              name={`Débit d'eau (L/s)`}
+              name={`Débit (${flowUnit})`}
               fill="#b3e5fc"
               stroke="#0288d1"
               strokeWidth={2}
@@ -325,7 +422,7 @@ const WaterSoilChart = ({
               yAxisId="left"
               type="monotone"
               dataKey="soilLow"
-              name="Humidité basse (%)"
+              name={`Humidité basse (${humLowUnit})`}
               stroke="#8884d8"
               strokeWidth={2}
               activeDot={{ r: 6 }}
@@ -334,7 +431,7 @@ const WaterSoilChart = ({
               yAxisId="left"
               type="monotone"
               dataKey="soilMedium"
-              name="Humidité moyenne (%)"
+              name={`Humidité moyenne (${humMedUnit})`}
               stroke="#82ca9d"
               strokeWidth={2}
               activeDot={{ r: 6 }}
@@ -343,7 +440,7 @@ const WaterSoilChart = ({
               yAxisId="left"
               type="monotone"
               dataKey="soilHigh"
-              name="Humidité haute (%)"
+              name={`Humidité haute (${humHighUnit})`}
               stroke="#ffc658"
               strokeWidth={2}
               activeDot={{ r: 6 }}
