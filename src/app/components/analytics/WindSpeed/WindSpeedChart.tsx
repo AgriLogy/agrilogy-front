@@ -94,10 +94,10 @@ const WindSpeedChart = ({
   const GUST_LABEL = 'Rafale de vent (km/h)';
 
   const handleLegendClick = (entry: ChartLegendPayloadEntry) => {
-    if (entry.value === SPEED_LABEL) {
+    if (entry.dataKey === 'value') {
       setShowLine((prev) => !prev);
     }
-    if (entry.value === GUST_LABEL) {
+    if (entry.dataKey === 'wind_gust') {
       setShowGust((prev) => !prev);
     }
   };
