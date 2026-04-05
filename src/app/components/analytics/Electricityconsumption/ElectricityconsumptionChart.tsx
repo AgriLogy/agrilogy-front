@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -9,23 +9,24 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from 'recharts';
-import { Box, Flex, Text, Button, HStack } from '@chakra-ui/react';
+import {
+  useBreakpointValue,
+  Box,
+  Flex,
+  Text,
+  Button,
+  HStack,
+} from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
-import ChartLegend from '../../common/ChartLegend';
-import {
-  addTimeMsToChartRows,
-  defaultCartesianGridProps,
-  defaultLegendWrapperStyle,
-  defaultLineProps,
-  defaultTooltipCursor,
-  getAdaptiveTimeXAxisProps,
-  getDefaultYAxisProps,
-} from '@/app/utils/chartAxisConfig';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
 
 const ElectricityconsumptionChart = ({
   data,
@@ -36,21 +37,36 @@ const ElectricityconsumptionChart = ({
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const [showLine, setShowLine] = useState(true);
+  const unitRev = useUnitOverridesRevision();
 
-  const chartData = addTimeMsToChartRows(
-    data.map((item) => ({
-      name: item.timestamp,
-      value: item.value,
-    })),
-    'name'
+  const chartData = useMemo(
+    () =>
+      data.map((item) => ({
+        name: item.timestamp,
+        electricity_consumption: calibrateChartValue(
+          'electricity_consumption',
+          item.value
+        ),
+        default_unit: item.default_unit,
+      })),
+    [data, unitRev]
   );
 
-  const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'name');
-  const yAxisProps = getDefaultYAxisProps(2);
-  const { textColor } = useColorModeStyles();
+  const labelInterval = useBreakpointValue({
+    base: Math.ceil(chartData.length / 3),
+    md: Math.ceil(chartData.length / 5),
+  });
 
-  const handleLegendClick = (data: any) => {
-    if (data.value === 'Consommation') {
+  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
+  const { textColor } = useColorModeStyles();
+  const { axis, mutedSeries, grid } = useChartAxisColors();
+  const elecUnit = resolveAxisUnit(
+    'electricity_consumption',
+    data[0]?.default_unit
+  );
+
+  const handleLegendClick = (payload: { dataKey?: unknown }) => {
+    if (payload?.dataKey === 'electricity_consumption') {
       setShowLine((prev) => !prev);
     }
   };
@@ -67,8 +83,8 @@ const ElectricityconsumptionChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      'timestamp,value\n' +
-      data.map((d) => `${d.timestamp},${d.value}`).join('\n');
+      'timestamp,electricity_consumption\n' +
+      chartData.map((d) => `${d.name},${d.electricity_consumption}`).join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -116,36 +132,53 @@ const ElectricityconsumptionChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
-            <CartesianGrid {...defaultCartesianGridProps} />
-            <XAxis {...xAxisProps} />
-            <YAxis
-              {...yAxisProps}
-              label={{
-                angle: 0,
-                fontSize: 12,
-                dy: 60,
-                position: 'top',
-                style: { fill: '#64748b' },
+            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+            <XAxis
+              dataKey="name"
+              angle={0}
+              textAnchor="middle"
+              interval={labelInterval}
+              stroke={axis}
+              strokeWidth={1}
+              tick={{
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
+              axisLine={{ stroke: axis, strokeWidth: 1 }}
+              tickLine={{ stroke: axis, strokeWidth: 1 }}
             />
-            <Tooltip
-              content={<UnifiedTooltip />}
-              cursor={defaultTooltipCursor}
+            <YAxis
+              label={{
+                value: elecUnit,
+                angle: -90,
+                fontSize: 16,
+                dy: 80,
+                position: 'insideLeft',
+              }}
+              stroke={axis}
+              strokeWidth={1}
+              tick={{
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
+              }}
+              axisLine={{ stroke: axis, strokeWidth: 1 }}
+              tickLine={{ stroke: axis, strokeWidth: 1 }}
             />
-            <Legend
-              wrapperStyle={defaultLegendWrapperStyle}
-              content={<ChartLegend onClick={handleLegendClick} />}
-            />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
+            <Legend onClick={handleLegendClick} />
             <Line
               type="monotone"
-              dataKey="value"
-              name="Consommation (kWh)"
-              stroke={showLine ? '#82ca9d' : 'gray'}
-              {...defaultLineProps}
+              dataKey="electricity_consumption"
+              name={`Consommation (${elecUnit})`}
+              stroke={showLine ? '#82ca9d' : mutedSeries}
+              strokeWidth={2}
+              dot={{ r: 4, fill: showLine ? '#82ca9d' : mutedSeries }}
+              activeDot={{ r: 6, stroke: showLine ? '#2f855a' : mutedSeries }}
               isAnimationActive={false}
-              hide={!showLine}
             />
           </LineChart>
         </ResponsiveContainer>

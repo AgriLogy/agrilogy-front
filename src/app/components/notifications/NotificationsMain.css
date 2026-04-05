@@ -13,7 +13,7 @@
   justify-content: left;
   align-items: center;
   height: 50px;
-  background-color: var(--chakra-colors-gray-200);
+  background-color: #fff;
   border: 1px solid #ccc;
   padding-left: 10px;
   font-size: medium;
@@ -27,7 +27,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--chakra-colors-gray-200);
+  background-color: #fff;
   border: 1px solid #ccc;
   /* height: 400px; */
   font-size: 24px;
@@ -70,12 +70,12 @@
 
 @media (prefers-color-scheme: dark) {
   .header {
-    background-color: var(--chakra-colors-gray-200);
-    color: white;
+    background-color: #fff;
+    color: #1a202c;
   }
 
   .box {
-    background-color: var(--chakra-colors-gray-200);
+    background-color: #fff;
     /* color: white; */
   }
 }

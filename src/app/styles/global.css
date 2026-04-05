@@ -1,17 +1,17 @@
 /* styles/global.css */
 
 :root {
-  --background-color-light: #f7f7f7;
+  --background-color-light: #fff;
   --text-color-light: #000;
   --sidebar-background-color-light: #fff;
   --border-color-light: #e2e8f0;
 
-  --background-color-dark: #1a202c;
+  /* --background-color-dark: #1a202c; */
   --text-color-dark: #fff;
   --sidebar-background-color-dark: #2d3748;
   --border-color-dark: #4a5568;
 
-  --background-color: var(--background-color-light);
+  --background-color: #fff;
   --text-color: var(--text-color-light);
   --sidebar-background-color: var(--sidebar-background-color-light);
   --border-color: var(--border-color-light);

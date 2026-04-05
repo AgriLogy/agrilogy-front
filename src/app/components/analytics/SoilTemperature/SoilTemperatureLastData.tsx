@@ -1,7 +1,12 @@
 import { Box, Text, VStack, HStack, useColorModeValue } from '@chakra-ui/react';
 import { FaThermometerHalf } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
-import { formatNumber } from '@/app/utils/formatNumber';
+import {
+  formatCalibratedReading,
+  resolveAxisUnit,
+} from '@/app/utils/unitOverrides';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -20,10 +25,12 @@ const Row = ({
   label,
   entry,
   color,
+  sensorKey,
 }: {
   label: string;
   entry?: SensorData;
   color: string;
+  sensorKey: string;
 }) => {
   const metaColor = useColorModeValue('gray.600', 'gray.400');
 
@@ -36,8 +43,8 @@ const Row = ({
           </Text>
           <Text color={color}>
             {entry
-              ? `${formatNumber(entry.value)} ${entry.default_unit}`
-              : 'N/A'}
+              ? `${formatCalibratedReading(sensorKey, entry.value)} ${resolveAxisUnit(sensorKey, entry.default_unit)}`
+              : 'Non disponible'}
           </Text>
         </HStack>
         <Text fontSize="sm" color={metaColor}>
@@ -57,6 +64,7 @@ const SoilTemperatureLastData = ({
   lastMedium?: SensorData;
   lastHigh?: SensorData;
 }) => {
+  useUnitOverridesRevision();
   const bgColor = useColorModeValue('orange.50', 'orange.900');
   const headerColor = useColorModeValue('gray.700', 'gray.200');
   const borderColor = useColorModeValue('blackAlpha.200', 'whiteAlpha.300');
@@ -96,10 +104,26 @@ const SoilTemperatureLastData = ({
         >
           Dernières mesures
         </Text>
-        <Row label="Basse (Low)" entry={lastLow} color={lowColor} />
-        <Row label="Moyenne (Medium)" entry={lastMedium} color={medColor} />
-        <Row label="Haute (High)" entry={lastHigh} color={highColor} />
+        <Row
+          label="Basse (Low)"
+          entry={lastLow}
+          color={lowColor}
+          sensorKey="soil_temp_low"
+        />
+        <Row
+          label="Moyenne (Medium)"
+          entry={lastMedium}
+          color={medColor}
+          sensorKey="soil_temp_medium"
+        />
+        <Row
+          label="Haute (High)"
+          entry={lastHigh}
+          color={highColor}
+          sensorKey="soil_temp_high"
+        />
       </VStack>
+      <LastDataAddAlertButton />
     </Box>
   );
 };

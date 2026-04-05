@@ -1,6 +1,6 @@
 'use client';
 
-import { Box } from '@chakra-ui/react';
+import { Box, useColorModeValue } from '@chakra-ui/react';
 import EmptyBox, { DEFAULT_EMPTY_TEXT, DEFAULT_LOADING_TEXT } from './EmptyBox';
 
 export interface ChartStateViewProps {
@@ -35,10 +35,17 @@ const ChartStateView = ({
   children,
 }: ChartStateViewProps) => {
   const boxRef = chartRef as React.RefObject<HTMLDivElement> | undefined;
+  const chartSurfaceBg = useColorModeValue('white', 'gray.800');
 
   if (loading) {
     return (
-      <Box ref={boxRef} height={height} width="100%">
+      <Box
+        ref={boxRef}
+        height={height}
+        width="100%"
+        bg={chartSurfaceBg}
+        borderRadius="md"
+      >
         <EmptyBox variant="loading" text={loadingText} />
       </Box>
     );
@@ -46,14 +53,27 @@ const ChartStateView = ({
 
   if (empty) {
     return (
-      <Box ref={boxRef} height={height} width="100%">
+      <Box
+        ref={boxRef}
+        height={height}
+        width="100%"
+        bg={chartSurfaceBg}
+        borderRadius="md"
+      >
         <EmptyBox variant="empty" text={emptyText} />
       </Box>
     );
   }
 
   return (
-    <Box ref={boxRef} height={height} width="100%">
+    <Box
+      ref={boxRef}
+      height={height}
+      width="100%"
+      bg={chartSurfaceBg}
+      borderRadius="md"
+      overflow="hidden"
+    >
       {children}
     </Box>
   );

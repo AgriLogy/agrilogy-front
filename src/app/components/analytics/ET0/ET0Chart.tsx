@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef } from 'react';
 import {
   BarChart,
   Bar,
@@ -12,6 +12,7 @@ import {
 import {
   Box,
   Text,
+  useBreakpointValue,
   useColorModeValue,
   Button,
   HStack,
@@ -19,19 +20,12 @@ import {
 } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
-import {
-  addTimeMsToChartRows,
-  defaultCartesianGridProps,
-  defaultBarProps,
-  defaultLegendWrapperStyle,
-  getAdaptiveTimeXAxisProps,
-  getDefaultYAxisProps,
-  defaultTooltipCursor,
-} from '@/app/utils/chartAxisConfig';
-import { formatNumber } from '@/app/utils/formatNumber';
 import ChartStateView from '../../common/ChartStateView';
-import ChartLegend from '../../common/ChartLegend';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
 
 interface Et0Data {
   timestamp: string;
@@ -49,43 +43,31 @@ const EC0Chart = ({
   loading: boolean;
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
+  const unitRev = useUnitOverridesRevision();
 
-  const calculatedByTimestamp = useMemo(
-    () => new Map(calculatedData.map((c) => [c.timestamp, c.value])),
-    [calculatedData]
-  );
-
-  const chartData = addTimeMsToChartRows(
-    weatherData.map((item) => {
-      const calculated = calculatedByTimestamp.get(item.timestamp);
-      return {
-        name: item.timestamp,
-        Weather: item.value,
-        Calculated: calculated ?? null,
-      };
-    }),
-    'name'
+  const chartData = useMemo(
+    () =>
+      weatherData.map((item, index) => {
+        const calculated = calculatedData[index]?.value ?? null;
+        return {
+          name: item.timestamp,
+          et0_sensor: calibrateChartValue('et0', item.value),
+          et0_calculated:
+            calculated != null && Number.isFinite(calculated)
+              ? calibrateChartValue('et0', calculated)
+              : null,
+        };
+      }),
+    [weatherData, calculatedData, unitRev]
   );
 
   const textColor = useColorModeValue('gray.800', 'gray.200');
-  const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'name');
-  const yAxisProps = getDefaultYAxisProps(2);
-
-  const [activeBars, setActiveBars] = useState({
-    Weather: true,
-    Calculated: true,
+  const { axis, grid } = useChartAxisColors();
+  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
+  const labelInterval = useBreakpointValue({
+    base: Math.ceil(chartData.length / 3),
+    md: Math.ceil(chartData.length / 5),
   });
-
-  const handleLegendClick = (entry: any) => {
-    const dataKey = entry?.dataKey ? String(entry.dataKey) : null;
-    if (!dataKey) return;
-    if (dataKey === 'Weather') {
-      setActiveBars((prev) => ({ ...prev, Weather: !prev.Weather }));
-    }
-    if (dataKey === 'Calculated') {
-      setActiveBars((prev) => ({ ...prev, Calculated: !prev.Calculated }));
-    }
-  };
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
@@ -99,14 +81,9 @@ const EC0Chart = ({
 
   const handleDownloadData = () => {
     const csv =
-      'timestamp,Weather,Calculated\n' +
+      'timestamp,et0_sensor,et0_calculated\n' +
       chartData
-        .map((d) => {
-          const w = d.Weather == null ? '' : formatNumber(Number(d.Weather));
-          const c =
-            d.Calculated == null ? '' : formatNumber(Number(d.Calculated));
-          return `${d.name},${w},${c}`;
-        })
+        .map((d) => `${d.name},${d.et0_sensor ?? ''},${d.et0_calculated ?? ''}`)
         .join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -118,19 +95,18 @@ const EC0Chart = ({
     URL.revokeObjectURL(url);
   };
 
+  const et0Unit = resolveAxisUnit(
+    'et0',
+    weatherData[0]?.default_unit ?? calculatedData[0]?.default_unit
+  );
+
   return (
     <Box width="100%" pr={4} pb={4}>
-      <Flex
-        justify="space-between"
-        align="center"
-        mb={4}
-        flexWrap="wrap"
-        gap={2}
-      >
+      <Flex justify="space-between" align="center" mb={4}>
         <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Évapotranspiration de référence (ET₀)
+          ET0
         </Text>
-        <HStack spacing={2} flexShrink={0}>
+        <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
             colorScheme="teal"
@@ -160,44 +136,59 @@ const EC0Chart = ({
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
-            margin={{ top: 20, right: 0, left: 40, bottom: 0 }}
+            margin={{ top: 10, right: 30, left: 0, bottom: 5 }}
           >
-            <CartesianGrid {...defaultCartesianGridProps} />
-            <XAxis {...xAxisProps} />
-            <YAxis
-              {...yAxisProps}
-              label={{
-                value: 'ET₀ (mm)',
-                angle: -90,
-                dx: -30,
-                dy: 20,
-                position: 'insideLeft',
-                style: { fontSize: 12, fill: '#64748b' },
+            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+            <XAxis
+              dataKey="name"
+              angle={0}
+              textAnchor="middle"
+              interval={labelInterval}
+              stroke={axis}
+              strokeWidth={1}
+              tick={{
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
+              }}
+              axisLine={{
+                stroke: axis,
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                stroke: axis,
+                strokeWidth: 1,
               }}
             />
-            <Tooltip
-              content={<UnifiedTooltip />}
-              cursor={defaultTooltipCursor}
+            <YAxis
+              label={{ value: et0Unit, angle: -90, position: 'insideLeft' }}
+              stroke={axis}
+              strokeWidth={1}
+              tick={{
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
+              }}
+              axisLine={{
+                stroke: axis,
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                stroke: axis,
+                strokeWidth: 1,
+              }}
             />
-            <Legend
-              wrapperStyle={defaultLegendWrapperStyle}
-              content={<ChartLegend onClick={handleLegendClick} />}
-            />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
+            <Legend />
             <Bar
-              dataKey="Weather"
-              name="ET0 Capteur"
+              dataKey="et0_sensor"
               fill="#3182ce"
-              fillOpacity={0.9}
-              {...defaultBarProps}
-              hide={!activeBars.Weather}
+              name={`ET0 Capteur (${et0Unit})`}
             />
             <Bar
-              dataKey="Calculated"
-              name="ET0 Calculé"
+              dataKey="et0_calculated"
               fill="#e53e3e"
-              fillOpacity={0.85}
-              {...defaultBarProps}
-              hide={!activeBars.Calculated}
+              name={`ET0 Calculé (${et0Unit})`}
             />
           </BarChart>
         </ResponsiveContainer>

@@ -1,16 +1,16 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   BarChart,
   Bar,
   Rectangle,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
 } from 'recharts';
 import {
+  useBreakpointValue,
   Box,
   Flex,
   Text,
@@ -21,20 +21,13 @@ import {
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
-import { formatNumber } from '@/app/utils/formatNumber';
-import {
-  addTimeMsToChartRows,
-  defaultCartesianGridProps,
-  defaultBarProps,
-  defaultLegendWrapperStyle,
-  getAdaptiveTimeXAxisProps,
-  getDefaultYAxisProps,
-  defaultTooltipCursor,
-} from '@/app/utils/chartAxisConfig';
 import ChartStateView from '../../common/ChartStateView';
-import ChartLegend from '../../common/ChartLegend';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
 
 const PrecipitationRateChart = ({
   data,
@@ -45,21 +38,32 @@ const PrecipitationRateChart = ({
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const [showBar, setShowBar] = useState(true);
+  const unitRev = useUnitOverridesRevision();
 
-  const chartData = addTimeMsToChartRows(
-    data.map((item) => ({
-      name: item.timestamp,
-      value: item.value,
-    })),
-    'name'
+  const chartData = useMemo(
+    () =>
+      data.map((item) => ({
+        name: item.timestamp,
+        precipitation_rate: calibrateChartValue(
+          'precipitation_rate',
+          item.value
+        ),
+        default_unit: item.default_unit,
+      })),
+    [data, unitRev]
   );
 
-  const { textColor } = useColorModeStyles();
-  const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'name');
-  const yAxisProps = getDefaultYAxisProps(2);
+  const labelInterval = useBreakpointValue({
+    base: Math.ceil(chartData.length / 3),
+    md: Math.ceil(chartData.length / 5),
+  });
 
-  const handleLegendClick = (data: any) => {
-    if (data.value === 'Taux de précipitation (mm/h)') {
+  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
+  const { textColor } = useColorModeStyles();
+  const { axis, mutedSeries } = useChartAxisColors();
+
+  const handleLegendClick = (payload: { dataKey?: unknown }) => {
+    if (payload?.dataKey === 'precipitation_rate') {
       setShowBar((prev) => !prev);
     }
   };
@@ -76,8 +80,8 @@ const PrecipitationRateChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      'timestamp,value\n' +
-      data.map((d) => `${d.timestamp},${formatNumber(d.value)}`).join('\n');
+      'timestamp,precipitation_rate\n' +
+      chartData.map((d) => `${d.name},${d.precipitation_rate}`).join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -90,19 +94,17 @@ const PrecipitationRateChart = ({
     URL.revokeObjectURL(url);
   };
   const { colorMode } = useColorMode();
+  const precipUnit = resolveAxisUnit(
+    'precipitation_rate',
+    data[0]?.default_unit
+  );
   return (
     <Box width="100%" pr={4} pb={4}>
-      <Flex
-        justify="space-between"
-        align="center"
-        mb={4}
-        flexWrap="wrap"
-        gap={2}
-      >
+      <Flex justify="space-between" align="center" mb={4}>
         <Text fontSize="xl" fontWeight="bold" color={textColor}>
           Taux de précipitation
         </Text>
-        <HStack spacing={2} flexShrink={0}>
+        <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
             colorScheme="teal"
@@ -131,41 +133,70 @@ const PrecipitationRateChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
-            margin={{ top: 20, right: 0, left: 35, bottom: 5 }}
-            onClick={(_e) => {}}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            onClick={(_e) => {
+              // optional: if you want to toggle bar by clicking legend label only
+            }}
           >
-            <CartesianGrid {...defaultCartesianGridProps} />
-            <XAxis {...xAxisProps} />
-            <YAxis
-              {...yAxisProps}
-              label={{
-                value: 'Précipitation (mm/h)',
-                angle: -90,
-                dx: -30,
-                dy: 50,
-                position: 'insideLeft',
-                style: { fontSize: 12, fill: '#64748b' },
+            <XAxis
+              dataKey="name"
+              angle={0}
+              textAnchor="middle"
+              interval={labelInterval}
+              stroke={axis}
+              strokeWidth={1}
+              tick={{
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
+              }}
+              axisLine={{
+                stroke: axis,
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                stroke: axis,
+                strokeWidth: 1,
               }}
             />
-            <Tooltip
-              content={<UnifiedTooltip />}
-              cursor={defaultTooltipCursor}
+            <YAxis
+              label={{
+                value: precipUnit,
+                angle: -90,
+                position: 'insideLeft',
+              }}
+              stroke={axis}
+              strokeWidth={1}
+              tick={{
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
+              }}
+              axisLine={{
+                stroke: axis,
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                stroke: axis,
+                strokeWidth: 1,
+              }}
             />
-            <Legend
-              wrapperStyle={defaultLegendWrapperStyle}
-              content={<ChartLegend onClick={handleLegendClick} />}
-            />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
+            <Legend onClick={handleLegendClick} />
             <Bar
-              dataKey="value"
-              name="Taux de précipitation (mm/h)"
+              dataKey="precipitation_rate"
+              name={`Taux de précipitation (${precipUnit})`}
               fill={colorMode === 'dark' ? '#60a5fa' : '#3b82f6'}
-              fillOpacity={showBar ? 0.9 : 0.15}
-              activeBar={<Rectangle radius={[10, 10, 3, 3]} />}
-              {...defaultBarProps}
+              activeBar={
+                <Rectangle
+                  fill={showBar ? 'gold' : mutedSeries}
+                  stroke={showBar ? 'purple' : mutedSeries}
+                />
+              }
+              isAnimationActive={false}
               style={{
                 pointerEvents: showBar ? 'auto' : 'none',
               }}
-              hide={!showBar}
             />
           </BarChart>
         </ResponsiveContainer>

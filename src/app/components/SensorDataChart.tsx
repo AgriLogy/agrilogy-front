@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import {
   Box,
   Text,
@@ -20,64 +20,86 @@ import {
 import { SensorData } from '../data/dashboard/data';
 import EmptyBox from './common/EmptyBox';
 import UnifiedTooltip from './common/UnifiedTooltip';
-import {
-  addTimeMsToChartRows,
-  defaultCartesianGridProps,
-  defaultLegendWrapperStyle,
-  defaultLineProps,
-  defaultTooltipCursor,
-  getAdaptiveTimeXAxisProps,
-  getDefaultYAxisProps,
-} from '@/app/utils/chartAxisConfig';
-import ChartLegend, {
-  type ChartLegendPayloadEntry,
-} from './common/ChartLegend';
+import { useCalibratedStationChartRows } from '@/app/hooks/useCalibratedStationChartRows';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
+// import { calculateET0 } from "../data/dashboard/calculateET0";
 
 interface SensorDataChartProps {
   data: SensorData[];
 }
 
+const DASHBOARD_CHART_FIELDS = [
+  { dataKey: 'temperature_weather', sensorKey: 'temperature_weather' },
+  { dataKey: 'solar_radiation', sensorKey: 'solar_radiation' },
+  { dataKey: 'et0', sensorKey: 'et0' },
+] as const;
+
+// Custom Legend Component
+const CustomLegend = (props: any) => {
+  return (
+    <ul
+      style={{
+        display: 'flex',
+        listStyle: 'none',
+        padding: 0,
+        flexWrap: 'wrap',
+        margin: 0,
+      }}
+    >
+      {props.payload.map((entry: any, index: number) => (
+        <li
+          key={`item-${index}`}
+          style={{
+            marginRight: '15px',
+            fontSize: '12px',
+            color: entry.color,
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <span
+            style={{
+              marginRight: '5px',
+              backgroundColor: entry.color,
+              width: '10px',
+              height: '10px',
+              display: 'inline-block',
+            }}
+          />
+          {entry.value}
+        </li>
+      ))}
+    </ul>
+  );
+};
+
 const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
   const validData = Array.isArray(data) && data.length > 0 ? data : [];
+  useUnitOverridesRevision();
 
-  // Calculate ET0 for each data point
-  const dataWithET0 = validData.map((sensorData) => ({
-    ...sensorData,
-  }));
-
-  const lastEightData = addTimeMsToChartRows(
-    dataWithET0.slice(-8),
-    'timestamp'
+  const calibrated = useCalibratedStationChartRows(
+    validData as unknown as Record<string, unknown>[],
+    DASHBOARD_CHART_FIELDS
   );
-  const xAxisProps = getAdaptiveTimeXAxisProps(lastEightData, 'timestamp');
-  const yAxisProps = getDefaultYAxisProps(2);
+
+  const lastEightData = useMemo(() => calibrated.slice(-8), [calibrated]);
+
+  const tempUnit = resolveAxisUnit('temperature_weather');
+  const solarUnit = resolveAxisUnit('solar_radiation');
+  const et0Unit = resolveAxisUnit('et0');
 
   const chartColor = useColorModeValue('#4A90E2', '#90CDF4');
   const chartBg = useColorModeValue('white', 'gray.800');
+  const { axis, grid } = useChartAxisColors();
   const p = useBreakpointValue({ base: 2, md: 4 });
   const { colorMode } = useColorMode();
 
-  const [activeLines, setActiveLines] = useState({
-    temperature_weather: true,
-    solar_radiation: true,
-    et0: true,
-  });
-
-  const handleLegendClick = (entry: ChartLegendPayloadEntry) => {
-    const dataKey = entry.dataKey ? String(entry.dataKey) : null;
-    if (!dataKey) return;
-    if (
-      dataKey !== 'temperature_weather' &&
-      dataKey !== 'solar_radiation' &&
-      dataKey !== 'et0'
-    ) {
-      return;
-    }
-    setActiveLines((prev) => ({
-      ...prev,
-      [dataKey]: !prev[dataKey as keyof typeof prev],
-    }));
-  };
+  const CustomTick = ({ x, y, payload }: any) => (
+    <text x={x} y={y} textAnchor="middle" fill={axis} fontSize="10">
+      {payload.value}
+    </text>
+  );
 
   if (validData.length === 0) {
     return (
@@ -120,39 +142,53 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
       <ResponsiveContainer width="100%" height={300}>
         <LineChart
           data={lastEightData}
-          margin={{ top: 16, right: 24, left: 8, bottom: 40 }}
+          margin={{ top: 8, right: 72, left: 8, bottom: 8 }}
         >
-          <CartesianGrid {...defaultCartesianGridProps} />
-          <XAxis {...xAxisProps} />
-          <YAxis {...yAxisProps} />
-          <Tooltip content={<UnifiedTooltip />} cursor={defaultTooltipCursor} />
-          <Legend
-            wrapperStyle={defaultLegendWrapperStyle}
-            content={<ChartLegend onClick={handleLegendClick} />}
+          <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+          <XAxis dataKey="timestamp" tick={<CustomTick />} />
+          <YAxis
+            yAxisId="temp"
+            orientation="left"
+            tick={<CustomTick />}
+            label={{ value: tempUnit, angle: -90, position: 'insideLeft' }}
           />
+          <YAxis
+            yAxisId="solar"
+            orientation="right"
+            tick={<CustomTick />}
+            width={48}
+            label={{ value: solarUnit, angle: 90, position: 'insideRight' }}
+          />
+          <YAxis
+            yAxisId="et0"
+            orientation="right"
+            tick={<CustomTick />}
+            width={48}
+            offset={56}
+            label={{ value: et0Unit, angle: 90, position: 'insideRight' }}
+          />
+          <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
+          <Legend content={<CustomLegend />} />
           <Line
+            yAxisId="temp"
             type="monotone"
             dataKey="temperature_weather"
             stroke={chartColor}
-            name="Température de l'air (°C)"
-            {...defaultLineProps}
-            hide={!activeLines.temperature_weather}
+            name={`Température de l'air (${tempUnit})`}
           />
           <Line
+            yAxisId="solar"
             type="monotone"
             dataKey="solar_radiation"
             stroke="#82ca9d"
-            name="Rayonnement solaire (W/m²)"
-            {...defaultLineProps}
-            hide={!activeLines.solar_radiation}
+            name={`Rayonnement solaire (${solarUnit})`}
           />
           <Line
+            yAxisId="et0"
             type="monotone"
             dataKey="et0"
             stroke="#ffc658"
-            name="ET₀ (mm)"
-            {...defaultLineProps}
-            hide={!activeLines.et0}
+            name={`ET₀ (${et0Unit})`}
           />
         </LineChart>
       </ResponsiveContainer>

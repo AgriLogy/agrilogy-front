@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -8,23 +8,26 @@ import {
   Legend,
   ResponsiveContainer,
   CartesianGrid,
+  Brush,
 } from 'recharts';
-import { Box, Text, Flex, HStack, Button } from '@chakra-ui/react';
+import {
+  Box,
+  Text,
+  Flex,
+  HStack,
+  Button,
+  useBreakpointValue,
+  useColorModeValue,
+} from '@chakra-ui/react';
 import { FaCamera, FaDownload } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
-import ChartLegend from '../../common/ChartLegend';
-import {
-  addTimeMsToChartRows,
-  defaultCartesianGridProps,
-  defaultLegendWrapperStyle,
-  defaultLineProps,
-  defaultTooltipCursor,
-  getAdaptiveTimeXAxisProps,
-  getDefaultYAxisProps,
-} from '@/app/utils/chartAxisConfig';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
 
 type SensorData = { timestamp: string; value: number };
 
@@ -39,27 +42,41 @@ const SensorLeafChart = ({
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const { textColor } = useColorModeStyles();
+  const { axis, mutedSeries, grid } = useChartAxisColors();
+  const brushStroke = useColorModeValue('#8884d8', '#b794f4');
+  const unitRev = useUnitOverridesRevision();
 
-  const combinedData = addTimeMsToChartRows(
-    temperatureData.map((t) => {
-      const moisturePoint = moistureData.find(
-        (m) => m.timestamp === t.timestamp
-      );
-      return {
-        name: t.timestamp,
-        temperature: t.value,
-        moisture: moisturePoint?.value ?? null,
-      };
-    }),
-    'name'
+  const combinedData = useMemo(
+    () =>
+      temperatureData.map((t) => {
+        const moisturePoint = moistureData.find(
+          (m) => m.timestamp === t.timestamp
+        );
+        return {
+          name: t.timestamp,
+          leaf_temperature: calibrateChartValue('leaf_temperature', t.value),
+          leaf_moisture:
+            moisturePoint != null
+              ? calibrateChartValue('leaf_moisture', moisturePoint.value)
+              : null,
+        };
+      }),
+    [temperatureData, moistureData, unitRev]
   );
 
-  const xAxisProps = getAdaptiveTimeXAxisProps(combinedData, 'name');
-  const yAxisProps = getDefaultYAxisProps(2);
+  const tempUnit = resolveAxisUnit('leaf_temperature');
+  const moistureUnit = resolveAxisUnit('leaf_moisture');
+
+  const labelInterval = useBreakpointValue({
+    base: Math.ceil(combinedData.length / 3),
+    md: Math.ceil(combinedData.length / 5),
+  });
+
+  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
 
   const [activeLines, setActiveLines] = useState({
-    temperature: true,
-    moisture: true,
+    leaf_temperature: true,
+    leaf_moisture: true,
   });
 
   const handleLegendClick = (e: any) => {
@@ -84,7 +101,7 @@ const SensorLeafChart = ({
     const csv =
       'timestamp,temperature,moisture\n' +
       combinedData
-        .map((d) => `${d.name},${d.temperature},${d.moisture}`)
+        .map((d) => `${d.name},${d.leaf_temperature},${d.leaf_moisture ?? ''}`)
         .join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -131,63 +148,100 @@ const SensorLeafChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={combinedData}
-            margin={{ top: 20, right: 35, left: 35, bottom: 0 }}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
-            <CartesianGrid {...defaultCartesianGridProps} />
-            <XAxis {...xAxisProps} />
+            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+            <XAxis
+              dataKey="name"
+              angle={0}
+              textAnchor="middle"
+              interval={labelInterval}
+              stroke={axis}
+              strokeWidth={1}
+              tick={{
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
+              }}
+              axisLine={{
+                stroke: axis,
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                stroke: axis,
+                strokeWidth: 1,
+              }}
+            />
             <YAxis
               yAxisId="left"
-              {...yAxisProps}
               label={{
-                value: 'Température (°C)',
+                value: `Température feuille (${tempUnit})`,
                 angle: -90,
-                position: 'top',
-                fontSize: 13,
-                dx: -45,
-                dy: 110,
-
-                style: { fill: '#64748b' },
+                position: 'insideLeft',
+                fontSize: 14,
+                dy: 50,
+              }}
+              stroke={axis}
+              strokeWidth={1}
+              tick={{
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
+              }}
+              axisLine={{
+                stroke: axis,
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                stroke: axis,
+                strokeWidth: 1,
               }}
             />
             <YAxis
               yAxisId="right"
               orientation="right"
-              {...yAxisProps}
               label={{
-                value: 'Humidité (%)',
-                angle: 90,
-                dx: 70,
-                dy: -30,
-                position: 'insideLeft',
-                fontSize: 13,
-                style: { fill: '#64748b' },
+                value: `Humidité feuille (${moistureUnit})`,
+                angle: -90,
+                position: 'insideRight',
+                fontSize: 14,
+                dy: -50,
               }}
+              stroke={axis}
+              strokeWidth={1}
+              tick={{
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
+              }}
+              axisLine={{ stroke: axis, strokeWidth: 1 }}
+              tickLine={{ stroke: axis, strokeWidth: 1 }}
             />
-            <Tooltip
-              content={<UnifiedTooltip />}
-              cursor={defaultTooltipCursor}
-            />
-            <Legend
-              wrapperStyle={defaultLegendWrapperStyle}
-              content={<ChartLegend onClick={handleLegendClick} />}
-            />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
+            <Legend onClick={handleLegendClick} />
             <Line
               yAxisId="left"
               type="monotone"
-              dataKey="temperature"
-              name="Température feuille (°C)"
-              stroke={activeLines.temperature ? '#ff7300' : 'gray'}
-              {...defaultLineProps}
-              hide={!activeLines.temperature}
+              dataKey="leaf_temperature"
+              name={`Température feuille (${tempUnit})`}
+              stroke={activeLines.leaf_temperature ? '#ff7300' : mutedSeries}
+              strokeWidth={2}
+              activeDot={{ r: 6 }}
             />
             <Line
               yAxisId="right"
               type="monotone"
-              dataKey="moisture"
-              name="Humidité feuille (%)"
-              stroke={activeLines.moisture ? '#007aff' : 'gray'}
-              {...defaultLineProps}
-              hide={!activeLines.moisture}
+              dataKey="leaf_moisture"
+              name={`Humidité feuille (${moistureUnit})`}
+              stroke={activeLines.leaf_moisture ? '#007aff' : mutedSeries}
+              strokeWidth={2}
+              activeDot={{ r: 6 }}
+            />
+            <Brush
+              dataKey="name"
+              height={30}
+              stroke={brushStroke}
+              travellerWidth={8}
             />
           </LineChart>
         </ResponsiveContainer>

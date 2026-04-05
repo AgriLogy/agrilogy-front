@@ -1,7 +1,12 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { FaTint, FaRulerCombined } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
-import { formatNumber } from '@/app/utils/formatNumber';
+import {
+  formatCalibratedReading,
+  resolveAxisUnit,
+} from '@/app/utils/unitOverrides';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -10,9 +15,9 @@ const timeAgo = (timestamp: string): string => {
   const diffMin = Math.floor(diffMs / 60000);
   const diffH = Math.floor(diffMin / 60);
 
-  if (diffMin < 1) return 'just now';
-  if (diffMin < 60) return `${diffMin} min ago`;
-  if (diffH < 24) return `${diffH} hours ago`;
+  if (diffMin < 1) return "à l'instant";
+  if (diffMin < 60) return `${diffMin} min.`;
+  if (diffH < 24) return `${diffH} heures`;
   return then.toLocaleDateString();
 };
 
@@ -23,6 +28,7 @@ const SoilSalinityConductivityLastData = ({
   salinityData: SensorData[];
   conductivityData: SensorData[];
 }) => {
+  useUnitOverridesRevision();
   const latestSalinity = salinityData[salinityData.length - 1];
   const latestConductivity = conductivityData[conductivityData.length - 1];
 
@@ -55,8 +61,8 @@ const SoilSalinityConductivityLastData = ({
         </Text>
         <Text fontSize="2xl" color={valueColor}>
           {latestSalinity
-            ? `${formatNumber(latestSalinity.value)} mg/l`
-            : 'N/A'}
+            ? `${formatCalibratedReading('soil_salinity', latestSalinity.value)} ${resolveAxisUnit('soil_salinity', latestSalinity.default_unit)}`
+            : 'Non disponible'}
         </Text>
         <Text fontSize="sm" color={textColor}>
           {latestSalinity
@@ -74,8 +80,8 @@ const SoilSalinityConductivityLastData = ({
         </Text>
         <Text fontSize="2xl" color={valueColor}>
           {latestConductivity
-            ? `${formatNumber(latestConductivity.value)} μS/cm`
-            : 'N/A'}
+            ? `${formatCalibratedReading('soil_conductivity', latestConductivity.value)} ${resolveAxisUnit('soil_conductivity', latestConductivity.default_unit)}`
+            : 'Non disponible'}
         </Text>
         <Text fontSize="sm" color={textColor}>
           {latestConductivity
@@ -83,6 +89,7 @@ const SoilSalinityConductivityLastData = ({
             : ''}
         </Text>
       </Box>
+      <LastDataAddAlertButton />
     </Box>
   );
 };

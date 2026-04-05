@@ -1,7 +1,13 @@
 import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import { GiChemicalDrop } from 'react-icons/gi';
 import { NpkSensorData } from '@/app/types';
-import { formatNumber } from '@/app/utils/formatNumber';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import {
+  formatCalibratedReading,
+  resolveAxisUnit,
+} from '@/app/utils/unitOverrides';
+import { getCatalogDefaultUnit } from '@/app/utils/sensorCatalog';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -18,6 +24,12 @@ const timeAgo = (timestamp: string): string => {
 
 const NpkLastData = ({ data }: { data: NpkSensorData[] }) => {
   const latest = data[data.length - 1];
+  useUnitOverridesRevision();
+
+  const npkFallback = latest?.default_unit ?? getCatalogDefaultUnit('npk_n');
+  const unitN = resolveAxisUnit('npk_n', npkFallback);
+  const unitP = resolveAxisUnit('npk_p', npkFallback);
+  const unitK = resolveAxisUnit('npk_k', npkFallback);
 
   // Light/dark mode colors
   const bgColor = useColorModeValue('blue.50', 'blue.900');
@@ -49,30 +61,21 @@ const NpkLastData = ({ data }: { data: NpkSensorData[] }) => {
       {latest ? (
         <VStack spacing={1} mt={3}>
           <Text fontSize="lg" color={latest.nitrogen_color}>
-            Azote (N):{' '}
-            {latest.nitrogen_value != null
-              ? formatNumber(latest.nitrogen_value)
-              : 'N/A'}{' '}
-            mg/kg
+            Azote (N): {formatCalibratedReading('npk_n', latest.nitrogen_value)}{' '}
+            {unitN}
           </Text>
           <Text fontSize="lg" color={latest.phosphorus_color}>
             Phosphore (P):{' '}
-            {latest.phosphorus_value != null
-              ? formatNumber(latest.phosphorus_value)
-              : 'N/A'}{' '}
-            mg/kg
+            {formatCalibratedReading('npk_p', latest.phosphorus_value)} {unitP}
           </Text>
           <Text fontSize="lg" color={latest.potassium_color}>
             Potassium (K):{' '}
-            {latest.potassium_value != null
-              ? formatNumber(latest.potassium_value)
-              : 'N/A'}{' '}
-            mg/kg
+            {formatCalibratedReading('npk_k', latest.potassium_value)} {unitK}
           </Text>
         </VStack>
       ) : (
         <Text mt={3} fontSize="md" color={noDataColor}>
-          N/A
+          Non disponible
         </Text>
       )}
 
@@ -81,6 +84,7 @@ const NpkLastData = ({ data }: { data: NpkSensorData[] }) => {
           Mise à jour : {timeAgo(latest.timestamp)}
         </Text>
       )}
+      <LastDataAddAlertButton />
     </Box>
   );
 };

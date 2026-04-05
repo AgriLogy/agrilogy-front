@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   BarChart,
   Bar,
@@ -8,25 +8,25 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  CartesianGrid,
 } from 'recharts';
-import { Box, Flex, Text, Button, HStack } from '@chakra-ui/react';
+import {
+  useBreakpointValue,
+  Box,
+  Flex,
+  Text,
+  Button,
+  HStack,
+} from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
-import ChartLegend from '../../common/ChartLegend';
-import {
-  addTimeMsToChartRows,
-  defaultCartesianGridProps,
-  defaultBarProps,
-  defaultLegendWrapperStyle,
-  defaultTooltipCursor,
-  getAdaptiveTimeXAxisProps,
-  getDefaultYAxisProps,
-} from '@/app/utils/chartAxisConfig';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
 
 const FruitSizeChart = ({
   data,
@@ -37,22 +37,30 @@ const FruitSizeChart = ({
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const [showBar, setShowBar] = useState(true);
+  const unitRev = useUnitOverridesRevision();
 
-  const chartData = addTimeMsToChartRows(
-    data.map((item) => ({
-      name: item.timestamp,
-      value: item.value,
-    })),
-    'name'
+  const chartData = useMemo(
+    () =>
+      data.map((item) => ({
+        name: item.timestamp,
+        fruit_size: calibrateChartValue('fruit_size', item.value),
+        default_unit: item.default_unit,
+      })),
+    [data, unitRev]
   );
 
-  const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'name');
-  const yAxisProps = getDefaultYAxisProps(2);
-  const { textColor } = useColorModeStyles();
+  const labelInterval = useBreakpointValue({
+    base: Math.ceil(chartData.length / 3),
+    md: Math.ceil(chartData.length / 5),
+  });
 
-  // Legend click handler
-  const handleLegendClick = (data: any) => {
-    if (data.value === 'Taille des fruits') {
+  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
+  const { textColor } = useColorModeStyles();
+  const { axis, mutedSeries } = useChartAxisColors();
+  const fruitUnit = resolveAxisUnit('fruit_size', data[0]?.default_unit);
+
+  const handleLegendClick = (payload: { dataKey?: unknown }) => {
+    if (payload?.dataKey === 'fruit_size') {
       setShowBar((prev) => !prev);
     }
   };
@@ -69,8 +77,8 @@ const FruitSizeChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      'timestamp,value\n' +
-      data.map((d) => `${d.timestamp},${d.value}`).join('\n');
+      'timestamp,fruit_size\n' +
+      chartData.map((d) => `${d.name},${d.fruit_size}`).join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -118,37 +126,68 @@ const FruitSizeChart = ({
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
-            margin={{ top: 20, right: 0, left: 20, bottom: 0 }}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            onClick={() => {}}
           >
-            <CartesianGrid {...defaultCartesianGridProps} />
-            <XAxis {...xAxisProps} />
-            <YAxis
-              {...yAxisProps}
-              label={{
-                angle: 0,
-                position: 'top',
-                style: { fill: '#64748b' },
+            <XAxis
+              dataKey="name"
+              angle={0}
+              textAnchor="middle"
+              interval={labelInterval}
+              stroke={axis}
+              strokeWidth={1}
+              tick={{
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
+              }}
+              axisLine={{
+                stroke: axis,
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                stroke: axis,
+                strokeWidth: 1,
               }}
             />
-            <Tooltip
-              content={<UnifiedTooltip />}
-              cursor={defaultTooltipCursor}
+            <YAxis
+              label={{
+                value: fruitUnit,
+                angle: -90,
+                position: 'insideLeft',
+              }}
+              stroke={axis}
+              strokeWidth={1}
+              tick={{
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
+              }}
+              axisLine={{
+                stroke: axis,
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                stroke: axis,
+                strokeWidth: 1,
+              }}
             />
-            <Legend
-              wrapperStyle={defaultLegendWrapperStyle}
-              content={<ChartLegend onClick={handleLegendClick} />}
-            />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
+            <Legend onClick={handleLegendClick} />
             <Bar
-              dataKey="value"
-              name="Taille des fruits (mm)"
-              fill={showBar ? '#22c55e' : '#94a3b8'}
-              fillOpacity={showBar ? 0.9 : 0.18}
-              activeBar={<Rectangle radius={[10, 10, 3, 3]} />}
-              {...defaultBarProps}
+              dataKey="fruit_size"
+              name={`Taille des fruits (${fruitUnit})`}
+              fill={showBar ? '#82ca9d' : mutedSeries}
+              activeBar={
+                <Rectangle
+                  fill={showBar ? 'gold' : mutedSeries}
+                  stroke={showBar ? 'purple' : mutedSeries}
+                />
+              }
+              isAnimationActive={false}
               style={{
                 pointerEvents: showBar ? 'auto' : 'none',
               }}
-              hide={!showBar}
             />
           </BarChart>
         </ResponsiveContainer>

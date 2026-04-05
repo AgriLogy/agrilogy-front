@@ -1,13 +1,20 @@
 'use client';
 import { Grid, GridItem } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../components/main/Header';
 import Navbar from '../components/main/Sidebar';
 import useColorModeStyles from '../utils/useColorModeStyles';
 import SettingsMain from '../components/settings/SettingsMain';
 
 const Page = () => {
-  const { textColor, navBgColor } = useColorModeStyles();
+  const { textColor, navBgColor, SideBarbg } = useColorModeStyles();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <Grid
@@ -17,8 +24,8 @@ const Page = () => {
         md: `"header header"
              "nav main"`,
       }}
-      gridTemplateRows={{ base: 'auto 1fr', md: '50px 1fr' }}
-      gridTemplateColumns={{ base: '1fr', md: '50px 1fr' }}
+      gridTemplateRows={{ base: 'auto 1fr', md: '64px 1fr' }}
+      gridTemplateColumns={{ base: '1fr', md: '72px 1fr' }}
       height="100vh"
       gap="0.5"
       color={textColor}
@@ -28,7 +35,7 @@ const Page = () => {
         <Header />
       </GridItem>
       <GridItem
-        bg={navBgColor}
+        bg={SideBarbg}
         area={'nav'}
         display={{ base: 'none', md: 'block' }}
       >

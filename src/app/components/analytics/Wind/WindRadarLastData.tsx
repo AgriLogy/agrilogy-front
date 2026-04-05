@@ -1,6 +1,11 @@
 import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import { WiStrongWind } from 'react-icons/wi';
-import { formatNumber } from '@/app/utils/formatNumber';
+import {
+  formatCalibratedReading,
+  resolveAxisUnit,
+} from '@/app/utils/unitOverrides';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 interface WindData {
   timestamp: string;
@@ -28,8 +33,14 @@ const WindRadarLastData = ({
   windSpeedData: WindData[];
   windDirectionData: WindData[];
 }) => {
+  useUnitOverridesRevision();
   const latestSpeed = windSpeedData[windSpeedData.length - 1];
   const latestDirection = windDirectionData[windDirectionData.length - 1];
+  const speedUnit = resolveAxisUnit('wind_speed', latestSpeed?.default_unit);
+  const directionUnit = resolveAxisUnit(
+    'wind_direction',
+    latestDirection?.default_unit
+  );
 
   // Background color with good contrast in light/dark mode
   const bgColor = useColorModeValue('green.100', 'green.800');
@@ -65,17 +76,19 @@ const WindRadarLastData = ({
       {latestSpeed && latestDirection ? (
         <VStack spacing={2} mt={4}>
           <Text fontSize="lg" color={valueColor}>
-            Vitesse du vent : {formatNumber(latestSpeed.value)}{' '}
-            {latestSpeed.default_unit}
+            Vitesse du vent :{' '}
+            {formatCalibratedReading('wind_speed', latestSpeed.value)}{' '}
+            {speedUnit}
           </Text>
           <Text fontSize="lg" color={valueColor}>
-            Direction du vent : {formatNumber(latestDirection.value)}{' '}
-            {latestDirection.default_unit}
+            Direction du vent :{' '}
+            {formatCalibratedReading('wind_direction', latestDirection.value)}{' '}
+            {directionUnit}
           </Text>
         </VStack>
       ) : (
         <Text mt={4} fontSize="md" color={noDataColor}>
-          N/A
+          Non disponible
         </Text>
       )}
 
@@ -84,6 +97,7 @@ const WindRadarLastData = ({
           Mise à jour : {timeAgo(latestSpeed.timestamp)}
         </Text>
       )}
+      <LastDataAddAlertButton />
     </Box>
   );
 };

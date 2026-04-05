@@ -1,7 +1,12 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { RiWaterFlashFill } from 'react-icons/ri';
 import { SensorData } from '@/app/types';
-import { formatNumber } from '@/app/utils/formatNumber';
+import {
+  formatCalibratedReading,
+  resolveAxisUnit,
+} from '@/app/utils/unitOverrides';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -10,14 +15,16 @@ const timeAgo = (timestamp: string): string => {
   const diffMin = Math.floor(diffMs / 60000);
   const diffH = Math.floor(diffMin / 60);
 
-  if (diffMin < 1) return 'just now';
-  if (diffMin < 60) return `${diffMin} min ago`;
-  if (diffH < 24) return `${diffH} hours ago`;
+  if (diffMin < 1) return "à l'instant";
+  if (diffMin < 60) return `${diffMin} min.`;
+  if (diffH < 24) return `${diffH} heures`;
   return then.toLocaleDateString();
 };
 
 const WaterFlowLastData = ({ data }: { data: SensorData[] }) => {
+  useUnitOverridesRevision();
   const latest = data[data.length - 1];
+  const unit = resolveAxisUnit('water_flow', latest?.default_unit);
 
   // Light/Dark mode values
   const bgColor = useColorModeValue('blue.50', 'blue.900');
@@ -42,16 +49,17 @@ const WaterFlowLastData = ({ data }: { data: SensorData[] }) => {
     >
       <RiWaterFlashFill size={50} color="#00b4d8" />
       <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
-        Dernière irrigation :
+        Dernière consommation :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
         {latest
-          ? `${formatNumber(latest.value)} ${latest.default_unit}`
-          : 'N/A'}
+          ? `${formatCalibratedReading('water_flow', latest.value)} ${unit}`
+          : 'Non disponible'}
       </Text>
       <Text fontSize="sm" color={textColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}
       </Text>
+      <LastDataAddAlertButton />
     </Box>
   );
 };

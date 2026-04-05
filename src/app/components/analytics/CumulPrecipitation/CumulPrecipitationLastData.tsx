@@ -1,7 +1,12 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { FaCloudRain } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
-import { formatNumber } from '@/app/utils/formatNumber';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import {
+  formatCalibratedReading,
+  resolveAxisUnit,
+} from '@/app/utils/unitOverrides';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -18,6 +23,8 @@ const timeAgo = (timestamp: string): string => {
 
 const CumulPrecipitationLastData = ({ data }: { data: SensorData[] }) => {
   const latest = data[data.length - 1];
+  useUnitOverridesRevision();
+  const unit = resolveAxisUnit('precipitation_rate', latest?.default_unit);
 
   const bgColor = useColorModeValue('blue.50', 'blue.900');
   const valueColor = useColorModeValue('blue.700', 'blue.200');
@@ -42,14 +49,17 @@ const CumulPrecipitationLastData = ({ data }: { data: SensorData[] }) => {
     >
       <FaCloudRain size={50} color="#3b82f6" />
       <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
-        Dernière irrigation :
+        Dernière précipitation :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest ? `${formatNumber(latest.value)} mm` : 'N/A'}
+        {latest
+          ? `${formatCalibratedReading('precipitation_rate', latest.value)} ${unit}`
+          : 'Non disponible'}
       </Text>
       <Text fontSize="sm" color={timeColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}
       </Text>
+      <LastDataAddAlertButton />
     </Box>
   );
 };

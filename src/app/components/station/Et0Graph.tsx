@@ -1,6 +1,8 @@
 'use client';
 import { Box, Text } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useCalibratedStationChartRows } from '@/app/hooks/useCalibratedStationChartRows';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
 import {
   LineChart,
   Line,
@@ -12,41 +14,69 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
-import {
-  addTimeMsToChartRows,
-  defaultCartesianGridProps,
-  defaultLegendWrapperStyle,
-  defaultLineProps,
-  getAdaptiveTimeXAxisProps,
-  getDefaultYAxisProps,
-  defaultTooltipCursor,
-} from '@/app/utils/chartAxisConfig';
-import ChartLegend from '../common/ChartLegend';
 import ChartStateView from '../common/ChartStateView';
 import UnifiedTooltip from '../common/UnifiedTooltip';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
 
-const CustomTick = ({ x, y, payload }: any) => (
-  <text x={x} y={y} textAnchor="middle" fill="#666" fontSize="10">
-    {payload.value}
-  </text>
+const CustomLegend = (props: any) => (
+  <ul
+    style={{
+      display: 'flex',
+      listStyle: 'none',
+      padding: 0,
+      flexWrap: 'wrap',
+      margin: 0,
+      marginLeft: 60,
+    }}
+  >
+    {props.payload.map((entry: any, index: number) => (
+      <li
+        key={`item-${index}`}
+        style={{
+          marginRight: '15px',
+          fontSize: '12px',
+          color: entry.color,
+          whiteSpace: 'nowrap',
+        }}
+      >
+        <span
+          style={{
+            marginRight: '5px',
+            backgroundColor: entry.color,
+            width: '10px',
+            height: '10px',
+            display: 'inline-block',
+          }}
+        />
+        {entry.value}
+      </li>
+    ))}
+  </ul>
 );
+
+const ET0_FIELDS = [{ dataKey: 'et0', sensorKey: 'et0' }] as const;
 
 const Et0Graph = ({ data }: { data: any }) => {
   const { bg, textColor } = useColorModeStyles();
+  const { axis, grid } = useChartAxisColors();
+  useUnitOverridesRevision();
+
+  const CustomTick = ({ x, y, payload }: any) => (
+    <text x={x} y={y} textAnchor="middle" fill={axis} fontSize="10">
+      {payload.value}
+    </text>
+  );
   const loading = !data;
   const empty =
     !!data &&
     (!data.sensor_data ||
       (Array.isArray(data.sensor_data) && data.sensor_data.length === 0));
-  const chartData = addTimeMsToChartRows(data?.sensor_data ?? [], 'timestamp');
-  const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'timestamp');
-  const yAxisProps = getDefaultYAxisProps(2);
 
-  const [showEt0, setShowEt0] = useState(true);
-
-  const handleLegendClick = () => {
-    setShowEt0((prev) => !prev);
-  };
+  const chartRows = useCalibratedStationChartRows(
+    data?.sensor_data,
+    ET0_FIELDS
+  );
+  const et0Unit = resolveAxisUnit('et0');
 
   return (
     <Box
@@ -63,28 +93,36 @@ const Et0Graph = ({ data }: { data: any }) => {
       </Text>
       <ChartStateView loading={loading} empty={empty} height={300}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={chartData}
-            margin={{ top: 16, right: 24, left: 8, bottom: 40 }}
-          >
-            <CartesianGrid {...defaultCartesianGridProps} />
-            <XAxis {...xAxisProps} />
-            <YAxis {...yAxisProps} />
-            <Tooltip
-              content={<UnifiedTooltip />}
-              cursor={defaultTooltipCursor}
+          <LineChart data={chartRows}>
+            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+            <XAxis
+              dataKey="timestamp"
+              tick={<CustomTick />}
+              stroke={axis}
+              strokeWidth={1}
+              axisLine={{
+                stroke: axis,
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                stroke: axis,
+                strokeWidth: 1,
+              }}
             />
-            <Legend
-              wrapperStyle={defaultLegendWrapperStyle}
-              content={<ChartLegend onClick={handleLegendClick} />}
+            <YAxis
+              tick={<CustomTick />}
+              stroke={axis}
+              strokeWidth={1}
+              axisLine={{ stroke: axis, strokeWidth: 1 }}
+              tickLine={{ stroke: axis, strokeWidth: 1 }}
             />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
+            <Legend content={<CustomLegend />} />
             <Line
               type="monotone"
               dataKey="et0"
               stroke={data.sensor_colors?.et0_color}
-              name="ET₀ (mm)"
-              {...defaultLineProps}
-              hide={!showEt0}
+              name={`ET₀ (${et0Unit})`}
             />
           </LineChart>
         </ResponsiveContainer>

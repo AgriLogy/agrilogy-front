@@ -1,6 +1,11 @@
 import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import { WiHumidity, WiThermometer } from 'react-icons/wi';
-import { formatNumber } from '@/app/utils/formatNumber';
+import {
+  formatCalibratedReading,
+  resolveAxisUnit,
+} from '@/app/utils/unitOverrides';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 interface WeatherData {
   timestamp: string;
@@ -28,8 +33,17 @@ const TempuratureHumidtyLastData = ({
   humidityData: WeatherData[];
   temperatureData: WeatherData[];
 }) => {
+  useUnitOverridesRevision();
   const latestHumidity = humidityData[humidityData.length - 1];
   const latestTemperature = temperatureData[temperatureData.length - 1];
+  const temperatureUnit = resolveAxisUnit(
+    'temperature_weather',
+    latestTemperature?.default_unit
+  );
+  const humidityUnit = resolveAxisUnit(
+    'humidity_weather',
+    latestHumidity?.default_unit
+  );
 
   const bgColor = useColorModeValue('gray.100', 'gray.700');
   const textColor = useColorModeValue('gray.800', 'gray.200');
@@ -60,19 +74,19 @@ const TempuratureHumidtyLastData = ({
           <Text fontSize="lg" color="red.400">
             <WiThermometer size={24} style={{ display: 'inline' }} />{' '}
             Température :
-            {` ${formatNumber(latestTemperature.value)} ${latestTemperature.default_unit}`}
+            {` ${formatCalibratedReading('temperature_weather', latestTemperature.value)} ${temperatureUnit}`}
           </Text>
         ) : (
-          <Text color={textColor}>Température : N/A</Text>
+          <Text color={textColor}>Température : non disponible</Text>
         )}
 
         {latestHumidity ? (
           <Text fontSize="lg" color="blue.400">
             <WiHumidity size={24} style={{ display: 'inline' }} /> Humidité :
-            {` ${formatNumber(latestHumidity.value)} ${latestHumidity.default_unit}`}
+            {` ${formatCalibratedReading('humidity_weather', latestHumidity.value)} ${humidityUnit}`}
           </Text>
         ) : (
-          <Text color={textColor}>Humidité : N/A</Text>
+          <Text color={textColor}>Humidité : non disponible</Text>
         )}
 
         {latestTemperature && (
@@ -81,6 +95,7 @@ const TempuratureHumidtyLastData = ({
           </Text>
         )}
       </VStack>
+      <LastDataAddAlertButton />
     </Box>
   );
 };

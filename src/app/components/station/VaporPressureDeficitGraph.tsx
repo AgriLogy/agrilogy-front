@@ -1,6 +1,8 @@
 'use client';
-import React, { useState } from 'react';
 import { Box, Text, useColorMode } from '@chakra-ui/react';
+import { useCalibratedStationChartRows } from '@/app/hooks/useCalibratedStationChartRows';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
 import {
   LineChart,
   Line,
@@ -11,37 +13,74 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import {
-  addTimeMsToChartRows,
-  defaultCartesianGridProps,
-  defaultLegendWrapperStyle,
-  defaultLineProps,
-  getAdaptiveTimeXAxisProps,
-  getDefaultYAxisProps,
-  defaultTooltipCursor,
-} from '@/app/utils/chartAxisConfig';
-import ChartLegend from '../common/ChartLegend';
 import ChartStateView from '../common/ChartStateView';
 import UnifiedTooltip from '../common/UnifiedTooltip';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
+
+// Custom legend component
+const CustomLegend = (props: any) => (
+  <ul
+    style={{
+      display: 'flex',
+      listStyle: 'none',
+      padding: 0,
+      flexWrap: 'wrap',
+      margin: 0,
+      marginLeft: 60,
+    }}
+  >
+    {props.payload.map((entry: any, index: number) => (
+      <li
+        key={`item-${index}`}
+        style={{
+          marginRight: '15px',
+          fontSize: '12px',
+          color: entry.color,
+          whiteSpace: 'nowrap',
+        }}
+      >
+        <span
+          style={{
+            marginRight: '5px',
+            backgroundColor: entry.color,
+            width: '10px',
+            height: '10px',
+            display: 'inline-block',
+          }}
+        />
+        {entry.value}
+      </li>
+    ))}
+  </ul>
+);
+
+/** Data key matches API payload (`pressure_weather` here). */
+const VPD_FIELDS = [
+  { dataKey: 'pressure_weather', sensorKey: 'pressure_weather' },
+] as const;
 
 const VaporPressureDeficitGraph = ({ data }: { data: any }) => {
   const { colorMode } = useColorMode();
+  const { axis, grid } = useChartAxisColors();
+  useUnitOverridesRevision();
+
+  const CustomTick = ({ x, y, payload }: any) => (
+    <text x={x} y={y} textAnchor="middle" fill={axis} fontSize="10">
+      {payload.value}
+    </text>
+  );
   const chartBg = colorMode === 'light' ? 'white' : 'gray.800';
   const loading = !data;
   const empty =
     !!data &&
     (!data.sensor_data ||
       (Array.isArray(data.sensor_data) && data.sensor_data.length === 0));
-  const chartData = addTimeMsToChartRows(data?.sensor_data ?? [], 'timestamp');
 
-  const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'timestamp');
-  const yAxisProps = getDefaultYAxisProps(2);
-
-  const [showPressure, setShowPressure] = useState(true);
-
-  const handleLegendClick = () => {
-    setShowPressure((prev) => !prev);
-  };
+  const chartRows = useCalibratedStationChartRows(
+    data?.sensor_data,
+    VPD_FIELDS
+  );
+  const pressUnit = resolveAxisUnit('pressure_weather');
 
   return (
     <Box
@@ -58,49 +97,46 @@ const VaporPressureDeficitGraph = ({ data }: { data: any }) => {
         fontWeight="bold"
         mb={4}
       >
-        Déficit de pression de vapeur (VPD)
+        {data?.sensor_names?.pressure_weather ?? 'Pression / VPD'}
       </Text>
       <ChartStateView loading={loading} empty={empty} height={300}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={chartData}
-            margin={{ top: 16, right: 24, left: 8, bottom: 40 }}
-          >
-            <CartesianGrid {...defaultCartesianGridProps} />
-            <XAxis {...xAxisProps} />
+          <LineChart data={chartRows}>
+            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+            <XAxis
+              dataKey="timestamp"
+              tick={<CustomTick />}
+              stroke={axis}
+              strokeWidth={1}
+              axisLine={{
+                stroke: axis,
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                stroke: axis,
+                strokeWidth: 1,
+              }}
+            />
             <YAxis
-              {...yAxisProps}
-              label={{
-                value: 'Déficit de pression de vapeur (DPV) (kPa)',
-                angle: -90,
-                position: 'insideLeft',
-                style: { fontSize: 12, fill: '#64748b' },
+              tick={<CustomTick />}
+              stroke={axis}
+              strokeWidth={1}
+              axisLine={{
+                stroke: axis,
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                stroke: axis,
+                strokeWidth: 1,
               }}
             />
-            <Tooltip
-              content={<UnifiedTooltip valueUnit=" kPa" />}
-              cursor={defaultTooltipCursor}
-            />
-            <Legend
-              wrapperStyle={defaultLegendWrapperStyle}
-              content={<ChartLegend onClick={handleLegendClick} />}
-            />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
+            <Legend content={<CustomLegend />} />
             <Line
-              type="linear"
+              type="monotone"
               dataKey="pressure_weather"
-              stroke={data.sensor_colors?.pressure_weather_color ?? '#3182ce'}
-              name="Déficit de pression de vapeur (kPa)"
-              {...defaultLineProps}
-              hide={!showPressure}
-              strokeLinejoin="miter"
-              strokeLinecap="butt"
-              activeDot={{
-                r: 5,
-                strokeWidth: 2,
-                fill: data.sensor_colors?.pressure_weather_color ?? '#3182ce',
-                stroke: '#fff',
-              }}
-              isAnimationActive={false}
+              stroke={data.sensor_colors?.pressure_weather_color}
+              name={`Pressure (${pressUnit})`}
             />
           </LineChart>
         </ResponsiveContainer>

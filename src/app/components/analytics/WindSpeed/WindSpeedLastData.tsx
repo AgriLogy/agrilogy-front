@@ -1,7 +1,12 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { FaBolt } from 'react-icons/fa';
-import { formatNumber } from '@/app/utils/formatNumber';
-import type { WindSpeedSensorRow } from '@/app/utils/windSpeedMerge';
+import { SensorData } from '@/app/types';
+import {
+  formatCalibratedReading,
+  resolveAxisUnit,
+} from '@/app/utils/unitOverrides';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -16,9 +21,10 @@ const timeAgo = (timestamp: string): string => {
   return then.toLocaleDateString();
 };
 
-const WindSpeedLastData = ({ data }: { data: WindSpeedSensorRow[] }) => {
+const WindSpeedLastData = ({ data }: { data: SensorData[] }) => {
   const latest = data[data.length - 1];
-  const gust = latest?.wind_gust;
+  useUnitOverridesRevision();
+  const unit = resolveAxisUnit('wind_speed', latest?.default_unit);
 
   // Light/Dark mode colors
   const bgColor = useColorModeValue('blue.50', 'blue.900');
@@ -48,22 +54,13 @@ const WindSpeedLastData = ({ data }: { data: WindSpeedSensorRow[] }) => {
       </Text>
       <Text fontSize="2xl" color={valueColor}>
         {latest
-          ? `${formatNumber(latest.value)} ${latest.default_unit}`
-          : 'N/A'}
+          ? `${formatCalibratedReading('wind_speed', latest.value)} ${unit}`
+          : 'Non disponible'}
       </Text>
       <Text fontSize="sm" color={timeColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}
       </Text>
-      {gust != null && Number.isFinite(gust) ? (
-        <>
-          <Text fontWeight="bold" fontSize="md" mt={4} color={textColor}>
-            Dernière rafale :
-          </Text>
-          <Text fontSize="xl" color={valueColor}>
-            {formatNumber(gust)} {latest.default_unit}
-          </Text>
-        </>
-      ) : null}
+      <LastDataAddAlertButton />
     </Box>
   );
 };

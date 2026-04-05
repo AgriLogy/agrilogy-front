@@ -1,7 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Stack, Box, VStack } from '@chakra-ui/react';
-import ChartDateRangeDragger from '../../common/ChartDateRangeDragger';
-import ChartDateRangeGate from '../../common/ChartDateRangeGate';
+import { useEffect, useState } from 'react';
+import { Stack, Box } from '@chakra-ui/react';
 import api from '@/app/lib/api';
 import WaterSoilChart from './WaterSoilChart';
 import WaterSoilLastData from './WaterSoilLastData';
@@ -103,44 +101,26 @@ const WaterSoilMain = ({
       .finally(() => setLoading(false));
   }, [startDate, endDate, selectedZone]);
 
-  const timeline = useMemo(
-    () => mergedData.map((d) => d.timestamp),
-    [mergedData]
-  );
-
   return (
     <Stack
       direction={{ base: 'column', md: 'row' }}
       width="100%"
       height="100%"
-      maxH="760px"
+      maxH="400px"
       spacing={4}
     >
       <Box flex={3} p={3}>
-        <ChartDateRangeGate timeline={timeline}>
-          {({ startIdx, endIdx, setRange }) => (
-            <VStack spacing={0} align="stretch" width="100%">
-              <WaterSoilChart
-                data={mergedData.slice(startIdx, endIdx + 1)}
-                loading={loading}
-                thresholds={{
-                  // Capacité aux champs (%): en dessous de critical_min = trop sec, au-dessus de critical_max = trop humide
-                  critical_min: 20,
-                  critical_max: 85,
-                  // Zone optimale (%): plage cible pour une bonne croissance
-                  normal_min: 40,
-                  normal_max: 85,
-                }}
-              />
-              <ChartDateRangeDragger
-                timestamps={timeline}
-                startIdx={startIdx}
-                endIdx={endIdx}
-                onChange={(r) => setRange(r)}
-              />
-            </VStack>
-          )}
-        </ChartDateRangeGate>
+        <WaterSoilChart
+          data={mergedData}
+          waterFlowDefaultUnit={waterFlowLast?.default_unit}
+          loading={loading}
+          thresholds={{
+            critical_min: 20,
+            critical_max: 100,
+            normal_min: 120,
+            normal_max: 380,
+          }}
+        />
       </Box>
       <Box flex={1} p={3}>
         <WaterSoilLastData
