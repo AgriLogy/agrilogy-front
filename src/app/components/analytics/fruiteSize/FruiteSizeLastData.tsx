@@ -1,6 +1,12 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
+import {
+  formatCalibratedReading,
+  resolveAxisUnit,
+} from '@/app/utils/unitOverrides';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import { FaAppleAlt } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -9,14 +15,15 @@ const timeAgo = (timestamp: string): string => {
   const diffMin = Math.floor(diffMs / 60000);
   const diffH = Math.floor(diffMin / 60);
 
-  if (diffMin < 1) return 'just now';
-  if (diffMin < 60) return `${diffMin} min ago`;
-  if (diffH < 24) return `${diffH} hours ago`;
+  if (diffMin < 1) return "à l'instant";
+  if (diffMin < 60) return `${diffMin} min.`;
+  if (diffH < 24) return `${diffH} heures`;
   return then.toLocaleDateString();
 };
 
 const FruiteSizeLastData = ({ data }: { data: SensorData[] }) => {
   const latest = data[data.length - 1];
+  useUnitOverridesRevision();
 
   // Dynamic colors for light/dark modes
   const bgColor = useColorModeValue('green.100', 'green.900');
@@ -44,11 +51,14 @@ const FruiteSizeLastData = ({ data }: { data: SensorData[] }) => {
         Dernière taille mesurée :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest ? `${latest.value.toFixed(2)} mm` : 'N/A'}
+        {latest
+          ? `${formatCalibratedReading('fruit_size', latest.value)} ${resolveAxisUnit('fruit_size', latest?.default_unit)}`
+          : 'Non disponible'}
       </Text>
       <Text fontSize="sm" color={textColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}
       </Text>
+      <LastDataAddAlertButton />
     </Box>
   );
 };

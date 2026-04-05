@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   AreaChart,
   Area,
@@ -23,6 +23,10 @@ import { SensorData } from '@/app/types';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
 
 const SolarRadiationChart = ({
   data,
@@ -33,11 +37,25 @@ const SolarRadiationChart = ({
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const [showArea, setShowArea] = useState(true);
+  const unitRev = useUnitOverridesRevision();
 
-  const chartData = data.map((item) => ({
-    name: item.timestamp,
-    value: item.value,
-  }));
+  const chartData = useMemo(
+    () =>
+      [...data]
+        .sort((a, b) => {
+          const ta = Date.parse(a.timestamp);
+          const tb = Date.parse(b.timestamp);
+          if (!Number.isFinite(ta) || !Number.isFinite(tb)) return 0;
+          return ta - tb;
+        })
+        .map((item) => ({
+          name: item.timestamp,
+          // Raw API = W/m². Use catalog dataKey so tooltip units match lecture overrides.
+          solar_radiation: calibrateChartValue('solar_radiation', item.value),
+          default_unit: item.default_unit,
+        })),
+    [data, unitRev]
+  );
 
   const labelInterval = useBreakpointValue({
     base: Math.ceil(chartData.length / 3),
@@ -46,6 +64,8 @@ const SolarRadiationChart = ({
 
   const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const { textColor } = useColorModeStyles();
+  const { axis, mutedSeries, grid } = useChartAxisColors();
+  const solarUnit = resolveAxisUnit('solar_radiation', data[0]?.default_unit);
 
   const handleLegendClick = (payload: any) => {
     if (payload.value === 'Radiation solaire') {
@@ -65,8 +85,8 @@ const SolarRadiationChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      'timestamp,value\n' +
-      data.map((d) => `${d.timestamp},${d.value}`).join('\n');
+      'timestamp,solar_radiation\n' +
+      chartData.map((d) => `${d.name},${d.solar_radiation}`).join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -117,65 +137,61 @@ const SolarRadiationChart = ({
             data={chartData}
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
             <XAxis
               dataKey="name"
               angle={0}
               textAnchor="middle"
               interval={labelInterval}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
             <YAxis
               label={{
+                value: solarUnit,
                 angle: -90,
                 fontSize: 16,
                 dy: 80,
                 position: 'insideLeft',
               }}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
             <Legend onClick={handleLegendClick} />
             <Area
               type="monotone"
-              dataKey="value"
-              name="Radiation solaire"
-              stroke={showArea ? '#f6c90e' : 'gray'}
-              fill={showArea ? '#f6c90e55' : 'gray'}
+              dataKey="solar_radiation"
+              name={`Radiation solaire (${solarUnit})`}
+              stroke={showArea ? '#f6c90e' : mutedSeries}
+              fill={showArea ? '#f6c90e' : mutedSeries}
+              fillOpacity={showArea ? 0.35 : 0.2}
               strokeWidth={2}
               isAnimationActive={false}
             />

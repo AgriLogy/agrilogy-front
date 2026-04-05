@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import {
   LineChart,
   Line,
@@ -17,12 +17,17 @@ import {
   Button,
   HStack,
   useBreakpointValue,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
 
 interface WeatherData {
   id: number;
@@ -45,16 +50,27 @@ const TempuratureHumidtyChart = ({
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const { textColor } = useColorModeStyles();
+  const { axis, grid } = useChartAxisColors();
+  const brushStroke = useColorModeValue('#8884d8', '#b794f4');
+  const unitRev = useUnitOverridesRevision();
 
-  // Merging humidity and temperature data based on the timestamp
-  const mergedData = humidityData.map((h) => {
-    const tempEntry = temperatureData.find((t) => t.timestamp === h.timestamp);
-    return {
-      timestamp: h.timestamp,
-      humidity: h.value,
-      temperature: tempEntry?.value || null,
-    };
-  });
+  const mergedData = useMemo(
+    () =>
+      humidityData.map((h) => {
+        const tempEntry = temperatureData.find(
+          (t) => t.timestamp === h.timestamp
+        );
+        return {
+          timestamp: h.timestamp,
+          humidity: calibrateChartValue('humidity_weather', h.value),
+          temperature:
+            tempEntry != null && tempEntry.value != null
+              ? calibrateChartValue('temperature_weather', tempEntry.value)
+              : null,
+        };
+      }),
+    [humidityData, temperatureData, unitRev]
+  );
 
   // Label interval and angle adjustments for responsive chart
   const labelInterval = useBreakpointValue({
@@ -62,6 +78,15 @@ const TempuratureHumidtyChart = ({
     md: Math.ceil(mergedData.length / 9),
   });
   const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
+
+  const tempUnit = resolveAxisUnit(
+    'temperature_weather',
+    temperatureData[0]?.default_unit
+  );
+  const humUnit = resolveAxisUnit(
+    'humidity_weather',
+    humidityData[0]?.default_unit
+  );
 
   // Screenshot capture function
   const handleScreenshot = async () => {
@@ -128,56 +153,50 @@ const TempuratureHumidtyChart = ({
             data={mergedData}
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
             <XAxis
               dataKey="timestamp"
               angle={0}
               textAnchor="middle"
               interval={labelInterval}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
             <YAxis
               yAxisId="left"
               label={{
-                value: 'Température (°C)',
+                value: tempUnit,
                 angle: -90,
                 position: 'insideLeft',
                 fontSize: 14,
                 dy: 80,
               }}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
@@ -185,37 +204,46 @@ const TempuratureHumidtyChart = ({
               yAxisId="right"
               orientation="right"
               label={{
-                value: 'Humidité (%)',
+                value: humUnit,
                 angle: -90,
                 position: 'insideRight',
                 fontSize: 14,
                 dx: 10,
               }}
+              stroke={axis}
+              strokeWidth={1}
+              tick={{
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
+              }}
+              axisLine={{ stroke: axis, strokeWidth: 1 }}
+              tickLine={{ stroke: axis, strokeWidth: 1 }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
             <Legend />
             <Line
               yAxisId="left"
               type="monotone"
-              dataKey="humidity"
-              name="Humidité (%)"
-              stroke="#2C7A7B"
+              dataKey="temperature"
+              name={`Température (${tempUnit})`}
+              stroke="#D69E2E"
               strokeWidth={2}
               activeDot={{ r: 6 }}
             />
             <Line
               yAxisId="right"
               type="monotone"
-              dataKey="temperature"
-              name="Température (°C)"
-              stroke="#D69E2E"
+              dataKey="humidity"
+              name={`Humidité (${humUnit})`}
+              stroke="#2C7A7B"
               strokeWidth={2}
               activeDot={{ r: 6 }}
             />
             <Brush
               dataKey="timestamp"
               height={30}
-              stroke="#8884d8"
+              stroke={brushStroke}
               travellerWidth={8}
             />
           </LineChart>

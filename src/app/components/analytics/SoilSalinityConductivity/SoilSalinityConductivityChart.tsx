@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -17,6 +17,7 @@ import {
   HStack,
   Text,
   useBreakpointValue,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { FaCamera, FaDownload } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
@@ -24,6 +25,10 @@ import { SensorData } from '@/app/types';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
 
 type Props = {
   salinityData: SensorData[];
@@ -38,10 +43,13 @@ const SoilSalinityConductivityChart = ({
 }: Props) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const { textColor } = useColorModeStyles();
+  const { axis, grid } = useChartAxisColors();
+  const brushStroke = useColorModeValue('#8884d8', '#b794f4');
+  const unitRev = useUnitOverridesRevision();
 
   const [activeLines, setActiveLines] = useState({
-    salinity: true,
-    conductivity: true,
+    soil_salinity: true,
+    soil_conductivity: true,
   });
 
   const labelInterval = useBreakpointValue({
@@ -51,33 +59,54 @@ const SoilSalinityConductivityChart = ({
   // const _labelAngle = useBreakpointValue({ base: -15, md: 15 });
   const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
 
-  const timestamps = Array.from(
-    new Set([
-      ...salinityData.map((d) => d.timestamp),
-      ...conductivityData.map((d) => d.timestamp),
-    ])
-  ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+  const chartData = useMemo(() => {
+    const timestamps = Array.from(
+      new Set([
+        ...salinityData.map((d) => d.timestamp),
+        ...conductivityData.map((d) => d.timestamp),
+      ])
+    ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
-  const chartData = timestamps.map((timestamp) => {
-    const sal = salinityData.find((d) => d.timestamp === timestamp);
-    const cond = conductivityData.find((d) => d.timestamp === timestamp);
-    return {
-      name: timestamp,
-      salinity: sal?.value,
-      salinity_color: sal?.color,
-      salinity_courbe_name: sal?.courbe_name,
-      conductivity: cond?.value,
-      conductivity_color: cond?.color,
-      conductivity_courbe_name: cond?.courbe_name,
-    };
-  });
+    return timestamps.map((timestamp) => {
+      const sal = salinityData.find((d) => d.timestamp === timestamp);
+      const cond = conductivityData.find((d) => d.timestamp === timestamp);
+      const sv = sal?.value;
+      const cv = cond?.value;
+      return {
+        name: timestamp,
+        soil_salinity:
+          sv != null && Number.isFinite(sv)
+            ? calibrateChartValue('soil_salinity', sv)
+            : null,
+        salinity_color: sal?.color,
+        salinity_courbe_name: sal?.courbe_name,
+        soil_conductivity:
+          cv != null && Number.isFinite(cv)
+            ? calibrateChartValue('soil_conductivity', cv)
+            : null,
+        conductivity_color: cond?.color,
+        conductivity_courbe_name: cond?.courbe_name,
+      };
+    });
+  }, [salinityData, conductivityData, unitRev]);
 
-  const handleLegendClick = (e: any) => {
-    const key = e.dataKey;
-    setActiveLines((prev) => ({
-      ...prev,
-      [key]: !prev[key as keyof typeof prev],
-    }));
+  const salinityUnit = resolveAxisUnit(
+    'soil_salinity',
+    salinityData[0]?.default_unit
+  );
+  const conductivityUnit = resolveAxisUnit(
+    'soil_conductivity',
+    conductivityData[0]?.default_unit
+  );
+
+  const handleLegendClick = (e: { dataKey?: unknown }) => {
+    const key = e.dataKey as keyof typeof activeLines | undefined;
+    if (key === 'soil_salinity' || key === 'soil_conductivity') {
+      setActiveLines((prev) => ({
+        ...prev,
+        [key]: !prev[key],
+      }));
+    }
   };
 
   const handleScreenshot = async () => {
@@ -92,9 +121,12 @@ const SoilSalinityConductivityChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      'timestamp,salinity,conductivity\n' +
+      'timestamp,soil_salinity,soil_conductivity\n' +
       chartData
-        .map((d) => `${d.name},${d.salinity ?? ''},${d.conductivity ?? ''}`)
+        .map(
+          (d) =>
+            `${d.name},${d.soil_salinity ?? ''},${d.soil_conductivity ?? ''}`
+        )
         .join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -138,78 +170,101 @@ const SoilSalinityConductivityChart = ({
             data={chartData}
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
             <XAxis
               dataKey="name"
               angle={0}
               textAnchor="middle"
               interval={labelInterval}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
             <YAxis
+              yAxisId="salinity"
               label={{
-                // value: "Concentration",
+                value: salinityUnit,
                 angle: -90,
                 position: 'insideLeft',
                 fontSize: 14,
                 dy: 80,
               }}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
+              stroke={axis}
+              strokeWidth={1}
               tick={{
-                // Tick styling
-                fill: '#666', // Tick label color
-                fontSize: 17, // Tick label font size
-                fontFamily: 'Arial, sans-serif', // Tick label font
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
               }}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <YAxis
+              yAxisId="conductivity"
+              orientation="right"
+              label={{
+                value: conductivityUnit,
+                angle: 90,
+                position: 'insideRight',
+                fontSize: 14,
+                dy: 50,
+              }}
+              stroke={axis}
+              strokeWidth={1}
+              tick={{
+                fill: axis,
+                fontSize: 17,
+                fontFamily: 'Arial, sans-serif',
+              }}
+              axisLine={{
+                stroke: axis,
+                strokeWidth: 1,
+              }}
+              tickLine={{
+                stroke: axis,
+                strokeWidth: 1,
+              }}
+            />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
             <Legend onClick={handleLegendClick} />
 
             <Line
+              yAxisId="salinity"
               type="monotone"
-              dataKey="salinity"
-              name={chartData[0]?.salinity_courbe_name || 'Salinité'}
+              dataKey="soil_salinity"
+              name={`${chartData[0]?.salinity_courbe_name ?? 'Salinité'} (${salinityUnit})`}
               stroke={chartData[0]?.salinity_color || '#dba800'}
-              strokeOpacity={activeLines.salinity ? 1 : 0.1}
+              strokeOpacity={activeLines.soil_salinity ? 1 : 0.1}
               strokeWidth={2}
               dot={false}
               activeDot={{ r: 6 }}
             />
 
             <Line
+              yAxisId="conductivity"
               type="monotone"
-              dataKey="conductivity"
-              name={chartData[0]?.conductivity_courbe_name || 'Conductivité'}
+              dataKey="soil_conductivity"
+              name={`${chartData[0]?.conductivity_courbe_name ?? 'Conductivité'} (${conductivityUnit})`}
               stroke={chartData[0]?.conductivity_color || '#00a86b'}
-              strokeOpacity={activeLines.conductivity ? 1 : 0.1}
+              strokeOpacity={activeLines.soil_conductivity ? 1 : 0.1}
               strokeWidth={2}
               dot={false}
               activeDot={{ r: 6 }}
@@ -219,7 +274,7 @@ const SoilSalinityConductivityChart = ({
               y={238}
               dataKey="name"
               height={30}
-              stroke="#8884d8"
+              stroke={brushStroke}
               travellerWidth={8}
             />
           </LineChart>

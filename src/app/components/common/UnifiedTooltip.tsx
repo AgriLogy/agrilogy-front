@@ -2,6 +2,12 @@
 
 import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import React from 'react';
+import {
+  applySensorCalibration,
+  getUnitOverrideFromDataKey,
+  getUnitOverrideFromSeriesName,
+  resolveSensorKeyForTooltip,
+} from '@/app/utils/unitOverrides';
 
 /**
  * Recharts payload item passed to tooltip content.
@@ -45,6 +51,11 @@ export interface UnifiedTooltipCustomProps {
   valueUnit?: string;
   /** Optional label shown above the values (e.g. "Date", "Timestamp"). If not set, the raw label is shown. */
   labelTitle?: string;
+  /**
+   * Set when chart `data` points are already calibrated (e.g. via `calibrateChartValue`).
+   * Tooltip shows the value as-is and still resolves display units; avoids double-applying a,b.
+   */
+  valuesAlreadyCalibrated?: boolean;
 }
 
 export type UnifiedTooltipProps = UnifiedTooltipPropsFromRecharts &
@@ -62,12 +73,36 @@ function defaultLabelFormatter(label: string): string {
  */
 function defaultValueFormatter(
   value: number | string,
-  _name: string,
-  _item: UnifiedTooltipPayloadItem,
-  valueUnit?: string
+  name: string,
+  item: UnifiedTooltipPayloadItem,
+  valueUnit?: string,
+  valuesAlreadyCalibrated?: boolean
 ): string {
-  const str = value == null ? '—' : String(value);
-  return valueUnit ? `${str}${valueUnit}` : str;
+  const payloadUnit =
+    typeof item?.payload?.default_unit === 'string'
+      ? String(item.payload.default_unit)
+      : undefined;
+  const baseUnit = valueUnit ?? payloadUnit ?? '';
+  const fromKey = getUnitOverrideFromDataKey(item?.dataKey, baseUnit);
+  const unit = getUnitOverrideFromSeriesName(String(name ?? ''), fromKey);
+  const sensorKey = resolveSensorKeyForTooltip(
+    item?.dataKey as string | undefined,
+    String(name ?? '')
+  );
+  const num = typeof value === 'number' ? value : Number(value);
+  const displayNum =
+    Number.isFinite(num) && (valuesAlreadyCalibrated || sensorKey != null)
+      ? valuesAlreadyCalibrated
+        ? num
+        : applySensorCalibration(sensorKey!, num)
+      : null;
+  const str =
+    displayNum != null && Number.isFinite(displayNum)
+      ? displayNum.toFixed(2)
+      : value == null || value === ''
+        ? '—'
+        : String(value);
+  return unit ? `${str} ${unit}` : str;
 }
 
 /**
@@ -101,6 +136,7 @@ const UnifiedTooltip: React.FC<UnifiedTooltipProps> = ({
   valueFormatter,
   valueUnit,
   labelTitle,
+  valuesAlreadyCalibrated = false,
 }) => {
   const bg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
@@ -119,7 +155,13 @@ const UnifiedTooltip: React.FC<UnifiedTooltipProps> = ({
   ) =>
     valueFormatter
       ? valueFormatter(value, name, item)
-      : defaultValueFormatter(value, name, item, valueUnit);
+      : defaultValueFormatter(
+          value,
+          name,
+          item,
+          valueUnit,
+          valuesAlreadyCalibrated
+        );
 
   return (
     <Box

@@ -1,6 +1,12 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { FaBolt } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
+import {
+  formatCalibratedReading,
+  resolveAxisUnit,
+} from '@/app/utils/unitOverrides';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -17,6 +23,8 @@ const timeAgo = (timestamp: string): string => {
 
 const WindSpeedLastData = ({ data }: { data: SensorData[] }) => {
   const latest = data[data.length - 1];
+  useUnitOverridesRevision();
+  const unit = resolveAxisUnit('wind_speed', latest?.default_unit);
 
   // Light/Dark mode colors
   const bgColor = useColorModeValue('blue.50', 'blue.900');
@@ -45,11 +53,14 @@ const WindSpeedLastData = ({ data }: { data: SensorData[] }) => {
         Dernière vitesse du vent :
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {latest ? `${latest.value.toFixed(2)} ${latest.default_unit}` : 'N/A'}
+        {latest
+          ? `${formatCalibratedReading('wind_speed', latest.value)} ${unit}`
+          : 'Non disponible'}
       </Text>
       <Text fontSize="sm" color={timeColor}>
         {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}
       </Text>
+      <LastDataAddAlertButton />
     </Box>
   );
 };

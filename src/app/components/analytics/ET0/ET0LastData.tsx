@@ -1,6 +1,12 @@
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import { GiWaterDrop } from 'react-icons/gi';
+import {
+  formatCalibratedReading,
+  resolveAxisUnit,
+} from '@/app/utils/unitOverrides';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 interface ET0Data {
   id: number;
@@ -29,8 +35,11 @@ const ET0LastData = ({
   weatherData: ET0Data[];
   calculatedData: ET0Data[];
 }) => {
+  useUnitOverridesRevision();
   const latestWeather = weatherData[weatherData.length - 1];
   const latestCalculated = calculatedData[calculatedData.length - 1];
+  const weatherUnit = resolveAxisUnit('et0', latestWeather?.default_unit);
+  const calculatedUnit = resolveAxisUnit('et0', latestCalculated?.default_unit);
 
   // Light/dark mode colors
   const bgColor = useColorModeValue('blue.50', 'blue.900');
@@ -64,23 +73,19 @@ const ET0LastData = ({
           <Text fontSize="lg" color="blue.600">
             ET0 météo:{' '}
             {latestWeather
-              ? `${latestWeather.value.toFixed(2)} ${
-                  latestWeather.default_unit
-                }`
-              : 'N/A'}
+              ? `${formatCalibratedReading('et0', latestWeather.value)} ${weatherUnit}`
+              : 'Non disponible'}
           </Text>
           <Text fontSize="lg" color="teal.600">
             ET0 calculé:{' '}
             {latestCalculated
-              ? `${latestCalculated.value.toFixed(2)} ${
-                  latestCalculated.default_unit
-                }`
-              : 'N/A'}
+              ? `${formatCalibratedReading('et0', latestCalculated.value)} ${calculatedUnit}`
+              : 'Non disponible'}
           </Text>
         </VStack>
       ) : (
         <Text mt={3} fontSize="md" color={noDataColor}>
-          N/A
+          Non disponible
         </Text>
       )}
 
@@ -98,6 +103,7 @@ const ET0LastData = ({
               : timeAgo(latestCalculated.timestamp)}
         </Text>
       )}
+      <LastDataAddAlertButton />
     </Box>
   );
 };

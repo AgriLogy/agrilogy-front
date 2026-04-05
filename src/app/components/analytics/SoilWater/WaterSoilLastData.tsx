@@ -2,6 +2,12 @@ import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { GiWaterDrop, GiWaterTank, GiGroundbreaker } from 'react-icons/gi';
 import { FaTachometerAlt } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
+import {
+  formatCalibratedReading,
+  resolveAxisUnit,
+} from '@/app/utils/unitOverrides';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -10,9 +16,9 @@ const timeAgo = (timestamp: string): string => {
   const diffMin = Math.floor(diffMs / 60000);
   const diffH = Math.floor(diffMin / 60);
 
-  if (diffMin < 1) return 'just now';
-  if (diffMin < 60) return `${diffMin} min ago`;
-  if (diffH < 24) return `${diffH} hours ago`;
+  if (diffMin < 1) return "à l'instant";
+  if (diffMin < 60) return `${diffMin} min.`;
+  if (diffH < 24) return `${diffH} heures`;
   return then.toLocaleDateString();
 };
 
@@ -20,10 +26,12 @@ const SensorBox = ({
   icon,
   label,
   data,
+  sensorKey,
 }: {
   icon: JSX.Element;
   label: string;
   data?: SensorData;
+  sensorKey: string;
   color: string;
 }) => {
   const valueColor = useColorModeValue('blue.700', 'blue.200');
@@ -39,7 +47,9 @@ const SensorBox = ({
         {label}
       </Text>
       <Text fontSize="2xl" color={valueColor}>
-        {data ? `${data.value.toFixed(2)} ${data.default_unit}` : 'N/A'}
+        {data
+          ? `${formatCalibratedReading(sensorKey, data.value)} ${resolveAxisUnit(sensorKey, data.default_unit)}`
+          : 'Non disponible'}
       </Text>
       <Text fontSize="sm" color={timeColor}>
         {data ? `Mise à jour : ${timeAgo(data.timestamp)}` : ''}
@@ -59,6 +69,7 @@ const WaterSoilLastData = ({
   soilHigh?: SensorData;
   waterFlow?: SensorData;
 }) => {
+  useUnitOverridesRevision();
   const bgColor = useColorModeValue('blue.50', 'blue.900');
 
   return (
@@ -84,6 +95,7 @@ const WaterSoilLastData = ({
           icon={<GiGroundbreaker size={40} color="#9c6644" />}
           label="Humidité du Sol - Bas"
           data={soilLow}
+          sensorKey="soil_moisture_low"
           color="#9c6644"
         />
       )}
@@ -94,6 +106,7 @@ const WaterSoilLastData = ({
           icon={<GiWaterDrop size={40} color="#2b6cb0" />}
           label="Humidité du Sol - Moyen"
           data={soilMedium}
+          sensorKey="soil_moisture_medium"
           color="#2b6cb0"
         />
       )}
@@ -104,6 +117,7 @@ const WaterSoilLastData = ({
           icon={<GiWaterTank size={40} color="#38a169" />}
           label="Humidité du Sol - Haut"
           data={soilHigh}
+          sensorKey="soil_moisture_high"
           color="#38a169"
         />
       )}
@@ -114,9 +128,11 @@ const WaterSoilLastData = ({
           icon={<FaTachometerAlt size={40} color="#e53e3e" />}
           label="Irrigation"
           data={waterFlow}
+          sensorKey="water_flow"
           color="#e53e3e"
         />
       )}
+      <LastDataAddAlertButton />
     </Box>
   );
 };

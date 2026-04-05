@@ -1,5 +1,8 @@
 'use client';
 import { Box, Text } from '@chakra-ui/react';
+import { useCalibratedStationChartRows } from '@/app/hooks/useCalibratedStationChartRows';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
 import {
   LineChart,
   Line,
@@ -13,6 +16,7 @@ import {
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import ChartStateView from '../common/ChartStateView';
 import UnifiedTooltip from '../common/UnifiedTooltip';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
 
 const CustomLegend = (props: any) => (
   <ul
@@ -50,19 +54,33 @@ const CustomLegend = (props: any) => (
   </ul>
 );
 
-const CustomTick = ({ x, y, payload }: any) => (
-  <text x={x} y={y} textAnchor="middle" fill="#666" fontSize="10">
-    {payload.value}
-  </text>
-);
+const TEMP_HUM_FIELDS = [
+  { dataKey: 'temperature_weather', sensorKey: 'temperature_weather' },
+  { dataKey: 'humidity_weather', sensorKey: 'humidity_weather' },
+] as const;
 
 const TempHumidityGraph = ({ data }: { data: any }) => {
   const { bg, textColor } = useColorModeStyles();
+  const { axis, grid } = useChartAxisColors();
+  useUnitOverridesRevision();
+
+  const CustomTick = ({ x, y, payload }: any) => (
+    <text x={x} y={y} textAnchor="middle" fill={axis} fontSize="10">
+      {payload.value}
+    </text>
+  );
   const loading = !data;
   const empty =
     !!data &&
     (!data.sensor_data ||
       (Array.isArray(data.sensor_data) && data.sensor_data.length === 0));
+
+  const chartRows = useCalibratedStationChartRows(
+    data?.sensor_data,
+    TEMP_HUM_FIELDS
+  );
+  const tempUnit = resolveAxisUnit('temperature_weather');
+  const humUnit = resolveAxisUnit('humidity_weather');
 
   return (
     <Box
@@ -78,64 +96,66 @@ const TempHumidityGraph = ({ data }: { data: any }) => {
       </Text>
       <ChartStateView loading={loading} empty={empty} height={300}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data?.sensor_data ?? []}>
-            <CartesianGrid strokeDasharray="3 3" />
+          <LineChart data={chartRows}>
+            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
             <XAxis
               dataKey="timestamp"
               tick={<CustomTick />}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              // tick={{                          // Tick styling
-              //   fill: '#666',                  // Tick label color
-              //   fontSize: 17,                  // Tick label font size
-              //   fontFamily: 'Arial, sans-serif' // Tick label font
-              // }}
+              stroke={axis}
+              strokeWidth={1}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
             <YAxis
+              yAxisId="left"
               tick={<CustomTick />}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              // tick={{                          // Tick styling
-              //   fill: '#666',                  // Tick label color
-              //   fontSize: 17,                  // Tick label font size
-              //   fontFamily: 'Arial, sans-serif' // Tick label font
-              // }}
-              axisLine={{
-                // Main axis line styling
-                stroke: '#666',
-                strokeWidth: 1,
+              stroke={axis}
+              strokeWidth={1}
+              label={{
+                value: tempUnit,
+                angle: -90,
+                position: 'insideLeft',
+                style: { fill: axis, fontSize: 11 },
               }}
-              tickLine={{
-                // Tick line styling
-                stroke: '#666',
-                strokeWidth: 1,
-              }}
+              axisLine={{ stroke: axis, strokeWidth: 1 }}
+              tickLine={{ stroke: axis, strokeWidth: 1 }}
             />
-            <Tooltip content={<UnifiedTooltip />} />
+            <YAxis
+              yAxisId="right"
+              orientation="right"
+              tick={<CustomTick />}
+              stroke={axis}
+              strokeWidth={1}
+              label={{
+                value: humUnit,
+                angle: 90,
+                position: 'insideRight',
+                style: { fill: axis, fontSize: 11 },
+              }}
+              axisLine={{ stroke: axis, strokeWidth: 1 }}
+              tickLine={{ stroke: axis, strokeWidth: 1 }}
+            />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
             <Legend content={<CustomLegend />} />
-            {/* Line for Temperature */}
             <Line
+              yAxisId="left"
               type="monotone"
               dataKey="temperature_weather"
               stroke={data.sensor_colors?.temperature_weather_color}
-              name="Temperature (°C)"
+              name={`Temperature (${tempUnit})`}
             />
-            {/* Line for Humidity */}
             <Line
+              yAxisId="right"
               type="monotone"
               dataKey="humidity_weather"
               stroke={data.sensor_colors?.humidity_weather_color}
-              name="Humidity (%)"
+              name={`Humidity (${humUnit})`}
             />
           </LineChart>
         </ResponsiveContainer>

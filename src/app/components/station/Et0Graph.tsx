@@ -1,5 +1,8 @@
 'use client';
 import { Box, Text } from '@chakra-ui/react';
+import { useCalibratedStationChartRows } from '@/app/hooks/useCalibratedStationChartRows';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
 import {
   LineChart,
   Line,
@@ -13,6 +16,7 @@ import {
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import ChartStateView from '../common/ChartStateView';
 import UnifiedTooltip from '../common/UnifiedTooltip';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
 
 const CustomLegend = (props: any) => (
   <ul
@@ -50,19 +54,29 @@ const CustomLegend = (props: any) => (
   </ul>
 );
 
-const CustomTick = ({ x, y, payload }: any) => (
-  <text x={x} y={y} textAnchor="middle" fill="#666" fontSize="10">
-    {payload.value}
-  </text>
-);
+const ET0_FIELDS = [{ dataKey: 'et0', sensorKey: 'et0' }] as const;
 
 const Et0Graph = ({ data }: { data: any }) => {
   const { bg, textColor } = useColorModeStyles();
+  const { axis, grid } = useChartAxisColors();
+  useUnitOverridesRevision();
+
+  const CustomTick = ({ x, y, payload }: any) => (
+    <text x={x} y={y} textAnchor="middle" fill={axis} fontSize="10">
+      {payload.value}
+    </text>
+  );
   const loading = !data;
   const empty =
     !!data &&
     (!data.sensor_data ||
       (Array.isArray(data.sensor_data) && data.sensor_data.length === 0));
+
+  const chartRows = useCalibratedStationChartRows(
+    data?.sensor_data,
+    ET0_FIELDS
+  );
+  const et0Unit = resolveAxisUnit('et0');
 
   return (
     <Box
@@ -79,37 +93,36 @@ const Et0Graph = ({ data }: { data: any }) => {
       </Text>
       <ChartStateView loading={loading} empty={empty} height={300}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data?.sensor_data ?? []}>
-            <CartesianGrid strokeDasharray="3 3" />
+          <LineChart data={chartRows}>
+            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
             <XAxis
               dataKey="timestamp"
               tick={<CustomTick />}
-              stroke="#666" // Axis line color
-              strokeWidth={1} // Axis line thickness
-              // tick={{                          // Tick styling
-              //   fill: '#666',                  // Tick label color
-              //   fontSize: 17,                  // Tick label font size
-              //   fontFamily: 'Arial, sans-serif' // Tick label font
-              // }}
+              stroke={axis}
+              strokeWidth={1}
               axisLine={{
-                // Main axis line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
               tickLine={{
-                // Tick line styling
-                stroke: '#666',
+                stroke: axis,
                 strokeWidth: 1,
               }}
             />
-            <YAxis tick={<CustomTick />} />
-            <Tooltip content={<UnifiedTooltip />} />
+            <YAxis
+              tick={<CustomTick />}
+              stroke={axis}
+              strokeWidth={1}
+              axisLine={{ stroke: axis, strokeWidth: 1 }}
+              tickLine={{ stroke: axis, strokeWidth: 1 }}
+            />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
             <Legend content={<CustomLegend />} />
             <Line
               type="monotone"
               dataKey="et0"
               stroke={data.sensor_colors?.et0_color}
-              name="ET0"
+              name={`ET₀ (${et0Unit})`}
             />
           </LineChart>
         </ResponsiveContainer>
