@@ -1,6 +1,5 @@
 import { Box, Stack, VStack } from '@chakra-ui/react';
 import { useEffect, useMemo, useState } from 'react';
-import ChartDateRangeDragger from '../../common/ChartDateRangeDragger';
 import ChartDateRangeGate from '../../common/ChartDateRangeGate';
 import { alignWindSeriesByTimestamp } from '@/app/utils/chartDateWindow';
 import api from '@/app/lib/api';
@@ -77,7 +76,7 @@ const WindRadarMain = ({
     >
       <Box flex={3} p={2} height="100%" width="100%">
         <ChartDateRangeGate timeline={timeline}>
-          {({ startIdx, endIdx, setRange }) => (
+          {({ startIdx, endIdx }) => (
             <VStack spacing={0} align="stretch" width="100%">
               <WindRadarChart
                 windSpeedData={speedAligned.slice(startIdx, endIdx + 1)}
