@@ -34,7 +34,7 @@ import api from '@/app/lib/api';
 import { logOptionalApiFailure } from '@/app/utils/apiClientErrors';
 import { FaBell, FaSeedling } from 'react-icons/fa';
 import { WiDaySunny } from 'react-icons/wi';
-import { GiGrapes } from 'react-icons/gi';
+import { GiGrapes, GiValve } from 'react-icons/gi';
 import { useRouter } from 'next/navigation';
 
 const MobileMenu = () => {
@@ -172,6 +172,17 @@ const MobileMenu = () => {
                   w="full"
                 >
                   Données des plantes
+                </Button>
+              </Link>
+
+              <Link href="/vannes-pompes">
+                <Button
+                  leftIcon={<GiValve />}
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  w="full"
+                >
+                  Vannes et pompes
                 </Button>
               </Link>
 

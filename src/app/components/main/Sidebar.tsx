@@ -19,7 +19,7 @@ import {
 import { MdWarningAmber } from 'react-icons/md';
 import { FaSeedling } from 'react-icons/fa6';
 import { WiDaySunny } from 'react-icons/wi';
-import { GiGrapes } from 'react-icons/gi';
+import { GiGrapes, GiValve } from 'react-icons/gi';
 import { IoLogOut } from 'react-icons/io5';
 import { FaHome, FaWater } from 'react-icons/fa';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
@@ -44,6 +44,11 @@ const Sidebar = () => {
     { href: '/station', icon: <WiDaySunny />, label: 'Station météo' },
     { href: '/plant', icon: <GiGrapes />, label: 'Données des plantes' },
     { href: '/water', icon: <FaWater />, label: "Station d'eau" },
+    {
+      href: '/vannes-pompes',
+      icon: <GiValve />,
+      label: 'Vannes et pompes',
+    },
     // { href: "/settings", icon: <FaCog />, label: "Paramètres" },
     { href: '/alerts', icon: <MdWarningAmber />, label: 'Alertes' },
   ];
