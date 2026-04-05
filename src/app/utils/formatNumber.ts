@@ -1,10 +1,10 @@
 /**
- * Format a number with a maximum number of decimal places to avoid
+ * Format a number with up to a maximum number of decimal places to avoid
  * floating-point display artifacts (e.g. 0.30000000004).
- * Rounds first, then formats to the given decimals.
+ * Rounds to at most `decimals` places and trims trailing zeros.
  * @param value - Numeric value (can be from sensor/API)
  * @param decimals - Maximum decimal places (default 2)
- * @returns Formatted string suitable for display
+ * @returns Formatted string suitable for display (trailing zeros stripped)
  */
 export function formatNumber(value: number, decimals: number = 2): string {
   if (typeof value !== 'number' || Number.isNaN(value)) {
@@ -12,7 +12,9 @@ export function formatNumber(value: number, decimals: number = 2): string {
   }
   const factor = Math.pow(10, decimals);
   const rounded = Math.round(value * factor) / factor;
-  return rounded.toFixed(decimals);
+  const fixed = rounded.toFixed(decimals);
+  if (!fixed.includes('.')) return fixed;
+  return fixed.replace(/\.?0+$/, '');
 }
 
 /**

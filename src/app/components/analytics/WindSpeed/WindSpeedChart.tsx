@@ -59,8 +59,8 @@ const WindSpeedChart = ({
   const { axis, mutedSeries, grid } = useChartAxisColors();
   const windUnit = resolveAxisUnit('wind_speed', data[0]?.default_unit);
 
-  const handleLegendClick = (payload: { dataKey?: unknown }) => {
-    if (payload?.dataKey === 'wind_speed') {
+  const handleLegendClick = (entry: { dataKey?: unknown }) => {
+    if (entry?.dataKey === 'wind_speed') {
       setShowLine((prev) => !prev);
     }
   };

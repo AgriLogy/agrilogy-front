@@ -70,7 +70,10 @@ export async function fetchWindGustRows(params: {
       const rows = unwrapSensorList(res.data);
       if (rows.length > 0) return rows;
       lastEmpty = rows;
-    } catch {
+    } catch (err) {
+      if (process.env.NODE_ENV === 'development') {
+        console.debug(`[fetchWindGustRows] ${path} failed:`, err);
+      }
       continue;
     }
   }
