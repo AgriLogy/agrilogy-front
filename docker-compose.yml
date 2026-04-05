@@ -3,11 +3,11 @@ version: "3.9"
 services:
   agryfront:
     container_name: agryfront
-    image: node:18-alpine
-    working_dir: /app
-    volumes:
-      - .:/app
-    command: sh -c "npm install && npm run dev"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: agrifront:v1.0
+    env_file: .env
     environment:
       - HOST=0.0.0.0
       - PORT=3000

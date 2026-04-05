@@ -1,24 +1,16 @@
-FROM node:18
-
-# Create app directory
+FROM node:18-alpine AS builder
 WORKDIR /app
-
-COPY env-example /.env
-
-# Copy dependencies definition files
-COPY package.json package-lock.json ./ 
-
-# Install app dependencies
-RUN npm install
-
-# Copy the rest of your app's source code
+COPY package*.json ./
+RUN npm ci
 COPY . .
-
-# Build the Next.js app
 RUN npm run build
 
-# Expose port Next.js runs on
-EXPOSE 3000
+FROM node:18-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
 
-# Start the production server (after the build)
-CMD ["npm", "run", "start"]
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+EXPOSE 3000
+CMD ["node", "server.js"]
