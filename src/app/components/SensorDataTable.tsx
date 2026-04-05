@@ -8,9 +8,9 @@ import {
   Th,
   Td,
   useBreakpointValue,
-  Text,
 } from '@chakra-ui/react';
 import useColorModeStyles from '../utils/useColorModeStyles';
+import ChartPanelHeading from './common/ChartPanelHeading';
 import { formatNumber } from '../utils/formatNumber';
 import { SensorData } from '../data/dashboard/data';
 import EmptyBox from './common/EmptyBox';
@@ -46,9 +46,13 @@ const SensorDataTable: React.FC<SensorDataTableProps> = ({ data }) => {
       p={p}
       overflowX="auto" // Ensure horizontal scroll is supported
     >
-      <Text color={textColor} fontSize="lg" fontWeight="bold" mb={4}>
-        Table des données des capteurs
-      </Text>
+      <Box mb={4}>
+        <ChartPanelHeading
+          title="Capteurs — aperçu tabulaire"
+          subtitle="Dernières lignes enregistrées"
+          color={textColor}
+        />
+      </Box>
       <div className="table-container">
         <Table variant="striped" size="sm" width="100%">
           <Thead>

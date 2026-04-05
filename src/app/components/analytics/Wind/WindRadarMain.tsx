@@ -1,6 +1,7 @@
-import { Box, Stack, VStack } from '@chakra-ui/react';
+import { Box, VStack } from '@chakra-ui/react';
 import { useEffect, useMemo, useState } from 'react';
 import ChartDateRangeGate from '../../common/ChartDateRangeGate';
+import ChartLastDataShell from '../../common/ChartLastDataShell';
 import { alignWindSeriesByTimestamp } from '@/app/utils/chartDateWindow';
 import api from '@/app/lib/api';
 import WindRadarLastData from './WindRadarLastData';
@@ -66,40 +67,48 @@ const WindRadarMain = ({
   }, [speedData, directionData]);
 
   return (
-    <Stack
+    <ChartLastDataShell
       spacing={2}
       direction={{ base: 'column', md: 'row' }}
       align="start"
       width="100%"
-      height="100%"
       className="Box"
-    >
-      <Box flex={3} p={2} height="100%" width="100%">
-        <ChartDateRangeGate timeline={timeline}>
-          {({ startIdx, endIdx }) => (
-            <VStack spacing={0} align="stretch" width="100%">
-              <WindRadarChart
-                windSpeedData={speedAligned.slice(startIdx, endIdx + 1)}
-                windDirectionData={directionAligned.slice(startIdx, endIdx + 1)}
-                loading={loading}
-              />
-              {/* <ChartDateRangeDragger
-                timestamps={timeline}
-                startIdx={startIdx}
-                endIdx={endIdx}
-                onChange={(r) => setRange(r)}
-              /> */}
-            </VStack>
-          )}
-        </ChartDateRangeGate>
-      </Box>
-      <Box flex={1} p={3} height="100%" width="100%">
-        <WindRadarLastData
-          windSpeedData={speedData}
-          windDirectionData={directionData}
-        />
-      </Box>
-    </Stack>
+      chart={
+        <Box flex={3} p={2} width="100%" minW={0}>
+          <ChartDateRangeGate timeline={timeline}>
+            {({ startIdx, endIdx }) => (
+              <VStack spacing={0} align="stretch" width="100%">
+                <WindRadarChart
+                  windSpeedData={speedAligned.slice(startIdx, endIdx + 1)}
+                  windDirectionData={directionAligned.slice(
+                    startIdx,
+                    endIdx + 1
+                  )}
+                  loading={loading}
+                />
+              </VStack>
+            )}
+          </ChartDateRangeGate>
+        </Box>
+      }
+      lastData={
+        <Box
+          flex={1}
+          p={3}
+          width="100%"
+          minW={0}
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="stretch"
+        >
+          <WindRadarLastData
+            windSpeedData={speedData}
+            windDirectionData={directionData}
+          />
+        </Box>
+      }
+    />
   );
 };
 

@@ -1,5 +1,5 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
-import { FaFlask } from 'react-icons/fa';
+import { GiChemicalDrop } from 'react-icons/gi';
 import { SensorData } from '@/app/types';
 import {
   formatCalibratedReading,
@@ -7,6 +7,7 @@ import {
 } from '@/app/utils/unitOverrides';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
+import LastDataPanel from '../../common/LastDataPanel';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -17,7 +18,7 @@ const timeAgo = (timestamp: string): string => {
 
   if (diffMin < 1) return "à l'instant";
   if (diffMin < 60) return `${diffMin} min.`;
-  if (diffH < 24) return `${diffH} heures`;
+  if (diffH < 24) return `${diffH} h`;
   return then.toLocaleDateString();
 };
 
@@ -26,40 +27,48 @@ const PhSoilLastData = ({ data }: { data: SensorData[] }) => {
   const latest = data[data.length - 1];
   const unit = resolveAxisUnit('soil_ph', latest?.default_unit);
 
-  // Light/Dark mode values
-  const bgColor = useColorModeValue('blue.50', 'blue.900');
   const valueColor = useColorModeValue('blue.700', 'blue.200');
   const textColor = useColorModeValue('gray.600', 'gray.300');
+  const subColor = useColorModeValue('gray.500', 'gray.400');
 
   return (
     <Box
-      bg={bgColor}
-      p={4}
-      borderRadius="md"
-      boxShadow="md"
-      minH="300px"
-      minW="250px"
-      height="100%"
-      width="100%"
+      flex={1}
+      minH={0}
+      minW={0}
+      w="100%"
+      alignSelf="stretch"
       display="flex"
       flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      textAlign="center"
     >
-      <FaFlask size={50} color="#f4a261" />
-      <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
-        Dernière mesure :
-      </Text>
-      <Text fontSize="2xl" color={valueColor}>
-        {latest
-          ? `${formatCalibratedReading('soil_ph', latest.value)} ${unit}`
-          : 'Non disponible'}
-      </Text>
-      <Text fontSize="sm" color={textColor}>
-        {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}
-      </Text>
-      <LastDataAddAlertButton />
+      <LastDataPanel
+        variant="phSoil"
+        display="flex"
+        flexDirection="column"
+        textAlign="center"
+        minW="250px"
+      >
+        <GiChemicalDrop size={44} color="#68d391" />
+        <Text
+          fontWeight="semibold"
+          fontSize="xs"
+          letterSpacing="0.08em"
+          textTransform="uppercase"
+          mt={3}
+          color={textColor}
+        >
+          pH du sol
+        </Text>
+        <Text fontSize="2xl" fontWeight="semibold" color={valueColor} mt={1}>
+          {latest
+            ? `${formatCalibratedReading('soil_ph', latest.value)} ${unit}`
+            : '—'}
+        </Text>
+        <Text fontSize="xs" color={subColor} mt={2}>
+          {latest ? `Mesure : ${timeAgo(latest.timestamp)}` : ''}
+        </Text>
+        <LastDataAddAlertButton />
+      </LastDataPanel>
     </Box>
   );
 };

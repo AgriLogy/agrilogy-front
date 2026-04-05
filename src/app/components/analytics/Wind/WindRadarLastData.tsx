@@ -6,6 +6,7 @@ import {
 } from '@/app/utils/unitOverrides';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
+import LastDataPanel from '../../common/LastDataPanel';
 
 interface WindData {
   timestamp: string;
@@ -22,7 +23,7 @@ const timeAgo = (timestamp: string): string => {
 
   if (diffMin < 1) return "à l'instant";
   if (diffMin < 60) return `${diffMin} min.`;
-  if (diffH < 24) return `${diffH} heures`;
+  if (diffH < 24) return `${diffH} h`;
   return then.toLocaleDateString();
 };
 
@@ -42,62 +43,79 @@ const WindRadarLastData = ({
     latestDirection?.default_unit
   );
 
-  // Background color with good contrast in light/dark mode
-  const bgColor = useColorModeValue('green.100', 'green.800');
-
-  // Text colors for readability
-  const titleColor = useColorModeValue('green.900', 'green.300');
-  const valueColor = useColorModeValue('gray.800', 'gray.200');
-  const noDataColor = useColorModeValue('gray.600', 'gray.400');
-  const timeColor = useColorModeValue('gray.500', 'gray.400');
+  const titleColor = useColorModeValue('gray.600', 'gray.300');
+  const labelMuted = useColorModeValue('gray.500', 'gray.400');
+  const valueColor = useColorModeValue('blue.700', 'blue.200');
+  const subColor = useColorModeValue('gray.500', 'gray.400');
+  const iconTone = useColorModeValue('#276749', '#68d391');
 
   return (
     <Box
-      bg={bgColor}
-      p={6}
-      borderRadius="md"
-      boxShadow="md"
-      minH="300px"
-      minW="250px"
-      height="100%"
-      width="100%"
+      flex={1}
+      minH={0}
+      minW={0}
+      w="100%"
+      alignSelf="stretch"
       display="flex"
       flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      textAlign="center"
     >
-      <WiStrongWind size={60} color={titleColor} />
+      <LastDataPanel
+        variant="windRadar"
+        display="flex"
+        flexDirection="column"
+        textAlign="center"
+        minW="250px"
+      >
+        <WiStrongWind size={52} color={iconTone} />
 
-      <Text fontWeight="bold" fontSize="lg" mt={3} color={titleColor}>
-        Données récentes du vent
-      </Text>
-
-      {latestSpeed && latestDirection ? (
-        <VStack spacing={2} mt={4}>
-          <Text fontSize="lg" color={valueColor}>
-            Vitesse du vent :{' '}
-            {formatCalibratedReading('wind_speed', latestSpeed.value)}{' '}
-            {speedUnit}
-          </Text>
-          <Text fontSize="lg" color={valueColor}>
-            Direction du vent :{' '}
-            {formatCalibratedReading('wind_direction', latestDirection.value)}{' '}
-            {directionUnit}
-          </Text>
-        </VStack>
-      ) : (
-        <Text mt={4} fontSize="md" color={noDataColor}>
-          Non disponible
+        <Text
+          fontWeight="semibold"
+          fontSize="xs"
+          letterSpacing="0.08em"
+          textTransform="uppercase"
+          mt={3}
+          color={titleColor}
+        >
+          Vent — vitesse et direction
         </Text>
-      )}
 
-      {latestSpeed && (
-        <Text fontSize="sm" color={timeColor} mt={5}>
-          Mise à jour : {timeAgo(latestSpeed.timestamp)}
-        </Text>
-      )}
-      <LastDataAddAlertButton />
+        {latestSpeed && latestDirection ? (
+          <VStack spacing={3} mt={4} align="stretch" w="100%">
+            <Box>
+              <Text fontSize="xs" fontWeight="medium" color={labelMuted}>
+                Vitesse
+              </Text>
+              <Text fontSize="lg" fontWeight="semibold" color={valueColor}>
+                {formatCalibratedReading('wind_speed', latestSpeed.value)}{' '}
+                {speedUnit}
+              </Text>
+            </Box>
+            <Box>
+              <Text fontSize="xs" fontWeight="medium" color={labelMuted}>
+                Direction
+              </Text>
+              <Text fontSize="lg" fontWeight="semibold" color={valueColor}>
+                {formatCalibratedReading(
+                  'wind_direction',
+                  latestDirection.value
+                )}{' '}
+                {directionUnit}
+              </Text>
+            </Box>
+          </VStack>
+        ) : (
+          <Text mt={4} fontSize="sm" color={subColor}>
+            Aucune donnée récente
+          </Text>
+        )}
+
+        {latestSpeed && (
+          <Text fontSize="xs" color={subColor} mt={3}>
+            Mesure : {timeAgo(latestSpeed.timestamp)}
+          </Text>
+        )}
+        <LastDataAddAlertButton />
+      </LastDataPanel>
     </Box>
   );
 };

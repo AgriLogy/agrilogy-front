@@ -1,11 +1,13 @@
-import { Box, Stack, VStack } from '@chakra-ui/react';
+import { Box, VStack } from '@chakra-ui/react';
 import { useEffect, useMemo, useState } from 'react';
 import ChartDateRangeDragger from '../../common/ChartDateRangeDragger';
+import ChartLastDataShell from '../../common/ChartLastDataShell';
 import ChartDateRangeGate from '../../common/ChartDateRangeGate';
 import { sortByTimestamp } from '@/app/utils/chartDateWindow';
 import api from '@/app/lib/api';
 import ET0LastData from './ET0LastData';
 import ET0Chart from './ET0Chart';
+import { CHART_SHELL_MAX_HEIGHT } from '@/app/utils/chartAxisConfig';
 
 interface ET0Data {
   id: number;
@@ -70,41 +72,52 @@ const ET0Main = ({
   );
 
   return (
-    <Stack
+    <ChartLastDataShell
       spacing={2}
       direction={{ base: 'column', md: 'row' }}
       align="start"
       width="100%"
-      height="100%"
       className="Box"
-      maxH={'560px'}
-    >
-      <Box flex={3} p={2} width="100%" height="100%">
-        <ChartDateRangeGate timeline={timeline}>
-          {({ startIdx, endIdx, setRange }) => (
-            <VStack spacing={0} align="stretch" width="100%">
-              <ET0Chart
-                weatherData={sortedWeather.slice(startIdx, endIdx + 1)}
-                calculatedData={calculatedData}
-                loading={loading}
-              />
-              <ChartDateRangeDragger
-                timestamps={timeline}
-                startIdx={startIdx}
-                endIdx={endIdx}
-                onChange={(r) => setRange(r)}
-              />
-            </VStack>
-          )}
-        </ChartDateRangeGate>
-      </Box>
-      <Box flex={1} p={3} height="100%" width="100%">
-        <ET0LastData
-          weatherData={weatherData}
-          calculatedData={calculatedData}
-        />
-      </Box>
-    </Stack>
+      maxH={CHART_SHELL_MAX_HEIGHT}
+      chart={
+        <Box flex={3} p={2} width="100%" minW={0}>
+          <ChartDateRangeGate timeline={timeline}>
+            {({ startIdx, endIdx, setRange }) => (
+              <VStack spacing={0} align="stretch" width="100%">
+                <ET0Chart
+                  weatherData={sortedWeather.slice(startIdx, endIdx + 1)}
+                  calculatedData={calculatedData}
+                  loading={loading}
+                />
+                <ChartDateRangeDragger
+                  timestamps={timeline}
+                  startIdx={startIdx}
+                  endIdx={endIdx}
+                  onChange={(r) => setRange(r)}
+                />
+              </VStack>
+            )}
+          </ChartDateRangeGate>
+        </Box>
+      }
+      lastData={
+        <Box
+          flex={1}
+          p={3}
+          width="100%"
+          minW={0}
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="stretch"
+        >
+          <ET0LastData
+            weatherData={weatherData}
+            calculatedData={calculatedData}
+          />
+        </Box>
+      }
+    />
   );
 };
 

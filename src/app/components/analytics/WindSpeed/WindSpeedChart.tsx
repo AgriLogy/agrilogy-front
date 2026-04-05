@@ -9,17 +9,11 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from 'recharts';
-import {
-  useBreakpointValue,
-  Box,
-  Flex,
-  Text,
-  Button,
-  HStack,
-} from '@chakra-ui/react';
+import { Box, Flex, Text, Button, HStack } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
+import ChartPanelHeading from '../../common/ChartPanelHeading';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
@@ -27,6 +21,22 @@ import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
 import { resolveAxisUnit } from '@/app/utils/unitOverrides';
 import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
+import ChartLegend, {
+  type ChartLegendPayloadEntry,
+} from '../../common/ChartLegend';
+import {
+  activeDotForSeries,
+  addTimeMsToChartRows,
+  defaultLegendWrapperStyle,
+  getAdaptiveTimeXAxisProps,
+  getDefaultYAxisProps,
+  mergeAxisTheme,
+  themedCartesianGrid,
+  CHART_MARGIN_LEFT_Y_LABEL,
+  CHART_PLOT_HEIGHT_PX,
+  analyticsChartPanelLayoutProps,
+  yAxisLabelInsideLeft,
+} from '@/app/utils/chartAxisConfig';
 
 const WindSpeedChart = ({
   data,
@@ -41,25 +51,28 @@ const WindSpeedChart = ({
 
   const chartData = useMemo(
     () =>
-      data.map((item) => ({
-        name: item.timestamp,
-        wind_speed: calibrateChartValue('wind_speed', item.value),
-        default_unit: item.default_unit,
-      })),
+      addTimeMsToChartRows(
+        data.map((item) => ({
+          name: item.timestamp,
+          wind_speed: calibrateChartValue('wind_speed', item.value),
+          default_unit: item.default_unit,
+        })),
+        'name'
+      ),
     [data, unitRev]
   );
 
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(chartData.length / 3),
-    md: Math.ceil(chartData.length / 5),
-  });
-
-  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const { textColor } = useColorModeStyles();
-  const { axis, mutedSeries, grid } = useChartAxisColors();
+  const { axis, tickFill, grid } = useChartAxisColors();
+  const xAxisProps = mergeAxisTheme(
+    getAdaptiveTimeXAxisProps(chartData, 'name'),
+    axis,
+    tickFill
+  );
+  const yProps = mergeAxisTheme(getDefaultYAxisProps(1), axis, tickFill);
   const windUnit = resolveAxisUnit('wind_speed', data[0]?.default_unit);
 
-  const handleLegendClick = (entry: { dataKey?: unknown }) => {
+  const handleLegendClick = (entry: ChartLegendPayloadEntry) => {
     if (entry?.dataKey === 'wind_speed') {
       setShowLine((prev) => !prev);
     }
@@ -92,11 +105,13 @@ const WindSpeedChart = ({
   };
 
   return (
-    <Box width="100%" pr={4} pb={4}>
+    <Box {...analyticsChartPanelLayoutProps}>
       <Flex justify="space-between" align="center" mb={4}>
-        <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Évolution de la vitesse du vent
-        </Text>
+        <ChartPanelHeading
+          color={textColor}
+          title="Vitesse du vent à la station"
+          subtitle="Série horaire ; échelle de temps adaptative avec le curseur de période."
+        />
         <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
@@ -121,69 +136,45 @@ const WindSpeedChart = ({
         loading={loading}
         empty={data.length === 0}
         chartRef={chartRef}
-        height="300px"
+        height={CHART_PLOT_HEIGHT_PX}
       >
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            margin={{
+              top: 12,
+              right: 12,
+              left: CHART_MARGIN_LEFT_Y_LABEL,
+              bottom: 8,
+            }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
-            <XAxis
-              dataKey="name"
-              angle={0}
-              textAnchor="middle"
-              interval={labelInterval}
-              stroke={axis}
-              strokeWidth={1}
-              tick={{
-                fill: axis,
-                fontSize: 17,
-                fontFamily: 'Arial, sans-serif',
-              }}
-              axisLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-            />
+            <CartesianGrid {...themedCartesianGrid(grid)} />
+            <XAxis {...xAxisProps} />
             <YAxis
-              label={{
-                value: windUnit,
-                angle: -90,
-                fontSize: 16,
-                dy: 80,
-                position: 'insideLeft',
-              }}
-              stroke={axis}
-              strokeWidth={1}
-              tick={{
-                fill: axis,
-                fontSize: 17,
-                fontFamily: 'Arial, sans-serif',
-              }}
-              axisLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
+              {...yProps}
+              label={yAxisLabelInsideLeft(windUnit, tickFill)}
             />
             <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
-            <Legend onClick={handleLegendClick} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={
+                <ChartLegend
+                  onClick={handleLegendClick}
+                  hiddenDataKeys={showLine ? [] : ['wind_speed']}
+                />
+              }
+            />
             <Line
               type="monotone"
               dataKey="wind_speed"
               name={`Vitesse du vent (${windUnit})`}
-              stroke={showLine ? '#82ca9d' : mutedSeries}
-              strokeWidth={2}
-              dot={{ r: 4, fill: showLine ? '#82ca9d' : mutedSeries }}
-              activeDot={{ r: 6, stroke: showLine ? '#2f855a' : mutedSeries }}
+              hide={!showLine}
+              stroke="#82ca9d"
+              strokeWidth={2.25}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              dot={false}
+              activeDot={activeDotForSeries('#82ca9d')}
               isAnimationActive={false}
             />
           </LineChart>

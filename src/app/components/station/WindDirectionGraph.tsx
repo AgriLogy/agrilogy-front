@@ -1,5 +1,6 @@
 'use client';
-import { Box, Text } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
+import { useMemo, useState } from 'react';
 import { useCalibratedStationChartRows } from '@/app/hooks/useCalibratedStationChartRows';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import { resolveAxisUnit } from '@/app/utils/unitOverrides';
@@ -15,45 +16,25 @@ import {
   ReferenceLine,
 } from 'recharts';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import ChartPanelHeading from '../common/ChartPanelHeading';
 import ChartStateView from '../common/ChartStateView';
 import UnifiedTooltip from '../common/UnifiedTooltip';
 import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
-
-const CustomLegend = (props: any) => (
-  <ul
-    style={{
-      display: 'flex',
-      listStyle: 'none',
-      padding: 0,
-      flexWrap: 'wrap',
-      margin: 0,
-      marginLeft: 60,
-    }}
-  >
-    {props.payload.map((entry: any, index: number) => (
-      <li
-        key={`item-${index}`}
-        style={{
-          marginRight: '15px',
-          fontSize: '12px',
-          color: entry.color,
-          whiteSpace: 'nowrap',
-        }}
-      >
-        <span
-          style={{
-            marginRight: '5px',
-            backgroundColor: entry.color,
-            width: '10px',
-            height: '10px',
-            display: 'inline-block',
-          }}
-        />
-        {entry.value}
-      </li>
-    ))}
-  </ul>
-);
+import ChartLegend, {
+  type ChartLegendPayloadEntry,
+} from '../common/ChartLegend';
+import {
+  activeDotForSeries,
+  addTimeMsToChartRows,
+  defaultLegendWrapperStyle,
+  getAdaptiveTimeXAxisProps,
+  getDefaultYAxisProps,
+  mergeAxisTheme,
+  themedCartesianGrid,
+  CHART_MARGIN_LEFT_Y_LABEL,
+  CHART_PLOT_HEIGHT_PX,
+  yAxisLabelInsideLeft,
+} from '@/app/utils/chartAxisConfig';
 
 const WIND_DIR_FIELDS = [
   { dataKey: 'wind_direction', sensorKey: 'wind_direction' },
@@ -61,14 +42,9 @@ const WIND_DIR_FIELDS = [
 
 const WindDirectionGraph = ({ data }: { data: any }) => {
   const { bg, textColor } = useColorModeStyles();
-  const { axis, grid } = useChartAxisColors();
+  const { axis, tickFill, grid } = useChartAxisColors();
   useUnitOverridesRevision();
 
-  const CustomTick = ({ x, y, payload }: any) => (
-    <text x={x} y={y} textAnchor="middle" fill={axis} fontSize="10">
-      {payload.value}
-    </text>
-  );
   const loading = !data;
   const empty =
     !!data &&
@@ -79,7 +55,24 @@ const WindDirectionGraph = ({ data }: { data: any }) => {
     data?.sensor_data,
     WIND_DIR_FIELDS
   );
+  const chartData = useMemo(
+    () => addTimeMsToChartRows(chartRows, 'timestamp'),
+    [chartRows]
+  );
+  const xAxisProps = mergeAxisTheme(
+    getAdaptiveTimeXAxisProps(chartData, 'timestamp'),
+    axis,
+    tickFill
+  );
+  const yProps = mergeAxisTheme(getDefaultYAxisProps(0), axis, tickFill);
   const dirUnit = resolveAxisUnit('wind_direction');
+
+  const [showSeries, setShowSeries] = useState(true);
+
+  const handleLegendClick = (e: ChartLegendPayloadEntry) => {
+    if (e.dataKey !== 'wind_direction') return;
+    setShowSeries((s) => !s);
+  };
 
   return (
     <Box
@@ -90,45 +83,46 @@ const WindDirectionGraph = ({ data }: { data: any }) => {
       boxShadow="lg"
       p={2}
     >
-      <Text color={textColor} fontSize="lg" fontWeight="bold" mb={4}>
-        {data?.sensor_names?.wind_direction}
-      </Text>
-      <ChartStateView loading={loading} empty={empty} height={300}>
+      <Box mb={4}>
+        <ChartPanelHeading
+          title="Vent — direction"
+          subtitle={data?.sensor_names?.wind_direction}
+          color={textColor}
+        />
+      </Box>
+      <ChartStateView
+        loading={loading}
+        empty={empty}
+        height={CHART_PLOT_HEIGHT_PX}
+      >
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartRows}>
-            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
-            <XAxis
-              dataKey="timestamp"
-              tick={<CustomTick />}
-              stroke={axis}
-              strokeWidth={1}
-              axisLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-            />
+          <LineChart
+            data={chartData}
+            margin={{
+              top: 12,
+              right: 12,
+              left: CHART_MARGIN_LEFT_Y_LABEL,
+              bottom: 8,
+            }}
+          >
+            <CartesianGrid {...themedCartesianGrid(grid)} />
+            <XAxis {...xAxisProps} />
             <YAxis
-              tick={<CustomTick />}
+              {...yProps}
               domain={[0, 360]}
-              stroke={axis}
-              strokeWidth={1}
-              axisLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
+              label={yAxisLabelInsideLeft(`Direction (${dirUnit})`, tickFill)}
             />
             <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
-            <Legend content={<CustomLegend />} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={
+                <ChartLegend
+                  onClick={handleLegendClick}
+                  hiddenDataKeys={showSeries ? [] : ['wind_direction']}
+                />
+              }
+            />
 
-            {/* Reference lines for cardinal directions */}
             <ReferenceLine y={0} stroke="red" strokeDasharray="3 3" label="N" />
             <ReferenceLine
               y={90}
@@ -149,12 +143,19 @@ const WindDirectionGraph = ({ data }: { data: any }) => {
               label="W"
             />
 
-            {/* Line for Wind Direction */}
             <Line
               type="monotone"
               dataKey="wind_direction"
               stroke={data.sensor_colors?.wind_direction_color}
               name={`Wind direction (${dirUnit})`}
+              strokeWidth={2.25}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              dot={false}
+              activeDot={activeDotForSeries(
+                data.sensor_colors?.wind_direction_color ?? '#8b5cf6'
+              )}
+              hide={!showSeries}
             />
           </LineChart>
         </ResponsiveContainer>

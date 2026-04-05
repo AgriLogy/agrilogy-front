@@ -7,6 +7,7 @@ import {
   resolveAxisUnit,
 } from '@/app/utils/unitOverrides';
 import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
+import LastDataPanel from '../../common/LastDataPanel';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -15,7 +16,7 @@ const timeAgo = (timestamp: string): string => {
   const diffMin = Math.floor(diffMs / 60000);
   const diffH = Math.floor(diffMin / 60);
 
-  if (diffMin < 1) return "À l'instant";
+  if (diffMin < 1) return "à l'instant";
   if (diffMin < 60) return `${diffMin} min`;
   if (diffH < 24) return `${diffH} h`;
   return then.toLocaleDateString();
@@ -26,40 +27,48 @@ const CumulPrecipitationLastData = ({ data }: { data: SensorData[] }) => {
   useUnitOverridesRevision();
   const unit = resolveAxisUnit('precipitation_rate', latest?.default_unit);
 
-  const bgColor = useColorModeValue('blue.50', 'blue.900');
   const valueColor = useColorModeValue('blue.700', 'blue.200');
   const textColor = useColorModeValue('gray.600', 'gray.300');
-  const timeColor = useColorModeValue('gray.500', 'gray.400');
+  const subColor = useColorModeValue('gray.500', 'gray.400');
 
   return (
     <Box
-      bg={bgColor}
-      p={4}
-      borderRadius="md"
-      boxShadow="md"
-      minH="300px"
-      minW="250px"
-      height="100%"
-      width="100%"
+      flex={1}
+      minH={0}
+      minW={0}
+      w="100%"
+      alignSelf="stretch"
       display="flex"
       flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      textAlign="center"
     >
-      <FaCloudRain size={50} color="#3b82f6" />
-      <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
-        Dernière précipitation :
-      </Text>
-      <Text fontSize="2xl" color={valueColor}>
-        {latest
-          ? `${formatCalibratedReading('precipitation_rate', latest.value)} ${unit}`
-          : 'Non disponible'}
-      </Text>
-      <Text fontSize="sm" color={timeColor}>
-        {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}
-      </Text>
-      <LastDataAddAlertButton />
+      <LastDataPanel
+        variant="cumulPrecipitation"
+        display="flex"
+        flexDirection="column"
+        textAlign="center"
+        minW="250px"
+      >
+        <FaCloudRain size={44} color="#3b82f6" />
+        <Text
+          fontWeight="semibold"
+          fontSize="xs"
+          letterSpacing="0.08em"
+          textTransform="uppercase"
+          mt={3}
+          color={textColor}
+        >
+          Cumul pluviométrique
+        </Text>
+        <Text fontSize="2xl" fontWeight="semibold" color={valueColor} mt={1}>
+          {latest
+            ? `${formatCalibratedReading('precipitation_rate', latest.value)} ${unit}`
+            : '—'}
+        </Text>
+        <Text fontSize="xs" color={subColor} mt={2}>
+          {latest ? `Mesure : ${timeAgo(latest.timestamp)}` : ''}
+        </Text>
+        <LastDataAddAlertButton />
+      </LastDataPanel>
     </Box>
   );
 };

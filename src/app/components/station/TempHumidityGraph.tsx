@@ -1,5 +1,6 @@
 'use client';
-import { Box, Text } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
+import { useMemo, useState } from 'react';
 import { useCalibratedStationChartRows } from '@/app/hooks/useCalibratedStationChartRows';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import { resolveAxisUnit } from '@/app/utils/unitOverrides';
@@ -14,45 +15,27 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import ChartPanelHeading from '../common/ChartPanelHeading';
 import ChartStateView from '../common/ChartStateView';
 import UnifiedTooltip from '../common/UnifiedTooltip';
 import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
-
-const CustomLegend = (props: any) => (
-  <ul
-    style={{
-      display: 'flex',
-      listStyle: 'none',
-      padding: 0,
-      flexWrap: 'wrap',
-      margin: 0,
-      marginLeft: 60,
-    }}
-  >
-    {props.payload.map((entry: any, index: number) => (
-      <li
-        key={`item-${index}`}
-        style={{
-          marginRight: '15px',
-          fontSize: '12px',
-          color: entry.color,
-          whiteSpace: 'nowrap',
-        }}
-      >
-        <span
-          style={{
-            marginRight: '5px',
-            backgroundColor: entry.color,
-            width: '10px',
-            height: '10px',
-            display: 'inline-block',
-          }}
-        />
-        {entry.value}
-      </li>
-    ))}
-  </ul>
-);
+import ChartLegend, {
+  type ChartLegendPayloadEntry,
+} from '../common/ChartLegend';
+import {
+  activeDotForSeries,
+  addTimeMsToChartRows,
+  defaultLegendWrapperStyle,
+  getAdaptiveTimeXAxisProps,
+  getDefaultYAxisProps,
+  mergeAxisTheme,
+  themedCartesianGrid,
+  CHART_MARGIN_LEFT_Y_LABEL,
+  CHART_MARGIN_RIGHT_Y_LABEL,
+  CHART_PLOT_HEIGHT_PX,
+  yAxisLabelInsideLeft,
+  yAxisLabelInsideRight,
+} from '@/app/utils/chartAxisConfig';
 
 const TEMP_HUM_FIELDS = [
   { dataKey: 'temperature_weather', sensorKey: 'temperature_weather' },
@@ -61,14 +44,9 @@ const TEMP_HUM_FIELDS = [
 
 const TempHumidityGraph = ({ data }: { data: any }) => {
   const { bg, textColor } = useColorModeStyles();
-  const { axis, grid } = useChartAxisColors();
+  const { axis, tickFill, grid } = useChartAxisColors();
   useUnitOverridesRevision();
 
-  const CustomTick = ({ x, y, payload }: any) => (
-    <text x={x} y={y} textAnchor="middle" fill={axis} fontSize="10">
-      {payload.value}
-    </text>
-  );
   const loading = !data;
   const empty =
     !!data &&
@@ -79,8 +57,34 @@ const TempHumidityGraph = ({ data }: { data: any }) => {
     data?.sensor_data,
     TEMP_HUM_FIELDS
   );
+  const chartData = useMemo(
+    () => addTimeMsToChartRows(chartRows, 'timestamp'),
+    [chartRows]
+  );
+  const xAxisProps = mergeAxisTheme(
+    getAdaptiveTimeXAxisProps(chartData, 'timestamp'),
+    axis,
+    tickFill
+  );
+  const yTemp = mergeAxisTheme(getDefaultYAxisProps(1), axis, tickFill);
+  const yHum = mergeAxisTheme(getDefaultYAxisProps(0), axis, tickFill);
   const tempUnit = resolveAxisUnit('temperature_weather');
   const humUnit = resolveAxisUnit('humidity_weather');
+
+  const [seriesVisible, setSeriesVisible] = useState({
+    temperature_weather: true,
+    humidity_weather: true,
+  });
+
+  const handleLegendClick = (e: ChartLegendPayloadEntry) => {
+    const k = e.dataKey;
+    if (k !== 'temperature_weather' && k !== 'humidity_weather') return;
+    setSeriesVisible((p) => ({ ...p, [k]: !p[k as keyof typeof p] }));
+  };
+
+  const hiddenLegendKeys = Object.entries(seriesVisible)
+    .filter(([, on]) => !on)
+    .map(([key]) => key) as string[];
 
   return (
     <Box
@@ -91,64 +95,65 @@ const TempHumidityGraph = ({ data }: { data: any }) => {
       boxShadow="lg"
       p={2}
     >
-      <Text color={textColor} fontSize="lg" fontWeight="bold" mb={4}>
-        {data?.sensor_names?.temperature_humidity_weather}
-      </Text>
-      <ChartStateView loading={loading} empty={empty} height={300}>
+      <Box mb={4}>
+        <ChartPanelHeading
+          title="Air — température et humidité relative"
+          subtitle={data?.sensor_names?.temperature_humidity_weather}
+          color={textColor}
+        />
+      </Box>
+      <ChartStateView
+        loading={loading}
+        empty={empty}
+        height={CHART_PLOT_HEIGHT_PX}
+      >
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartRows}>
-            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
-            <XAxis
-              dataKey="timestamp"
-              tick={<CustomTick />}
-              stroke={axis}
-              strokeWidth={1}
-              axisLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-            />
+          <LineChart
+            data={chartData}
+            margin={{
+              top: 12,
+              right: CHART_MARGIN_RIGHT_Y_LABEL,
+              left: CHART_MARGIN_LEFT_Y_LABEL,
+              bottom: 8,
+            }}
+          >
+            <CartesianGrid {...themedCartesianGrid(grid)} />
+            <XAxis {...xAxisProps} />
             <YAxis
               yAxisId="left"
-              tick={<CustomTick />}
-              stroke={axis}
-              strokeWidth={1}
-              label={{
-                value: tempUnit,
-                angle: -90,
-                position: 'insideLeft',
-                style: { fill: axis, fontSize: 11 },
-              }}
-              axisLine={{ stroke: axis, strokeWidth: 1 }}
-              tickLine={{ stroke: axis, strokeWidth: 1 }}
+              {...yTemp}
+              label={yAxisLabelInsideLeft(`Temp. (${tempUnit})`, tickFill)}
             />
             <YAxis
               yAxisId="right"
               orientation="right"
-              tick={<CustomTick />}
-              stroke={axis}
-              strokeWidth={1}
-              label={{
-                value: humUnit,
-                angle: 90,
-                position: 'insideRight',
-                style: { fill: axis, fontSize: 11 },
-              }}
-              axisLine={{ stroke: axis, strokeWidth: 1 }}
-              tickLine={{ stroke: axis, strokeWidth: 1 }}
+              {...yHum}
+              label={yAxisLabelInsideRight(`HR (${humUnit})`, tickFill)}
             />
             <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
-            <Legend content={<CustomLegend />} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={
+                <ChartLegend
+                  onClick={handleLegendClick}
+                  hiddenDataKeys={hiddenLegendKeys}
+                />
+              }
+            />
             <Line
               yAxisId="left"
               type="monotone"
               dataKey="temperature_weather"
               stroke={data.sensor_colors?.temperature_weather_color}
               name={`Temperature (${tempUnit})`}
+              strokeWidth={2.25}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              dot={false}
+              activeDot={activeDotForSeries(
+                data.sensor_colors?.temperature_weather_color ?? '#d97706'
+              )}
+              hide={!seriesVisible.temperature_weather}
             />
             <Line
               yAxisId="right"
@@ -156,6 +161,14 @@ const TempHumidityGraph = ({ data }: { data: any }) => {
               dataKey="humidity_weather"
               stroke={data.sensor_colors?.humidity_weather_color}
               name={`Humidity (${humUnit})`}
+              strokeWidth={2.25}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              dot={false}
+              activeDot={activeDotForSeries(
+                data.sensor_colors?.humidity_weather_color ?? '#0d9488'
+              )}
+              hide={!seriesVisible.humidity_weather}
             />
           </LineChart>
         </ResponsiveContainer>

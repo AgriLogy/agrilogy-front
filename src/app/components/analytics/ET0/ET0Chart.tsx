@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   BarChart,
   Bar,
@@ -12,7 +12,6 @@ import {
 import {
   Box,
   Text,
-  useBreakpointValue,
   useColorModeValue,
   Button,
   HStack,
@@ -20,12 +19,30 @@ import {
 } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
+import ChartPanelHeading from '../../common/ChartPanelHeading';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
 import { resolveAxisUnit } from '@/app/utils/unitOverrides';
 import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
+import ChartLegend, {
+  type ChartLegendPayloadEntry,
+} from '../../common/ChartLegend';
+import {
+  addTimeMsToChartRows,
+  defaultBarProps,
+  defaultLegendWrapperStyle,
+  getAdaptiveTimeXAxisProps,
+  getDefaultYAxisProps,
+  maxBarSizeForPointCount,
+  mergeAxisTheme,
+  themedCartesianGrid,
+  CHART_MARGIN_LEFT_Y_LABEL,
+  CHART_PLOT_HEIGHT_PX,
+  analyticsChartPanelLayoutProps,
+  yAxisLabelInsideLeft,
+} from '@/app/utils/chartAxisConfig';
 
 interface Et0Data {
   timestamp: string;
@@ -47,27 +64,46 @@ const EC0Chart = ({
 
   const chartData = useMemo(
     () =>
-      weatherData.map((item, index) => {
-        const calculated = calculatedData[index]?.value ?? null;
-        return {
-          name: item.timestamp,
-          et0_sensor: calibrateChartValue('et0', item.value),
-          et0_calculated:
-            calculated != null && Number.isFinite(calculated)
-              ? calibrateChartValue('et0', calculated)
-              : null,
-        };
-      }),
+      addTimeMsToChartRows(
+        weatherData.map((item, index) => {
+          const calculated = calculatedData[index]?.value ?? null;
+          return {
+            name: item.timestamp,
+            et0_sensor: calibrateChartValue('et0', item.value),
+            et0_calculated:
+              calculated != null && Number.isFinite(calculated)
+                ? calibrateChartValue('et0', calculated)
+                : null,
+          };
+        }),
+        'name'
+      ),
     [weatherData, calculatedData, unitRev]
   );
 
   const textColor = useColorModeValue('gray.800', 'gray.200');
-  const { axis, grid } = useChartAxisColors();
-  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(chartData.length / 3),
-    md: Math.ceil(chartData.length / 5),
+  const { axis, tickFill, grid } = useChartAxisColors();
+  const xAxisProps = mergeAxisTheme(
+    getAdaptiveTimeXAxisProps(chartData, 'name'),
+    axis,
+    tickFill
+  );
+  const yProps = mergeAxisTheme(getDefaultYAxisProps(2), axis, tickFill);
+
+  const [seriesVisible, setSeriesVisible] = useState({
+    et0_sensor: true,
+    et0_calculated: true,
   });
+
+  const handleLegendClick = (e: ChartLegendPayloadEntry) => {
+    const k = e.dataKey;
+    if (k !== 'et0_sensor' && k !== 'et0_calculated') return;
+    setSeriesVisible((p) => ({ ...p, [k]: !p[k as keyof typeof p] }));
+  };
+
+  const hiddenLegendKeys = Object.entries(seriesVisible)
+    .filter(([, on]) => !on)
+    .map(([key]) => key) as string[];
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
@@ -101,11 +137,13 @@ const EC0Chart = ({
   );
 
   return (
-    <Box width="100%" pr={4} pb={4}>
+    <Box {...analyticsChartPanelLayoutProps}>
       <Flex justify="space-between" align="center" mb={4}>
-        <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          ET0
-        </Text>
+        <ChartPanelHeading
+          color={textColor}
+          title="ET₀ — évapotranspiration de référence"
+          subtitle={`Comparaison mesures capteur et série calculée — unité affichée ${et0Unit}.`}
+        />
         <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
@@ -131,64 +169,50 @@ const EC0Chart = ({
         empty={chartData.length === 0}
         emptyText="Aucune donnée disponible"
         chartRef={chartRef}
-        height="300px"
+        height={CHART_PLOT_HEIGHT_PX}
       >
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
-            margin={{ top: 10, right: 30, left: 0, bottom: 5 }}
+            margin={{
+              top: 10,
+              right: 30,
+              left: CHART_MARGIN_LEFT_Y_LABEL,
+              bottom: 5,
+            }}
+            barCategoryGap="14%"
           >
-            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
-            <XAxis
-              dataKey="name"
-              angle={0}
-              textAnchor="middle"
-              interval={labelInterval}
-              stroke={axis}
-              strokeWidth={1}
-              tick={{
-                fill: axis,
-                fontSize: 17,
-                fontFamily: 'Arial, sans-serif',
-              }}
-              axisLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-            />
+            <CartesianGrid {...themedCartesianGrid(grid)} />
+            <XAxis {...xAxisProps} />
             <YAxis
-              label={{ value: et0Unit, angle: -90, position: 'insideLeft' }}
-              stroke={axis}
-              strokeWidth={1}
-              tick={{
-                fill: axis,
-                fontSize: 17,
-                fontFamily: 'Arial, sans-serif',
-              }}
-              axisLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
+              {...yProps}
+              label={yAxisLabelInsideLeft(`ET₀ (${et0Unit})`, tickFill)}
             />
             <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
-            <Legend />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={
+                <ChartLegend
+                  onClick={handleLegendClick}
+                  hiddenDataKeys={hiddenLegendKeys}
+                />
+              }
+            />
             <Bar
               dataKey="et0_sensor"
+              {...defaultBarProps}
+              maxBarSize={maxBarSizeForPointCount(chartData.length)}
               fill="#3182ce"
               name={`ET0 Capteur (${et0Unit})`}
+              hide={!seriesVisible.et0_sensor}
             />
             <Bar
               dataKey="et0_calculated"
+              {...defaultBarProps}
+              maxBarSize={maxBarSizeForPointCount(chartData.length)}
               fill="#e53e3e"
               name={`ET0 Calculé (${et0Unit})`}
+              hide={!seriesVisible.et0_calculated}
             />
           </BarChart>
         </ResponsiveContainer>

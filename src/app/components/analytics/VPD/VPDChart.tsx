@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -12,21 +12,31 @@ import {
 import { Box, Flex, Text, Button, HStack, Icon } from '@chakra-ui/react';
 import { FaDownload, FaCamera, FaLeaf } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
+import ChartPanelHeading from '../../common/ChartPanelHeading';
 import ChartStateView from '../../common/ChartStateView';
 import ChartLegend, {
   type ChartLegendPayloadEntry,
 } from '../../common/ChartLegend';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
 import { formatNumber } from '@/app/utils/formatNumber';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
 import {
+  activeDotForSeries,
   addTimeMsToChartRows,
-  defaultCartesianGridProps,
   defaultLegendWrapperStyle,
   defaultLineProps,
   defaultTooltipCursor,
   getAdaptiveTimeXAxisProps,
   getDefaultYAxisProps,
+  mergeAxisTheme,
+  themedCartesianGrid,
+  CHART_MARGIN_LEFT_Y_LABEL,
+  CHART_PLOT_HEIGHT_VPD_PX,
+  analyticsChartPanelLayoutProps,
+  yAxisLabelInsideLeft,
 } from '@/app/utils/chartAxisConfig';
 
 export interface VPDDataPoint {
@@ -35,7 +45,6 @@ export interface VPDDataPoint {
 }
 
 const LEGEND_NAME = 'Déficit de pression de vapeur';
-const Y_TICKS = [0, 0.5, 1, 1.5, 2, 2.5] as const;
 
 const VPDChart = ({
   data,
@@ -46,15 +55,25 @@ const VPDChart = ({
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const { textColor } = useColorModeStyles();
+  useUnitOverridesRevision();
+  const vpdUnit = resolveAxisUnit('vpd');
 
-  const chartData = addTimeMsToChartRows(data, 'timestamp');
-  const xAxisProps = getAdaptiveTimeXAxisProps(chartData, 'timestamp');
-  const yAxisProps = getDefaultYAxisProps(1);
+  const chartData = useMemo(
+    () => addTimeMsToChartRows(data, 'timestamp'),
+    [data]
+  );
+  const { axis, tickFill, grid } = useChartAxisColors();
+  const xAxisProps = mergeAxisTheme(
+    getAdaptiveTimeXAxisProps(chartData, 'timestamp'),
+    axis,
+    tickFill
+  );
+  const yAxisProps = mergeAxisTheme(getDefaultYAxisProps(1), axis, tickFill);
 
   const [showVpd, setShowVpd] = useState(true);
 
   const handleLegendClick = (entry: ChartLegendPayloadEntry) => {
-    if (!entry) return;
+    if (entry?.dataKey !== 'vpd') return;
     setShowVpd((prev) => !prev);
   };
 
@@ -70,7 +89,7 @@ const VPDChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      'timestamp,vpd_kpa\n' +
+      `timestamp,vpd_${vpdUnit.replace(/\s+/g, '_')}\n` +
       data.map((d) => `${d.timestamp},${formatNumber(d.vpd)}`).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -82,14 +101,20 @@ const VPDChart = ({
   };
 
   return (
-    <Box width="100%" pr={4} pb={4}>
+    <Box {...analyticsChartPanelLayoutProps}>
       <Flex justify="space-between" align="center" mb={4}>
-        <HStack spacing={2} align="center">
-          <Icon as={FaLeaf} color="green.500" boxSize={5} aria-hidden />
-          <Text fontSize="xl" fontWeight="bold" color={textColor}>
-            Déficit de pression de vapeur
-          </Text>
-        </HStack>
+        <ChartPanelHeading
+          color={textColor}
+          title="Déficit de pression de vapeur (DPV)"
+          subtitle={
+            vpdUnit
+              ? `Indicateur pour le couvert végétal — échelle ${vpdUnit}.`
+              : 'Indicateur de sécheresse atmosphérique pour le couvert végétal.'
+          }
+          startAdornment={
+            <Icon as={FaLeaf} color="green.500" boxSize={5} aria-hidden />
+          }
+        />
         <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
@@ -113,26 +138,24 @@ const VPDChart = ({
         loading={loading}
         empty={chartData.length === 0}
         chartRef={chartRef}
-        height="340px"
+        height={CHART_PLOT_HEIGHT_VPD_PX}
       >
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
-            margin={{ top: 16, right: 0, left: 15, bottom: 0 }}
+            margin={{
+              top: 16,
+              right: 0,
+              left: CHART_MARGIN_LEFT_Y_LABEL,
+              bottom: 0,
+            }}
           >
-            <CartesianGrid {...defaultCartesianGridProps} />
+            <CartesianGrid {...themedCartesianGrid(grid)} />
             <XAxis {...xAxisProps} />
             <YAxis
               {...yAxisProps}
-              domain={[0, 2.5]}
-              ticks={[...Y_TICKS]}
-              label={{
-                value: 'Déficit de pression de vapeur (DPV) (kPa)',
-                angle: -90,
-                dy: 10,
-                dx: -30,
-                style: { fontSize: 12, fill: '#64748b' },
-              }}
+              domain={[0, 'auto']}
+              label={yAxisLabelInsideLeft(`DPV (${vpdUnit})`.trim(), tickFill)}
             />
             <Tooltip
               cursor={defaultTooltipCursor}
@@ -143,30 +166,27 @@ const VPDChart = ({
                     const num = typeof v === 'number' ? v : Number(v);
                     return Number.isNaN(num)
                       ? String(v)
-                      : `${formatNumber(num, 1)} kPa`;
+                      : `${formatNumber(num, 1)} ${vpdUnit}`.trim();
                   }}
                 />
               }
             />
             <Legend
               wrapperStyle={defaultLegendWrapperStyle}
-              content={<ChartLegend onClick={handleLegendClick} />}
+              content={
+                <ChartLegend
+                  onClick={handleLegendClick}
+                  hiddenDataKeys={showVpd ? [] : ['vpd']}
+                />
+              }
             />
             <Line
-              type="linear"
               dataKey="vpd"
-              name={LEGEND_NAME}
+              name={vpdUnit ? `${LEGEND_NAME} (${vpdUnit})` : LEGEND_NAME}
               stroke="#3182ce"
               {...defaultLineProps}
               hide={!showVpd}
-              strokeLinejoin="miter"
-              strokeLinecap="butt"
-              activeDot={{
-                r: 5,
-                strokeWidth: 2,
-                fill: '#3182ce',
-                stroke: '#fff',
-              }}
+              activeDot={activeDotForSeries('#3182ce')}
               isAnimationActive={false}
             />
           </LineChart>

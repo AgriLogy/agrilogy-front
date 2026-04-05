@@ -8,20 +8,12 @@ import {
   Legend,
   ResponsiveContainer,
   CartesianGrid,
-  Brush,
 } from 'recharts';
-import {
-  Box,
-  Button,
-  Flex,
-  HStack,
-  Text,
-  useBreakpointValue,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { FaCamera, FaDownload } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
+import ChartPanelHeading from '../../common/ChartPanelHeading';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
@@ -29,6 +21,24 @@ import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
 import { resolveAxisUnit } from '@/app/utils/unitOverrides';
 import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
+import ChartLegend, {
+  type ChartLegendPayloadEntry,
+} from '../../common/ChartLegend';
+import {
+  activeDotForSeries,
+  addTimeMsToChartRows,
+  defaultLegendWrapperStyle,
+  getAdaptiveTimeXAxisProps,
+  getDefaultYAxisProps,
+  mergeAxisTheme,
+  themedCartesianGrid,
+  CHART_MARGIN_LEFT_Y_LABEL,
+  CHART_MARGIN_RIGHT_Y_LABEL,
+  CHART_PLOT_HEIGHT_PX,
+  analyticsChartPanelLayoutProps,
+  yAxisLabelInsideLeft,
+  yAxisLabelInsideRight,
+} from '@/app/utils/chartAxisConfig';
 
 type Props = {
   salinityData: SensorData[];
@@ -43,21 +53,13 @@ const SoilSalinityConductivityChart = ({
 }: Props) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const { textColor } = useColorModeStyles();
-  const { axis, grid } = useChartAxisColors();
-  const brushStroke = useColorModeValue('#8884d8', '#b794f4');
+  const { axis, tickFill, grid } = useChartAxisColors();
   const unitRev = useUnitOverridesRevision();
 
   const [activeLines, setActiveLines] = useState({
     soil_salinity: true,
     soil_conductivity: true,
   });
-
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(Math.max(salinityData.length, conductivityData.length) / 3),
-    md: Math.ceil(Math.max(salinityData.length, conductivityData.length) / 5),
-  });
-  // const _labelAngle = useBreakpointValue({ base: -15, md: 15 });
-  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
 
   const chartData = useMemo(() => {
     const timestamps = Array.from(
@@ -90,6 +92,19 @@ const SoilSalinityConductivityChart = ({
     });
   }, [salinityData, conductivityData, unitRev]);
 
+  const chartRows = useMemo(
+    () => addTimeMsToChartRows(chartData, 'name'),
+    [chartData]
+  );
+
+  const xAxisProps = mergeAxisTheme(
+    getAdaptiveTimeXAxisProps(chartRows, 'name'),
+    axis,
+    tickFill
+  );
+  const ySal = mergeAxisTheme(getDefaultYAxisProps(0), axis, tickFill);
+  const yCond = mergeAxisTheme(getDefaultYAxisProps(0), axis, tickFill);
+
   const salinityUnit = resolveAxisUnit(
     'soil_salinity',
     salinityData[0]?.default_unit
@@ -99,7 +114,7 @@ const SoilSalinityConductivityChart = ({
     conductivityData[0]?.default_unit
   );
 
-  const handleLegendClick = (e: { dataKey?: unknown }) => {
+  const handleLegendClick = (e: ChartLegendPayloadEntry) => {
     const key = e.dataKey as keyof typeof activeLines | undefined;
     if (key === 'soil_salinity' || key === 'soil_conductivity') {
       setActiveLines((prev) => ({
@@ -108,6 +123,10 @@ const SoilSalinityConductivityChart = ({
       }));
     }
   };
+
+  const hiddenLegendKeys = (
+    ['soil_salinity', 'soil_conductivity'] as const
+  ).filter((k) => !activeLines[k]);
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
@@ -140,11 +159,13 @@ const SoilSalinityConductivityChart = ({
   };
 
   return (
-    <Box width="100%" pr={4} pb={4}>
+    <Box {...analyticsChartPanelLayoutProps}>
       <Flex justify="space-between" align="center" mb={4}>
-        <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Évolution de la salinité et conductivité du sol
-        </Text>
+        <ChartPanelHeading
+          color={textColor}
+          title="Salinité et conductivité du sol"
+          subtitle="Teneur en sels et conductivité électrique — indicateurs de stress ionique."
+        />
         <HStack spacing={2}>
           <Button onClick={handleScreenshot} variant="ghost" colorScheme="teal">
             <FaCamera />
@@ -161,101 +182,64 @@ const SoilSalinityConductivityChart = ({
 
       <ChartStateView
         loading={loading}
-        empty={chartData.length === 0}
+        empty={chartRows.length === 0}
         chartRef={chartRef}
-        height="300px"
+        height={CHART_PLOT_HEIGHT_PX}
       >
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
-            data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            data={chartRows}
+            margin={{
+              top: 12,
+              right: CHART_MARGIN_RIGHT_Y_LABEL,
+              left: CHART_MARGIN_LEFT_Y_LABEL,
+              bottom: 8,
+            }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
-            <XAxis
-              dataKey="name"
-              angle={0}
-              textAnchor="middle"
-              interval={labelInterval}
-              stroke={axis}
-              strokeWidth={1}
-              tick={{
-                fill: axis,
-                fontSize: 17,
-                fontFamily: 'Arial, sans-serif',
-              }}
-              axisLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-            />
+            <CartesianGrid {...themedCartesianGrid(grid)} />
+            <XAxis {...xAxisProps} />
             <YAxis
               yAxisId="salinity"
-              label={{
-                value: salinityUnit,
-                angle: -90,
-                position: 'insideLeft',
-                fontSize: 14,
-                dy: 80,
-              }}
-              stroke={axis}
-              strokeWidth={1}
-              tick={{
-                fill: axis,
-                fontSize: 17,
-                fontFamily: 'Arial, sans-serif',
-              }}
-              axisLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
+              {...ySal}
+              label={yAxisLabelInsideLeft(
+                `Salinité (${salinityUnit})`,
+                tickFill
+              )}
             />
             <YAxis
               yAxisId="conductivity"
               orientation="right"
-              label={{
-                value: conductivityUnit,
-                angle: 90,
-                position: 'insideRight',
-                fontSize: 14,
-                dy: 50,
-              }}
-              stroke={axis}
-              strokeWidth={1}
-              tick={{
-                fill: axis,
-                fontSize: 17,
-                fontFamily: 'Arial, sans-serif',
-              }}
-              axisLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
+              {...yCond}
+              label={yAxisLabelInsideRight(
+                `CE (${conductivityUnit})`,
+                tickFill
+              )}
             />
             <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
-            <Legend onClick={handleLegendClick} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={
+                <ChartLegend
+                  onClick={handleLegendClick}
+                  hiddenDataKeys={[...hiddenLegendKeys]}
+                />
+              }
+            />
 
             <Line
               yAxisId="salinity"
               type="monotone"
               dataKey="soil_salinity"
               name={`${chartData[0]?.salinity_courbe_name ?? 'Salinité'} (${salinityUnit})`}
+              hide={!activeLines.soil_salinity}
               stroke={chartData[0]?.salinity_color || '#dba800'}
-              strokeOpacity={activeLines.soil_salinity ? 1 : 0.1}
-              strokeWidth={2}
+              strokeWidth={2.25}
+              strokeLinecap="round"
+              strokeLinejoin="round"
               dot={false}
-              activeDot={{ r: 6 }}
+              activeDot={activeDotForSeries(
+                chartData[0]?.salinity_color || '#dba800'
+              )}
             />
 
             <Line
@@ -263,19 +247,15 @@ const SoilSalinityConductivityChart = ({
               type="monotone"
               dataKey="soil_conductivity"
               name={`${chartData[0]?.conductivity_courbe_name ?? 'Conductivité'} (${conductivityUnit})`}
+              hide={!activeLines.soil_conductivity}
               stroke={chartData[0]?.conductivity_color || '#00a86b'}
-              strokeOpacity={activeLines.soil_conductivity ? 1 : 0.1}
-              strokeWidth={2}
+              strokeWidth={2.25}
+              strokeLinecap="round"
+              strokeLinejoin="round"
               dot={false}
-              activeDot={{ r: 6 }}
-            />
-
-            <Brush
-              y={238}
-              dataKey="name"
-              height={30}
-              stroke={brushStroke}
-              travellerWidth={8}
+              activeDot={activeDotForSeries(
+                chartData[0]?.conductivity_color || '#00a86b'
+              )}
             />
           </LineChart>
         </ResponsiveContainer>

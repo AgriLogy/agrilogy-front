@@ -1,12 +1,13 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
+import { GiElectricalResistance } from 'react-icons/gi';
 import { SensorData } from '@/app/types';
-import { GiLightningDome } from 'react-icons/gi';
 import {
   formatCalibratedReading,
   resolveAxisUnit,
 } from '@/app/utils/unitOverrides';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
+import LastDataPanel from '../../common/LastDataPanel';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -17,7 +18,7 @@ const timeAgo = (timestamp: string): string => {
 
   if (diffMin < 1) return "à l'instant";
   if (diffMin < 60) return `${diffMin} min.`;
-  if (diffH < 24) return `${diffH} heures`;
+  if (diffH < 24) return `${diffH} h`;
   return then.toLocaleDateString();
 };
 
@@ -26,41 +27,48 @@ const EcWaterLastData = ({ data }: { data: SensorData[] }) => {
   const latest = data[data.length - 1];
   const unit = resolveAxisUnit('water_ec', latest?.default_unit);
 
-  // Light/Dark mode values
-  const bgColor = useColorModeValue('blue.50', 'blue.900');
   const valueColor = useColorModeValue('blue.700', 'blue.200');
   const textColor = useColorModeValue('gray.600', 'gray.300');
+  const subColor = useColorModeValue('gray.500', 'gray.400');
 
   return (
     <Box
-      bg={bgColor}
-      p={4}
-      borderRadius="md"
-      boxShadow="md"
-      minH="300px"
-      minW="250px"
-      height="100%"
-      width="100%"
+      flex={1}
+      minH={0}
+      minW={0}
+      w="100%"
+      alignSelf="stretch"
       display="flex"
       flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      textAlign="center"
     >
-      {/* <FaBolt size={50} color="#f4a261" /> */}
-      <GiLightningDome size={50} color="#f9844a" />
-      <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
-        Dernière consommation :
-      </Text>
-      <Text fontSize="2xl" color={valueColor}>
-        {latest
-          ? `${formatCalibratedReading('water_ec', latest.value)} ${unit}`
-          : 'Non disponible'}
-      </Text>
-      <Text fontSize="sm" color={textColor}>
-        {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}
-      </Text>
-      <LastDataAddAlertButton />
+      <LastDataPanel
+        variant="ecWater"
+        display="flex"
+        flexDirection="column"
+        textAlign="center"
+        minW="250px"
+      >
+        <GiElectricalResistance size={44} color="#38bdf8" />
+        <Text
+          fontWeight="semibold"
+          fontSize="xs"
+          letterSpacing="0.08em"
+          textTransform="uppercase"
+          mt={3}
+          color={textColor}
+        >
+          Conductivité électrique de l&apos;eau
+        </Text>
+        <Text fontSize="2xl" fontWeight="semibold" color={valueColor} mt={1}>
+          {latest
+            ? `${formatCalibratedReading('water_ec', latest.value)} ${unit}`
+            : '—'}
+        </Text>
+        <Text fontSize="xs" color={subColor} mt={2}>
+          {latest ? `Mesure : ${timeAgo(latest.timestamp)}` : ''}
+        </Text>
+        <LastDataAddAlertButton />
+      </LastDataPanel>
     </Box>
   );
 };

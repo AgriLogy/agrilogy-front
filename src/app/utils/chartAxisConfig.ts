@@ -8,9 +8,46 @@ import { formatNumber } from './formatNumber';
 const AXIS_STROKE = '#94a3b8';
 const AXIS_STROKE_WIDTH = 1;
 const GRID_STROKE = '#e2e8f0';
-const TICK_FONT_SIZE = 12;
+const TICK_FONT_SIZE = 11;
 const TICK_FILL = '#64748b';
 const FONT_FAMILY = 'system-ui, -apple-system, sans-serif';
+
+/** Axis title (unit) size — compact, centered via label style */
+export const AXIS_LABEL_FONT_PX = 11;
+
+/**
+ * Minimum chart margin so outside Y-axis unit labels ({@link yAxisLabelInsideLeft} /
+ * {@link yAxisLabelInsideRight}) sit past tick numerals. Use on the corresponding side.
+ */
+export const CHART_MARGIN_LEFT_Y_LABEL = 40;
+export const CHART_MARGIN_RIGHT_Y_LABEL = 44;
+
+/**
+ * Default pixel height of the Recharts surface (ChartStateView / ResponsiveContainer).
+ * Large enough for axis labels and to leave vertical room under the plot for the period dragger.
+ */
+export const CHART_PLOT_HEIGHT_PX = 350;
+/** VPD chart: slightly taller than default. */
+export const CHART_PLOT_HEIGHT_VPD_PX = 520;
+/** Charts with extra rows above the grid (zones, radar, etc.). */
+export const CHART_PLOT_HEIGHT_TALL_PX = 560;
+
+/**
+ * ChartLastDataShell max height (md+): heading + plot + {@link CHART_PLOT_HEIGHT_PX} + date dragger (~130px) + margins.
+ */
+export const CHART_SHELL_MAX_HEIGHT = '900px';
+/** Water/soil humidity: zone chips + taller plot + dragger. */
+export const CHART_SHELL_MAX_HEIGHT_TALL = '1080px';
+
+/**
+ * Standard outer wrapper for analytics chart components (plant/soil/water pages).
+ * Keeps headings and ChartStateView aligned with the chart column padding.
+ */
+export const analyticsChartPanelLayoutProps = {
+  width: '100%',
+  pr: 4,
+  pb: 4,
+} as const;
 
 export const chartAxisStyles = {
   axisStroke: AXIS_STROKE,
@@ -26,21 +63,72 @@ export const defaultCartesianGridProps = {
   stroke: GRID_STROKE,
   strokeDasharray: '3 3',
   strokeWidth: 1,
+  strokeOpacity: 0.65,
   vertical: true,
   horizontal: true,
 };
 
-/** Hover marker: small circle, white fill, stroke for visibility. Use for Line activeDot. */
-export const defaultActiveDot = { r: 5, strokeWidth: 2, fill: 'black' };
+/** Left Y-axis unit label — outside the tick column so it is not covered by values. */
+export function yAxisLabelInsideLeft(value: string, fill: string = TICK_FILL) {
+  return {
+    value,
+    angle: -90,
+    position: 'left' as const,
+    style: {
+      textAnchor: 'middle' as const,
+      fontSize: AXIS_LABEL_FONT_PX,
+      fill,
+      fontWeight: 500,
+      fontFamily: FONT_FAMILY,
+    },
+    offset: 6,
+  };
+}
+
+/** Right Y-axis unit label — outside the tick column so it is not covered by values. */
+export function yAxisLabelInsideRight(value: string, fill: string = TICK_FILL) {
+  return {
+    value,
+    angle: 90,
+    position: 'right' as const,
+    style: {
+      textAnchor: 'middle' as const,
+      fontSize: AXIS_LABEL_FONT_PX,
+      fill,
+      fontWeight: 500,
+      fontFamily: FONT_FAMILY,
+    },
+    offset: 18,
+  };
+}
+
+/** Hover marker: no visible dots on the line; this shows only under the cursor. */
+export const defaultActiveDot = {
+  r: 6,
+  strokeWidth: 2,
+  fill: '#ffffff',
+  stroke: '#64748b',
+} as const;
+
+/** activeDot that matches the series stroke (ring accent on hover). */
+export function activeDotForSeries(strokeColor: string) {
+  return {
+    r: 6,
+    strokeWidth: 2,
+    fill: '#ffffff',
+    stroke: strokeColor,
+  } as const;
+}
 
 /**
  * Default Line props: smooth continuous line, no dots by default.
- * A single small marker appears only on hover (activeDot). Thin stroke for a modern look.
+ * A single small marker appears only on hover (activeDot).
  */
 export const defaultLineProps = {
+  type: 'monotone' as const,
   dot: false,
   activeDot: defaultActiveDot,
-  strokeWidth: 2,
+  strokeWidth: 2.25,
   strokeLinecap: 'round' as const,
   strokeLinejoin: 'round' as const,
 };
@@ -50,7 +138,7 @@ export const defaultLineProps = {
  * Spread this on Recharts <Bar /> for consistent styling.
  */
 export const defaultBarProps = {
-  radius: [8, 8, 2, 2] as [number, number, number, number],
+  radius: [10, 10, 4, 4] as [number, number, number, number],
   stroke: 'none',
   isAnimationActive: false,
 } as const;
@@ -64,19 +152,20 @@ export const defaultLegendWrapperStyle = {
   width: '100%',
 } as const;
 
-const MONTHS = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
+/** Short French month labels for axis ticks */
+const MOIS_COURTS = [
+  'janv.',
+  'févr.',
+  'mars',
+  'avr.',
+  'mai',
+  'juin',
+  'juil.',
+  'août',
+  'sept.',
+  'oct.',
+  'nov.',
+  'déc.',
 ];
 
 /**
@@ -88,14 +177,14 @@ export function formatXAxisTimestamp(value: string): string {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return String(value);
   const pad = (n: number) => n.toString().padStart(2, '0');
-  return `${date.getDate()} ${MONTHS[date.getMonth()]} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  return `${date.getDate()} ${MOIS_COURTS[date.getMonth()]} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
-/** Format a timestamp for X-axis display as date only: "DD MMM" (e.g. "12 Mar"). */
+/** Format a timestamp for X-axis display as day + month (e.g. "12 mars"). */
 export function formatXAxisDate(value: string): string {
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return String(value);
-  return `${d.getDate()} ${MONTHS[d.getMonth()]}`;
+  return `${d.getDate()} ${MOIS_COURTS[d.getMonth()]}`;
 }
 
 const pad2 = (n: number) => n.toString().padStart(2, '0');
@@ -125,7 +214,7 @@ export function formatZoomedTimeAxisTick(
   const firstD = new Date(allTicks[0]);
 
   if (idx === 0) {
-    return `${d.getDate()} ${MONTHS[d.getMonth()]}`;
+    return `${d.getDate()} ${MOIS_COURTS[d.getMonth()]}`;
   }
 
   if (idx === allTicks.length - 1) {
@@ -136,7 +225,7 @@ export function formatZoomedTimeAxisTick(
     if (sameCalDayAsStart) {
       return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
     }
-    return `${d.getDate()} ${MONTHS[d.getMonth()]}`;
+    return `${d.getDate()} ${MOIS_COURTS[d.getMonth()]}`;
   }
 
   const prevD = new Date(allTicks[idx - 1]);
@@ -146,7 +235,7 @@ export function formatZoomedTimeAxisTick(
     d.getFullYear() !== prevD.getFullYear();
 
   if (newCalendarDay) {
-    return `${d.getDate()} ${MONTHS[d.getMonth()]}`;
+    return `${d.getDate()} ${MOIS_COURTS[d.getMonth()]}`;
   }
 
   return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
@@ -245,21 +334,7 @@ export function formatXAxisPeriod(value: string): string {
   if (!value) return value;
   const d = new Date(value);
   if (!Number.isNaN(d.getTime())) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return `${d.getDate()} ${months[d.getMonth()]}`;
+    return `${d.getDate()} ${MOIS_COURTS[d.getMonth()]}`;
   }
   return value;
 }
@@ -295,10 +370,10 @@ export function getDefaultXAxisProps(
     axisLine: { stroke: AXIS_STROKE, strokeWidth: AXIS_STROKE_WIDTH },
     tickLine: { stroke: AXIS_STROKE, strokeWidth: AXIS_STROKE_WIDTH },
     tickFormatter: createXAxisTimeFormatter(data, dataKey),
-    angle: -25,
+    angle: -22,
     textAnchor: 'end' as const,
     interval: 'preserveStartEnd' as const,
-    minTickGap: 36,
+    minTickGap: 28,
   };
 }
 
@@ -306,7 +381,7 @@ export type AdaptiveTimeXAxisOptions = {
   /** Optional slice of `data` (by index) used to compute visible time span for tick density. */
   startIndex?: number;
   endIndex?: number;
-  /** Show date+time (DD MMM HH:mm) when visible span is <= this many hours. Default: 7 days. */
+  /** Show day + hour on axis when visible span is ≤ this many hours (narrow dragger window). Default: 10 days. */
   zoomThresholdHours?: number;
 };
 
@@ -389,6 +464,7 @@ export function getAdaptiveTimeXAxisProps(
   options: AdaptiveTimeXAxisOptions = {}
 ) {
   const visual = getTimeAxisVisualProps();
+  /** Narrower default so dragger / short windows pick up day+hour ticks sooner (aligned with soil chart UX). */
   const zoomThresholdHours = options.zoomThresholdHours ?? 24 * 7;
   const thresholdMs = zoomThresholdHours * 60 * 60 * 1000;
   /** Use numeric time axis for sub-daily data up to ~1 month (not only ≤7 days). */
@@ -433,6 +509,15 @@ export function getAdaptiveTimeXAxisProps(
       const pad = 60 * 60 * 1000;
       domainMin -= pad;
       domainMax += pad;
+    } else {
+      /** Edge padding keeps time-aligned bars (numeric X) inside the clip on zoom. */
+      const span = domainMax - domainMin;
+      const pad = Math.min(
+        Math.max(span * 0.04, 30 * 60 * 1000),
+        24 * 60 * 60 * 1000
+      );
+      domainMin -= pad;
+      domainMax += pad;
     }
 
     return {
@@ -452,14 +537,17 @@ export function getAdaptiveTimeXAxisProps(
   }
 
   const base = getDefaultXAxisProps(data, dataKey);
+  /** Wide window but sub-daily samples: show date+hour like zoomed detail (still category axis). */
+  const tickFormatter = (v: string) =>
+    subDaily ? formatXAxisTimestamp(v) : formatXAxisDate(v);
   return {
     ...base,
     dataKey,
-    tickFormatter: (v: string) => formatXAxisDate(v),
+    tickFormatter,
     interval: 'preserveStartEnd' as const,
-    minTickGap: 36,
-    angle: 0,
-    textAnchor: 'middle' as const,
+    minTickGap: subDaily ? 20 : 36,
+    angle: subDaily ? -28 : 0,
+    textAnchor: (subDaily ? 'end' : 'middle') as 'end' | 'middle',
   };
 }
 
@@ -501,4 +589,54 @@ export function getDefaultYAxisProps(decimals: number = 2) {
     width: 48,
     tickMargin: 8,
   };
+}
+
+/**
+ * Apply light/dark axis stroke and tick fill while preserving angle, formatter, etc.
+ * Use with {@link getAdaptiveTimeXAxisProps} and {@link getDefaultYAxisProps}.
+ */
+export function mergeAxisTheme<T extends Record<string, unknown>>(
+  props: T,
+  axisStroke: string,
+  tickFill: string
+): T {
+  const baseTick = {
+    fill: tickFill,
+    fontSize: TICK_FONT_SIZE,
+    fontFamily: FONT_FAMILY,
+  };
+  const existingTick = props.tick;
+  const mergedTick =
+    existingTick &&
+    typeof existingTick === 'object' &&
+    !Array.isArray(existingTick) &&
+    existingTick !== null
+      ? { ...baseTick, ...(existingTick as Record<string, unknown>) }
+      : baseTick;
+
+  return {
+    ...props,
+    stroke: axisStroke,
+    tick: mergedTick,
+    axisLine: { stroke: axisStroke, strokeWidth: AXIS_STROKE_WIDTH },
+    tickLine: { stroke: axisStroke, strokeWidth: AXIS_STROKE_WIDTH },
+  };
+}
+
+/** Theme-aware grid stroke; keeps dash and opacity from {@link defaultCartesianGridProps}. */
+export function themedCartesianGrid(gridStroke: string) {
+  return {
+    ...defaultCartesianGridProps,
+    stroke: gridStroke,
+  };
+}
+
+/** Caps bar thickness on time-based BarCharts so narrow dragger windows do not overflow the clip. */
+export function maxBarSizeForPointCount(n: number): number {
+  if (!Number.isFinite(n) || n <= 0) return 24;
+  if (n <= 1) return 20;
+  if (n <= 3) return 28;
+  if (n <= 10) return 40;
+  if (n <= 24) return 48;
+  return 56;
 }

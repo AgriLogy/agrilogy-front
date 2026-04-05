@@ -39,9 +39,7 @@
 //       width="100%"
 //       display="flex"
 //       flexDirection="column"
-//       justifyContent="center"
-//       alignItems="center"
-//       textAlign="center"
+// // //       textAlign="center"
 //     >
 //       <FaSun size={50} color="#f6c90e" />
 //       <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
@@ -70,6 +68,7 @@ import {
 } from '@/app/utils/unitOverrides';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
+import LastDataPanel from '../../common/LastDataPanel';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -90,40 +89,48 @@ const SolarRadiationLastData = ({ data }: { data: SensorData[] }) => {
     (a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp)
   )[data.length - 1];
 
-  const bgColor = useColorModeValue('yellow.50', 'yellow.900');
   const valueColor = useColorModeValue('yellow.700', 'yellow.200');
   const textColor = useColorModeValue('gray.600', 'gray.300');
   const timeColor = useColorModeValue('gray.500', 'gray.400');
 
   return (
     <Box
-      bg={bgColor}
-      p={4}
-      borderRadius="md"
-      boxShadow="md"
-      minH="300px"
-      minW="250px"
-      height="100%"
-      width="100%"
+      flex={1}
+      minH={0}
+      minW={0}
+      w="100%"
+      alignSelf="stretch"
       display="flex"
       flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      textAlign="center"
     >
-      <FaSun size={50} color="#f6c90e" />
-      <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
-        Dernière radiation solaire :
-      </Text>
-      <Text fontSize="2xl" color={valueColor}>
-        {latest
-          ? `${formatCalibratedReading('solar_radiation', latest.value)} ${resolveAxisUnit('solar_radiation', latest?.default_unit)}`
-          : 'Non disponible'}
-      </Text>
-      <Text fontSize="sm" color={timeColor}>
-        {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}
-      </Text>
-      <LastDataAddAlertButton />
+      <LastDataPanel
+        variant="solarRadiation"
+        display="flex"
+        flexDirection="column"
+        textAlign="center"
+        minW="250px"
+      >
+        <FaSun size={44} color="#f6c90e" />
+        <Text
+          fontWeight="semibold"
+          fontSize="xs"
+          letterSpacing="0.08em"
+          textTransform="uppercase"
+          mt={3}
+          color={textColor}
+        >
+          Rayonnement global (dernière mesure)
+        </Text>
+        <Text fontSize="2xl" fontWeight="semibold" color={valueColor} mt={1}>
+          {latest
+            ? `${formatCalibratedReading('solar_radiation', latest.value)} ${resolveAxisUnit('solar_radiation', latest?.default_unit)}`
+            : 'Non disponible'}
+        </Text>
+        <Text fontSize="xs" color={timeColor} mt={2}>
+          {latest ? `Mesure : ${timeAgo(latest.timestamp)}` : ''}
+        </Text>
+        <LastDataAddAlertButton />
+      </LastDataPanel>
     </Box>
   );
 };

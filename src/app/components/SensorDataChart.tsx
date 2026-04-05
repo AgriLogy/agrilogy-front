@@ -1,8 +1,7 @@
 'use client';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Box,
-  Text,
   useColorModeValue,
   useBreakpointValue,
   useColorMode,
@@ -24,6 +23,23 @@ import { useCalibratedStationChartRows } from '@/app/hooks/useCalibratedStationC
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import { resolveAxisUnit } from '@/app/utils/unitOverrides';
 import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
+import ChartPanelHeading from './common/ChartPanelHeading';
+import ChartLegend, {
+  type ChartLegendPayloadEntry,
+} from './common/ChartLegend';
+import {
+  activeDotForSeries,
+  addTimeMsToChartRows,
+  defaultLegendWrapperStyle,
+  getAdaptiveTimeXAxisProps,
+  getDefaultYAxisProps,
+  mergeAxisTheme,
+  themedCartesianGrid,
+  CHART_MARGIN_LEFT_Y_LABEL,
+  CHART_PLOT_HEIGHT_PX,
+  yAxisLabelInsideLeft,
+  yAxisLabelInsideRight,
+} from '@/app/utils/chartAxisConfig';
 // import { calculateET0 } from "../data/dashboard/calculateET0";
 
 interface SensorDataChartProps {
@@ -36,44 +52,6 @@ const DASHBOARD_CHART_FIELDS = [
   { dataKey: 'et0', sensorKey: 'et0' },
 ] as const;
 
-// Custom Legend Component
-const CustomLegend = (props: any) => {
-  return (
-    <ul
-      style={{
-        display: 'flex',
-        listStyle: 'none',
-        padding: 0,
-        flexWrap: 'wrap',
-        margin: 0,
-      }}
-    >
-      {props.payload.map((entry: any, index: number) => (
-        <li
-          key={`item-${index}`}
-          style={{
-            marginRight: '15px',
-            fontSize: '12px',
-            color: entry.color,
-            whiteSpace: 'nowrap',
-          }}
-        >
-          <span
-            style={{
-              marginRight: '5px',
-              backgroundColor: entry.color,
-              width: '10px',
-              height: '10px',
-              display: 'inline-block',
-            }}
-          />
-          {entry.value}
-        </li>
-      ))}
-    </ul>
-  );
-};
-
 const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
   const validData = Array.isArray(data) && data.length > 0 ? data : [];
   useUnitOverridesRevision();
@@ -84,6 +62,10 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
   );
 
   const lastEightData = useMemo(() => calibrated.slice(-8), [calibrated]);
+  const chartData = useMemo(
+    () => addTimeMsToChartRows(lastEightData, 'timestamp'),
+    [lastEightData]
+  );
 
   const tempUnit = resolveAxisUnit('temperature_weather');
   const solarUnit = resolveAxisUnit('solar_radiation');
@@ -91,15 +73,35 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
 
   const chartColor = useColorModeValue('#4A90E2', '#90CDF4');
   const chartBg = useColorModeValue('white', 'gray.800');
-  const { axis, grid } = useChartAxisColors();
+  const { axis, tickFill, grid } = useChartAxisColors();
   const p = useBreakpointValue({ base: 2, md: 4 });
   const { colorMode } = useColorMode();
 
-  const CustomTick = ({ x, y, payload }: any) => (
-    <text x={x} y={y} textAnchor="middle" fill={axis} fontSize="10">
-      {payload.value}
-    </text>
+  const xAxisProps = mergeAxisTheme(
+    getAdaptiveTimeXAxisProps(chartData, 'timestamp'),
+    axis,
+    tickFill
   );
+  const yTemp = mergeAxisTheme(getDefaultYAxisProps(1), axis, tickFill);
+  const ySolar = mergeAxisTheme(getDefaultYAxisProps(0), axis, tickFill);
+  const yEt0 = mergeAxisTheme(getDefaultYAxisProps(2), axis, tickFill);
+
+  const [seriesVisible, setSeriesVisible] = useState({
+    temperature_weather: true,
+    solar_radiation: true,
+    et0: true,
+  });
+
+  const handleLegendClick = (e: ChartLegendPayloadEntry) => {
+    const k = e.dataKey;
+    if (k !== 'temperature_weather' && k !== 'solar_radiation' && k !== 'et0')
+      return;
+    setSeriesVisible((p) => ({ ...p, [k]: !p[k as keyof typeof p] }));
+  };
+
+  const hiddenLegendKeys = Object.entries(seriesVisible)
+    .filter(([, on]) => !on)
+    .map(([key]) => key) as string[];
 
   if (validData.length === 0) {
     return (
@@ -131,50 +133,67 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
       p={p}
       overflow="hidden"
     >
-      <Text
-        color={colorMode === 'light' ? 'gray.700' : 'gray.200'}
-        fontSize="lg"
-        fontWeight="bold"
-        mb={4}
-      >
-        ET0 / H
-      </Text>
-      <ResponsiveContainer width="100%" height={300}>
+      <Box mb={4}>
+        <ChartPanelHeading
+          color={colorMode === 'light' ? 'gray.700' : 'gray.200'}
+          title="Station — température, rayonnement et ET₀"
+          subtitle={`Échelles lecture : ${tempUnit} · ${solarUnit} · ${et0Unit} — fenêtre récente synchronisée.`}
+        />
+      </Box>
+      <ResponsiveContainer width="100%" height={CHART_PLOT_HEIGHT_PX}>
         <LineChart
-          data={lastEightData}
-          margin={{ top: 8, right: 72, left: 8, bottom: 8 }}
+          data={chartData}
+          margin={{
+            top: 12,
+            right: 88,
+            left: CHART_MARGIN_LEFT_Y_LABEL,
+            bottom: 8,
+          }}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke={grid} />
-          <XAxis dataKey="timestamp" tick={<CustomTick />} />
+          <CartesianGrid {...themedCartesianGrid(grid)} />
+          <XAxis {...xAxisProps} />
           <YAxis
             yAxisId="temp"
             orientation="left"
-            tick={<CustomTick />}
-            label={{ value: tempUnit, angle: -90, position: 'insideLeft' }}
+            {...yTemp}
+            label={yAxisLabelInsideLeft(`T (${tempUnit})`, tickFill)}
           />
           <YAxis
             yAxisId="solar"
             orientation="right"
-            tick={<CustomTick />}
-            width={48}
-            label={{ value: solarUnit, angle: 90, position: 'insideRight' }}
+            {...ySolar}
+            label={yAxisLabelInsideRight(solarUnit, tickFill)}
           />
           <YAxis
             yAxisId="et0"
             orientation="right"
-            tick={<CustomTick />}
+            {...yEt0}
             width={48}
             offset={56}
-            label={{ value: et0Unit, angle: 90, position: 'insideRight' }}
+            label={yAxisLabelInsideRight(`ET₀ (${et0Unit})`, tickFill)}
           />
           <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
-          <Legend content={<CustomLegend />} />
+          <Legend
+            wrapperStyle={defaultLegendWrapperStyle}
+            content={
+              <ChartLegend
+                onClick={handleLegendClick}
+                hiddenDataKeys={hiddenLegendKeys}
+              />
+            }
+          />
           <Line
             yAxisId="temp"
             type="monotone"
             dataKey="temperature_weather"
             stroke={chartColor}
             name={`Température de l'air (${tempUnit})`}
+            strokeWidth={2.25}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            dot={false}
+            activeDot={activeDotForSeries(chartColor)}
+            hide={!seriesVisible.temperature_weather}
           />
           <Line
             yAxisId="solar"
@@ -182,6 +201,12 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
             dataKey="solar_radiation"
             stroke="#82ca9d"
             name={`Rayonnement solaire (${solarUnit})`}
+            strokeWidth={2.25}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            dot={false}
+            activeDot={activeDotForSeries('#82ca9d')}
+            hide={!seriesVisible.solar_radiation}
           />
           <Line
             yAxisId="et0"
@@ -189,6 +214,12 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
             dataKey="et0"
             stroke="#ffc658"
             name={`ET₀ (${et0Unit})`}
+            strokeWidth={2.25}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            dot={false}
+            activeDot={activeDotForSeries('#ffc658')}
+            hide={!seriesVisible.et0}
           />
         </LineChart>
       </ResponsiveContainer>

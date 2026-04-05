@@ -1,6 +1,7 @@
-import { Box, Stack, VStack } from '@chakra-ui/react';
+import { Box, VStack } from '@chakra-ui/react';
 import { useEffect, useMemo, useState } from 'react';
 import ChartDateRangeDragger from '../../common/ChartDateRangeDragger';
+import ChartLastDataShell from '../../common/ChartLastDataShell';
 import ChartDateRangeGate from '../../common/ChartDateRangeGate';
 import { sortByTimestamp } from '@/app/utils/chartDateWindow';
 import { SensorData } from '@/app/types';
@@ -14,6 +15,7 @@ import {
 import '@/app/styles/style.css';
 import WindSpeedChart from './WindSpeedChart';
 import WindSpeedLastData from './WindSpeedLastData';
+import { CHART_SHELL_MAX_HEIGHT } from '@/app/utils/chartAxisConfig';
 
 const WindSpeedMain = ({
   filters,
@@ -65,37 +67,48 @@ const WindSpeedMain = ({
   );
 
   return (
-    <Stack
+    <ChartLastDataShell
       spacing={2}
       direction={{ base: 'column', md: 'row' }}
       align="start"
       width="100%"
-      height="100%"
       className="Box"
-      maxH={'550px'}
-    >
-      <Box flex={3} p={2} height="100%" width="100%">
-        <ChartDateRangeGate timeline={timeline}>
-          {({ startIdx, endIdx, setRange }) => (
-            <VStack spacing={0} align="stretch" width="100%">
-              <WindSpeedChart
-                data={sortedData.slice(startIdx, endIdx + 1)}
-                loading={loading}
-              />
-              <ChartDateRangeDragger
-                timestamps={timeline}
-                startIdx={startIdx}
-                endIdx={endIdx}
-                onChange={(r) => setRange(r)}
-              />
-            </VStack>
-          )}
-        </ChartDateRangeGate>
-      </Box>
-      <Box flex={1} p={3} height="100%" width="100%">
-        <WindSpeedLastData data={data} />
-      </Box>
-    </Stack>
+      maxH={CHART_SHELL_MAX_HEIGHT}
+      chart={
+        <Box flex={3} p={2} width="100%" minW={0}>
+          <ChartDateRangeGate timeline={timeline}>
+            {({ startIdx, endIdx, setRange }) => (
+              <VStack spacing={0} align="stretch" width="100%">
+                <WindSpeedChart
+                  data={sortedData.slice(startIdx, endIdx + 1)}
+                  loading={loading}
+                />
+                <ChartDateRangeDragger
+                  timestamps={timeline}
+                  startIdx={startIdx}
+                  endIdx={endIdx}
+                  onChange={(r) => setRange(r)}
+                />
+              </VStack>
+            )}
+          </ChartDateRangeGate>
+        </Box>
+      }
+      lastData={
+        <Box
+          flex={1}
+          p={3}
+          width="100%"
+          minW={0}
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="stretch"
+        >
+          <WindSpeedLastData data={data} />
+        </Box>
+      }
+    />
   );
 };
 

@@ -26,12 +26,11 @@
 .box {
   margin: 3px;
   border-radius: 5px;
-  height: 400px;
+  min-height: 0;
+  height: auto;
   font-size: 24px;
   font-weight: bold;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: visible;
 }
 
 .wide {

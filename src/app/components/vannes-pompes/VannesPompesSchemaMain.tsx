@@ -473,14 +473,14 @@ const VannesPompesSchemaMain = () => {
                               fontSize="xs"
                               fontWeight="bold"
                               color={titleColor}
-                              fontVariantNumeric="tabular-nums"
+                              sx={{ fontVariantNumeric: 'tabular-nums' }}
                             >
                               0.0
                             </Text>
                             <Text
                               fontSize="10px"
                               color={mutedColor}
-                              fontVariantNumeric="tabular-nums"
+                              sx={{ fontVariantNumeric: 'tabular-nums' }}
                             >
                               cible 4.0
                             </Text>

@@ -7,32 +7,41 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  Brush,
   CartesianGrid,
 } from 'recharts';
-import {
-  useBreakpointValue,
-  Box,
-  Flex,
-  Text,
-  Button,
-  HStack,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { Box, Flex, Text, Button, HStack } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { NpkSensorData } from '@/app/types';
+import ChartPanelHeading from '../../common/ChartPanelHeading';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import {
+  compactResolvedAxisUnits,
   formatCalibratedReading,
   resolveAxisUnit,
 } from '@/app/utils/unitOverrides';
 import { calibratedValueInAxisUnit } from '@/app/utils/calibratedValueInAxisUnit';
 import { getCatalogDefaultUnit } from '@/app/utils/sensorCatalog';
 import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
+import ChartLegend, {
+  type ChartLegendPayloadEntry,
+} from '../../common/ChartLegend';
+import {
+  activeDotForSeries,
+  addTimeMsToChartRows,
+  defaultLegendWrapperStyle,
+  getAdaptiveTimeXAxisProps,
+  getDefaultYAxisProps,
+  mergeAxisTheme,
+  themedCartesianGrid,
+  CHART_MARGIN_LEFT_Y_LABEL,
+  CHART_PLOT_HEIGHT_PX,
+  analyticsChartPanelLayoutProps,
+  yAxisLabelInsideLeft,
+} from '@/app/utils/chartAxisConfig';
 
 const NpkSizeChart = ({
   data,
@@ -43,8 +52,7 @@ const NpkSizeChart = ({
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const { textColor } = useColorModeStyles();
-  const { axis, mutedSeries, grid } = useChartAxisColors();
-  const brushStroke = useColorModeValue('#8884d8', '#b794f4');
+  const { axis, tickFill, grid } = useChartAxisColors();
   const unitRev = useUnitOverridesRevision();
 
   const catalogDefault =
@@ -84,16 +92,26 @@ const NpkSizeChart = ({
       }),
     [data, unitRev, catalogDefault]
   );
+
+  const chartRows = useMemo(
+    () => addTimeMsToChartRows(chartData, 'name'),
+    [chartData]
+  );
+
+  const xAxisProps = mergeAxisTheme(
+    getAdaptiveTimeXAxisProps(chartRows, 'name'),
+    axis,
+    tickFill
+  );
+  const yProps = mergeAxisTheme(getDefaultYAxisProps(1), axis, tickFill);
+
   const unitN = resolveAxisUnit('npk_n', catalogDefault);
   const unitP = resolveAxisUnit('npk_p', catalogDefault);
   const unitK = resolveAxisUnit('npk_k', catalogDefault);
-
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(chartData.length / 3),
-    md: Math.ceil(chartData.length / 5),
-  });
-
-  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
+  const npkAxisUnits = compactResolvedAxisUnits(
+    ['npk_n', 'npk_p', 'npk_k'],
+    catalogDefault
+  );
 
   const [activeLines, setActiveLines] = useState({
     npk_n: true,
@@ -101,7 +119,7 @@ const NpkSizeChart = ({
     npk_k: true,
   });
 
-  const handleLegendClick = (e: { dataKey?: unknown }) => {
+  const handleLegendClick = (e: ChartLegendPayloadEntry) => {
     const key = e.dataKey;
     if (key !== 'npk_n' && key !== 'npk_p' && key !== 'npk_k') return;
     setActiveLines((prev) => ({
@@ -109,6 +127,10 @@ const NpkSizeChart = ({
       [key]: !prev[key],
     }));
   };
+
+  const hiddenLegendKeys = (['npk_n', 'npk_p', 'npk_k'] as const).filter(
+    (k) => !activeLines[k]
+  );
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
@@ -139,11 +161,13 @@ const NpkSizeChart = ({
   };
 
   return (
-    <Box width="100%" pr={4} pb={4}>
+    <Box {...analyticsChartPanelLayoutProps}>
       <Flex justify="space-between" align="center" mb={4}>
-        <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Évolution des éléments NPK
-        </Text>
+        <ChartPanelHeading
+          color={textColor}
+          title="Azote, phosphore et potassium"
+          subtitle={`Bilan N-P-K dans le sol — unités lecture ${npkAxisUnits}.`}
+        />
         <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
@@ -168,58 +192,23 @@ const NpkSizeChart = ({
         loading={loading}
         empty={data.length === 0}
         chartRef={chartRef}
-        height="300px"
+        height={CHART_PLOT_HEIGHT_PX}
       >
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
-            data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            data={chartRows}
+            margin={{
+              top: 12,
+              right: 12,
+              left: CHART_MARGIN_LEFT_Y_LABEL,
+              bottom: 8,
+            }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
-            <XAxis
-              dataKey="name"
-              angle={0}
-              textAnchor="middle"
-              interval={labelInterval}
-              stroke={axis}
-              strokeWidth={1}
-              tick={{
-                fill: axis,
-                fontSize: 17,
-                fontFamily: 'Arial, sans-serif',
-              }}
-              axisLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-            />
+            <CartesianGrid {...themedCartesianGrid(grid)} />
+            <XAxis {...xAxisProps} />
             <YAxis
-              label={{
-                value: `NPK (${catalogDefault})`,
-                angle: -90,
-                position: 'insideLeft',
-                fontSize: 12,
-                dy: 80,
-              }}
-              stroke={axis}
-              strokeWidth={1}
-              tick={{
-                fill: axis,
-                fontSize: 17,
-                fontFamily: 'Arial, sans-serif',
-              }}
-              axisLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
+              {...yProps}
+              label={yAxisLabelInsideLeft(`NPK (${npkAxisUnits})`, tickFill)}
             />
             <Tooltip
               content={
@@ -267,53 +256,57 @@ const NpkSizeChart = ({
                 />
               }
             />
-            <Legend onClick={handleLegendClick} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={
+                <ChartLegend
+                  onClick={handleLegendClick}
+                  hiddenDataKeys={[...hiddenLegendKeys]}
+                />
+              }
+            />
 
             <Line
               type="monotone"
               dataKey="npk_n"
               name={`${data[0]?.nitrogen_courbe_name || 'Azote (N)'} (${unitN})`}
-              stroke={
-                activeLines.npk_n
-                  ? data[0]?.nitrogen_color || '#dba800'
-                  : mutedSeries
-              }
-              strokeOpacity={activeLines.npk_n ? 1 : 0.2}
-              strokeWidth={2}
-              activeDot={{ r: 6 }}
+              hide={!activeLines.npk_n}
+              stroke={data[0]?.nitrogen_color || '#dba800'}
+              strokeWidth={2.25}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              dot={false}
+              activeDot={activeDotForSeries(
+                data[0]?.nitrogen_color || '#dba800'
+              )}
             />
             <Line
               type="monotone"
               dataKey="npk_p"
               name={`${data[0]?.phosphorus_courbe_name || 'Phosphore (P)'} (${unitP})`}
-              stroke={
-                activeLines.npk_p
-                  ? data[0]?.phosphorus_color || '#00a86b'
-                  : mutedSeries
-              }
-              strokeOpacity={activeLines.npk_p ? 1 : 0.2}
-              strokeWidth={2}
-              activeDot={{ r: 6 }}
+              hide={!activeLines.npk_p}
+              stroke={data[0]?.phosphorus_color || '#00a86b'}
+              strokeWidth={2.25}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              dot={false}
+              activeDot={activeDotForSeries(
+                data[0]?.phosphorus_color || '#00a86b'
+              )}
             />
             <Line
               type="monotone"
               dataKey="npk_k"
               name={`${data[0]?.potassium_courbe_name || 'Potassium (K)'} (${unitK})`}
-              stroke={
-                activeLines.npk_k
-                  ? data[0]?.potassium_color || '#4682b4'
-                  : mutedSeries
-              }
-              strokeOpacity={activeLines.npk_k ? 1 : 0.2}
-              strokeWidth={2}
-              activeDot={{ r: 6 }}
-            />
-
-            <Brush
-              dataKey="name"
-              height={30}
-              stroke={brushStroke}
-              travellerWidth={8}
+              hide={!activeLines.npk_k}
+              stroke={data[0]?.potassium_color || '#4682b4'}
+              strokeWidth={2.25}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              dot={false}
+              activeDot={activeDotForSeries(
+                data[0]?.potassium_color || '#4682b4'
+              )}
             />
           </LineChart>
         </ResponsiveContainer>

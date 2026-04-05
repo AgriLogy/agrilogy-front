@@ -9,6 +9,7 @@ import {
   Flex,
   useColorModeValue,
 } from '@chakra-ui/react';
+import ChartPanelHeading from '../../common/ChartPanelHeading';
 import ChartStateView from '../../common/ChartStateView';
 import { FaCamera, FaDownload } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
@@ -27,6 +28,10 @@ import {
   applySensorCalibration,
   resolveAxisUnit,
 } from '@/app/utils/unitOverrides';
+import {
+  CHART_PLOT_HEIGHT_TALL_PX,
+  analyticsChartPanelLayoutProps,
+} from '@/app/utils/chartAxisConfig';
 
 // Helper: get pixel radius from scale value (Chart.js 4 radial scale)
 function getRadiusForValue(scale: any, value: number): number {
@@ -326,22 +331,29 @@ const WindRadarChart = ({
         display: true,
         position: 'right',
         reverse: false,
-        onClick: () => {},
+        onClick: (_e, legendItem, legend) => {
+          const chart = legend.chart;
+          const i = legendItem.datasetIndex;
+          if (typeof i !== 'number') return;
+          chart.setDatasetVisibility(i, !chart.isDatasetVisible(i));
+          chart.update();
+        },
         labels: {
           color: textColor,
           usePointStyle: true,
           padding: 20,
-          generateLabels: (chart: any) => {
-            const datasets = chart.data.datasets;
-            return datasets.map((dataset: any, i: number) => ({
-              text: dataset.label,
-              fillStyle: dataset.backgroundColor[0],
-              strokeStyle: dataset.borderColor[0],
-              lineWidth: dataset.borderWidth,
-              hidden: false,
+          generateLabels: (chart: Chart) =>
+            chart.data.datasets.map((dataset, i) => ({
+              text: String(dataset.label ?? ''),
+              fillStyle: (dataset as unknown as { backgroundColor: string[] })
+                .backgroundColor[0],
+              strokeStyle: (dataset as unknown as { borderColor: string[] })
+                .borderColor[0],
+              lineWidth: (dataset as unknown as { borderWidth: number })
+                .borderWidth,
+              hidden: !chart.isDatasetVisible(i),
               datasetIndex: i,
-            }));
-          },
+            })),
         },
       },
       tooltip: {
@@ -402,11 +414,13 @@ const WindRadarChart = ({
   };
 
   return (
-    <Box width="100%" pr={4} pb={4}>
+    <Box {...analyticsChartPanelLayoutProps}>
       <Flex justify="space-between" align="center" mb={4}>
-        <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Direction de vent
-        </Text>
+        <ChartPanelHeading
+          color={textColor}
+          title="Vent — rose des directions"
+          subtitle="Répartition par secteur et classes de vitesse sur la période."
+        />
         <HStack spacing={2}>
           <Button
             aria-label="Capture"
@@ -433,7 +447,7 @@ const WindRadarChart = ({
         empty={isDataEmpty}
         emptyText="Aucune donnée disponible"
         chartRef={chartRef}
-        height="400px"
+        height={CHART_PLOT_HEIGHT_TALL_PX}
       >
         <PolarArea data={chartData as any} options={chartOptions} />
       </ChartStateView>

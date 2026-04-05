@@ -1,4 +1,3 @@
-import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { Box, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import { GiWaterDrop } from 'react-icons/gi';
 import {
@@ -7,6 +6,7 @@ import {
 } from '@/app/utils/unitOverrides';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
+import LastDataPanel from '../../common/LastDataPanel';
 
 interface ET0Data {
   id: number;
@@ -24,7 +24,7 @@ const timeAgo = (timestamp: string): string => {
 
   if (diffMin < 1) return "à l'instant";
   if (diffMin < 60) return `${diffMin} min.`;
-  if (diffH < 24) return `${diffH} heures`;
+  if (diffH < 24) return `${diffH} h`;
   return then.toLocaleDateString();
 };
 
@@ -41,69 +41,84 @@ const ET0LastData = ({
   const weatherUnit = resolveAxisUnit('et0', latestWeather?.default_unit);
   const calculatedUnit = resolveAxisUnit('et0', latestCalculated?.default_unit);
 
-  // Light/dark mode colors
-  const bgColor = useColorModeValue('blue.50', 'blue.900');
-  const noDataColor = useColorModeValue('gray.600', 'gray.300');
-  const timeColor = useColorModeValue('gray.500', 'gray.400');
-  const { textColor } = useColorModeStyles();
+  const titleColor = useColorModeValue('gray.600', 'gray.300');
+  const labelMuted = useColorModeValue('gray.500', 'gray.400');
+  const valueMeteo = useColorModeValue('blue.700', 'blue.200');
+  const valueCalc = useColorModeValue('teal.700', 'teal.200');
+  const subColor = useColorModeValue('gray.500', 'gray.400');
+
+  const newestTs =
+    latestWeather && latestCalculated
+      ? latestWeather.timestamp > latestCalculated.timestamp
+        ? latestWeather.timestamp
+        : latestCalculated.timestamp
+      : latestWeather?.timestamp || latestCalculated?.timestamp;
 
   return (
     <Box
-      bg={bgColor}
-      p={4}
-      borderRadius="md"
-      boxShadow="md"
-      minH="300px"
-      minW="250px"
-      height="100%"
-      width="100%"
+      flex={1}
+      minH={0}
+      minW={0}
+      w="100%"
+      alignSelf="stretch"
       display="flex"
       flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      textAlign="center"
     >
-      <GiWaterDrop size={50} color="#2B6CB0" />
-      <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
-        Dernières valeurs ET0
-      </Text>
-
-      {latestWeather || latestCalculated ? (
-        <VStack spacing={2} mt={3}>
-          <Text fontSize="lg" color="blue.600">
-            ET0 météo:{' '}
-            {latestWeather
-              ? `${formatCalibratedReading('et0', latestWeather.value)} ${weatherUnit}`
-              : 'Non disponible'}
-          </Text>
-          <Text fontSize="lg" color="teal.600">
-            ET0 calculé:{' '}
-            {latestCalculated
-              ? `${formatCalibratedReading('et0', latestCalculated.value)} ${calculatedUnit}`
-              : 'Non disponible'}
-          </Text>
-        </VStack>
-      ) : (
-        <Text mt={3} fontSize="md" color={noDataColor}>
-          Non disponible
+      <LastDataPanel
+        variant="et0"
+        display="flex"
+        flexDirection="column"
+        textAlign="center"
+        minW="250px"
+      >
+        <GiWaterDrop size={44} color="#2B6CB0" />
+        <Text
+          fontWeight="semibold"
+          fontSize="xs"
+          letterSpacing="0.08em"
+          textTransform="uppercase"
+          mt={3}
+          color={titleColor}
+        >
+          Évapotranspiration de référence (ET₀)
         </Text>
-      )}
 
-      {(latestWeather || latestCalculated) && (
-        <Text fontSize="sm" color={timeColor} mt={3}>
-          Mise à jour :{' '}
-          {latestWeather && latestCalculated
-            ? timeAgo(
-                latestWeather.timestamp > latestCalculated.timestamp
-                  ? latestWeather.timestamp
-                  : latestCalculated.timestamp
-              )
-            : latestWeather
-              ? timeAgo(latestWeather.timestamp)
-              : timeAgo(latestCalculated.timestamp)}
-        </Text>
-      )}
-      <LastDataAddAlertButton />
+        {latestWeather || latestCalculated ? (
+          <VStack spacing={3} mt={4} align="stretch" w="100%">
+            <Box>
+              <Text fontSize="xs" fontWeight="medium" color={labelMuted}>
+                Capteur météo
+              </Text>
+              <Text fontSize="lg" fontWeight="semibold" color={valueMeteo}>
+                {latestWeather
+                  ? `${formatCalibratedReading('et0', latestWeather.value)} ${weatherUnit}`
+                  : '—'}
+              </Text>
+            </Box>
+            <Box>
+              <Text fontSize="xs" fontWeight="medium" color={labelMuted}>
+                Modèle calculé
+              </Text>
+              <Text fontSize="lg" fontWeight="semibold" color={valueCalc}>
+                {latestCalculated
+                  ? `${formatCalibratedReading('et0', latestCalculated.value)} ${calculatedUnit}`
+                  : '—'}
+              </Text>
+            </Box>
+          </VStack>
+        ) : (
+          <Text mt={4} fontSize="sm" color={subColor}>
+            Aucune donnée récente
+          </Text>
+        )}
+
+        {newestTs && (
+          <Text fontSize="xs" color={subColor} mt={3}>
+            Mesure : {timeAgo(newestTs)}
+          </Text>
+        )}
+        <LastDataAddAlertButton />
+      </LastDataPanel>
     </Box>
   );
 };

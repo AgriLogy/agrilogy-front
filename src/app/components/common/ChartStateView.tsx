@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, useColorModeValue } from '@chakra-ui/react';
+import { CHART_PLOT_HEIGHT_PX } from '@/app/utils/chartAxisConfig';
 import EmptyBox, { DEFAULT_EMPTY_TEXT, DEFAULT_LOADING_TEXT } from './EmptyBox';
 
 export interface ChartStateViewProps {
@@ -12,7 +13,7 @@ export interface ChartStateViewProps {
   emptyText?: string;
   /** Message when loading. Default: "Chargement..." */
   loadingText?: string;
-  /** Height of the chart area (loading/empty match this). Default: "300px" */
+  /** Height of the chart area (loading/empty match this). Default follows CHART_PLOT_HEIGHT_PX in chartAxisConfig. */
   height?: string | number;
   /** Optional ref forwarded to the wrapper Box (e.g. for html2canvas) */
   chartRef?: React.RefObject<HTMLDivElement | null>;
@@ -30,7 +31,7 @@ const ChartStateView = ({
   empty = false,
   emptyText = DEFAULT_EMPTY_TEXT,
   loadingText = DEFAULT_LOADING_TEXT,
-  height = '300px',
+  height = CHART_PLOT_HEIGHT_PX,
   chartRef,
   children,
 }: ChartStateViewProps) => {
