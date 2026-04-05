@@ -16,17 +16,14 @@ const Page = () => {
 
   useEffect(() => {
     const isAuthenticated = checkAuthTokens();
-    if (!isAuthenticated) {
-      router.push("/login");
-    }
+    if (!isAuthenticated) router.push('/login');
   }, [router]);
+
   return (
     <Grid
       templateAreas={{
-        base: `"header"
-               "main"`,
-        md: `"header header"
-             "nav main"`,
+        base: `"header" "main"`,
+        md: `"header header" "nav main"`,
       }}
       gridTemplateRows={{ base: "auto 1fr", md: "50px 1fr" }}
       gridTemplateColumns={{ base: "1fr", md: "50px 1fr" }}
@@ -35,19 +32,11 @@ const Page = () => {
       color={textColor}
       fontWeight="bold"
     >
-      <GridItem area={"header"}>
-        <Header />
-      </GridItem>
-      <GridItem
-        bg={navBgColor}
-        area={"nav"}
-        display={{ base: "none", md: "block" }}
-      >
+      <GridItem area="header"><Header /></GridItem>
+      <GridItem bg={navBgColor} area="nav" display={{ base: 'none', md: 'block' }}>
         <Navbar />
       </GridItem>
-
-      <GridItem
-        pl="2" bg={navBgColor} area={"main"} overflowY="auto" height="100%" >
+      <GridItem pl="2" bg={navBgColor} area="main" overflowY="auto" height="100%">
         <MainContent />
       </GridItem>
     </Grid>
