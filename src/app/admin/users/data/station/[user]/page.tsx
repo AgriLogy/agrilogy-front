@@ -31,7 +31,10 @@ const StationDatapage = ({ params }: { params: Params }) => {
                  "nav main"`,
       }}
       gridTemplateRows={{ base: 'auto 1fr', md: '50px 1fr' }}
-      gridTemplateColumns={{ base: '1fr', md: '50px 1fr' }}
+      gridTemplateColumns={{
+        base: 'minmax(0, 1fr)',
+        md: '50px minmax(0, 1fr)',
+      }}
       height="100vh"
       gap="0.5"
       color={textColor}

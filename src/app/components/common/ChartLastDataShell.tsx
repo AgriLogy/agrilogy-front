@@ -38,10 +38,13 @@ export default function ChartLastDataShell({
     <Box
       position="relative"
       width={width}
+      maxWidth="100%"
+      minWidth={0}
       height={height}
       maxH={maxH}
       minH={minH}
       overflowY={maxH != null ? 'auto' : undefined}
+      overflowX="hidden"
     >
       <Tooltip
         label={
@@ -71,6 +74,8 @@ export default function ChartLastDataShell({
         direction={direction}
         spacing={spacing}
         width="100%"
+        maxWidth="100%"
+        minWidth={0}
         height="auto"
         align={align}
         pt={1}
