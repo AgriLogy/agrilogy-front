@@ -40,9 +40,10 @@ import Image from 'next/image';
 import logo from '../../public/logo.png';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import api from '@/app/lib/api';
+import { logOptionalApiFailure } from '@/app/utils/apiClientErrors';
 import { FaBell, FaSeedling, FaWater } from 'react-icons/fa';
 import { WiDaySunny } from 'react-icons/wi';
-import { GiGrapes } from 'react-icons/gi';
+import { GiGrapes, GiValve } from 'react-icons/gi';
 
 const HEADER_H = '64px';
 
@@ -78,7 +79,8 @@ const MobileMenu = () => {
       try {
         const response = await api.get('/api/header/');
         setUsername(response.data.first_name ?? response.data.username ?? '');
-      } catch {
+      } catch (error) {
+        logOptionalApiFailure('MobileMenu: header', error);
         setUsername('');
       }
     };
@@ -96,6 +98,7 @@ const MobileMenu = () => {
     { href: '/station', label: 'Station météo', icon: <WiDaySunny /> },
     { href: '/plant', label: 'Données des plantes', icon: <GiGrapes /> },
     { href: '/water', label: "Station d'eau", icon: <FaWater /> },
+    { href: '/vannes-pompes', label: 'Vannes et pompes', icon: <GiValve /> },
     { href: '/alerts', label: 'Alertes', icon: <FaBell /> },
     { href: '/notifications', label: 'Notifications', icon: <BellIcon /> },
     { href: '/settings', label: 'Paramètres', icon: <FaCog /> },

@@ -150,7 +150,7 @@ const ZoneModalAddForm = ({ isOpen, onClose, user }: ZoneModalAddForm) => {
             />
           </FormControl>
           <FormControl>
-            <FormLabel>Débit d&apos;aeau (L/s)</FormLabel>
+            <FormLabel>Irrigation (L/s)</FormLabel>
             <Input
               type="number"
               value={flow_rate}

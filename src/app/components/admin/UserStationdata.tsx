@@ -72,7 +72,12 @@ const UserStationdata: React.FC<Props> = ({ user }) => {
     return <EmptyBox />;
   }
 
-  const data = stationPayload;
+  const data = {
+    ...stationPayload,
+    sensor_data: stationPayload.sensor_data!,
+    sensor_names: stationPayload.sensor_names ?? {},
+    sensor_colors: stationPayload.sensor_colors ?? {},
+  };
 
   return (
     <div className="container">
@@ -92,7 +97,13 @@ const UserStationdata: React.FC<Props> = ({ user }) => {
 
       {/* Date Range Picker */}
       <Box bg={bg} className="header" mt={0} mb={0}>
-        <DateRangePicker setStartDate={setStartDate} setEndDate={setEndDate} />
+        <DateRangePicker
+          setStartDate={setStartDate}
+          setEndDate={setEndDate}
+          zones={[]}
+          selectedZone={null}
+          setSelectedZone={() => {}}
+        />
       </Box>
       <Box bg={bg} className="box wide">
         <Et0Graph data={data} />

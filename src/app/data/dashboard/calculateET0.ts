@@ -1,12 +1,12 @@
 import { SensorData } from './data';
 
 export const calculateET0 = (data: SensorData): number => {
-  const {
-    hc_air_temperature,
-    solar_radiation,
-    wind_speed,
-    hc_relative_humidity,
-  } = data;
+  const solar_radiation = data.solar_radiation;
+  const wind_speed = data.wind_speed;
+  const hc_air_temperature =
+    data.hc_air_temperature ?? data.temperature_weather;
+  const hc_relative_humidity =
+    data.hc_relative_humidity ?? data.humidity_weather;
 
   const et0 =
     (0.0023 *

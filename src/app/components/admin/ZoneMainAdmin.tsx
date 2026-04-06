@@ -4,7 +4,7 @@ import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import axiosInstance from '@/app/lib/api';
 import ZoneCard from './ZoneCard';
 import ZoneEditModal from './ZoneEditModalAdmin'; // Import ZoneEditModal
-import { Zone, ZoneWrapper } from '@/app/types';
+import { ZoneType, ZoneWrapper } from '@/app/types';
 import ZoneAddFloatingButton from './ZoneAddFloatingButtonAdmin';
 import EmptyBox from '../common/EmptyBox';
 
@@ -17,7 +17,7 @@ const ZoneMain = ({ user }: Props) => {
   const [zones, setZones] = useState<ZoneWrapper[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal open state
-  const [selectedZone, setSelectedZone] = useState<Zone | null>(null); // Selected zone for editing
+  const [selectedZone, setSelectedZone] = useState<ZoneType | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,12 +33,12 @@ const ZoneMain = ({ user }: Props) => {
     fetchData();
   }, []);
 
-  const handleZoneClick = (zone: Zone) => {
+  const handleZoneClick = (zone: ZoneType) => {
     setSelectedZone(zone); // Set the zone to edit
     setIsModalOpen(true); // Open the modal
   };
 
-  const handleUpdateZone = (updatedZone: Zone) => {
+  const handleUpdateZone = (updatedZone: ZoneType) => {
     setZones((prevZones) =>
       prevZones.map((zone) =>
         zone.id === updatedZone.id ? { ...zone, ...updatedZone } : zone

@@ -8,6 +8,10 @@ export interface SensorData {
   pressure_weather: number; // Atmospheric pressure in hPa
   wind_direction: number; // Wind direction in degrees
   temperature_weather: number; // Air temperature in Celsius
+  /** Legacy alias used by some ET0 helpers; falls back to temperature_weather. */
+  hc_air_temperature?: number;
+  /** Legacy alias used by some ET0 helpers; falls back to humidity_weather. */
+  hc_relative_humidity?: number;
   ec_soil_medium: number; // Electrical conductivity of soil at medium depth in dS/m
   soil_temperature_medium: number; // Soil temperature at medium depth in Celsius
   soil_ec_high: number; // Electrical conductivity of soil at high depth in dS/m

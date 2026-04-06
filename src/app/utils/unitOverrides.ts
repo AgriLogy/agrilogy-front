@@ -136,6 +136,20 @@ export function resolveAxisUnit(
   return getUnitOverride(sensorKey, fromApi || fromCatalog || undefined);
 }
 
+/**
+ * For shared axes or panel titles: one unit if all probes match, otherwise
+ * "u1 · u2" so labels track Réglages without hiding per-sensor differences.
+ */
+export function compactResolvedAxisUnits(
+  sensorKeys: readonly string[],
+  catalogFallback: string
+): string {
+  const units = sensorKeys.map((k) => resolveAxisUnit(k, catalogFallback));
+  const uniq = [...new Set(units.map((u) => u.trim()).filter(Boolean))];
+  if (uniq.length === 0) return catalogFallback;
+  return uniq.length === 1 ? uniq[0]! : uniq.join(' · ');
+}
+
 export function getUnitOverrideFromDataKey(
   dataKey: string | undefined,
   fallback?: string

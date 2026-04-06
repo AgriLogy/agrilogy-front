@@ -9,13 +9,13 @@ import {
   Tr,
   Th,
   Td,
-  Text,
   useColorMode,
   HStack,
   Spinner,
 } from '@chakra-ui/react';
 import { CSVLink } from 'react-csv';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import ChartPanelHeading from '../common/ChartPanelHeading';
 
 interface SensorData {
   id: number;
@@ -65,10 +65,12 @@ const DataTable = ({
       borderRadius="md"
       boxShadow="lg"
     >
-      <HStack justify="space-between">
-        <Text fontSize="lg" fontWeight="bold" mb={4} color={textColor}>
-          {data.sensor_names?.data_table}
-        </Text>
+      <HStack justify="space-between" align="flex-start" mb={4}>
+        <ChartPanelHeading
+          title="Mesures — tableau détaillé"
+          subtitle={data.sensor_names?.data_table}
+          color={textColor}
+        />
         <CSVLink
           data={data.sensor_data}
           headers={headers}

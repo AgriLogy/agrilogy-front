@@ -4,7 +4,9 @@ export const API_URL =
   process.env.NEXT_PUBLIC_API_URL || 'https://agrilogy-pi.com/';
 //  "http://localhost:8000";
 
-console.log('[NEXT_PUBLIC_API_URL]', API_URL);
+if (process.env.NODE_ENV === 'development') {
+  console.debug('[NEXT_PUBLIC_API_URL]', API_URL);
+}
 
 const api = axios.create({
   baseURL: API_URL,

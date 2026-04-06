@@ -6,6 +6,7 @@ import {
 } from '@/app/utils/unitOverrides';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
+import LastDataPanel from '../../common/LastDataPanel';
 
 interface WeatherData {
   timestamp: string;
@@ -45,57 +46,81 @@ const TempuratureHumidtyLastData = ({
     latestHumidity?.default_unit
   );
 
-  const bgColor = useColorModeValue('gray.100', 'gray.700');
-  const textColor = useColorModeValue('gray.800', 'gray.200');
+  const textColor = useColorModeValue('gray.700', 'gray.200');
+  const muted = useColorModeValue('gray.600', 'gray.400');
   const timeColor = useColorModeValue('gray.500', 'gray.400');
 
   return (
     <Box
-      bg={bgColor}
-      p={4}
-      borderRadius="md"
-      boxShadow="md"
-      minH="300px"
-      minW="250px"
-      height="100%"
-      width="100%"
+      flex={1}
+      minH={0}
+      minW={0}
+      w="100%"
+      alignSelf="stretch"
       display="flex"
       flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      textAlign="center"
     >
-      <Text fontWeight="bold" fontSize="lg" mb={2} color={textColor}>
-        Dernières valeurs météo
-      </Text>
+      <LastDataPanel
+        variant="tempHumidity"
+        display="flex"
+        flexDirection="column"
+        textAlign="center"
+        minW="250px"
+      >
+        <Text
+          fontSize="xs"
+          fontWeight="semibold"
+          letterSpacing="0.08em"
+          textTransform="uppercase"
+          color={muted}
+          mb={3}
+        >
+          {`Air — ${temperatureUnit} · ${humidityUnit}`}
+        </Text>
 
-      <VStack spacing={3}>
-        {latestTemperature ? (
-          <Text fontSize="lg" color="red.400">
-            <WiThermometer size={24} style={{ display: 'inline' }} />{' '}
-            Température :
-            {` ${formatCalibratedReading('temperature_weather', latestTemperature.value)} ${temperatureUnit}`}
-          </Text>
-        ) : (
-          <Text color={textColor}>Température : non disponible</Text>
-        )}
+        <VStack spacing={4}>
+          {latestTemperature ? (
+            <Box>
+              <WiThermometer
+                size={32}
+                style={{ display: 'inline', color: '#dd6b20' }}
+              />
+              <Text fontSize="xs" color={muted} mt={1}>
+                Température
+              </Text>
+              <Text fontSize="xl" fontWeight="semibold" color={textColor}>
+                {`${formatCalibratedReading('temperature_weather', latestTemperature.value)} ${temperatureUnit}`}
+              </Text>
+            </Box>
+          ) : (
+            <Text color={muted}>Température : —</Text>
+          )}
 
-        {latestHumidity ? (
-          <Text fontSize="lg" color="blue.400">
-            <WiHumidity size={24} style={{ display: 'inline' }} /> Humidité :
-            {` ${formatCalibratedReading('humidity_weather', latestHumidity.value)} ${humidityUnit}`}
-          </Text>
-        ) : (
-          <Text color={textColor}>Humidité : non disponible</Text>
-        )}
+          {latestHumidity ? (
+            <Box>
+              <WiHumidity
+                size={32}
+                style={{ display: 'inline', color: '#3182ce' }}
+              />
+              <Text fontSize="xs" color={muted} mt={1}>
+                Humidité relative
+              </Text>
+              <Text fontSize="xl" fontWeight="semibold" color={textColor}>
+                {`${formatCalibratedReading('humidity_weather', latestHumidity.value)} ${humidityUnit}`}
+              </Text>
+            </Box>
+          ) : (
+            <Text color={muted}>Humidité : —</Text>
+          )}
 
-        {latestTemperature && (
-          <Text fontSize="sm" color={timeColor} mt={2}>
-            Mise à jour : {timeAgo(latestTemperature.timestamp)}
-          </Text>
-        )}
-      </VStack>
-      <LastDataAddAlertButton />
+          {latestTemperature && (
+            <Text fontSize="xs" color={timeColor}>
+              Mesure : {timeAgo(latestTemperature.timestamp)}
+            </Text>
+          )}
+        </VStack>
+        <LastDataAddAlertButton />
+      </LastDataPanel>
     </Box>
   );
 };

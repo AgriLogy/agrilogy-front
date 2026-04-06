@@ -1,8 +1,13 @@
-import { useEffect, useState } from 'react';
-import { Stack, Box } from '@chakra-ui/react';
+import { useEffect, useMemo, useState } from 'react';
+import { Box, VStack } from '@chakra-ui/react';
 import api from '@/app/lib/api';
+import ChartLastDataShell from '../../common/ChartLastDataShell';
+import type { WaterSoilData } from '@/app/types';
 import WaterSoilChart from './WaterSoilChart';
 import WaterSoilLastData from './WaterSoilLastData';
+import ChartDateRangeDragger from '../../common/ChartDateRangeDragger';
+import ChartDateRangeGate from '../../common/ChartDateRangeGate';
+import { filterByTimestampWindow } from '@/app/utils/chartDateWindow';
 
 interface SensorEntry {
   id: number;
@@ -12,14 +17,6 @@ interface SensorEntry {
   available_units: string[];
   zone: number;
   user: number;
-}
-
-export interface WaterSoilData {
-  timestamp: string;
-  soilLow?: number;
-  soilMedium?: number;
-  soilHigh?: number;
-  waterFlow?: number;
 }
 
 const WaterSoilMain = ({
@@ -35,7 +32,6 @@ const WaterSoilMain = ({
   const [mergedData, setMergedData] = useState<WaterSoilData[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // NEW: States for last sensor values
   const [soilLowLast, setSoilLowLast] = useState<SensorEntry | undefined>();
   const [soilMediumLast, setSoilMediumLast] = useState<
     SensorEntry | undefined
@@ -91,7 +87,6 @@ const WaterSoilMain = ({
         );
         setMergedData(sorted);
 
-        // SET LAST VALUES
         setSoilLowLast(lowRes.data.at(-1));
         setSoilMediumLast(medRes.data.at(-1));
         setSoilHighLast(highRes.data.at(-1));
@@ -101,36 +96,63 @@ const WaterSoilMain = ({
       .finally(() => setLoading(false));
   }, [startDate, endDate, selectedZone]);
 
+  const timeline = useMemo(
+    () => mergedData.map((d) => d.timestamp),
+    [mergedData]
+  );
+
   return (
-    <Stack
+    <ChartLastDataShell
       direction={{ base: 'column', md: 'row' }}
       width="100%"
-      height="100%"
-      maxH="400px"
+      // maxH={"500px"}
       spacing={4}
-    >
-      <Box flex={3} p={3}>
-        <WaterSoilChart
-          data={mergedData}
-          waterFlowDefaultUnit={waterFlowLast?.default_unit}
-          loading={loading}
-          thresholds={{
-            critical_min: 20,
-            critical_max: 100,
-            normal_min: 120,
-            normal_max: 380,
-          }}
-        />
-      </Box>
-      <Box flex={1} p={3}>
-        <WaterSoilLastData
-          soilLow={soilLowLast}
-          soilMedium={soilMediumLast}
-          soilHigh={soilHighLast}
-          waterFlow={waterFlowLast}
-        />
-      </Box>
-    </Stack>
+      chart={
+        <Box flex={3} p={3} minW={0} maxW="100%" minH={0}>
+          <ChartDateRangeGate timeline={timeline}>
+            {({ startIdx, endIdx, setRange }) => (
+              <VStack spacing={0} align="stretch" width="100%">
+                <WaterSoilChart
+                  data={filterByTimestampWindow(
+                    mergedData,
+                    timeline,
+                    startIdx,
+                    endIdx
+                  )}
+                  waterFlowDefaultUnit={waterFlowLast?.default_unit}
+                  loading={loading}
+                />
+                <ChartDateRangeDragger
+                  timestamps={timeline}
+                  startIdx={startIdx}
+                  endIdx={endIdx}
+                  onChange={(r) => setRange(r)}
+                />
+              </VStack>
+            )}
+          </ChartDateRangeGate>
+        </Box>
+      }
+      lastData={
+        <Box
+          flex={1}
+          p={3}
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="stretch"
+          width="100%"
+          minW={0}
+        >
+          <WaterSoilLastData
+            soilLow={soilLowLast}
+            soilMedium={soilMediumLast}
+            soilHigh={soilHighLast}
+            waterFlow={waterFlowLast}
+          />
+        </Box>
+      }
+    />
   );
 };
 

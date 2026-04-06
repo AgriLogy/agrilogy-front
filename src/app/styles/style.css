@@ -23,7 +23,8 @@
   border-radius: 5px;
   font-size: 24px;
   font-weight: bold;
-  overflow: hidden;
+  /* Allow chart + date dragger to extend vertically (was clipping children). */
+  overflow: visible;
 }
 
 .wide {

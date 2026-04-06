@@ -23,6 +23,7 @@ import html2canvas from 'html2canvas';
 import { FaDownload, FaCloudRain } from 'react-icons/fa';
 import { SensorData } from '@/app/types';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import ChartPanelHeading from '../../common/ChartPanelHeading';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
@@ -32,6 +33,22 @@ import {
   resolveAxisUnit,
 } from '@/app/utils/unitOverrides';
 import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
+import ChartLegend, {
+  type ChartLegendPayloadEntry,
+} from '../../common/ChartLegend';
+import {
+  defaultBarProps,
+  defaultLegendWrapperStyle,
+  getDefaultYAxisProps,
+  getPeriodXAxisProps,
+  maxBarSizeForPointCount,
+  mergeAxisTheme,
+  themedCartesianGrid,
+  CHART_MARGIN_LEFT_Y_LABEL,
+  CHART_PLOT_HEIGHT_PX,
+  analyticsChartPanelLayoutProps,
+  yAxisLabelInsideLeft,
+} from '@/app/utils/chartAxisConfig';
 
 /** Sum raw API values per bucket, then apply lecture calibration once (PDF: v = a×raw+b). */
 function aggregateCalibratedPrecip(data: SensorData[], period: string) {
@@ -75,6 +92,7 @@ const CumulPrecipitationChart = ({
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const [groupBy, setGroupBy] = useState('day');
+  const [showBar, setShowBar] = useState(true);
   const { colorMode } = useColorMode();
   const unitRev = useUnitOverridesRevision();
   const chartData = useMemo(
@@ -87,11 +105,19 @@ const CumulPrecipitationChart = ({
   });
   const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const { textColor } = useColorModeStyles();
-  const { axis, grid } = useChartAxisColors();
+  const { axis, tickFill, grid } = useChartAxisColors();
+  const xAxisProps = mergeAxisTheme(getPeriodXAxisProps(), axis, tickFill);
+  const yProps = mergeAxisTheme(getDefaultYAxisProps(1), axis, tickFill);
   const precipUnit = resolveAxisUnit(
     'precipitation_rate',
     data[0]?.default_unit
   );
+
+  const handleLegendClick = (e: ChartLegendPayloadEntry) => {
+    if (e.dataKey === 'precipitation_rate') {
+      setShowBar((s) => !s);
+    }
+  };
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
@@ -118,14 +144,14 @@ const CumulPrecipitationChart = ({
     URL.revokeObjectURL(url);
   };
 
-  const legendTextColor = textColor;
-
   return (
-    <Box width="100%" pr={4} pb={4} borderRadius="md" p={4}>
+    <Box {...analyticsChartPanelLayoutProps}>
       <Flex justify="space-between" align="center" mb={4}>
-        <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Cumul de précipitations
-        </Text>
+        <ChartPanelHeading
+          color={textColor}
+          title="Précipitations cumulées"
+          subtitle="Agrégation par jour, semaine ou mois selon votre sélection."
+        />
         <HStack spacing={2}>
           <Select
             value={groupBy}
@@ -150,57 +176,24 @@ const CumulPrecipitationChart = ({
         loading={loading}
         empty={chartData.length === 0}
         chartRef={chartRef}
-        height="300px"
+        height={CHART_PLOT_HEIGHT_PX}
       >
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            margin={{
+              top: 20,
+              right: 30,
+              left: CHART_MARGIN_LEFT_Y_LABEL,
+              bottom: 5,
+            }}
+            barCategoryGap="14%"
           >
-            <CartesianGrid stroke={grid} strokeDasharray="3 3" />
-            <XAxis
-              dataKey="period"
-              angle={0}
-              textAnchor="middle"
-              interval={labelInterval}
-              stroke={axis}
-              strokeWidth={1}
-              tick={{
-                fill: axis,
-                fontSize: 17,
-                fontFamily: 'Arial, sans-serif',
-              }}
-              axisLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-            />
+            <CartesianGrid {...themedCartesianGrid(grid)} />
+            <XAxis dataKey="period" {...xAxisProps} interval={labelInterval} />
             <YAxis
-              label={{
-                value: `Σ (${precipUnit})`,
-                angle: -90,
-                position: 'insideLeft',
-                style: { fill: axis, fontSize: 12 },
-              }}
-              stroke={axis}
-              strokeWidth={1}
-              tick={{
-                fill: axis,
-                fontSize: 17,
-                fontFamily: 'Arial, sans-serif',
-              }}
-              axisLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
+              {...yProps}
+              label={yAxisLabelInsideLeft(`Σ (${precipUnit})`, tickFill)}
             />
             <Tooltip
               content={
@@ -223,14 +216,21 @@ const CumulPrecipitationChart = ({
               }
             />
             <Legend
-              wrapperStyle={{ color: legendTextColor }}
-              // Alternatively, you can customize the payload style for more control
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={
+                <ChartLegend
+                  onClick={handleLegendClick}
+                  hiddenDataKeys={showBar ? [] : ['precipitation_rate']}
+                />
+              }
             />
             <Bar
               dataKey="precipitation_rate"
               name={`Précipitations cumulées (Σ ${precipUnit})`}
-              fill={colorMode === 'dark' ? '#60a5fa' : '#3b82f6'} // lighter blue in dark mode
-              isAnimationActive={false}
+              {...defaultBarProps}
+              maxBarSize={maxBarSizeForPointCount(chartData.length)}
+              hide={!showBar}
+              fill={colorMode === 'dark' ? '#60a5fa' : '#3b82f6'}
             />
           </BarChart>
         </ResponsiveContainer>

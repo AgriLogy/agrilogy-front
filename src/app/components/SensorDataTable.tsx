@@ -8,11 +8,17 @@ import {
   Th,
   Td,
   useBreakpointValue,
-  Text,
 } from '@chakra-ui/react';
 import useColorModeStyles from '../utils/useColorModeStyles';
+import ChartPanelHeading from './common/ChartPanelHeading';
+import { formatNumber } from '../utils/formatNumber';
 import { SensorData } from '../data/dashboard/data';
 import EmptyBox from './common/EmptyBox';
+
+const n = (v: number | undefined | null, decimals = 2) =>
+  v == null || Number.isNaN(Number(v))
+    ? '—'
+    : formatNumber(Number(v), decimals);
 
 interface SensorDataTableProps {
   data: SensorData[];
@@ -40,9 +46,13 @@ const SensorDataTable: React.FC<SensorDataTableProps> = ({ data }) => {
       p={p}
       overflowX="auto" // Ensure horizontal scroll is supported
     >
-      <Text color={textColor} fontSize="lg" fontWeight="bold" mb={4}>
-        Table des données des capteurs
-      </Text>
+      <Box mb={4}>
+        <ChartPanelHeading
+          title="Capteurs — aperçu tabulaire"
+          subtitle="Dernières lignes enregistrées"
+          color={textColor}
+        />
+      </Box>
       <div className="table-container">
         <Table variant="striped" size="sm" width="100%">
           <Thead>
@@ -67,34 +77,34 @@ const SensorDataTable: React.FC<SensorDataTableProps> = ({ data }) => {
                   {entry.timestamp}
                 </Td>
                 <Td fontSize={fontSize} color={textColor}>
-                  {entry.temperature_weather}°C
+                  {n(entry.temperature_weather)}°C
                 </Td>
                 <Td fontSize={fontSize} color={textColor}>
-                  {entry.humidity_weather}%
+                  {n(entry.humidity_weather)}%
                 </Td>
                 <Td fontSize={fontSize} color={textColor}>
-                  {entry.solar_radiation} W/m²
+                  {n(entry.solar_radiation)} W/m²
                 </Td>
                 <Td fontSize={fontSize} color={textColor}>
-                  {entry.wind_speed} m/s
+                  {n(entry.wind_speed)} m/s
                 </Td>
                 <Td fontSize={fontSize} color={textColor}>
-                  {entry.precipitation_rate} mm/h
+                  {n(entry.precipitation_rate)} mm/h
                 </Td>
                 <Td fontSize={fontSize} color={textColor}>
-                  {entry.ec_soil_medium} dS/m
+                  {n(entry.ec_soil_medium)} dS/m
                 </Td>
                 <Td fontSize={fontSize} color={textColor}>
-                  {entry.soil_moisture_medium}%
+                  {n(entry.soil_moisture_medium)}%
                 </Td>
                 <Td fontSize={fontSize} color={textColor}>
-                  {entry.soil_temperature_medium}°C
+                  {n(entry.soil_temperature_medium)}°C
                 </Td>
                 <Td fontSize={fontSize} color={textColor}>
-                  {entry.ph_soil}
+                  {n(entry.ph_soil)}
                 </Td>
                 <Td fontSize={fontSize} color={textColor}>
-                  {entry.wind_direction}°
+                  {n(entry.wind_direction, 0)}°
                 </Td>
               </Tr>
             ))}

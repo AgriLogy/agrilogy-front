@@ -15,22 +15,14 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import axiosInstance from '@/app/lib/api';
-
-interface Zone {
-  id: number;
-  name: string;
-  space: number;
-  kc: number;
-  soil_type: 'clay' | 'loamy' | 'sandy' | 'others';
-  critical_moisture_threshold: number;
-}
+import type { ZoneType } from '@/app/types';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  zone: Zone;
+  zone: ZoneType;
   username: string;
-  onUpdate: (zone: Zone) => void;
+  onUpdate: (zone: ZoneType) => void;
 }
 
 const ZoneEditModal = ({
@@ -40,7 +32,7 @@ const ZoneEditModal = ({
   username,
   onUpdate,
 }: Props) => {
-  const [formData, setFormData] = useState<Zone>(zone);
+  const [formData, setFormData] = useState<ZoneType>(zone);
   const toast = useToast();
 
   const handleChange = (

@@ -7,6 +7,7 @@ import {
 } from '@/app/utils/unitOverrides';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
+import LastDataPanel from '../../common/LastDataPanel';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -26,41 +27,48 @@ const WindSpeedLastData = ({ data }: { data: SensorData[] }) => {
   useUnitOverridesRevision();
   const unit = resolveAxisUnit('wind_speed', latest?.default_unit);
 
-  // Light/Dark mode colors
-  const bgColor = useColorModeValue('blue.50', 'blue.900');
   const valueColor = useColorModeValue('blue.700', 'blue.200');
   const textColor = useColorModeValue('gray.600', 'gray.300');
   const timeColor = useColorModeValue('gray.500', 'gray.400');
 
   return (
     <Box
-      bg={bgColor}
-      p={4}
-      borderRadius="md"
-      boxShadow="md"
-      minH="300px"
-      minW="250px"
-      height="100%"
-      width="100%"
+      flex={1}
+      minH={0}
+      minW={0}
+      w="100%"
+      alignSelf="stretch"
       display="flex"
       flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      textAlign="center"
     >
-      <FaBolt size={50} color="#f4a261" />
-      <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
-        Dernière vitesse du vent :
-      </Text>
-      <Text fontSize="2xl" color={valueColor}>
-        {latest
-          ? `${formatCalibratedReading('wind_speed', latest.value)} ${unit}`
-          : 'Non disponible'}
-      </Text>
-      <Text fontSize="sm" color={timeColor}>
-        {latest ? `Mise à jour : ${timeAgo(latest.timestamp)}` : ''}
-      </Text>
-      <LastDataAddAlertButton />
+      <LastDataPanel
+        variant="windSpeed"
+        display="flex"
+        flexDirection="column"
+        textAlign="center"
+        minW="250px"
+      >
+        <FaBolt size={44} color="#f4a261" />
+        <Text
+          fontWeight="semibold"
+          fontSize="xs"
+          letterSpacing="0.08em"
+          textTransform="uppercase"
+          mt={3}
+          color={textColor}
+        >
+          Vitesse du vent (dernière mesure)
+        </Text>
+        <Text fontSize="2xl" fontWeight="semibold" color={valueColor} mt={1}>
+          {latest
+            ? `${formatCalibratedReading('wind_speed', latest.value)} ${unit}`
+            : 'Non disponible'}
+        </Text>
+        <Text fontSize="xs" color={timeColor} mt={2}>
+          {latest ? `Mesure : ${timeAgo(latest.timestamp)}` : ''}
+        </Text>
+        <LastDataAddAlertButton />
+      </LastDataPanel>
     </Box>
   );
 };

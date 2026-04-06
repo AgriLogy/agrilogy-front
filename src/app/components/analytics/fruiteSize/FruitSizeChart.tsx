@@ -8,18 +8,13 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  CartesianGrid,
 } from 'recharts';
-import {
-  useBreakpointValue,
-  Box,
-  Flex,
-  Text,
-  Button,
-  HStack,
-} from '@chakra-ui/react';
+import { Box, Flex, Text, Button, HStack } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
+import ChartPanelHeading from '../../common/ChartPanelHeading';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
@@ -27,6 +22,23 @@ import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
 import { resolveAxisUnit } from '@/app/utils/unitOverrides';
 import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
+import ChartLegend, {
+  type ChartLegendPayloadEntry,
+} from '../../common/ChartLegend';
+import {
+  addTimeMsToChartRows,
+  defaultBarProps,
+  defaultLegendWrapperStyle,
+  getAdaptiveTimeXAxisProps,
+  getDefaultYAxisProps,
+  maxBarSizeForPointCount,
+  mergeAxisTheme,
+  themedCartesianGrid,
+  CHART_MARGIN_LEFT_Y_LABEL,
+  CHART_PLOT_HEIGHT_PX,
+  analyticsChartPanelLayoutProps,
+  yAxisLabelInsideLeft,
+} from '@/app/utils/chartAxisConfig';
 
 const FruitSizeChart = ({
   data,
@@ -41,25 +53,28 @@ const FruitSizeChart = ({
 
   const chartData = useMemo(
     () =>
-      data.map((item) => ({
-        name: item.timestamp,
-        fruit_size: calibrateChartValue('fruit_size', item.value),
-        default_unit: item.default_unit,
-      })),
+      addTimeMsToChartRows(
+        data.map((item) => ({
+          name: item.timestamp,
+          fruit_size: calibrateChartValue('fruit_size', item.value),
+          default_unit: item.default_unit,
+        })),
+        'name'
+      ),
     [data, unitRev]
   );
 
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(chartData.length / 3),
-    md: Math.ceil(chartData.length / 5),
-  });
-
-  const _labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const { textColor } = useColorModeStyles();
-  const { axis, mutedSeries } = useChartAxisColors();
+  const { axis, tickFill, grid } = useChartAxisColors();
+  const xAxisProps = mergeAxisTheme(
+    getAdaptiveTimeXAxisProps(chartData, 'name'),
+    axis,
+    tickFill
+  );
+  const yProps = mergeAxisTheme(getDefaultYAxisProps(2), axis, tickFill);
   const fruitUnit = resolveAxisUnit('fruit_size', data[0]?.default_unit);
 
-  const handleLegendClick = (payload: { dataKey?: unknown }) => {
+  const handleLegendClick = (payload: ChartLegendPayloadEntry) => {
     if (payload?.dataKey === 'fruit_size') {
       setShowBar((prev) => !prev);
     }
@@ -92,11 +107,13 @@ const FruitSizeChart = ({
   };
 
   return (
-    <Box width="100%" pr={4} pb={4}>
+    <Box {...analyticsChartPanelLayoutProps}>
       <Flex justify="space-between" align="center" mb={4}>
-        <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Évolution de la taille des fruits
-        </Text>
+        <ChartPanelHeading
+          color={textColor}
+          title="Calibre des fruits"
+          subtitle="Suivi dimensionnel des fruits sur la campagne."
+        />
         <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
@@ -121,73 +138,45 @@ const FruitSizeChart = ({
         loading={loading}
         empty={data.length === 0}
         chartRef={chartRef}
-        height="300px"
+        height={CHART_PLOT_HEIGHT_PX}
       >
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            margin={{
+              top: 20,
+              right: 30,
+              left: CHART_MARGIN_LEFT_Y_LABEL,
+              bottom: 5,
+            }}
+            barCategoryGap="14%"
             onClick={() => {}}
           >
-            <XAxis
-              dataKey="name"
-              angle={0}
-              textAnchor="middle"
-              interval={labelInterval}
-              stroke={axis}
-              strokeWidth={1}
-              tick={{
-                fill: axis,
-                fontSize: 17,
-                fontFamily: 'Arial, sans-serif',
-              }}
-              axisLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-            />
+            <CartesianGrid {...themedCartesianGrid(grid)} />
+            <XAxis {...xAxisProps} />
             <YAxis
-              label={{
-                value: fruitUnit,
-                angle: -90,
-                position: 'insideLeft',
-              }}
-              stroke={axis}
-              strokeWidth={1}
-              tick={{
-                fill: axis,
-                fontSize: 17,
-                fontFamily: 'Arial, sans-serif',
-              }}
-              axisLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
+              {...yProps}
+              label={yAxisLabelInsideLeft(`Calibre (${fruitUnit})`, tickFill)}
             />
             <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
-            <Legend onClick={handleLegendClick} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={
+                <ChartLegend
+                  onClick={handleLegendClick}
+                  hiddenDataKeys={showBar ? [] : ['fruit_size']}
+                />
+              }
+            />
             <Bar
               dataKey="fruit_size"
               name={`Taille des fruits (${fruitUnit})`}
-              fill={showBar ? '#82ca9d' : mutedSeries}
-              activeBar={
-                <Rectangle
-                  fill={showBar ? 'gold' : mutedSeries}
-                  stroke={showBar ? 'purple' : mutedSeries}
-                />
-              }
+              {...defaultBarProps}
+              maxBarSize={maxBarSizeForPointCount(chartData.length)}
+              hide={!showBar}
+              fill="#82ca9d"
+              activeBar={<Rectangle fill="gold" stroke="purple" />}
               isAnimationActive={false}
-              style={{
-                pointerEvents: showBar ? 'auto' : 'none',
-              }}
             />
           </BarChart>
         </ResponsiveContainer>

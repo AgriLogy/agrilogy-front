@@ -1,5 +1,6 @@
 'use client';
-import { Box, Text, useColorMode } from '@chakra-ui/react';
+import { Box, useColorMode } from '@chakra-ui/react';
+import { useMemo, useState } from 'react';
 import { useCalibratedStationChartRows } from '@/app/hooks/useCalibratedStationChartRows';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import { resolveAxisUnit } from '@/app/utils/unitOverrides';
@@ -13,45 +14,26 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import ChartPanelHeading from '../common/ChartPanelHeading';
 import ChartStateView from '../common/ChartStateView';
 import UnifiedTooltip from '../common/UnifiedTooltip';
 import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
-
-const CustomLegend = (props: any) => (
-  <ul
-    style={{
-      display: 'flex',
-      listStyle: 'none',
-      padding: 0,
-      flexWrap: 'wrap',
-      margin: 0,
-      marginLeft: 60,
-    }}
-  >
-    {props.payload.map((entry: any, index: number) => (
-      <li
-        key={`item-${index}`}
-        style={{
-          marginRight: '15px',
-          fontSize: '12px',
-          color: entry.color,
-          whiteSpace: 'nowrap',
-        }}
-      >
-        <span
-          style={{
-            marginRight: '5px',
-            backgroundColor: entry.color,
-            width: '10px',
-            height: '10px',
-            display: 'inline-block',
-          }}
-        />
-        {entry.value}
-      </li>
-    ))}
-  </ul>
-);
+import ChartLegend, {
+  type ChartLegendPayloadEntry,
+} from '../common/ChartLegend';
+import {
+  activeDotForSeries,
+  addTimeMsToChartRows,
+  defaultLegendWrapperStyle,
+  getAdaptiveTimeXAxisProps,
+  getDefaultYAxisProps,
+  mergeAxisTheme,
+  themedCartesianGrid,
+  CHART_MARGIN_LEFT_Y_LABEL,
+  CHART_PLOT_HEIGHT_PX,
+  yAxisLabelInsideLeft,
+} from '@/app/utils/chartAxisConfig';
 
 const PLUVIO_FIELDS = [
   { dataKey: 'precipitation_rate', sensorKey: 'precipitation_rate' },
@@ -59,14 +41,10 @@ const PLUVIO_FIELDS = [
 
 const PluvometricGraph = ({ data }: { data: any }) => {
   const { colorMode } = useColorMode();
-  const { axis, grid } = useChartAxisColors();
+  const { textColor } = useColorModeStyles();
+  const { axis, tickFill, grid } = useChartAxisColors();
   useUnitOverridesRevision();
 
-  const CustomTick = ({ x, y, payload }: any) => (
-    <text x={x} y={y} textAnchor="middle" fill={axis} fontSize="10">
-      {payload.value}
-    </text>
-  );
   const chartBg = colorMode === 'light' ? 'white' : 'gray.800';
   const loading = !data;
   const empty =
@@ -78,7 +56,24 @@ const PluvometricGraph = ({ data }: { data: any }) => {
     data?.sensor_data,
     PLUVIO_FIELDS
   );
+  const chartData = useMemo(
+    () => addTimeMsToChartRows(chartRows, 'timestamp'),
+    [chartRows]
+  );
+  const xAxisProps = mergeAxisTheme(
+    getAdaptiveTimeXAxisProps(chartData, 'timestamp'),
+    axis,
+    tickFill
+  );
+  const yProps = mergeAxisTheme(getDefaultYAxisProps(2), axis, tickFill);
   const lineUnit = resolveAxisUnit('precipitation_rate');
+
+  const [showSeries, setShowSeries] = useState(true);
+
+  const handleLegendClick = (e: ChartLegendPayloadEntry) => {
+    if (e.dataKey !== 'precipitation_rate') return;
+    setShowSeries((s) => !s);
+  };
 
   return (
     <Box
@@ -89,53 +84,57 @@ const PluvometricGraph = ({ data }: { data: any }) => {
       boxShadow="lg"
       p={2}
     >
-      <Text
-        color={colorMode === 'light' ? 'gray.700' : 'gray.200'}
-        fontSize="lg"
-        fontWeight="bold"
-        mb={4}
+      <Box mb={4}>
+        <ChartPanelHeading
+          title="Précipitations — intensité horaire"
+          subtitle={data?.sensor_names?.pluviometrie}
+          color={textColor}
+        />
+      </Box>
+      <ChartStateView
+        loading={loading}
+        empty={empty}
+        height={CHART_PLOT_HEIGHT_PX}
       >
-        {data?.sensor_names?.pluviometrie ?? 'Pluviométrie'}
-      </Text>
-      <ChartStateView loading={loading} empty={empty} height={300}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartRows}>
-            <CartesianGrid strokeDasharray="3 3" stroke={grid} />
-            <XAxis
-              dataKey="timestamp"
-              tick={<CustomTick />}
-              stroke={axis}
-              strokeWidth={1}
-              axisLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-            />
+          <LineChart
+            data={chartData}
+            margin={{
+              top: 12,
+              right: 12,
+              left: CHART_MARGIN_LEFT_Y_LABEL,
+              bottom: 8,
+            }}
+          >
+            <CartesianGrid {...themedCartesianGrid(grid)} />
+            <XAxis {...xAxisProps} />
             <YAxis
-              tick={<CustomTick />}
-              stroke={axis}
-              strokeWidth={1}
-              axisLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
-              tickLine={{
-                stroke: axis,
-                strokeWidth: 1,
-              }}
+              {...yProps}
+              label={yAxisLabelInsideLeft(`Précip. (${lineUnit})`, tickFill)}
             />
             <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
-            <Legend content={<CustomLegend />} />
-            {/* Line for Pluvometric Data */}
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={
+                <ChartLegend
+                  onClick={handleLegendClick}
+                  hiddenDataKeys={showSeries ? [] : ['precipitation_rate']}
+                />
+              }
+            />
             <Line
               type="monotone"
               dataKey="precipitation_rate"
               stroke={data.sensor_colors?.precipitation_rate_color}
               name={`Précipitation (${lineUnit})`}
+              strokeWidth={2.25}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              dot={false}
+              activeDot={activeDotForSeries(
+                data.sensor_colors?.precipitation_rate_color ?? '#0ea5e9'
+              )}
+              hide={!showSeries}
             />
           </LineChart>
         </ResponsiveContainer>
