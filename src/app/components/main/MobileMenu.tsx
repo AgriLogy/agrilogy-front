@@ -152,9 +152,12 @@ const MobileMenu = () => {
   return (
     <Flex
       as="header"
+      w="100%"
+      maxW="100%"
+      minW={0}
       justify="space-between"
       align="center"
-      px={4}
+      px={{ base: 2, md: 4 }}
       h={HEADER_H}
       minH={HEADER_H}
       bg={headerBarBg}

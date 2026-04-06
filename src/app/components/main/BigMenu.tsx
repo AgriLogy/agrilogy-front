@@ -45,9 +45,12 @@ const BigMenu = () => {
   return (
     <Flex
       as="header"
+      w="100%"
+      maxW="100%"
+      minW={0}
       justify="space-between"
       align="center"
-      px={{ base: 4, md: 6 }}
+      px={{ base: 2, md: 6 }}
       h={HEADER_H}
       minH={HEADER_H}
       bg={headerBarBg}
@@ -67,7 +70,12 @@ const BigMenu = () => {
         />
       </Link>
 
-      <HStack spacing={{ base: 1, md: 2 }} align="center">
+      <HStack
+        spacing={{ base: 1, md: 2 }}
+        align="center"
+        minW={0}
+        flexShrink={1}
+      >
         <NavbarNotificationsButton />
 
         <Divider orientation="vertical" h={6} borderColor={headerBarBorder} />

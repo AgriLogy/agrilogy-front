@@ -1,53 +1,14 @@
 'use client';
 
-import { Grid, GridItem } from '@chakra-ui/react';
 import React from 'react';
-import Header from '../components/main/Header';
-import Navbar from '../components/main/Sidebar';
 import VannesPompesMain from '../components/main/VannesPompesMain';
-import useColorModeStyles from '../utils/useColorModeStyles';
+import { AppPageShell } from '../components/layout/AppPageShell';
 
 const Page = () => {
-  const { navBgColor, textColor } = useColorModeStyles();
-
   return (
-    <Grid
-      templateAreas={{
-        base: `"header"
-               "main"`,
-        md: `"header header"
-             "nav main"`,
-      }}
-      gridTemplateRows={{ base: 'auto 1fr', md: '50px 1fr' }}
-      gridTemplateColumns={{
-        base: 'minmax(0, 1fr)',
-        md: '50px minmax(0, 1fr)',
-      }}
-      height="100vh"
-      gap="0.5"
-      color={textColor}
-      fontWeight="bold"
-    >
-      <GridItem area="header">
-        <Header />
-      </GridItem>
-      <GridItem
-        bg={navBgColor}
-        area="nav"
-        display={{ base: 'none', md: 'block' }}
-      >
-        <Navbar />
-      </GridItem>
-      <GridItem
-        pl="2"
-        bg={navBgColor}
-        area="main"
-        overflowY="auto"
-        height="100%"
-      >
-        <VannesPompesMain />
-      </GridItem>
-    </Grid>
+    <AppPageShell density="compact">
+      <VannesPompesMain />
+    </AppPageShell>
   );
 };
 
