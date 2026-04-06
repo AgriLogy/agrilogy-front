@@ -20,6 +20,7 @@ import SolarRadiationMain from '../analytics/SolarRadiation/SolarRadiationMain';
 import CumulPrecipitationMain from '../analytics/CumulPrecipitation/CumulPrecipitationMain';
 import PrecipitationRateMain from '../analytics/PrecipitationRate/PrecipitationRateMain';
 import VPDMain from '../analytics/VPD/VPDMain';
+import ZoneNotificationBell from '@/app/components/common/ZoneNotificationBell';
 
 const StationMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
@@ -58,7 +59,7 @@ const StationMain = () => {
   return (
     <div className="container">
       <Box bg={bg} className="header">
-        <HStack>
+        <HStack spacing={3} flexWrap="wrap" alignItems="center">
           <Text color={textColor}>Station météo du </Text>
           <select
             value={selectedZone ?? ''}
@@ -76,6 +77,14 @@ const StationMain = () => {
               </option>
             ))}
           </select>
+          {selectedZone != null && (
+            <ZoneNotificationBell
+              zoneId={selectedZone}
+              zoneName={
+                zones.find((z) => z.id === selectedZone)?.name ?? 'Zone'
+              }
+            />
+          )}
         </HStack>
       </Box>
 

@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import {
   Flex,
   IconButton,
@@ -18,12 +17,13 @@ import {
   Box,
   Divider,
 } from '@chakra-ui/react';
-import { BellIcon, MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { FaCog } from 'react-icons/fa';
 import Image from 'next/image';
 import api from '@/app/lib/api';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import logo from '../../public/logo.png';
+import NavbarNotificationsButton from '@/app/components/main/NavbarNotificationsButton';
 
 const HEADER_H = '64px';
 
@@ -32,7 +32,6 @@ const BigMenu = () => {
   const { hoverColor, headerBarBg, headerBarBorder, textColor } =
     useColorModeStyles();
   const [username, setUsername] = useState('');
-  const router = useRouter();
 
   useEffect(() => {
     api
@@ -69,18 +68,7 @@ const BigMenu = () => {
       </Link>
 
       <HStack spacing={{ base: 1, md: 2 }} align="center">
-        <Tooltip label="Notifications" hasArrow openDelay={300}>
-          <IconButton
-            icon={<BellIcon boxSize={5} />}
-            aria-label="Notifications"
-            variant="ghost"
-            size="md"
-            borderRadius="xl"
-            onClick={() => router.push('/notifications')}
-            _hover={{ bg: 'blackAlpha.50', color: hoverColor }}
-            _dark={{ _hover: { bg: 'whiteAlpha.100', color: hoverColor } }}
-          />
-        </Tooltip>
+        <NavbarNotificationsButton />
 
         <Divider orientation="vertical" h={6} borderColor={headerBarBorder} />
 
