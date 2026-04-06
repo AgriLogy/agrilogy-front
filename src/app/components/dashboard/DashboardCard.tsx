@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import {
   Box,
+  Flex,
   Text,
   useColorModeValue,
   useBreakpointValue,
@@ -9,11 +10,12 @@ import {
 
 interface DashboardCardProps {
   title: string;
+  titleAddon?: ReactNode;
   content: ReactNode;
   maxHeight?: string; // Optional: Max height for card
 }
 
-const DashboardCard = ({ title, content }: DashboardCardProps) => {
+const DashboardCard = ({ title, titleAddon, content }: DashboardCardProps) => {
   const tableBg = useColorModeValue('white', 'gray.800');
   const { colorMode } = useColorMode();
 
@@ -32,15 +34,25 @@ const DashboardCard = ({ title, content }: DashboardCardProps) => {
       // boxShadow="lg"
       overflow="hidden"
     >
-      {/* Title of the card */}
-      <Text
-        color={colorMode === 'light' ? 'gray.700' : 'gray.200'}
-        fontSize="lg"
-        fontWeight="bold"
+      <Flex
         mb={2}
+        align="center"
+        justify="space-between"
+        gap={3}
+        wrap="wrap"
+        pr={titleAddon ? 0 : 2}
       >
-        {title}
-      </Text>
+        <Text
+          color={colorMode === 'light' ? 'gray.700' : 'gray.200'}
+          fontSize="lg"
+          fontWeight="bold"
+          flex="1"
+          minW="0"
+        >
+          {title}
+        </Text>
+        {titleAddon ? <Box flexShrink={0}>{titleAddon}</Box> : null}
+      </Flex>
 
       {/* Scrollable content area */}
       <Box

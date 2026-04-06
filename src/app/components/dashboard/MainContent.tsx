@@ -20,16 +20,24 @@ const MainContent = () => {
         <Text color={textColor}>Tableau de board</Text>
       </Box>
       <Box {...cardProps} className="box">
-        <GoogleMapWeather />
+        <Box flex="1" minW={0} minH={0} w="100%" overflow="auto">
+          <GoogleMapWeather />
+        </Box>
       </Box>
       <Box {...cardProps} className="box">
-        <WeatherDashboard />
+        <Box flex="1" minW={0} minH={0} w="100%" overflow="auto">
+          <WeatherDashboard />
+        </Box>
       </Box>
       <Box {...cardProps} className="box">
-        <Zones />
+        <Box flex="1" minW={0} minH={0} w="100%" overflow="auto">
+          <Zones />
+        </Box>
       </Box>
       <Box {...cardProps} className="box">
-        <ElectrovannesList />
+        <Box flex="1" minW={0} minH={0} w="100%" overflow="auto">
+          <ElectrovannesList />
+        </Box>
       </Box>
     </div>
   );

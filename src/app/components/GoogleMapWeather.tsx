@@ -1,48 +1,62 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
-import { Box, useBreakpointValue } from '@chakra-ui/react';
+import { Box, Button, useBreakpointValue } from '@chakra-ui/react';
 import Loading from '@component/common/Loading';
 import DashboardCard from '@component/dashboard/DashboardCard';
 
-// Import the map only in the browser (prevents SSR "window is not defined")
-const OpenStreetMap = dynamic(() => import('@component/OpenStreetMap'), {
-  ssr: false,
-  loading: () => <Loading />,
-});
+const AgricultureMapboxMap = dynamic(
+  () => import('@component/map/AgricultureMapboxMap'),
+  {
+    ssr: false,
+    loading: () => <Loading />,
+  }
+);
+
+const DEFAULT_LAT = 32.88986;
+const DEFAULT_LON = -6.914351;
 
 export default function GoogleMapWeather() {
-  // Chakra can use matchMedia under the hood; this runs only on client due to "use client"
   const p = useBreakpointValue({ base: 2, md: 4 }) ?? 2;
+  const [mapToolsOpen, setMapToolsOpen] = useState(false);
 
-  const [loading, setLoading] = useState(true);
-  const lat = 32.88986;
-  const lon = -6.914351;
-
-  useEffect(() => {
-    // simulate initial load; remove if unnecessary
-    setLoading(false);
-  }, []);
-
-  const content = loading ? (
-    <Loading />
-  ) : (
+  const content = (
     <Box
       maxW="100%"
-      maxH={{ base: '300px', md: '500px' }}
+      maxH={{ base: 'none', md: '560px' }}
+      minH={{ base: '360px', md: '480px' }}
       height="100%"
       width="100%"
       borderRadius="md"
       overflow="hidden"
     >
-      <OpenStreetMap lat={lat} lon={lon} />
+      <AgricultureMapboxMap
+        lat={DEFAULT_LAT}
+        lon={DEFAULT_LON}
+        showToolsPanel={mapToolsOpen}
+      />
     </Box>
+  );
+
+  const titleAddon = (
+    <Button
+      size="sm"
+      variant={mapToolsOpen ? 'solid' : 'outline'}
+      colorScheme="green"
+      onClick={() => setMapToolsOpen((o) => !o)}
+    >
+      {mapToolsOpen ? 'Masquer les outils' : 'Outils carte'}
+    </Button>
   );
 
   return (
     <Box width="100%" height="100%" p={p} overflowX="auto">
-      <DashboardCard title="Localisation" content={content} />
+      <DashboardCard
+        title="Exploitation & secteurs"
+        titleAddon={titleAddon}
+        content={content}
+      />
     </Box>
   );
 }

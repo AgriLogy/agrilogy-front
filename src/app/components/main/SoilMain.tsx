@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, HStack, Text, useColorModeValue } from '@chakra-ui/react';
+import '@/app/styles/style.css';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import DateRangePicker from '../analytics/DateRangePicker';
 import api from '@/app/lib/api';
