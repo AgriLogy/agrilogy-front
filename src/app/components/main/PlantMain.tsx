@@ -15,6 +15,7 @@ import getActiveGraphs, {
 import FruiteSizeMain from '../analytics/fruiteSize/FruiteSizeMain';
 import LargeFruitDiameterMain from '../analytics/LargeFruitDiameter/LargeFruitDiameterMain';
 import SensorLeafMain from '../analytics/Leaf/SensorLeafMain';
+import ZoneNotificationBell from '@/app/components/common/ZoneNotificationBell';
 
 const PlantMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
@@ -53,7 +54,7 @@ const PlantMain = () => {
   return (
     <div className="container">
       <Box bg={bg} className="header">
-        <HStack>
+        <HStack spacing={3} flexWrap="wrap" alignItems="center">
           <Text color={textColor}>Données des plantes du </Text>
           <select
             value={selectedZone ?? ''}
@@ -71,6 +72,14 @@ const PlantMain = () => {
               </option>
             ))}
           </select>
+          {selectedZone != null && (
+            <ZoneNotificationBell
+              zoneId={selectedZone}
+              zoneName={
+                zones.find((z) => z.id === selectedZone)?.name ?? 'Zone'
+              }
+            />
+          )}
         </HStack>
       </Box>
 

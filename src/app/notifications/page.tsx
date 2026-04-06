@@ -1,10 +1,11 @@
 'use client';
 import { Grid, GridItem } from '@chakra-ui/react';
-import React from 'react';
+import React, { Suspense } from 'react';
 import Header from '../components/main/Header';
 import Navbar from '../components/main/Sidebar';
 import useColorModeStyles from '../utils/useColorModeStyles';
 import NotificationsMain from '../components/notifications/NotificationsMain';
+import EmptyBox from '../components/common/EmptyBox';
 
 const Page = () => {
   const { textColor, navBgColor, SideBarbg } = useColorModeStyles();
@@ -44,7 +45,9 @@ const Page = () => {
         overflowY="auto"
         height="100%"
       >
-        <NotificationsMain />
+        <Suspense fallback={<EmptyBox variant="loading" />}>
+          <NotificationsMain />
+        </Suspense>
       </GridItem>
     </Grid>
   );

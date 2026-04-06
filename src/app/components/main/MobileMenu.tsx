@@ -44,6 +44,7 @@ import { logOptionalApiFailure } from '@/app/utils/apiClientErrors';
 import { FaBell, FaSeedling, FaWater } from 'react-icons/fa';
 import { WiDaySunny } from 'react-icons/wi';
 import { GiGrapes, GiValve } from 'react-icons/gi';
+import NavbarNotificationsButton from '@/app/components/main/NavbarNotificationsButton';
 
 const HEADER_H = '64px';
 
@@ -174,6 +175,7 @@ const MobileMenu = () => {
       </Link>
 
       <HStack spacing={1}>
+        <NavbarNotificationsButton />
         <Menu placement="bottom-end">
           <MenuButton
             as={IconButton}

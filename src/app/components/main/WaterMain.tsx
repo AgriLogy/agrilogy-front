@@ -15,6 +15,7 @@ import EcWaterMain from '../analytics/WaterEc/EcWaterMain';
 import WaterFlowMain from '../analytics/WaterFlow/WaterFlowMain';
 import PhWaterMain from '../analytics/WaterPh/PhWaterMain';
 import WaterPressureMain from '../analytics/WaterPressure/WaterPressureMain';
+import ZoneNotificationBell from '@/app/components/common/ZoneNotificationBell';
 
 const WaterMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
@@ -53,7 +54,7 @@ const WaterMain = () => {
   return (
     <div className="container">
       <Box bg={bg} className="header" border="1px">
-        <HStack>
+        <HStack spacing={3} flexWrap="wrap" alignItems="center">
           <Text color={textColor}>Données sur l&apos;eau du </Text>
           <select
             value={selectedZone ?? ''}
@@ -71,6 +72,14 @@ const WaterMain = () => {
               </option>
             ))}
           </select>
+          {selectedZone != null && (
+            <ZoneNotificationBell
+              zoneId={selectedZone}
+              zoneName={
+                zones.find((z) => z.id === selectedZone)?.name ?? 'Zone'
+              }
+            />
+          )}
         </HStack>
       </Box>
 

@@ -15,6 +15,7 @@ import SoilSalinityConductivityMain from '../analytics/SoilSalinityConductivity/
 import SoilConductivityIrrigationMain from '../analytics/SoilConductivityIrrigation/SoilConductivityIrrigationMain';
 import NpkMain from '../analytics/npk/NpkMain';
 import SoilTemperatureMain from '../analytics/SoilTemperature/SoilTemperatureMain';
+import ZoneNotificationBell from '@/app/components/common/ZoneNotificationBell';
 
 const SoilMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
@@ -53,7 +54,7 @@ const SoilMain = () => {
   return (
     <div className="container">
       <Box bg={bg} className="header">
-        <HStack>
+        <HStack spacing={3} flexWrap="wrap" alignItems="center">
           <Text color={textColor}>Données sur le sol du </Text>
           <select
             value={selectedZone ?? ''}
@@ -71,6 +72,14 @@ const SoilMain = () => {
               </option>
             ))}
           </select>
+          {selectedZone != null && (
+            <ZoneNotificationBell
+              zoneId={selectedZone}
+              zoneName={
+                zones.find((z) => z.id === selectedZone)?.name ?? 'Zone'
+              }
+            />
+          )}
         </HStack>
       </Box>
 
