@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Table,
   Text,
@@ -11,10 +11,10 @@ import {
   useToast,
   Button,
   Flex,
-} from "@chakra-ui/react";
-import api from "@/app/lib/api";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import EmptyBox from "../common/EmptyBox";
+} from '@chakra-ui/react';
+import api from '@/app/lib/api';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import EmptyBox from '../common/EmptyBox';
 
 interface SensorSetting {
   name: string;
@@ -30,7 +30,7 @@ const GraphNameSettings = () => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const graphResponse = await api.get("/api/graph-name/");
+        const graphResponse = await api.get('/api/graph-name/');
         const graphData = graphResponse.data;
 
         const sensorSettings: SensorSetting[] = Object.keys(graphData).map(
@@ -42,7 +42,7 @@ const GraphNameSettings = () => {
 
         setSettings(sensorSettings);
       } catch (error) {
-        console.error("Error fetching sensor settings", error);
+        console.error('Error fetching sensor settings', error);
       } finally {
         setLoading(false);
       }
@@ -59,26 +59,29 @@ const GraphNameSettings = () => {
 
   const handleSave = async () => {
     try {
-      const graphUpdate = settings.reduce((acc, sensor) => {
-        acc[sensor.name] = sensor.customName;
-        return acc;
-      }, {} as Record<string, string>);
+      const graphUpdate = settings.reduce(
+        (acc, sensor) => {
+          acc[sensor.name] = sensor.customName;
+          return acc;
+        },
+        {} as Record<string, string>
+      );
 
       await api.put(`/api/graph-name/`, graphUpdate);
 
       toast({
-        title: "Success",
-        description: "Color updated successfully",
-        status: "success",
+        title: 'Success',
+        description: 'Color updated successfully',
+        status: 'success',
         duration: 2000,
         isClosable: true,
       });
     } catch (error) {
-      console.error("Error updating settings", error);
+      console.error('Error updating settings', error);
       toast({
-        title: "Error",
-        description: "Failed to update color",
-        status: "error",
+        title: 'Error',
+        description: 'Failed to update color',
+        status: 'error',
         duration: 3000,
         isClosable: true,
       });
@@ -87,11 +90,11 @@ const GraphNameSettings = () => {
   return (
     <div>
       {loading ? (
-        <EmptyBox />
+        <EmptyBox variant="loading" />
       ) : (
         <>
           <Text color={textColor}>Paramètres du nom du graphique</Text>
-  
+
           <Table>
             <Thead>
               <Tr>
@@ -113,7 +116,7 @@ const GraphNameSettings = () => {
               ))}
             </Tbody>
           </Table>
-  
+
           <Flex justifyContent="center" mt={4}>
             <Button colorScheme="blue" size="lg" onClick={handleSave}>
               Mettre à jour
@@ -122,7 +125,7 @@ const GraphNameSettings = () => {
         </>
       )}
     </div>
-  );}
-  
+  );
+};
 
 export default GraphNameSettings;

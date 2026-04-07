@@ -1,38 +1,48 @@
 'use client';
 import { useEffect, useRef, useState, KeyboardEvent } from 'react';
-import {
-  Box,
-  Flex,
-  Textarea,
-  Text,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { Box, Flex, Textarea, Text, useColorModeValue } from '@chakra-ui/react';
 import { keyframes } from '@emotion/react';
 import { AgrilogyMessageBubble } from './MessageBubble';
 import type { ChatErrorCode, Message } from './types';
 
 // ── Icons ──────────────────────────────────────────────────────────────────
 const LeafIcon = ({ size = 22 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox='0 0 24 24' fill='none'>
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <path
-      d='M21 3C21 3 13 3 8 8C3.58 12.42 4 18 4 18C4 18 9.58 18.42 14 14C19 9 19 1 19 1'
-      stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'
+      d="M21 3C21 3 13 3 8 8C3.58 12.42 4 18 4 18C4 18 9.58 18.42 14 14C19 9 19 1 19 1"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
-    <path d='M4 20L9 15' stroke='currentColor' strokeWidth='2' strokeLinecap='round' />
+    <path
+      d="M4 20L9 15"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
   </svg>
 );
 
 const CloseIcon = ({ size = 18 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox='0 0 24 24' fill='none'>
-    <path d='M18 6L6 18M6 6l12 12' stroke='currentColor' strokeWidth='2.5' strokeLinecap='round' />
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <path
+      d="M18 6L6 18M6 6l12 12"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+    />
   </svg>
 );
 
 const SendIcon = () => (
-  <svg width='15' height='15' viewBox='0 0 24 24' fill='none'>
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
     <path
-      d='M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z'
-      stroke='currentColor' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round'
+      d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
@@ -45,10 +55,9 @@ const panelIn = keyframes`
 
 // ── Constants ──────────────────────────────────────────────────────────────
 const WELCOME_MESSAGE =
-  "Bonjour ! Je suis votre assistant Agrilogy. Posez-moi vos questions sur vos champs, capteurs, santé des cultures ou performance de votre exploitation. Tapez /help pour voir les pages disponibles.";
+  'Bonjour ! Je suis votre assistant Agrilogy. Posez-moi vos questions sur vos champs, capteurs, santé des cultures ou performance de votre exploitation. Tapez /help pour voir les pages disponibles.';
 
-const SYSTEM_PROMPT =
-  `Tu es l'assistant intégré d'Agrilogy, une plateforme d'intelligence agricole.
+const SYSTEM_PROMPT = `Tu es l'assistant intégré d'Agrilogy, une plateforme d'intelligence agricole.
 Ta seule mission est d'aider les utilisateurs à naviguer et comprendre les données disponibles dans l'application Agrilogy : tableau de bord, données sol, station météo, suivi des plantes, données eau, et gestion des alertes.
 
 RÈGLE ABSOLUE : Si la question ne concerne pas directement l'application Agrilogy ou l'agriculture en lien avec les données de la plateforme, tu DOIS refuser. Réponds uniquement : "Je suis uniquement disponible pour répondre aux questions liées à l'application Agrilogy. Tapez /help pour voir les pages disponibles." Ne donne aucune information hors sujet, même partielle. Ne t'excuse pas longuement, ne propose pas d'alternatives hors-sujet.
@@ -56,11 +65,11 @@ RÈGLE ABSOLUE : Si la question ne concerne pas directement l'application Agrilo
 Réponds toujours en français. Sois concis et pratique.`;
 
 const ERROR_MESSAGES: Record<ChatErrorCode, string> = {
-  timeout:    'La requête a expiré. Veuillez réessayer.',
+  timeout: 'La requête a expiré. Veuillez réessayer.',
   overloaded: 'Le serveur est occupé. Veuillez réessayer dans un moment.',
   rate_limit: 'Trop de requêtes. Veuillez ralentir.',
-  internal:   'Une erreur s\'est produite. Veuillez réessayer.',
-  network:    'Erreur réseau. Vérifiez votre connexion et réessayez.',
+  internal: "Une erreur s'est produite. Veuillez réessayer.",
+  network: 'Erreur réseau. Vérifiez votre connexion et réessayez.',
 };
 
 // ── App routes for /help ───────────────────────────────────────────────────
@@ -68,37 +77,41 @@ const APP_ROUTES = [
   {
     path: '/',
     label: 'Tableau de bord',
-    description: 'Vue d\'ensemble de votre exploitation',
+    description: "Vue d'ensemble de votre exploitation",
     icon: '🏠',
   },
   {
     path: '/soil',
     label: 'Données sur le sol',
-    description: 'Eau disponible, Température (°C), pH, Salinité & conductivité, NPK',
+    description:
+      'Eau disponible, Température (°C), pH, Salinité & conductivité, NPK',
     icon: '🌱',
   },
   {
     path: '/station',
     label: 'Station météo',
-    description: 'Température & Humidité, ET0, Vitesse & direction du vent, Rayonnement, Précipitations',
+    description:
+      'Température & Humidité, ET0, Vitesse & direction du vent, Rayonnement, Précipitations',
     icon: '🌤️',
   },
   {
     path: '/plant',
     label: 'Suivi des plantes',
-    description: 'Taille des fruits, Diamètre des gros fruits, Humidité & température des feuilles',
+    description:
+      'Taille des fruits, Diamètre des gros fruits, Humidité & température des feuilles',
     icon: '🌿',
   },
   {
     path: '/water',
-    label: 'Données sur l\'eau',
+    label: "Données sur l'eau",
     description: 'Débit, Pression, pH, Conductivité, Cumul de précipitations',
     icon: '💧',
   },
   {
     path: '/alerts',
     label: 'Gestion des alertes',
-    description: 'Consultation et gestion de toutes les alertes de votre exploitation',
+    description:
+      'Consultation et gestion de toutes les alertes de votre exploitation',
     icon: '🔔',
   },
 ];
@@ -112,43 +125,49 @@ interface HelpCardProps {
   descColor: string;
 }
 
-const HelpCard = ({ linkColor, linkHoverColor, cardBg, cardBorder, descColor }: HelpCardProps) => (
-  <Box display='flex' flexDirection='column' gap='6px'>
-    <Text fontSize='13px' fontWeight={600} mb='4px'>
+const HelpCard = ({
+  linkColor,
+  linkHoverColor,
+  cardBg,
+  cardBorder,
+  descColor,
+}: HelpCardProps) => (
+  <Box display="flex" flexDirection="column" gap="6px">
+    <Text fontSize="13px" fontWeight={600} mb="4px">
       📋 Pages disponibles sur Agrilogy :
     </Text>
     {APP_ROUTES.map((route) => (
       <Box
         key={route.path}
-        as='a'
+        as="a"
         href={route.path}
-        display='block'
-        px='10px'
-        py='7px'
+        display="block"
+        px="10px"
+        py="7px"
         bg={cardBg}
-        border='1px solid'
+        border="1px solid"
         borderColor={cardBorder}
-        borderRadius='8px'
-        textDecoration='none'
-        transition='all 0.15s'
+        borderRadius="8px"
+        textDecoration="none"
+        transition="all 0.15s"
         _hover={{ borderColor: linkHoverColor, transform: 'translateX(2px)' }}
-        role='link'
+        role="link"
       >
-        <Flex align='center' gap='6px' mb='1px'>
-          <Text fontSize='13px'>{route.icon}</Text>
+        <Flex align="center" gap="6px" mb="1px">
+          <Text fontSize="13px">{route.icon}</Text>
           <Text
-            fontSize='12.5px'
+            fontSize="12.5px"
             fontWeight={600}
             color={linkColor}
-            fontFamily='mono'
+            fontFamily="mono"
           >
             {route.path}
           </Text>
-          <Text fontSize='12px' fontWeight={500} color={linkColor}>
+          <Text fontSize="12px" fontWeight={500} color={linkColor}>
             — {route.label}
           </Text>
         </Flex>
-        <Text fontSize='11px' color={descColor} pl='20px'>
+        <Text fontSize="11px" color={descColor} pl="20px">
           {route.description}
         </Text>
       </Box>
@@ -168,7 +187,7 @@ async function sendToAnthropic(
   messages: { role: string; content: string }[],
   system: string,
   onChunk: (text: string) => void,
-  signal: AbortSignal,
+  signal: AbortSignal
 ): Promise<void> {
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -190,8 +209,10 @@ async function sendToAnthropic(
 
   if (!response.ok) {
     const status = response.status;
-    if (status === 429) throw Object.assign(new Error(), { code: 'rate_limit' });
-    if (status === 503) throw Object.assign(new Error(), { code: 'overloaded' });
+    if (status === 429)
+      throw Object.assign(new Error(), { code: 'rate_limit' });
+    if (status === 503)
+      throw Object.assign(new Error(), { code: 'overloaded' });
     if (status >= 500) throw Object.assign(new Error(), { code: 'internal' });
     throw Object.assign(new Error(), { code: 'network' });
   }
@@ -236,44 +257,43 @@ export const AgrilogyChatBot = ({
   onClose,
   pageContext = 'general',
 }: AgrilogyChatBotProps) => {
-
   // ── State ────────────────────────────────────────────────────────────────
-  const [input, setInput]       = useState('');
+  const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [streaming, setStreaming] = useState(false);
 
-  const abortRef       = useRef<AbortController | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const textareaRef    = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // ── Colors ───────────────────────────────────────────────────────────────
-  const panelBg          = useColorModeValue('white', 'gray.800');
-  const panelBorder      = useColorModeValue('gray.200', 'gray.600');
-  const headerBg         = useColorModeValue('gray.50', 'gray.750');
-  const headerName       = useColorModeValue('gray.800', 'gray.100');
-  const headerStatus     = useColorModeValue('gray.500', 'gray.400');
-  const statusDot        = useColorModeValue('green.500', 'green.400');
-  const closeHoverBg     = useColorModeValue('gray.200', 'gray.600');
-  const toggleBg         = useColorModeValue('green.600', 'green.500');
-  const inputBg          = useColorModeValue('gray.50', 'gray.700');
-  const inputBorder      = useColorModeValue('gray.200', 'gray.600');
-  const inputFocus       = useColorModeValue('green.500', 'green.400');
-  const inputColor       = useColorModeValue('gray.800', 'gray.100');
+  const panelBg = useColorModeValue('white', 'gray.800');
+  const panelBorder = useColorModeValue('gray.200', 'gray.600');
+  const headerBg = useColorModeValue('gray.50', 'gray.700');
+  const headerName = useColorModeValue('gray.800', 'gray.100');
+  const headerStatus = useColorModeValue('gray.500', 'gray.400');
+  const statusDot = useColorModeValue('green.500', 'green.400');
+  const closeHoverBg = useColorModeValue('gray.200', 'gray.600');
+  const toggleBg = useColorModeValue('green.600', 'green.500');
+  const inputBg = useColorModeValue('gray.50', 'gray.700');
+  const inputBorder = useColorModeValue('gray.200', 'gray.600');
+  const inputFocus = useColorModeValue('green.500', 'green.400');
+  const inputColor = useColorModeValue('gray.800', 'gray.100');
   const placeholderColor = useColorModeValue('gray.400', 'gray.500');
-  const sendBg           = useColorModeValue('green.600', 'green.500');
-  const sendHoverBg      = useColorModeValue('green.700', 'green.400');
-  const hintColor        = useColorModeValue('gray.400', 'gray.500');
-  const abortColor       = useColorModeValue('gray.500', 'gray.400');
-  const abortHoverColor  = useColorModeValue('red.500', 'red.400');
-  const scrollThumb      = useColorModeValue('gray.300', 'gray.600');
-  const asstBubbleBg     = useColorModeValue('gray.100', 'gray.700');
-  const asstBubbleText   = useColorModeValue('gray.800', 'gray.100');
+  const sendBg = useColorModeValue('green.600', 'green.500');
+  const sendHoverBg = useColorModeValue('green.700', 'green.400');
+  const hintColor = useColorModeValue('gray.400', 'gray.500');
+  const abortColor = useColorModeValue('gray.500', 'gray.400');
+  const abortHoverColor = useColorModeValue('red.500', 'red.400');
+  const scrollThumb = useColorModeValue('gray.300', 'gray.600');
+  const asstBubbleBg = useColorModeValue('gray.100', 'gray.700');
+  const asstBubbleText = useColorModeValue('gray.800', 'gray.100');
   const asstBubbleBorder = useColorModeValue('gray.200', 'gray.600');
-  const helpLinkColor    = useColorModeValue('green.600', 'green.400');
-  const helpLinkHover    = useColorModeValue('green.700', 'green.300');
-  const helpCardBg       = useColorModeValue('gray.50', 'gray.700');
-  const helpCardBorder   = useColorModeValue('gray.200', 'gray.600');
-  const helpDescColor    = useColorModeValue('gray.500', 'gray.400');
+  const helpLinkColor = useColorModeValue('green.600', 'green.400');
+  const helpLinkHover = useColorModeValue('green.700', 'green.300');
+  const helpCardBg = useColorModeValue('gray.50', 'gray.700');
+  const helpCardBorder = useColorModeValue('gray.200', 'gray.600');
+  const helpDescColor = useColorModeValue('gray.500', 'gray.400');
 
   // ── Effects ──────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -285,10 +305,20 @@ export const AgrilogyChatBot = ({
   }, [open]);
 
   // ── Message helpers ───────────────────────────────────────────────────────
-  const appendMessage = (role: Message['role'], content: string, isError = false) => {
+  const appendMessage = (
+    role: Message['role'],
+    content: string,
+    isError = false
+  ) => {
     setMessages((prev) => [
       ...prev,
-      { id: crypto.randomUUID(), role, content, isError, timestamp: new Date() },
+      {
+        id: crypto.randomUUID(),
+        role,
+        content,
+        isError,
+        timestamp: new Date(),
+      },
     ]);
   };
 
@@ -319,7 +349,8 @@ export const AgrilogyChatBot = ({
   const removeLastIfEmpty = () => {
     setMessages((prev) => {
       const last = prev[prev.length - 1];
-      if (last?.role === 'assistant' && !last.content.trim()) return prev.slice(0, -1);
+      if (last?.role === 'assistant' && !last.content.trim())
+        return prev.slice(0, -1);
       return prev;
     });
   };
@@ -370,7 +401,7 @@ export const AgrilogyChatBot = ({
         [...historySnapshot, { role: 'user', content: text }],
         `${SYSTEM_PROMPT}\nContexte de la page actuelle : ${pageContext}`,
         updateLastAssistant,
-        controller.signal,
+        controller.signal
       );
     } catch (e: unknown) {
       if ((e as Error).name === 'AbortError') {
@@ -395,69 +426,112 @@ export const AgrilogyChatBot = ({
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
     if (e.key === 'Escape') onClose();
   };
 
-  const isTypingIndicator = streaming && messages[messages.length - 1]?.content === '';
+  const isTypingIndicator =
+    streaming && messages[messages.length - 1]?.content === '';
   const canSend = !!input.trim() && !streaming;
   const timestampColor = useColorModeValue('gray.400', 'gray.500');
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <Box
-      position='fixed'
+      position="fixed"
       bottom={{ base: '80px', sm: '92px' }}
       right={{ base: '8px', sm: '28px' }}
       zIndex={999}
       w={{ base: 'calc(100vw - 16px)', sm: '380px' }}
       h={{ base: 'calc(100vh - 120px)', sm: '540px' }}
-      borderRadius='16px'
+      borderRadius="16px"
       bg={panelBg}
-      border='1px solid'
+      border="1px solid"
       borderColor={panelBorder}
-      display='flex'
-      flexDirection='column'
-      overflow='hidden'
-      boxShadow='0 8px 32px rgba(33,43,54,0.12), 0 2px 8px rgba(33,43,54,0.06)'
-      transformOrigin='bottom right'
-      transform={open ? 'scale(1) translateY(0)' : 'scale(0.88) translateY(10px)'}
+      display="flex"
+      flexDirection="column"
+      overflow="hidden"
+      boxShadow="0 8px 32px rgba(33,43,54,0.12), 0 2px 8px rgba(33,43,54,0.06)"
+      transformOrigin="bottom right"
+      transform={
+        open ? 'scale(1) translateY(0)' : 'scale(0.88) translateY(10px)'
+      }
       opacity={open ? 1 : 0}
       pointerEvents={open ? 'all' : 'none'}
-      transition='transform 0.25s cubic-bezier(0.34,1.4,0.64,1), opacity 0.18s ease'
-      animation={open ? `${panelIn} 0.25s cubic-bezier(0.34,1.4,0.64,1)` : undefined}
-      role='dialog'
-      aria-label='Agrilogy assistant'
+      transition="transform 0.25s cubic-bezier(0.34,1.4,0.64,1), opacity 0.18s ease"
+      animation={
+        open ? `${panelIn} 0.25s cubic-bezier(0.34,1.4,0.64,1)` : undefined
+      }
+      role="dialog"
+      aria-label="Agrilogy assistant"
     >
       {/* Header */}
       <Flex
-        align='center' gap='10px' px='16px' py='14px'
-        borderBottom='1px solid' borderColor={panelBorder}
-        bg={headerBg} flexShrink={0}
+        align="center"
+        gap="10px"
+        px="16px"
+        py="14px"
+        borderBottom="1px solid"
+        borderColor={panelBorder}
+        bg={headerBg}
+        flexShrink={0}
       >
-        <Flex w='32px' h='32px' borderRadius='10px' bg={toggleBg} color='white' align='center' justify='center' flexShrink={0}>
+        <Flex
+          w="32px"
+          h="32px"
+          borderRadius="10px"
+          bg={toggleBg}
+          color="white"
+          align="center"
+          justify="center"
+          flexShrink={0}
+        >
           <LeafIcon size={16} />
         </Flex>
 
         <Box flex={1} minW={0}>
-          <Text fontSize='13px' fontWeight={600} color={headerName} letterSpacing='0.01em'>
+          <Text
+            fontSize="13px"
+            fontWeight={600}
+            color={headerName}
+            letterSpacing="0.01em"
+          >
             Assistant Agrilogy
           </Text>
-          <Flex align='center' gap='4px'>
-            <Box w='5px' h='5px' borderRadius='50%' bg={statusDot} flexShrink={0} />
-            <Text fontSize='11px' color={headerStatus}>
+          <Flex align="center" gap="4px">
+            <Box
+              w="5px"
+              h="5px"
+              borderRadius="50%"
+              bg={statusDot}
+              flexShrink={0}
+            />
+            <Text fontSize="11px" color={headerStatus}>
               {streaming ? 'En cours...' : 'Prêt'}
             </Text>
           </Flex>
         </Box>
 
         <Box
-          as='button' w='28px' h='28px' borderRadius='8px' border='none'
-          cursor='pointer' bg='transparent' color={headerStatus}
-          display='flex' alignItems='center' justifyContent='center'
-          transition='background 0.15s, color 0.15s'
+          as="button"
+          w="28px"
+          h="28px"
+          borderRadius="8px"
+          border="none"
+          cursor="pointer"
+          bg="transparent"
+          color={headerStatus}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          transition="background 0.15s, color 0.15s"
           _hover={{ bg: closeHoverBg, color: headerName }}
-          onClick={onClose} aria-label='Fermer' type='button'
+          onClick={onClose}
+          aria-label="Fermer"
+          type="button"
         >
           <CloseIcon size={14} />
         </Box>
@@ -465,23 +539,38 @@ export const AgrilogyChatBot = ({
 
       {/* Messages */}
       <Box
-        flex={1} overflowY='auto' px='14px' pt='14px' pb='8px'
-        display='flex' flexDirection='column' gap='8px' bg={panelBg}
+        flex={1}
+        overflowY="auto"
+        px="14px"
+        pt="14px"
+        pb="8px"
+        display="flex"
+        flexDirection="column"
+        gap="8px"
+        bg={panelBg}
         sx={{
           scrollBehavior: 'smooth',
           '&::-webkit-scrollbar': { width: '3px' },
           '&::-webkit-scrollbar-track': { background: 'transparent' },
-          '&::-webkit-scrollbar-thumb': { background: scrollThumb, borderRadius: '99px' },
+          '&::-webkit-scrollbar-thumb': {
+            background: scrollThumb,
+            borderRadius: '99px',
+          },
         }}
       >
         {/* Welcome */}
-        <Box display='flex' flexDirection='column' alignItems='flex-start'>
+        <Box display="flex" flexDirection="column" alignItems="flex-start">
           <Box
-            maxW='78%' px='13px' py='9px'
-            bg={asstBubbleBg} color={asstBubbleText}
-            border='1px solid' borderColor={asstBubbleBorder}
-            borderRadius='12px 12px 12px 4px'
-            fontSize='13.5px' lineHeight='1.55'
+            maxW="78%"
+            px="13px"
+            py="9px"
+            bg={asstBubbleBg}
+            color={asstBubbleText}
+            border="1px solid"
+            borderColor={asstBubbleBorder}
+            borderRadius="12px 12px 12px 4px"
+            fontSize="13.5px"
+            lineHeight="1.55"
           >
             {WELCOME_MESSAGE}
           </Box>
@@ -489,28 +578,29 @@ export const AgrilogyChatBot = ({
 
         {messages.map((msg, i) => {
           const isLast = i === messages.length - 1;
-          const showTyping = isLast && isTypingIndicator && msg.role === 'assistant';
+          const showTyping =
+            isLast && isTypingIndicator && msg.role === 'assistant';
 
           // Render help card inline for __HELP__ messages
           if (msg.content === '__HELP__') {
             return (
               <Box
                 key={msg.id}
-                display='flex'
-                flexDirection='column'
-                alignItems='flex-start'
+                display="flex"
+                flexDirection="column"
+                alignItems="flex-start"
               >
                 <Box
-                  maxW='90%'
-                  px='13px'
-                  py='10px'
+                  maxW="90%"
+                  px="13px"
+                  py="10px"
                   bg={asstBubbleBg}
                   color={asstBubbleText}
-                  border='1px solid'
+                  border="1px solid"
                   borderColor={asstBubbleBorder}
-                  borderRadius='12px 12px 12px 4px'
-                  fontSize='13px'
-                  lineHeight='1.55'
+                  borderRadius="12px 12px 12px 4px"
+                  fontSize="13px"
+                  lineHeight="1.55"
                 >
                   <HelpCard
                     linkColor={helpLinkColor}
@@ -521,19 +611,28 @@ export const AgrilogyChatBot = ({
                   />
                 </Box>
                 <Text
-                  fontSize='10px'
+                  fontSize="10px"
                   color={timestampColor}
-                  fontFamily='mono'
-                  px='4px'
-                  mt='3px'
+                  fontFamily="mono"
+                  px="4px"
+                  mt="3px"
                 >
-                  {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  {msg.timestamp.toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
                 </Text>
               </Box>
             );
           }
 
-          return <AgrilogyMessageBubble key={msg.id} message={msg} isTyping={showTyping} />;
+          return (
+            <AgrilogyMessageBubble
+              key={msg.id}
+              message={msg}
+              isTyping={showTyping}
+            />
+          );
         })}
 
         <div ref={messagesEndRef} />
@@ -541,12 +640,18 @@ export const AgrilogyChatBot = ({
 
       {/* Input */}
       <Box
-        px='12px' pt='10px' pb='12px'
-        borderTop='1px solid' borderColor={panelBorder}
-        bg={headerBg} flexShrink={0}
-        display='flex' flexDirection='column' gap='6px'
+        px="12px"
+        pt="10px"
+        pb="12px"
+        borderTop="1px solid"
+        borderColor={panelBorder}
+        bg={headerBg}
+        flexShrink={0}
+        display="flex"
+        flexDirection="column"
+        gap="6px"
       >
-        <Flex align='flex-end' gap='8px'>
+        <Flex align="flex-end" gap="8px">
           <Textarea
             ref={textareaRef}
             value={input}
@@ -554,45 +659,74 @@ export const AgrilogyChatBot = ({
             onKeyDown={handleKeyDown}
             onInput={handleInput}
             flex={1}
-            bg={inputBg} border='1px solid' borderColor={inputBorder}
-            borderRadius='10px' px='12px' py='9px'
-            fontSize='13px' color={inputColor}
-            resize='none' outline='none'
-            maxH='100px' minH='38px' rows={1} lineHeight='1.45'
-            placeholder='Posez votre question ou tapez /help...'
+            bg={inputBg}
+            border="1px solid"
+            borderColor={inputBorder}
+            borderRadius="10px"
+            px="12px"
+            py="9px"
+            fontSize="13px"
+            color={inputColor}
+            resize="none"
+            outline="none"
+            maxH="100px"
+            minH="38px"
+            rows={1}
+            lineHeight="1.45"
+            placeholder="Posez votre question ou tapez /help..."
             _placeholder={{ color: placeholderColor }}
             _focus={{ borderColor: inputFocus, boxShadow: 'none' }}
             _disabled={{ opacity: 0.5, cursor: 'not-allowed' }}
             disabled={streaming}
           />
           <Box
-            as='button' type='button' onClick={sendMessage}
-            w='36px' h='36px' borderRadius='10px' border='none'
-            cursor={canSend ? 'pointer' : 'not-allowed'} flexShrink={0}
-            bg={sendBg} color='white'
-            display='flex' alignItems='center' justifyContent='center'
+            as="button"
+            type="button"
+            onClick={sendMessage}
+            w="36px"
+            h="36px"
+            borderRadius="10px"
+            border="none"
+            cursor={canSend ? 'pointer' : 'not-allowed'}
+            flexShrink={0}
+            bg={sendBg}
+            color="white"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
             opacity={canSend ? 1 : 0.35}
-            transition='background 0.15s, transform 0.15s'
-            _hover={canSend ? { bg: sendHoverBg, transform: 'scale(1.05)' } : {}}
+            transition="background 0.15s, transform 0.15s"
+            _hover={
+              canSend ? { bg: sendHoverBg, transform: 'scale(1.05)' } : {}
+            }
             _active={canSend ? { transform: 'scale(0.95)' } : {}}
-            disabled={!canSend} aria-label='Envoyer'
+            disabled={!canSend}
+            aria-label="Envoyer"
           >
             <SendIcon />
           </Box>
         </Flex>
 
-        <Flex justify='space-between' align='center' minH='16px'>
+        <Flex justify="space-between" align="center" minH="16px">
           {streaming ? (
             <Box
-              as='button' type='button' onClick={abort}
-              fontSize='11px' fontFamily='mono' color={abortColor}
-              bg='transparent' border='none' cursor='pointer' p={0}
-              transition='color 0.15s' _hover={{ color: abortHoverColor }}
+              as="button"
+              type="button"
+              onClick={abort}
+              fontSize="11px"
+              fontFamily="mono"
+              color={abortColor}
+              bg="transparent"
+              border="none"
+              cursor="pointer"
+              p={0}
+              transition="color 0.15s"
+              _hover={{ color: abortHoverColor }}
             >
               Arrêter la génération ×
             </Box>
           ) : (
-            <Text fontSize='10px' color={hintColor} fontFamily='mono' ml='auto'>
+            <Text fontSize="10px" color={hintColor} fontFamily="mono" ml="auto">
               Entrée pour envoyer, Maj+Entrée pour nouvelle ligne
             </Text>
           )}

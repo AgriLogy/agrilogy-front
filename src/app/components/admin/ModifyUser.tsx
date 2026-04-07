@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -12,11 +12,10 @@ import {
   Select,
   useToast,
   HStack,
-  Spinner,
-} from "@chakra-ui/react";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import axiosInstance from "@/app/lib/api";
-import "@/app/styles/graphes.css";
+} from '@chakra-ui/react';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import axiosInstance from '@/app/lib/api';
+import '@/app/styles/graphes.css';
 
 type Props = {
   user: string;
@@ -28,13 +27,13 @@ const ModifyUser = ({ user }: Props) => {
 
   const [formData, setFormData] = useState({
     username: user,
-    firstname: "",
-    lastname: "",
-    email: "",
-    phone_number: "",
-    is_staff: "",
-    latitude: "",
-    longitude: "",
+    firstname: '',
+    lastname: '',
+    email: '',
+    phone_number: '',
+    is_staff: '',
+    latitude: '',
+    longitude: '',
   });
 
   const [loadingLocation, setLoadingLocation] = useState(false);
@@ -50,16 +49,16 @@ const ModifyUser = ({ user }: Props) => {
           setFormData((prev) => ({
             ...prev,
             ...response.data,
-            latitude: response.data.latitude ?? "",
-            longitude: response.data.longitude ?? "",
+            latitude: response.data.latitude ?? '',
+            longitude: response.data.longitude ?? '',
           }));
         }
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error('Error fetching user data:', error);
         toast({
-          title: "Error",
-          description: "Failed to fetch user data. Please try again.",
-          status: "error",
+          title: 'Error',
+          description: 'Failed to fetch user data. Please try again.',
+          status: 'error',
           duration: 5000,
           isClosable: true,
         });
@@ -79,9 +78,9 @@ const ModifyUser = ({ user }: Props) => {
   const handleFillLocation = () => {
     if (!navigator.geolocation) {
       toast({
-        title: "Error",
-        description: "Geolocation is not supported by your browser.",
-        status: "error",
+        title: 'Error',
+        description: 'Geolocation is not supported by your browser.',
+        status: 'error',
         duration: 5000,
         isClosable: true,
       });
@@ -98,9 +97,9 @@ const ModifyUser = ({ user }: Props) => {
         }));
         setLoadingLocation(false);
         toast({
-          title: "Success",
-          description: "Location filled successfully!",
-          status: "success",
+          title: 'Success',
+          description: 'Location filled successfully!',
+          status: 'success',
           duration: 3000,
           isClosable: true,
         });
@@ -108,13 +107,13 @@ const ModifyUser = ({ user }: Props) => {
       (error) => {
         setLoadingLocation(false);
         toast({
-          title: "Error",
-          description: "Failed to get location. Please try again.",
-          status: "error",
+          title: 'Error',
+          description: 'Failed to get location. Please try again.',
+          status: 'error',
           duration: 5000,
           isClosable: true,
         });
-        console.error("Geolocation error:", error);
+        console.error('Geolocation error:', error);
       }
     );
   };
@@ -122,24 +121,24 @@ const ModifyUser = ({ user }: Props) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.put("/auth/modify-user/", formData);
+      const response = await axiosInstance.put('/auth/modify-user/', formData);
 
       if (response.status === 200) {
         toast({
-          title: "Success!",
+          title: 'Success!',
           description:
-            "Les données utilisateur ont été mises à jour avec succès.",
-          status: "success",
+            'Les données utilisateur ont été mises à jour avec succès.',
+          status: 'success',
           duration: 5000,
           isClosable: true,
         });
       }
     } catch (error) {
-      console.error("Error updating user data:", error);
+      console.error('Error updating user data:', error);
       toast({
-        title: "Error",
-        description: "Failed to update user data. Please try again.",
-        status: "error",
+        title: 'Error',
+        description: 'Failed to update user data. Please try again.',
+        status: 'error',
         duration: 5000,
         isClosable: true,
       });

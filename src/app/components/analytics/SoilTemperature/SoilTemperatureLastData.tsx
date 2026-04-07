@@ -1,6 +1,15 @@
-import { Box, Text, VStack, HStack, useColorModeValue } from "@chakra-ui/react";
-import { FaThermometerHalf } from "react-icons/fa";
-import { SensorData } from "@/app/types";
+import { Box, Text, VStack, HStack, useColorModeValue } from '@chakra-ui/react';
+import { FaThermometerHalf } from 'react-icons/fa';
+import { SensorData } from '@/app/types';
+import {
+  compactResolvedAxisUnits,
+  formatCalibratedReading,
+  resolveAxisUnit,
+} from '@/app/utils/unitOverrides';
+import { getCatalogDefaultUnit } from '@/app/utils/sensorCatalog';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
+import LastDataPanel from '../../common/LastDataPanel';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -19,26 +28,30 @@ const Row = ({
   label,
   entry,
   color,
+  sensorKey,
 }: {
   label: string;
   entry?: SensorData;
   color: string;
+  sensorKey: string;
 }) => {
-  const metaColor = useColorModeValue("gray.600", "gray.400");
+  const metaColor = useColorModeValue('gray.500', 'gray.400');
 
   return (
     <Box pl={3} borderLeftWidth="3px" borderLeftColor={color}>
       <VStack align="stretch" spacing={0}>
         <HStack justify="space-between">
-          <Text fontWeight="semibold" color={color}>
+          <Text fontSize="xs" fontWeight="semibold" color={color}>
             {label}
           </Text>
-          <Text color={color}>
-            {entry ? `${entry.value.toFixed(2)} ${entry.default_unit}` : "N/A"}
+          <Text fontSize="sm" fontWeight="semibold" color={color}>
+            {entry
+              ? `${formatCalibratedReading(sensorKey, entry.value)} ${resolveAxisUnit(sensorKey, entry.default_unit)}`
+              : '—'}
           </Text>
         </HStack>
-        <Text fontSize="sm" color={metaColor}>
-          {entry ? `Maj: ${timeAgo(entry.timestamp)}` : ""}
+        <Text fontSize="xs" color={metaColor}>
+          {entry ? `Mesure : ${timeAgo(entry.timestamp)}` : ''}
         </Text>
       </VStack>
     </Box>
@@ -54,44 +67,66 @@ const SoilTemperatureLastData = ({
   lastMedium?: SensorData;
   lastHigh?: SensorData;
 }) => {
-  const bgColor = useColorModeValue("orange.50", "orange.900");
-  const headerColor = useColorModeValue("gray.700", "gray.200");
-  const borderColor = useColorModeValue("blackAlpha.200", "whiteAlpha.300");
-  const iconColor = useColorModeValue("orange.600", "orange.300");
+  useUnitOverridesRevision();
+  const soilTempFallback = getCatalogDefaultUnit('soil_temp_low') || '°C';
+  const soilHeadingUnits = compactResolvedAxisUnits(
+    ['soil_temp_low', 'soil_temp_medium', 'soil_temp_high'],
+    soilTempFallback
+  );
+  const headingColor = useColorModeValue('gray.600', 'gray.300');
+  const iconColor = useColorModeValue('orange.600', 'orange.300');
 
-  // series colors (mode-aware)
-  const lowColor = useColorModeValue("blue.600", "blue.300");
-  const medColor = useColorModeValue("teal.600", "teal.300");
-  const highColor = useColorModeValue("red.600", "red.300");
+  const lowColor = useColorModeValue('blue.600', 'blue.300');
+  const medColor = useColorModeValue('teal.600', 'teal.300');
+  const highColor = useColorModeValue('red.600', 'red.300');
 
   return (
     <Box
-      bg={bgColor}
-      p={4}
-      borderRadius="md"
-      boxShadow="sm"
-      borderWidth="1px"
-      borderColor={borderColor}
-      minH="300px"
-      minW="250px"
-      height="100%"
-      width="100%"
+      flex={1}
+      minH={0}
+      minW={0}
+      w="100%"
+      alignSelf="stretch"
       display="flex"
       flexDirection="column"
-      justifyContent="center"
-      alignItems="stretch"
     >
-      <VStack spacing={4} align="stretch">
-        <HStack justify="center">
-          <FaThermometerHalf size={44} color={iconColor} />
+      <LastDataPanel variant="soilTemperature">
+        <HStack justify="center" mb={2}>
+          <FaThermometerHalf size={40} color={iconColor} />
         </HStack>
-        <Text fontWeight="bold" fontSize="lg" color={headerColor} textAlign="center">
-          Dernières mesures
+        <Text
+          fontWeight="semibold"
+          fontSize="xs"
+          letterSpacing="0.08em"
+          textTransform="uppercase"
+          color={headingColor}
+          textAlign="center"
+          mb={4}
+        >
+          {`Température du sol (${soilHeadingUnits})`}
         </Text>
-        <Row label="Basse (Low)" entry={lastLow} color={lowColor} />
-        <Row label="Moyenne (Medium)" entry={lastMedium} color={medColor} />
-        <Row label="Haute (High)" entry={lastHigh} color={highColor} />
-      </VStack>
+        <VStack spacing={4} align="stretch" w="100%">
+          <Row
+            label="Sonde basse"
+            entry={lastLow}
+            color={lowColor}
+            sensorKey="soil_temp_low"
+          />
+          <Row
+            label="Sonde moyenne"
+            entry={lastMedium}
+            color={medColor}
+            sensorKey="soil_temp_medium"
+          />
+          <Row
+            label="Sonde haute"
+            entry={lastHigh}
+            color={highColor}
+            sensorKey="soil_temp_high"
+          />
+        </VStack>
+        <LastDataAddAlertButton />
+      </LastDataPanel>
     </Box>
   );
 };

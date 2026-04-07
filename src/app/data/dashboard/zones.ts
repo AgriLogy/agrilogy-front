@@ -7,16 +7,14 @@
 //   critical_moisture_threshold: number;
 // }
 
-import { ZoneType } from "@/app/types";
+import { ZoneType } from '@/app/types';
 
-  
-  // export const zonesLst: Zone[] = [
-  // { id: 1, name: 'Zone 1', space: 100, kc: 0.8, soil_type: "clay", critical_moisture_threshold: 30 },
-  // { id: 2, name: 'Zone 2', space: 120, kc: 0.7, soil_type: "loamy", critical_moisture_threshold: 28 },
-  // { id: 3, name: 'Zone 3', space: 90, kc: 0.9, soil_type: "sandy", critical_moisture_threshold: 25 },
-  // { id: 4, name: 'Zone 4', space: 110, kc: 0.85, soil_type: "others", critical_moisture_threshold: 32 },
-  // ];
-    
+// export const zonesLst: Zone[] = [
+// { id: 1, name: 'Zone 1', space: 100, kc: 0.8, soil_type: "clay", critical_moisture_threshold: 30 },
+// { id: 2, name: 'Zone 2', space: 120, kc: 0.7, soil_type: "loamy", critical_moisture_threshold: 28 },
+// { id: 3, name: 'Zone 3', space: 90, kc: 0.9, soil_type: "sandy", critical_moisture_threshold: 25 },
+// { id: 4, name: 'Zone 4', space: 110, kc: 0.85, soil_type: "others", critical_moisture_threshold: 32 },
+// ];
 
 export const zonesLst: ZoneType[] = [
   {
@@ -29,7 +27,7 @@ export const zonesLst: ZoneType[] = [
     irrigation_method: 'Goutte-à-goutte',
     et0: 5.2,
     last_irrigation_date: '2025-08-18',
-    critical_moisture_threshold: 18
+    critical_moisture_threshold: 18,
   },
   {
     id: 2,
@@ -41,7 +39,7 @@ export const zonesLst: ZoneType[] = [
     irrigation_method: 'Arroseur',
     et0: 4.9,
     last_irrigation_date: '2025-08-17',
-    critical_moisture_threshold: 18
+    critical_moisture_threshold: 18,
   },
   {
     id: 3,
@@ -53,7 +51,7 @@ export const zonesLst: ZoneType[] = [
     irrigation_method: 'Pivot central',
     et0: 6.1,
     last_irrigation_date: '2025-08-16',
-    critical_moisture_threshold: 18
+    critical_moisture_threshold: 18,
   },
   {
     id: 4,
@@ -65,6 +63,6 @@ export const zonesLst: ZoneType[] = [
     irrigation_method: 'Irrigation par inondation',
     et0: 5.0,
     last_irrigation_date: '2025-08-15',
-    critical_moisture_threshold: 18
-  }
+    critical_moisture_threshold: 18,
+  },
 ];

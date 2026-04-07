@@ -1,10 +1,12 @@
-import axios from "axios";
+import axios from 'axios';
 
 export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://agrilogy-pi.com/";
-  //  "http://localhost:8000";
+  process.env.NEXT_PUBLIC_API_URL || 'https://agrilogy-pi.com/';
+//  "http://localhost:8000";
 
-  console.log("[NEXT_PUBLIC_API_URL]", API_URL);
+if (process.env.NODE_ENV === 'development') {
+  console.debug('[NEXT_PUBLIC_API_URL]', API_URL);
+}
 
 const api = axios.create({
   baseURL: API_URL,
@@ -14,7 +16,7 @@ const api = axios.create({
 // Add an interceptor to include the access token in every request
 api.interceptors.request.use(
   (config) => {
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = localStorage.getItem('accessToken');
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
@@ -29,9 +31,9 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.status === 401) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      window.location.href = "/login";
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      window.location.href = '/login';
     }
     return Promise.reject(error);
   }

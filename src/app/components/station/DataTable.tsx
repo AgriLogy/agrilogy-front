@@ -1,5 +1,5 @@
-"use client";
-import React from "react";
+'use client';
+import React from 'react';
 import {
   Box,
   Button,
@@ -9,13 +9,13 @@ import {
   Tr,
   Th,
   Td,
-  Text,
   useColorMode,
   HStack,
   Spinner,
-} from "@chakra-ui/react";
-import { CSVLink } from "react-csv";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
+} from '@chakra-ui/react';
+import { CSVLink } from 'react-csv';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import ChartPanelHeading from '../common/ChartPanelHeading';
 
 interface SensorData {
   id: number;
@@ -41,14 +41,19 @@ interface SensorData {
   soil_temperature_high: number;
 }
 
-const DataTable = ({ data }: { data: { sensor_data: SensorData[], sensor_names : any } }) => {
+const DataTable = ({
+  data,
+}: {
+  data: { sensor_data: SensorData[]; sensor_names: any };
+}) => {
   const { textColor } = useColorModeStyles();
   const { colorMode } = useColorMode();
 
-  if (!data || !data.sensor_data || data.sensor_data.length === 0) return <Spinner />;
+  if (!data || !data.sensor_data || data.sensor_data.length === 0)
+    return <Spinner />;
 
   const headers = Object.keys(data.sensor_data[0] || {}).map((key) => ({
-    label: key.replace(/_/g, " ").toUpperCase(),
+    label: key.replace(/_/g, ' ').toUpperCase(),
     key: key,
   }));
 
@@ -56,20 +61,21 @@ const DataTable = ({ data }: { data: { sensor_data: SensorData[], sensor_names :
     <Box
       width="100%"
       p={4}
-      bg={colorMode === "light" ? "white" : "gray.800"}
+      bg={colorMode === 'light' ? 'white' : 'gray.800'}
       borderRadius="md"
       boxShadow="lg"
     >
-      <HStack justify="space-between">
-        <Text fontSize="lg" fontWeight="bold" mb={4} color={textColor}>
-        {data.sensor_names?.data_table}
-
-        </Text>
+      <HStack justify="space-between" align="flex-start" mb={4}>
+        <ChartPanelHeading
+          title="Mesures — tableau détaillé"
+          subtitle={data.sensor_names?.data_table}
+          color={textColor}
+        />
         <CSVLink
           data={data.sensor_data}
           headers={headers}
           filename="sensor_data.csv"
-          style={{ textDecoration: "none" }}
+          style={{ textDecoration: 'none' }}
         >
           <Button colorScheme="teal" mb={4}>
             Exporter CSV
@@ -79,7 +85,12 @@ const DataTable = ({ data }: { data: { sensor_data: SensorData[], sensor_names :
       <Box overflowX="auto" overflowY="auto" maxHeight="400px">
         <Table variant="simple" whiteSpace="nowrap">
           <Thead>
-            <Tr position="sticky" top="0" bg={colorMode === "light" ? "white" : "gray.800"} zIndex={1}>
+            <Tr
+              position="sticky"
+              top="0"
+              bg={colorMode === 'light' ? 'white' : 'gray.800'}
+              zIndex={1}
+            >
               {headers.map((header) => (
                 <Th key={header.key}>{header.label}</Th>
               ))}
@@ -89,7 +100,9 @@ const DataTable = ({ data }: { data: { sensor_data: SensorData[], sensor_names :
             {data.sensor_data.map((row) => (
               <Tr key={row.id}>
                 {headers.map((header) => (
-                  <Td key={header.key} color={textColor}>{row[header.key as keyof SensorData]}</Td>
+                  <Td key={header.key} color={textColor}>
+                    {row[header.key as keyof SensorData]}
+                  </Td>
                 ))}
               </Tr>
             ))}

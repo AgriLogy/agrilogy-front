@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -8,20 +8,35 @@ import {
   Legend,
   ResponsiveContainer,
   CartesianGrid,
-} from "recharts";
+} from 'recharts';
+import { Box, Flex, Text, Button, HStack } from '@chakra-ui/react';
+import { FaDownload, FaCamera } from 'react-icons/fa';
+import html2canvas from 'html2canvas';
+import { SensorData } from '@/app/types';
+import ChartPanelHeading from '../../common/ChartPanelHeading';
+import ChartStateView from '../../common/ChartStateView';
+import UnifiedTooltip from '../../common/UnifiedTooltip';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
+import ChartLegend, {
+  type ChartLegendPayloadEntry,
+} from '../../common/ChartLegend';
 import {
-  useBreakpointValue,
-  Box,
-  Flex,
-  Text,
-  Button,
-  HStack,
-} from "@chakra-ui/react";
-import { FaDownload, FaCamera } from "react-icons/fa";
-import html2canvas from "html2canvas";
-import { SensorData } from "@/app/types";
-import EmptyBox from "../../common/EmptyBox";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
+  activeDotForSeries,
+  addTimeMsToChartRows,
+  defaultLegendWrapperStyle,
+  getAdaptiveTimeXAxisProps,
+  getDefaultYAxisProps,
+  mergeAxisTheme,
+  themedCartesianGrid,
+  CHART_MARGIN_LEFT_Y_LABEL,
+  CHART_PLOT_HEIGHT_PX,
+  analyticsChartPanelLayoutProps,
+  yAxisLabelInsideLeft,
+} from '@/app/utils/chartAxisConfig';
 
 const LargeFruitDiameterChart = ({
   data,
@@ -32,22 +47,39 @@ const LargeFruitDiameterChart = ({
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const [showLine, setShowLine] = useState(true);
+  const unitRev = useUnitOverridesRevision();
 
-  const chartData = data.map((item) => ({
-    name: item.timestamp,
-    value: item.value,
-  }));
+  const chartData = useMemo(
+    () =>
+      addTimeMsToChartRows(
+        data.map((item) => ({
+          name: item.timestamp,
+          large_fruit_diameter: calibrateChartValue(
+            'large_fruit_diameter',
+            item.value
+          ),
+          default_unit: item.default_unit,
+        })),
+        'name'
+      ),
+    [data, unitRev]
+  );
 
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(chartData.length / 3),
-    md: Math.ceil(chartData.length / 5),
-  });
-
-  const labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const { textColor } = useColorModeStyles();
+  const { axis, tickFill, grid } = useChartAxisColors();
+  const xAxisProps = mergeAxisTheme(
+    getAdaptiveTimeXAxisProps(chartData, 'name'),
+    axis,
+    tickFill
+  );
+  const yProps = mergeAxisTheme(getDefaultYAxisProps(2), axis, tickFill);
+  const diamUnit = resolveAxisUnit(
+    'large_fruit_diameter',
+    data[0]?.default_unit
+  );
 
-  const handleLegendClick = (data: any) => {
-    if (data.value === "Consommation") {
+  const handleLegendClick = (payload: ChartLegendPayloadEntry) => {
+    if (payload?.dataKey === 'large_fruit_diameter') {
       setShowLine((prev) => !prev);
     }
   };
@@ -55,8 +87,8 @@ const LargeFruitDiameterChart = ({
   const handleScreenshot = async () => {
     if (chartRef.current) {
       const canvas = await html2canvas(chartRef.current);
-      const link = document.createElement("a");
-      link.download = "largefruitediameter_chart.png";
+      const link = document.createElement('a');
+      link.download = 'largefruitediameter_chart.png';
       link.href = canvas.toDataURL();
       link.click();
     }
@@ -64,26 +96,28 @@ const LargeFruitDiameterChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      "timestamp,value\n" +
-      data.map((d) => `${d.timestamp},${d.value}`).join("\n");
+      'timestamp,large_fruit_diameter\n' +
+      chartData.map((d) => `${d.name},${d.large_fruit_diameter}`).join('\n');
 
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
 
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
-    link.download = "largefruitediameter_data.csv";
+    link.download = 'largefruitediameter_data.csv';
     link.click();
 
     URL.revokeObjectURL(url);
   };
 
   return (
-    <Box width="100%" pr={4} pb={4}>
+    <Box {...analyticsChartPanelLayoutProps}>
       <Flex justify="space-between" align="center" mb={4}>
-        <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Évolution du diamètre des gros fruits
-        </Text>
+        <ChartPanelHeading
+          color={textColor}
+          title="Diamètre des gros fruits"
+          subtitle="Croissance calibrée des fruits les plus développés."
+        />
         <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
@@ -104,49 +138,54 @@ const LargeFruitDiameterChart = ({
         </HStack>
       </Flex>
 
-      <Box ref={chartRef} height="300px">
-        {loading ? (
-          <EmptyBox text="Chargement..." />
-        ) : data.length === 0 ? (
-          <EmptyBox text="Pas de données" />
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={chartData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="name"
-                angle={labelAngle}
-                textAnchor="middle"
-                interval={labelInterval}
-              />
-              <YAxis
-                label={{
-                  // value: "Diamètre (mm)",
-                  angle: -90,
-                  fontSize: 16,
-                  dy: 80,
-                  position: "insideLeft",
-                }}
-              />
-              <Tooltip />
-              <Legend onClick={handleLegendClick} />
-              <Line
-                type="monotone"
-                dataKey="value"
-                name="Diamètre (mm)"
-                stroke={showLine ? "#82ca9d" : "gray"}
-                strokeWidth={2}
-                dot={{ r: 4, fill: showLine ? "#82ca9d" : "gray" }}
-                activeDot={{ r: 6, stroke: showLine ? "#2f855a" : "gray" }}
-                isAnimationActive={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        )}
-      </Box>
+      <ChartStateView
+        loading={loading}
+        empty={data.length === 0}
+        chartRef={chartRef}
+        height={CHART_PLOT_HEIGHT_PX}
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={chartData}
+            margin={{
+              top: 12,
+              right: 12,
+              left: CHART_MARGIN_LEFT_Y_LABEL,
+              bottom: 8,
+            }}
+          >
+            <CartesianGrid {...themedCartesianGrid(grid)} />
+            <XAxis {...xAxisProps} />
+            <YAxis
+              {...yProps}
+              label={yAxisLabelInsideLeft(`Diamètre (${diamUnit})`, tickFill)}
+            />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={
+                <ChartLegend
+                  onClick={handleLegendClick}
+                  hiddenDataKeys={showLine ? [] : ['large_fruit_diameter']}
+                />
+              }
+            />
+            <Line
+              type="monotone"
+              dataKey="large_fruit_diameter"
+              name={`Diamètre (${diamUnit})`}
+              hide={!showLine}
+              stroke="#82ca9d"
+              strokeWidth={2.25}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              dot={false}
+              activeDot={activeDotForSeries('#82ca9d')}
+              isAnimationActive={false}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </ChartStateView>
     </Box>
   );
 };

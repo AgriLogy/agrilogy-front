@@ -1,19 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { Box, HStack, Text, useColorModeValue } from "@chakra-ui/react";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import DateRangePicker from "../analytics/DateRangePicker";
-import api from "@/app/lib/api";
+import React, { useEffect, useState } from 'react';
+import { Box, HStack, Text, useColorModeValue } from '@chakra-ui/react';
+import '@/app/styles/style.css';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import DateRangePicker from '../analytics/DateRangePicker';
+import api from '@/app/lib/api';
 import getActiveGraphs, {
   ActiveGraphResponse,
-} from "@/app/utils/getActiveGraphs";
+} from '@/app/utils/getActiveGraphs';
 
 // Soil-specific components
-import WaterSoilMain from "../analytics/SoilWater/WaterSoilMain";
-import PhSoilMain from "../analytics/SoilPh/PhSoilMain";
-import SoilSalinityConductivityMain from "../analytics/SoilSalinityConductivity/SoilSalinityConductivityMain";
-import SoilConductivityIrrigationMain from "../analytics/SoilConductivityIrrigation/SoilConductivityIrrigationMain";
-import NpkMain from "../analytics/npk/NpkMain";
-import SoilTemperatureMain from "../analytics/SoilTemperature/SoilTemperatureMain";
+import WaterSoilMain from '../analytics/SoilWater/WaterSoilMain';
+import PhSoilMain from '../analytics/SoilPh/PhSoilMain';
+import SoilSalinityConductivityMain from '../analytics/SoilSalinityConductivity/SoilSalinityConductivityMain';
+import SoilConductivityIrrigationMain from '../analytics/SoilConductivityIrrigation/SoilConductivityIrrigationMain';
+import NpkMain from '../analytics/npk/NpkMain';
+import SoilTemperatureMain from '../analytics/SoilTemperature/SoilTemperatureMain';
+import ZoneNotificationBell from '@/app/components/common/ZoneNotificationBell';
 
 const SoilMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
@@ -23,9 +25,9 @@ const SoilMain = () => {
   );
 
   const { bg, textColor } = useColorModeStyles();
-  const [startDate, setStartDate] = useState<string>("");
+  const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split('T')[0]
   );
 
   const filters = { startDate, endDate, selectedZone };
@@ -33,11 +35,11 @@ const SoilMain = () => {
   useEffect(() => {
     const fetchZones = async () => {
       try {
-        const res = await api.get("/api/zones-names-per-user/");
+        const res = await api.get('/api/zones-names-per-user/');
         setZones(res.data || []);
         if (res.data.length > 0) setSelectedZone(res.data[0].id);
       } catch (error) {
-        console.error("Failed to fetch zones", error);
+        console.error('Failed to fetch zones', error);
       }
     };
     fetchZones();
@@ -52,16 +54,16 @@ const SoilMain = () => {
   return (
     <div className="container">
       <Box bg={bg} className="header">
-        <HStack>
+        <HStack spacing={3} flexWrap="wrap" alignItems="center">
           <Text color={textColor}>Données sur le sol du </Text>
           <select
-            value={selectedZone ?? ""}
+            value={selectedZone ?? ''}
             onChange={(e) => setSelectedZone(Number(e.target.value))}
             style={{
-              borderRadius: "2px",
-              padding: "4px",
-              color: useColorModeValue("black", "white"),
-              border: `1px solid ${useColorModeValue("black", "white")}`,
+              borderRadius: '2px',
+              padding: '4px',
+              color: useColorModeValue('black', 'white'),
+              border: `1px solid ${useColorModeValue('black', 'white')}`,
             }}
           >
             {zones.map((zone) => (
@@ -70,6 +72,14 @@ const SoilMain = () => {
               </option>
             ))}
           </select>
+          {selectedZone != null && (
+            <ZoneNotificationBell
+              zoneId={selectedZone}
+              zoneName={
+                zones.find((z) => z.id === selectedZone)?.name ?? 'Zone'
+              }
+            />
+          )}
         </HStack>
       </Box>
 

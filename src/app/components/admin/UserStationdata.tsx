@@ -1,22 +1,22 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { Box, Text } from "@chakra-ui/react";
-import axiosInstance from "@/app/lib/api";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import DateRangePicker from "../analytics/DateRangePicker";
-import DataTable from "../station/DataTable";
-import Et0Graph from "../station/Et0Graph";
-import PluvometricGraph from "../station/PluvometricGraph";
-import PrecipitationHumidityGraph from "../station/PrecipitationHumidityGraph";
-import SolarRadiationGraph from "../station/SolarRadiationGraph";
-import TempHumidityGraph from "../station/TempHumidityGraph";
-import VaporPressureDeficitGraph from "../station/VaporPressureDeficitGraph";
-import WindDirectionGraph from "../station/WindDirectionGraph";
-import WindSpeedGraph from "../station/WindSpeedGraph";
-import "@/app/styles/graphes.css";
+'use client';
+import React, { useEffect, useState } from 'react';
+import { Box, Text } from '@chakra-ui/react';
+import axiosInstance from '@/app/lib/api';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import DateRangePicker from '../analytics/DateRangePicker';
+import DataTable from '../station/DataTable';
+import Et0Graph from '../station/Et0Graph';
+import PluvometricGraph from '../station/PluvometricGraph';
+import PrecipitationHumidityGraph from '../station/PrecipitationHumidityGraph';
+import SolarRadiationGraph from '../station/SolarRadiationGraph';
+import TempHumidityGraph from '../station/TempHumidityGraph';
+import VaporPressureDeficitGraph from '../station/VaporPressureDeficitGraph';
+import WindDirectionGraph from '../station/WindDirectionGraph';
+import WindSpeedGraph from '../station/WindSpeedGraph';
+import '@/app/styles/graphes.css';
 
-import "./style.css";
-import EmptyBox from "../common/EmptyBox";
+import './style.css';
+import EmptyBox from '../common/EmptyBox';
 
 type Props = {
   user: string;
@@ -24,11 +24,15 @@ type Props = {
 
 const UserStationdata: React.FC<Props> = ({ user }) => {
   const { bg, textColor } = useColorModeStyles();
-  const [data, setData] = useState<any[]>([]);
+  const [stationPayload, setStationPayload] = useState<{
+    sensor_data?: any[];
+    sensor_names?: Record<string, string>;
+    sensor_colors?: Record<string, string>;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [startDate, setStartDate] = useState<string>("");
+  const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split('T')[0]
   );
 
   useEffect(() => {
@@ -43,10 +47,13 @@ const UserStationdata: React.FC<Props> = ({ user }) => {
           `api/admin-user-data/`,
           payload
         );
-        console.log("API Response:", response.data.sensor_data); // Inspect the structure
-        setData(response.data.sensor_data || []);
+        setStationPayload(
+          response.data ?? {
+            sensor_data: [],
+          }
+        );
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Unknown error");
+        setError(err instanceof Error ? err.message : 'Unknown error');
       }
     };
 
@@ -61,9 +68,16 @@ const UserStationdata: React.FC<Props> = ({ user }) => {
     );
   }
 
-  if (!data.length) {
+  if (!stationPayload?.sensor_data?.length) {
     return <EmptyBox />;
   }
+
+  const data = {
+    ...stationPayload,
+    sensor_data: stationPayload.sensor_data!,
+    sensor_names: stationPayload.sensor_names ?? {},
+    sensor_colors: stationPayload.sensor_colors ?? {},
+  };
 
   return (
     <div className="container">
@@ -83,7 +97,13 @@ const UserStationdata: React.FC<Props> = ({ user }) => {
 
       {/* Date Range Picker */}
       <Box bg={bg} className="header" mt={0} mb={0}>
-        <DateRangePicker setStartDate={setStartDate} setEndDate={setEndDate} />
+        <DateRangePicker
+          setStartDate={setStartDate}
+          setEndDate={setEndDate}
+          zones={[]}
+          selectedZone={null}
+          setSelectedZone={() => {}}
+        />
       </Box>
       <Box bg={bg} className="box wide">
         <Et0Graph data={data} />

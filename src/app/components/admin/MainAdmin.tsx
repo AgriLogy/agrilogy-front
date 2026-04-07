@@ -1,20 +1,20 @@
-import React from "react";
-import { Box, Text, Grid, GridItem, Icon, Link } from "@chakra-ui/react";
-import { FaTachometerAlt, FaUsers, FaSignOutAlt, FaMapMarkedAlt } from "react-icons/fa";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
+import React from 'react';
+import { Box, Text, Grid, GridItem, Icon, Link } from '@chakra-ui/react';
+import {
+  FaTachometerAlt,
+  FaUsers,
+  FaSignOutAlt,
+  FaMapMarkedAlt,
+} from 'react-icons/fa';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
 
 const MainAdmin = () => {
   const { bg, textColor, hoverColor } = useColorModeStyles();
 
   return (
-	
     <Grid templateColumns="repeat(2, 1fr)" gap={6} p={6}>
       <GridItem>
-        <Link
-          href={`/admin/dashboard`}
-          color={hoverColor}
-          textDecoration="non"
-        >
+        <Link href={`/admin/dashboard`} color={hoverColor} textDecoration="non">
           <Box
             bg={bg}
             border="1px solid #ccc"

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -8,20 +8,36 @@ import {
   Legend,
   ResponsiveContainer,
   CartesianGrid,
-  Brush,
-} from "recharts";
+} from 'recharts';
+import { Box, Text, Flex, HStack, Button } from '@chakra-ui/react';
+import { FaCamera, FaDownload } from 'react-icons/fa';
+import html2canvas from 'html2canvas';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import ChartPanelHeading from '../../common/ChartPanelHeading';
+import ChartStateView from '../../common/ChartStateView';
+import UnifiedTooltip from '../../common/UnifiedTooltip';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
+import ChartLegend, {
+  type ChartLegendPayloadEntry,
+} from '../../common/ChartLegend';
 import {
-  Box,
-  Text,
-  Flex,
-  HStack,
-  Button,
-  useBreakpointValue,
-} from "@chakra-ui/react";
-import { FaCamera, FaDownload } from "react-icons/fa";
-import html2canvas from "html2canvas";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import EmptyBox from "../../common/EmptyBox";
+  activeDotForSeries,
+  addTimeMsToChartRows,
+  defaultLegendWrapperStyle,
+  getAdaptiveTimeXAxisProps,
+  getDefaultYAxisProps,
+  mergeAxisTheme,
+  themedCartesianGrid,
+  CHART_MARGIN_LEFT_Y_LABEL,
+  CHART_MARGIN_RIGHT_Y_LABEL,
+  CHART_PLOT_HEIGHT_PX,
+  analyticsChartPanelLayoutProps,
+  yAxisLabelInsideLeft,
+  yAxisLabelInsideRight,
+} from '@/app/utils/chartAxisConfig';
 
 type SensorData = { timestamp: string; value: number };
 
@@ -36,41 +52,66 @@ const SensorLeafChart = ({
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const { textColor } = useColorModeStyles();
+  const { axis, tickFill, grid } = useChartAxisColors();
+  const unitRev = useUnitOverridesRevision();
 
-  const combinedData = temperatureData.map((t) => {
-    const moisturePoint = moistureData.find((m) => m.timestamp === t.timestamp);
-    return {
-      name: t.timestamp,
-      temperature: t.value,
-      moisture: moisturePoint?.value ?? null,
-    };
-  });
+  const combinedData = useMemo(
+    () =>
+      temperatureData.map((t) => {
+        const moisturePoint = moistureData.find(
+          (m) => m.timestamp === t.timestamp
+        );
+        return {
+          name: t.timestamp,
+          leaf_temperature: calibrateChartValue('leaf_temperature', t.value),
+          leaf_moisture:
+            moisturePoint != null
+              ? calibrateChartValue('leaf_moisture', moisturePoint.value)
+              : null,
+        };
+      }),
+    [temperatureData, moistureData, unitRev]
+  );
 
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(combinedData.length / 3),
-    md: Math.ceil(combinedData.length / 5),
-  });
+  const chartData = useMemo(
+    () => addTimeMsToChartRows(combinedData, 'name'),
+    [combinedData]
+  );
 
-  const labelAngle = useBreakpointValue({ base: -3, md: 5 });
+  const xAxisProps = mergeAxisTheme(
+    getAdaptiveTimeXAxisProps(chartData, 'name'),
+    axis,
+    tickFill
+  );
+  const yTemp = mergeAxisTheme(getDefaultYAxisProps(1), axis, tickFill);
+  const yMoist = mergeAxisTheme(getDefaultYAxisProps(0), axis, tickFill);
+
+  const tempUnit = resolveAxisUnit('leaf_temperature');
+  const moistureUnit = resolveAxisUnit('leaf_moisture');
 
   const [activeLines, setActiveLines] = useState({
-    temperature: true,
-    moisture: true,
+    leaf_temperature: true,
+    leaf_moisture: true,
   });
 
-  const handleLegendClick = (e: any) => {
-    const key = e.dataKey as keyof typeof activeLines;
+  const handleLegendClick = (e: ChartLegendPayloadEntry) => {
+    const key = e.dataKey;
+    if (key !== 'leaf_temperature' && key !== 'leaf_moisture') return;
     setActiveLines((prev) => ({
       ...prev,
-      [key]: !prev[key],
+      [key]: !prev[key as keyof typeof prev],
     }));
   };
+
+  const hiddenLegendKeys = Object.entries(activeLines)
+    .filter(([, on]) => !on)
+    .map(([k]) => k) as string[];
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
       const canvas = await html2canvas(chartRef.current);
-      const link = document.createElement("a");
-      link.download = "leaf_chart.png";
+      const link = document.createElement('a');
+      link.download = 'leaf_chart.png';
       link.href = canvas.toDataURL();
       link.click();
     }
@@ -78,26 +119,28 @@ const SensorLeafChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      "timestamp,temperature,moisture\n" +
+      'timestamp,temperature,moisture\n' +
       combinedData
-        .map((d) => `${d.name},${d.temperature},${d.moisture}`)
-        .join("\n");
+        .map((d) => `${d.name},${d.leaf_temperature},${d.leaf_moisture ?? ''}`)
+        .join('\n');
 
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
-    link.download = "leaf_data.csv";
+    link.download = 'leaf_data.csv';
     link.click();
     URL.revokeObjectURL(url);
   };
 
   return (
-    <Box width="100%" pr={4} pb={4}>
+    <Box {...analyticsChartPanelLayoutProps}>
       <Flex justify="space-between" align="center" mb={4}>
-        <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Évolution de l'humidité et de la température des feuilles
-        </Text>
+        <ChartPanelHeading
+          color={textColor}
+          title="Feuille — humidité et température"
+          subtitle="Microclimat foliaire sur la fenêtre d’analyse."
+        />
         <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
@@ -118,75 +161,77 @@ const SensorLeafChart = ({
         </HStack>
       </Flex>
 
-      <Box ref={chartRef} height="300px">
-        {loading ? (
-          <EmptyBox text="Chargement..." />
-        ) : combinedData.length === 0 ? (
-          <EmptyBox text="Pas de données" />
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={combinedData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="name"
-                angle={labelAngle}
-                textAnchor="middle"
-                interval={labelInterval}
-              />
-              <YAxis
-                yAxisId="left"
-                label={{
-                  value: "Température (°C)",
-                  angle: -90,
-                  position: "insideLeft",
-                  fontSize: 14,
-                  dy: 50,
-                }}
-              />
-              <YAxis
-                yAxisId="right"
-                orientation="right"
-                label={{
-                  value: "Humidité (%)",
-                  angle: -90,
-                  position: "insideRight",
-                  fontSize: 14,
-                  dy: -50,
-                }}
-              />
-              <Tooltip />
-              <Legend onClick={handleLegendClick} />
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="temperature"
-                name="Température (°C)"
-                stroke={activeLines.temperature ? "#ff7300" : "gray"}
-                strokeWidth={2}
-                activeDot={{ r: 6 }}
-              />
-              <Line
-                yAxisId="right"
-                type="monotone"
-                dataKey="moisture"
-                name="Humidité des feuilles (%)"
-                stroke={activeLines.moisture ? "#007aff" : "gray"}
-                strokeWidth={2}
-                activeDot={{ r: 6 }}
-              />
-              <Brush
-                dataKey="name"
-                height={30}
-                stroke="#8884d8"
-                travellerWidth={8}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        )}
-      </Box>
+      <ChartStateView
+        loading={loading}
+        empty={combinedData.length === 0}
+        chartRef={chartRef}
+        height={CHART_PLOT_HEIGHT_PX}
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={chartData}
+            margin={{
+              top: 12,
+              right: CHART_MARGIN_RIGHT_Y_LABEL,
+              left: CHART_MARGIN_LEFT_Y_LABEL,
+              bottom: 8,
+            }}
+          >
+            <CartesianGrid {...themedCartesianGrid(grid)} />
+            <XAxis {...xAxisProps} />
+            <YAxis
+              yAxisId="left"
+              {...yTemp}
+              label={yAxisLabelInsideLeft(`T feuille (${tempUnit})`, tickFill)}
+            />
+            <YAxis
+              yAxisId="right"
+              orientation="right"
+              {...yMoist}
+              label={yAxisLabelInsideRight(
+                `H feuille (${moistureUnit})`,
+                tickFill
+              )}
+            />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={
+                <ChartLegend
+                  onClick={handleLegendClick}
+                  hiddenDataKeys={hiddenLegendKeys}
+                />
+              }
+            />
+            <Line
+              yAxisId="left"
+              type="monotone"
+              dataKey="leaf_temperature"
+              name={`Température feuille (${tempUnit})`}
+              hide={!activeLines.leaf_temperature}
+              stroke="#ff7300"
+              strokeWidth={2.25}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              dot={false}
+              activeDot={activeDotForSeries('#ff7300')}
+            />
+            <Line
+              yAxisId="right"
+              type="monotone"
+              dataKey="leaf_moisture"
+              name={`Humidité feuille (${moistureUnit})`}
+              hide={!activeLines.leaf_moisture}
+              stroke="#007aff"
+              strokeWidth={2.25}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              dot={false}
+              activeDot={activeDotForSeries('#007aff')}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </ChartStateView>
     </Box>
   );
 };

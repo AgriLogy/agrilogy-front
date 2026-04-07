@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -8,21 +8,37 @@ import {
   Legend,
   ResponsiveContainer,
   CartesianGrid,
-  Brush,
-} from "recharts";
+} from 'recharts';
+import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
+import { FaCamera, FaDownload } from 'react-icons/fa';
+import html2canvas from 'html2canvas';
+import { SensorData } from '@/app/types';
+import ChartPanelHeading from '../../common/ChartPanelHeading';
+import ChartStateView from '../../common/ChartStateView';
+import UnifiedTooltip from '../../common/UnifiedTooltip';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
+import ChartLegend, {
+  type ChartLegendPayloadEntry,
+} from '../../common/ChartLegend';
 import {
-  Box,
-  Button,
-  Flex,
-  HStack,
-  Text,
-  useBreakpointValue,
-} from "@chakra-ui/react";
-import { FaCamera, FaDownload } from "react-icons/fa";
-import html2canvas from "html2canvas";
-import { SensorData } from "@/app/types";
-import EmptyBox from "../../common/EmptyBox";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
+  activeDotForSeries,
+  addTimeMsToChartRows,
+  defaultLegendWrapperStyle,
+  getAdaptiveTimeXAxisProps,
+  getDefaultYAxisProps,
+  mergeAxisTheme,
+  themedCartesianGrid,
+  CHART_MARGIN_LEFT_Y_LABEL,
+  CHART_MARGIN_RIGHT_Y_LABEL,
+  CHART_PLOT_HEIGHT_PX,
+  analyticsChartPanelLayoutProps,
+  yAxisLabelInsideLeft,
+  yAxisLabelInsideRight,
+} from '@/app/utils/chartAxisConfig';
 
 type Props = {
   salinityData: SensorData[];
@@ -37,53 +53,86 @@ const SoilSalinityConductivityChart = ({
 }: Props) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const { textColor } = useColorModeStyles();
+  const { axis, tickFill, grid } = useChartAxisColors();
+  const unitRev = useUnitOverridesRevision();
 
   const [activeLines, setActiveLines] = useState({
-    salinity: true,
-    conductivity: true,
+    soil_salinity: true,
+    soil_conductivity: true,
   });
 
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(Math.max(salinityData.length, conductivityData.length) / 3),
-    md: Math.ceil(Math.max(salinityData.length, conductivityData.length) / 5),
-  });
-  // const labelAngle = useBreakpointValue({ base: -15, md: 15 });
-  const labelAngle = useBreakpointValue({ base: -3, md: 5 });
+  const chartData = useMemo(() => {
+    const timestamps = Array.from(
+      new Set([
+        ...salinityData.map((d) => d.timestamp),
+        ...conductivityData.map((d) => d.timestamp),
+      ])
+    ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
-  const timestamps = Array.from(
-    new Set([
-      ...salinityData.map((d) => d.timestamp),
-      ...conductivityData.map((d) => d.timestamp),
-    ])
-  ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+    return timestamps.map((timestamp) => {
+      const sal = salinityData.find((d) => d.timestamp === timestamp);
+      const cond = conductivityData.find((d) => d.timestamp === timestamp);
+      const sv = sal?.value;
+      const cv = cond?.value;
+      return {
+        name: timestamp,
+        soil_salinity:
+          sv != null && Number.isFinite(sv)
+            ? calibrateChartValue('soil_salinity', sv)
+            : null,
+        salinity_color: sal?.color,
+        salinity_courbe_name: sal?.courbe_name,
+        soil_conductivity:
+          cv != null && Number.isFinite(cv)
+            ? calibrateChartValue('soil_conductivity', cv)
+            : null,
+        conductivity_color: cond?.color,
+        conductivity_courbe_name: cond?.courbe_name,
+      };
+    });
+  }, [salinityData, conductivityData, unitRev]);
 
-  const chartData = timestamps.map((timestamp) => {
-    const sal = salinityData.find((d) => d.timestamp === timestamp);
-    const cond = conductivityData.find((d) => d.timestamp === timestamp);
-    return {
-      name: timestamp,
-      salinity: sal?.value,
-      salinity_color: sal?.color,
-      salinity_courbe_name: sal?.courbe_name,
-      conductivity: cond?.value,
-      conductivity_color: cond?.color,
-      conductivity_courbe_name: cond?.courbe_name,
-    };
-  });
+  const chartRows = useMemo(
+    () => addTimeMsToChartRows(chartData, 'name'),
+    [chartData]
+  );
 
-  const handleLegendClick = (e: any) => {
-    const key = e.dataKey;
-    setActiveLines((prev) => ({
-      ...prev,
-      [key]: !prev[key as keyof typeof prev],
-    }));
+  const xAxisProps = mergeAxisTheme(
+    getAdaptiveTimeXAxisProps(chartRows, 'name'),
+    axis,
+    tickFill
+  );
+  const ySal = mergeAxisTheme(getDefaultYAxisProps(0), axis, tickFill);
+  const yCond = mergeAxisTheme(getDefaultYAxisProps(0), axis, tickFill);
+
+  const salinityUnit = resolveAxisUnit(
+    'soil_salinity',
+    salinityData[0]?.default_unit
+  );
+  const conductivityUnit = resolveAxisUnit(
+    'soil_conductivity',
+    conductivityData[0]?.default_unit
+  );
+
+  const handleLegendClick = (e: ChartLegendPayloadEntry) => {
+    const key = e.dataKey as keyof typeof activeLines | undefined;
+    if (key === 'soil_salinity' || key === 'soil_conductivity') {
+      setActiveLines((prev) => ({
+        ...prev,
+        [key]: !prev[key],
+      }));
+    }
   };
+
+  const hiddenLegendKeys = (
+    ['soil_salinity', 'soil_conductivity'] as const
+  ).filter((k) => !activeLines[k]);
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
       const canvas = await html2canvas(chartRef.current);
-      const link = document.createElement("a");
-      link.download = "soil_salinity_conductivity_chart.png";
+      const link = document.createElement('a');
+      link.download = 'soil_salinity_conductivity_chart.png';
       link.href = canvas.toDataURL();
       link.click();
     }
@@ -91,27 +140,32 @@ const SoilSalinityConductivityChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      "timestamp,salinity,conductivity\n" +
+      'timestamp,soil_salinity,soil_conductivity\n' +
       chartData
-        .map((d) => `${d.name},${d.salinity ?? ""},${d.conductivity ?? ""}`)
-        .join("\n");
+        .map(
+          (d) =>
+            `${d.name},${d.soil_salinity ?? ''},${d.soil_conductivity ?? ''}`
+        )
+        .join('\n');
 
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
 
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
-    link.download = "soil_data.csv";
+    link.download = 'soil_data.csv';
     link.click();
     URL.revokeObjectURL(url);
   };
 
   return (
-    <Box width="100%" pr={4} pb={4}>
+    <Box {...analyticsChartPanelLayoutProps}>
       <Flex justify="space-between" align="center" mb={4}>
-        <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          Évolution de la salinité et conductivité du sol
-        </Text>
+        <ChartPanelHeading
+          color={textColor}
+          title="Salinité et conductivité du sol"
+          subtitle="Teneur en sels et conductivité électrique — indicateurs de stress ionique."
+        />
         <HStack spacing={2}>
           <Button onClick={handleScreenshot} variant="ghost" colorScheme="teal">
             <FaCamera />
@@ -126,69 +180,86 @@ const SoilSalinityConductivityChart = ({
         </HStack>
       </Flex>
 
-      <Box ref={chartRef} height="300px">
-        {loading ? (
-          <EmptyBox text="Chargement..." />
-        ) : chartData.length === 0 ? (
-          <EmptyBox text="Pas de données" />
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={chartData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="name"
-                angle={labelAngle}
-                textAnchor="middle"
-                interval={labelInterval}
-              />
-              <YAxis
-                label={{
-                  // value: "Concentration",
-                  angle: -90,
-                  position: "insideLeft",
-                  fontSize: 14,
-                  dy: 80,
-                }}
-              />
-              <Tooltip />
-              <Legend onClick={handleLegendClick} />
+      <ChartStateView
+        loading={loading}
+        empty={chartRows.length === 0}
+        chartRef={chartRef}
+        height={CHART_PLOT_HEIGHT_PX}
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={chartRows}
+            margin={{
+              top: 12,
+              right: CHART_MARGIN_RIGHT_Y_LABEL,
+              left: CHART_MARGIN_LEFT_Y_LABEL,
+              bottom: 8,
+            }}
+          >
+            <CartesianGrid {...themedCartesianGrid(grid)} />
+            <XAxis {...xAxisProps} />
+            <YAxis
+              yAxisId="salinity"
+              {...ySal}
+              label={yAxisLabelInsideLeft(
+                `Salinité (${salinityUnit})`,
+                tickFill
+              )}
+            />
+            <YAxis
+              yAxisId="conductivity"
+              orientation="right"
+              {...yCond}
+              label={yAxisLabelInsideRight(
+                `CE (${conductivityUnit})`,
+                tickFill
+              )}
+            />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={
+                <ChartLegend
+                  onClick={handleLegendClick}
+                  hiddenDataKeys={[...hiddenLegendKeys]}
+                />
+              }
+            />
 
-              <Line
-                type="monotone"
-                dataKey="salinity"
-                name={chartData[0]?.salinity_courbe_name || "Salinité"}
-                stroke={chartData[0]?.salinity_color || "#dba800"}
-                strokeOpacity={activeLines.salinity ? 1 : 0.1}
-                strokeWidth={2}
-                dot={false}
-                activeDot={{ r: 6 }}
-              />
+            <Line
+              yAxisId="salinity"
+              type="monotone"
+              dataKey="soil_salinity"
+              name={`${chartData[0]?.salinity_courbe_name ?? 'Salinité'} (${salinityUnit})`}
+              hide={!activeLines.soil_salinity}
+              stroke={chartData[0]?.salinity_color || '#dba800'}
+              strokeWidth={2.25}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              dot={false}
+              activeDot={activeDotForSeries(
+                chartData[0]?.salinity_color || '#dba800'
+              )}
+            />
 
-              <Line
-                type="monotone"
-                dataKey="conductivity"
-                name={chartData[0]?.conductivity_courbe_name || "Conductivité"}
-                stroke={chartData[0]?.conductivity_color || "#00a86b"}
-                strokeOpacity={activeLines.conductivity ? 1 : 0.1}
-                strokeWidth={2}
-                dot={false}
-                activeDot={{ r: 6 }}
-              />
-
-              <Brush
-                y={238}
-                dataKey="name"
-                height={30}
-                stroke="#8884d8"
-                travellerWidth={8}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        )}
-      </Box>
+            <Line
+              yAxisId="conductivity"
+              type="monotone"
+              dataKey="soil_conductivity"
+              name={`${chartData[0]?.conductivity_courbe_name ?? 'Conductivité'} (${conductivityUnit})`}
+              hide={!activeLines.soil_conductivity}
+              stroke={chartData[0]?.conductivity_color || '#00a86b'}
+              strokeWidth={2.25}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              dot={false}
+              activeDot={activeDotForSeries(
+                chartData[0]?.conductivity_color || '#00a86b'
+              )}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </ChartStateView>
     </Box>
   );
 };

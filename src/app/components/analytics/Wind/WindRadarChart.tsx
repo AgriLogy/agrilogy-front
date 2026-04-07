@@ -1,13 +1,6 @@
-import React, { useRef } from "react";
-import {
-  Radar,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  ResponsiveContainer,
-  Tooltip,
-  TooltipProps,
-} from "recharts";
+'use client';
+
+import React, { useMemo, useRef } from 'react';
 import {
   Box,
   Text,
@@ -15,14 +8,81 @@ import {
   HStack,
   Flex,
   useColorModeValue,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
+import ChartPanelHeading from '../../common/ChartPanelHeading';
+import ChartStateView from '../../common/ChartStateView';
+import { FaCamera, FaDownload } from 'react-icons/fa';
+import html2canvas from 'html2canvas';
 import {
-  ValueType,
-  NameType,
-} from "recharts/types/component/DefaultTooltipContent";
-import { TickItem } from "recharts/types/util/types";
-import { FaCamera, FaDownload } from "react-icons/fa";
-import html2canvas from "html2canvas";
+  Chart as ChartJS,
+  RadialLinearScale,
+  ArcElement,
+  Tooltip,
+  Legend,
+  ChartOptions,
+  Chart,
+} from 'chart.js';
+import { PolarArea } from 'react-chartjs-2';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import {
+  applySensorCalibration,
+  resolveAxisUnit,
+} from '@/app/utils/unitOverrides';
+import {
+  CHART_PLOT_HEIGHT_TALL_PX,
+  analyticsChartPanelLayoutProps,
+} from '@/app/utils/chartAxisConfig';
+
+// Helper: get pixel radius from scale value (Chart.js 4 radial scale)
+function getRadiusForValue(scale: any, value: number): number {
+  if (typeof scale.getDistanceFromCenterForValue === 'function') {
+    return scale.getDistanceFromCenterForValue(value);
+  }
+  const min = scale.min ?? 0;
+  const max = scale.max ?? 1;
+  const length = scale._length ?? 0;
+  const maxRadius = length / 2;
+  if (maxRadius <= 0 || max <= min) return 0;
+  return ((value - min) / (max - min)) * maxRadius;
+}
+
+// Plugin to stack polar-area datasets so each radial segment shows stacked speed colors
+const stackedPolarAreaPlugin = {
+  id: 'stackedPolarArea',
+  // Run immediately before drawing so our radii are used (after layout, no overwrite)
+  beforeDatasetsDraw: (chart: Chart) => {
+    const scale = chart.scales.r as any;
+    const labelsLength = chart.data.labels?.length ?? 0;
+    if (!scale) return;
+
+    for (let dataIndex = 0; dataIndex < labelsLength; dataIndex++) {
+      let cumulative = 0;
+
+      chart.data.datasets.forEach((dataset, datasetIndex) => {
+        const value = dataset.data?.[dataIndex];
+        if (typeof value !== 'number') return;
+
+        const meta = chart.getDatasetMeta(datasetIndex);
+        const arc = meta.data?.[dataIndex] as any;
+        if (!arc) return;
+
+        arc.innerRadius = getRadiusForValue(scale, cumulative);
+        arc.outerRadius = getRadiusForValue(scale, cumulative + value);
+
+        cumulative += value;
+      });
+    }
+  },
+};
+
+// Register Chart.js modules + plugin
+ChartJS.register(
+  RadialLinearScale,
+  ArcElement,
+  Tooltip,
+  Legend,
+  stackedPolarAreaPlugin
+);
 
 interface WindData {
   timestamp: string;
@@ -30,63 +90,156 @@ interface WindData {
   default_unit: string;
 }
 
-interface RadarPoint {
-  angle: number;
-  speed: number;
-  timestamp: string;
+/** Bin edges in raw API space (catalog default m/s); labels follow unit overrides. */
+const SPEED_BINS_RAW = [
+  { min: 0, max: 2, color: '#7cb5ec' },
+  { min: 2, max: 4, color: '#434348' },
+  { min: 4, max: 6, color: '#90ed7d' },
+  { min: 6, max: 8, color: '#f7a35c' },
+  { min: 8, max: Infinity, color: '#8085e9' },
+] as const;
+
+type SpeedBin = { label: string; min: number; max: number; color: string };
+
+function buildSpeedBinsWithLabels(axisUnit: string): SpeedBin[] {
+  const unit = axisUnit;
+  const fmt = (v: number) =>
+    Number.isFinite(v)
+      ? applySensorCalibration('wind_speed', v).toFixed(1)
+      : '';
+  return SPEED_BINS_RAW.map((b, i) => {
+    const first = i === 0;
+    const last = i === SPEED_BINS_RAW.length - 1;
+    let label: string;
+    if (first) {
+      label = `< ${fmt(2)} ${unit}`.trim();
+    } else if (last) {
+      label = `> ${fmt(8)} ${unit}`.trim();
+    } else {
+      label = `${fmt(b.min)} – ${fmt(b.max)} ${unit}`.trim();
+    }
+    return { label, min: b.min, max: b.max, color: b.color };
+  });
 }
 
-const prepareRadarData = (
-  speedData: WindData[],
-  directionData: WindData[]
-): RadarPoint[] => {
-  const radarData: RadarPoint[] = [];
+const LABELS_16_POINT = [
+  'N',
+  'NNE',
+  'NE',
+  'ENE',
+  'E',
+  'ESE',
+  'SE',
+  'SSE',
+  'S',
+  'SSW',
+  'SW',
+  'WSW',
+  'W',
+  'WNW',
+  'NW',
+  'NNW',
+];
 
-  for (let i = 0; i < Math.min(speedData.length, directionData.length); i++) {
-    const speedReading = speedData[i];
-    const directionReading = directionData[i];
+const getCompassSector = (degrees: number): string => {
+  const normalized = ((degrees % 360) + 360) % 360;
+  const index = Math.round(normalized / 22.5) % 16;
+  return LABELS_16_POINT[index];
+};
+
+const prepareWindRoseData = (
+  speedData: WindData[],
+  directionData: WindData[],
+  speedBins: SpeedBin[],
+  segmentBorderColor: string
+) => {
+  const countsMap: Record<string, Record<string, number>> = {};
+  LABELS_16_POINT.forEach((dir) => {
+    countsMap[dir] = {};
+    speedBins.forEach((bin) => {
+      countsMap[dir][bin.label] = 0;
+    });
+  });
+
+  const limit = Math.min(speedData.length, directionData.length);
+  let totalValidPoints = 0;
+
+  for (let i = 0; i < limit; i++) {
+    const speed = speedData[i];
+    const direction = directionData[i];
 
     if (
-      speedReading &&
-      directionReading &&
-      speedReading.timestamp === directionReading.timestamp &&
-      typeof speedReading.value === "number" &&
-      typeof directionReading.value === "number"
+      speed &&
+      direction &&
+      speed.timestamp === direction.timestamp &&
+      typeof speed.value === 'number' &&
+      typeof direction.value === 'number'
     ) {
-      radarData.push({
-        angle: directionReading.value,
-        speed: speedReading.value,
-        timestamp: speedReading.timestamp,
-      });
+      const sector = getCompassSector(direction.value);
+      const speedVal = speed.value;
+      const matchingBin = speedBins.find(
+        (b) => speedVal >= b.min && speedVal < b.max
+      );
+
+      if (matchingBin) {
+        countsMap[sector][matchingBin.label]++;
+        totalValidPoints++;
+      }
     }
   }
 
-  radarData.sort(
-    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-  );
-
-  return radarData.slice(0, 10);
-};
-
-const CustomTooltip = ({
-  active,
-  payload,
-}: TooltipProps<ValueType, NameType>) => {
-  const bg = useColorModeValue("white", "gray.800");
-  const color = useColorModeValue("black", "white");
-
-  if (active && payload && payload.length) {
-    const data = payload[0].payload as RadarPoint;
-    return (
-      <Box bg={bg} color={color} p={3} borderRadius="md" boxShadow="lg">
-        <Text fontWeight="bold">Direction: {data.angle.toFixed(1)}°</Text>
-        <Text>Vitesse : {data.speed.toFixed(2)} m/s</Text>
-        <Text>Timestamp : {data.timestamp}</Text>
-      </Box>
-    );
+  if (totalValidPoints === 0) {
+    return {
+      chartData: { labels: LABELS_16_POINT, datasets: [] },
+      pctMap: {},
+      countsMap: {},
+      maxStacked: 0,
+    };
   }
 
-  return null;
+  // Convert raw counts to percentages
+  const pctMap: Record<string, Record<string, number>> = {};
+  LABELS_16_POINT.forEach((dir) => {
+    pctMap[dir] = {};
+    speedBins.forEach((bin) => {
+      pctMap[dir][bin.label] =
+        (countsMap[dir][bin.label] / totalValidPoints) * 100;
+    });
+  });
+
+  // Build datasets with actual percentages (stacking handled by plugin)
+  const datasets = speedBins.map((bin) => {
+    const realPercentages = LABELS_16_POINT.map(
+      (dir) => pctMap[dir][bin.label]
+    );
+    const realCounts = LABELS_16_POINT.map((dir) => countsMap[dir][bin.label]);
+
+    return {
+      label: bin.label,
+      data: realPercentages,
+      realData: realPercentages,
+      realCounts: realCounts,
+      backgroundColor: LABELS_16_POINT.map(() => bin.color),
+      borderColor: LABELS_16_POINT.map(() => segmentBorderColor),
+      borderWidth: 1,
+    };
+  });
+
+  const maxStacked = Math.max(
+    ...LABELS_16_POINT.map((dir) =>
+      speedBins.reduce((sum, bin) => sum + pctMap[dir][bin.label], 0)
+    )
+  );
+
+  return {
+    chartData: {
+      labels: LABELS_16_POINT,
+      datasets: datasets,
+    },
+    pctMap,
+    countsMap,
+    maxStacked,
+  };
 };
 
 const WindRadarChart = ({
@@ -99,47 +252,178 @@ const WindRadarChart = ({
   loading: boolean;
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
-  const chartData = prepareRadarData(windSpeedData, windDirectionData);
-  const textColor = useColorModeValue("gray.800", "gray.200");
+  const unitRev = useUnitOverridesRevision();
+  const speedBins = useMemo(() => {
+    const u = resolveAxisUnit('wind_speed', windSpeedData[0]?.default_unit);
+    return buildSpeedBinsWithLabels(u);
+  }, [unitRev, windSpeedData]);
+  const textColor = useColorModeValue('gray.800', 'gray.200');
+  const gridColor = useColorModeValue(
+    'rgba(0, 0, 0, 0.1)',
+    'rgba(255, 255, 255, 0.1)'
+  );
+  const axisLineColor = useColorModeValue(
+    'rgba(0, 0, 0, 0.3)',
+    'rgba(255, 255, 255, 0.3)'
+  );
+  const backdropColor = useColorModeValue(
+    'rgba(255, 255, 255, 0.85)',
+    'rgba(26, 32, 44, 0.85)'
+  );
+  const roseSegmentBorder = useColorModeValue(
+    '#ffffff',
+    'rgba(15, 23, 42, 0.85)'
+  );
+
+  const { chartData, pctMap, countsMap, maxStacked } = useMemo(
+    () =>
+      prepareWindRoseData(
+        windSpeedData,
+        windDirectionData,
+        speedBins,
+        roseSegmentBorder
+      ),
+    [windSpeedData, windDirectionData, speedBins, roseSegmentBorder]
+  );
+  const isDataEmpty = !chartData || chartData.datasets.length === 0;
+
+  const chartOptions: ChartOptions<'polarArea'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      r: {
+        min: 0,
+        suggestedMax: Math.max(6, Math.ceil(maxStacked + 1)),
+        angleLines: {
+          display: true,
+          color: axisLineColor,
+          lineWidth: 0.4,
+        },
+        grid: {
+          color: gridColor,
+          circular: true,
+        },
+        ticks: {
+          stepSize: 2,
+          display: true,
+          color: 'black',
+          backdropColor: backdropColor,
+          backdropPadding: 3,
+          z: 10,
+          callback: (value: any) => {
+            // If the value is 0 (the center point), return an empty string to hide it
+            if (value === 0) {
+              return '';
+            }
+            // Otherwise, write the number followed by a percentage sign
+            return `${value}%`;
+          },
+        },
+        pointLabels: {
+          display: true,
+          color: textColor,
+          font: { size: 12 },
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: true,
+        position: 'right',
+        reverse: false,
+        onClick: (_e, legendItem, legend) => {
+          const chart = legend.chart;
+          const i = legendItem.datasetIndex;
+          if (typeof i !== 'number') return;
+          chart.setDatasetVisibility(i, !chart.isDatasetVisible(i));
+          chart.update();
+        },
+        labels: {
+          color: textColor,
+          usePointStyle: true,
+          padding: 20,
+          generateLabels: (chart: Chart) =>
+            chart.data.datasets.map((dataset, i) => ({
+              text: String(dataset.label ?? ''),
+              fillStyle: (dataset as unknown as { backgroundColor: string[] })
+                .backgroundColor[0],
+              strokeStyle: (dataset as unknown as { borderColor: string[] })
+                .borderColor[0],
+              lineWidth: (dataset as unknown as { borderWidth: number })
+                .borderWidth,
+              hidden: !chart.isDatasetVisible(i),
+              datasetIndex: i,
+            })),
+        },
+      },
+      tooltip: {
+        callbacks: {
+          label: (context: any) => {
+            const dataset = context.dataset;
+            const realValue = dataset.realData[context.dataIndex];
+            const countValue = dataset.realCounts[context.dataIndex];
+
+            if (realValue === 0) return undefined;
+
+            return ` ${dataset.label}: ${realValue.toFixed(1)}% (${countValue} mesures)`;
+          },
+        },
+      },
+    },
+  };
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
-      const canvas = await html2canvas(chartRef.current);
-      const link = document.createElement("a");
-      link.download = "wind_radar_chart.png";
+      const canvas = await html2canvas(chartRef.current, {
+        scale: 2,
+        backgroundColor: null,
+      });
+      const link = document.createElement('a');
+      link.download = 'wind_direction_chart.png';
       link.href = canvas.toDataURL();
       link.click();
     }
   };
 
   const handleDownloadData = () => {
-    const csv =
-      "timestamp,angle,speed\n" +
-      chartData
-        .map(
-          (d) => `${d.timestamp},${d.angle.toFixed(1)},${d.speed.toFixed(2)}`
-        )
-        .join("\n");
+    if (isDataEmpty) return;
 
-    const blob = new Blob([csv], { type: "text/csv" });
+    const headers = [
+      'Direction',
+      ...speedBins.map((b) => `${b.label} (%)`),
+      ...speedBins.map((b) => `${b.label} (Count)`),
+    ];
+    const rows = LABELS_16_POINT.map((dir) => {
+      const pctData = speedBins.map(
+        (bin) => pctMap[dir][bin.label].toFixed(2) + '%'
+      );
+      const countData = speedBins.map((bin) =>
+        countsMap[dir][bin.label].toString()
+      );
+      return [dir, ...pctData, ...countData].join(',');
+    });
+
+    const csv = headers.join(',') + '\n' + rows.join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
-    link.download = "wind_radar_data.csv";
+    link.download = 'wind_direction_data.csv';
     link.click();
     URL.revokeObjectURL(url);
   };
 
   return (
-    <Box width="100%" pr={4} pb={4}>
+    <Box {...analyticsChartPanelLayoutProps}>
       <Flex justify="space-between" align="center" mb={4}>
-        <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          {/* Radar du vent (10 dernières valeurs) */}
-          Direction de vent
-        </Text>
+        <ChartPanelHeading
+          color={textColor}
+          title="Vent — rose des directions"
+          subtitle="Répartition par secteur et classes de vitesse sur la période."
+        />
         <HStack spacing={2}>
           <Button
-            aria-label="Capture graphique"
+            aria-label="Capture"
             colorScheme="teal"
             variant="ghost"
             onClick={handleScreenshot}
@@ -147,67 +431,26 @@ const WindRadarChart = ({
             <FaCamera />
           </Button>
           <Button
-            aria-label="Exporter CSV"
+            aria-label="Export"
             colorScheme="blue"
             variant="ghost"
             onClick={handleDownloadData}
+            isDisabled={isDataEmpty}
           >
             <FaDownload />
           </Button>
         </HStack>
       </Flex>
 
-      <Box ref={chartRef} height="300px">
-        {loading ? (
-          <Text>Chargement...</Text>
-        ) : chartData.length === 0 ? (
-          <Text>Aucune donnée disponible</Text>
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <RadarChart
-              cx="50%"
-              cy="50%"
-              outerRadius="80%"
-              data={chartData}
-              startAngle={90}
-              endAngle={-270}
-            >
-              <PolarGrid />
-              <PolarAngleAxis
-                dataKey="angle"
-                type="number"
-                domain={[0, 360]}
-                ticks={
-                  [0, 45, 90, 135, 180, 225, 270, 315] as unknown as TickItem[]
-                }
-                stroke={textColor}
-                tickFormatter={(degree) => {
-                  const directions = [
-                    "N",
-                    "NE",
-                    "E",
-                    "SE",
-                    "S",
-                    "SW",
-                    "W",
-                    "NW",
-                  ];
-                  const index = Math.round(degree / 45) % 8;
-                  return directions[index];
-                }}
-              />
-              <Tooltip content={(props) => <CustomTooltip {...props} />} />
-              <Radar
-                name="Vitesse"
-                dataKey="speed"
-                stroke="#82ca9d"
-                fill="#82ca9d"
-                fillOpacity={0.6}
-              />
-            </RadarChart>
-          </ResponsiveContainer>
-        )}
-      </Box>
+      <ChartStateView
+        loading={loading}
+        empty={isDataEmpty}
+        emptyText="Aucune donnée disponible"
+        chartRef={chartRef}
+        height={CHART_PLOT_HEIGHT_TALL_PX}
+      >
+        <PolarArea data={chartData as any} options={chartOptions} />
+      </ChartStateView>
     </Box>
   );
 };

@@ -1,11 +1,15 @@
-"use client";
+'use client';
 
-import { Box, Stack } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import api from "@/app/lib/api";
-import { SensorData } from "@/app/types";
-import SoilTemperatureChart from "./SoilTemperatureChart";
-import SoilTemperatureLastData from "./SoilTemperatureLastData";
+import { Box, VStack } from '@chakra-ui/react';
+import { useEffect, useMemo, useState } from 'react';
+import ChartDateRangeDragger from '../../common/ChartDateRangeDragger';
+import ChartLastDataShell from '../../common/ChartLastDataShell';
+import ChartDateRangeGate from '../../common/ChartDateRangeGate';
+import api from '@/app/lib/api';
+import { SensorData } from '@/app/types';
+import SoilTemperatureChart from './SoilTemperatureChart';
+import SoilTemperatureLastData from './SoilTemperatureLastData';
+import { CHART_SHELL_MAX_HEIGHT } from '@/app/utils/chartAxisConfig';
 
 export type TemperaturePoint = {
   timestamp: string;
@@ -42,9 +46,9 @@ const SoilTemperatureMain = ({
       });
 
     Promise.all([
-      fetchSeries("/api/sensors/soiltemperaturelow/"),
-      fetchSeries("/api/sensors/soiltemperaturemedium/"),
-      fetchSeries("/api/sensors/soiltemperaturehigh/"),
+      fetchSeries('/api/sensors/soiltemperaturelow/'),
+      fetchSeries('/api/sensors/soiltemperaturemedium/'),
+      fetchSeries('/api/sensors/soiltemperaturehigh/'),
     ])
       .then(([lowRes, medRes, highRes]) => {
         const map = new Map<string, TemperaturePoint>();
@@ -76,35 +80,60 @@ const SoilTemperatureMain = ({
         setLastMedium(medRes.data.at(-1));
         setLastHigh(highRes.data.at(-1));
       })
-      .catch((err) => console.error("Failed to fetch soil temperature:", err))
+      .catch((err) => console.error('Failed to fetch soil temperature:', err))
       .finally(() => setLoading(false));
   }, [startDate, endDate, selectedZone]);
 
+  const timeline = useMemo(() => data.map((d) => d.timestamp), [data]);
+
   return (
-    <Stack
-      spacing={2}
-      direction={{ base: "column", md: "row" }}
+    <ChartLastDataShell
+      direction={{ base: 'column', md: 'row' }}
       align="start"
       width="100%"
-      height="100%"
-    >
-      <Box flex={3} p={2} height="100%" width="100%">
-        <SoilTemperatureChart
-          data={data}
-          loading={loading}
-          bestValueMin={12} // °C
-          bestValueMax={250} // °C
-        />
-      </Box>
-
-      <Box flex={1} p={3} height="100%" width="100%">
-        <SoilTemperatureLastData
-          lastLow={lastLow}
-          lastMedium={lastMedium}
-          lastHigh={lastHigh}
-        />
-      </Box>
-    </Stack>
+      maxH={CHART_SHELL_MAX_HEIGHT}
+      spacing={5}
+      chart={
+        <Box flex={3} p={2} width="100%" minW={0}>
+          <ChartDateRangeGate timeline={timeline}>
+            {({ startIdx, endIdx, setRange }) => (
+              <VStack spacing={0} align="stretch" width="100%">
+                <SoilTemperatureChart
+                  data={data.slice(startIdx, endIdx + 1)}
+                  loading={loading}
+                  bestValueMin={12} // °C
+                  bestValueMax={250} // °C
+                />
+                <ChartDateRangeDragger
+                  timestamps={timeline}
+                  startIdx={startIdx}
+                  endIdx={endIdx}
+                  onChange={(r) => setRange(r)}
+                />
+              </VStack>
+            )}
+          </ChartDateRangeGate>
+        </Box>
+      }
+      lastData={
+        <Box
+          flex={1}
+          p={3}
+          width="100%"
+          minW={0}
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="stretch"
+        >
+          <SoilTemperatureLastData
+            lastLow={lastLow}
+            lastMedium={lastMedium}
+            lastHigh={lastHigh}
+          />
+        </Box>
+      }
+    />
   );
 };
 

@@ -10,6 +10,10 @@ NEXT_PUBLIC_API_URL=http://157.245.43.196:8000
 # Optional - used only during build (Node server-side fetches)
 API_URL=http://157.245.43.196:8000
 
+# Chat assistant (Anthropic) — required for Agrilogy chatbot in the browser.
+# Warning: NEXT_PUBLIC_* is visible to clients; prefer a server Route Handler + secret key for production.
+# NEXT_PUBLIC_ANTHROPIC_API_KEY=
+
 # Disable Next telemetry (optional)
 NEXT_TELEMETRY_DISABLED=1
 

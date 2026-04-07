@@ -1,18 +1,17 @@
-version: "3.9"
-
 services:
   agryfront:
     container_name: agryfront
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN: pk.eyJ1IjoiYWdyZyIsImEiOiJjbW5ianloY2IwdzRyMm9wYjFjMTZrcmI1In0.8qR-z1_SzULfE92ZoGozlA
+        NEXT_PUBLIC_API_URL: https://agrilogy-pi.com
     image: agrifront:v1.0
-    env_file: .env
     environment:
       - HOST=0.0.0.0
       - PORT=3000
-      - NEXT_PUBLIC_API_URL=https://agrilogy-pi.com
       - NEXT_TELEMETRY_DISABLED=1
     ports:
-      - "3000:3000"
+      - '3000:3000'
     restart: unless-stopped

@@ -1,5 +1,5 @@
-"use client";
-import React, { useEffect, useState } from "react";
+'use client';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Text,
@@ -9,10 +9,10 @@ import {
   useToast,
   Divider,
   Select,
-} from "@chakra-ui/react";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import axiosInstance from "@/app/lib/api";
-import "@/app/styles/graphes.css";
+} from '@chakra-ui/react';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import axiosInstance from '@/app/lib/api';
+import '@/app/styles/graphes.css';
 
 type Props = {
   user: string;
@@ -28,40 +28,40 @@ type Zone = {
 };
 
 const fieldGroups: Record<string, string[]> = {
-  "🌱 Sol": [
-    "soil_irrigation_status",
-    "soil_ph_status",
-    "soil_conductivity_status",
-    "soil_moisture_status",
-    "soil_temperature_status",
+  '🌱 Sol': [
+    'soil_irrigation_status',
+    'soil_ph_status',
+    'soil_conductivity_status',
+    'soil_moisture_status',
+    'soil_temperature_status',
   ],
-  "☁️ Météo": [
-    "et0_status",
-    "wind_speed_status",
-    "wind_direction_status",
-    "solar_radiation_status",
-    "temperature_humidity_weather_status",
-    "precipitation_humidity_rate_status",
-    "pluviometry_status",
-    "data_table_status",
-    "wind_radar_status",
-    "cumulative_precipitation_status",
-    "precipitation_rate_status",
-    "weather_temperature_humidity_status",
+  '☁️ Météo': [
+    'et0_status',
+    'wind_speed_status',
+    'wind_direction_status',
+    'solar_radiation_status',
+    'temperature_humidity_weather_status',
+    'precipitation_humidity_rate_status',
+    'pluviometry_status',
+    'data_table_status',
+    'wind_radar_status',
+    'cumulative_precipitation_status',
+    'precipitation_rate_status',
+    'weather_temperature_humidity_status',
   ],
-  "💧 Eau": [
-    "water_flow_status",
-    "water_pressure_status",
-    "water_ph_status",
-    "water_ec_status",
+  '💧 Eau': [
+    'water_flow_status',
+    'water_pressure_status',
+    'water_ph_status',
+    'water_ec_status',
   ],
-  "🌿 Plante": [
-    "leaf_sensor_status",
-    "fruit_size_status",
-    "large_fruit_diameter_status",
+  '🌿 Plante': [
+    'leaf_sensor_status',
+    'fruit_size_status',
+    'large_fruit_diameter_status',
   ],
-  "🌾 Engrais/Nutriments": ["npk_status"],
-  "⚡ Autres": ["electricity_consumption_status"],
+  '🌾 Engrais/Nutriments': ['npk_status'],
+  '⚡ Autres': ['electricity_consumption_status'],
 };
 
 const GraphStatusMain = ({ user }: Props) => {
@@ -82,8 +82,8 @@ const GraphStatusMain = ({ user }: Props) => {
       }
     } catch {
       toast({
-        title: "Erreur lors du chargement des zones",
-        status: "error",
+        title: 'Erreur lors du chargement des zones',
+        status: 'error',
         isClosable: true,
       });
     }
@@ -98,8 +98,8 @@ const GraphStatusMain = ({ user }: Props) => {
       setGraphStatus(response.data);
     } catch {
       toast({
-        title: "Erreur lors du chargement des graphiques",
-        status: "error",
+        title: 'Erreur lors du chargement des graphiques',
+        status: 'error',
         isClosable: true,
       });
     } finally {
@@ -117,15 +117,15 @@ const GraphStatusMain = ({ user }: Props) => {
       );
       setGraphStatus(updatedStatus);
       toast({
-        title: `"${key.replace(/_/g, " ")}" mis à jour`,
-        status: "success",
+        title: `"${key.replace(/_/g, ' ')}" mis à jour`,
+        status: 'success',
         duration: 2000,
         isClosable: true,
       });
     } catch {
       toast({
-        title: "Erreur lors de la mise à jour",
-        status: "error",
+        title: 'Erreur lors de la mise à jour',
+        status: 'error',
         isClosable: true,
       });
     }
@@ -155,7 +155,7 @@ const GraphStatusMain = ({ user }: Props) => {
             onChange={(e) => updateStatus(key, e.target.checked)}
             _hover={{ color: hoverColor }}
           >
-            {key.replace(/_/g, " ")}
+            {key.replace(/_/g, ' ')}
           </Checkbox>
         ))}
       </SimpleGrid>
@@ -178,7 +178,7 @@ const GraphStatusMain = ({ user }: Props) => {
         <Box mt={2}>
           <Select
             placeholder="Sélectionner une zone"
-            value={selectedZoneId ?? ""}
+            value={selectedZoneId ?? ''}
             onChange={(e) => setSelectedZoneId(parseInt(e.target.value))}
             maxW="300px"
           >

@@ -1,8 +1,11 @@
-import { Box, Stack } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import api from "@/app/lib/api";
-import WindRadarLastData from "./WindRadarLastData";
-import WindRadarChart from "./WindRadarChart";
+import { Box, VStack } from '@chakra-ui/react';
+import { useEffect, useMemo, useState } from 'react';
+import ChartDateRangeGate from '../../common/ChartDateRangeGate';
+import ChartLastDataShell from '../../common/ChartLastDataShell';
+import { alignWindSeriesByTimestamp } from '@/app/utils/chartDateWindow';
+import api from '@/app/lib/api';
+import WindRadarLastData from './WindRadarLastData';
+import WindRadarChart from './WindRadarChart';
 
 interface WindData {
   id: number;
@@ -29,7 +32,7 @@ const WindRadarMain = ({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchSpeed = api.get<WindData[]>("/api/sensors/windspeed/", {
+    const fetchSpeed = api.get<WindData[]>('/api/sensors/windspeed/', {
       params: {
         start_date: startDate,
         end_date: endDate,
@@ -37,7 +40,7 @@ const WindRadarMain = ({
       },
     });
 
-    const fetchDirection = api.get<WindData[]>("/api/sensors/winddirection/", {
+    const fetchDirection = api.get<WindData[]>('/api/sensors/winddirection/', {
       params: {
         start_date: startDate,
         end_date: endDate,
@@ -50,33 +53,62 @@ const WindRadarMain = ({
         setSpeedData(speedRes.data);
         setDirectionData(dirRes.data);
       })
-      .catch((err) => console.error("Error fetching wind data:", err))
+      .catch((err) => console.error('Error fetching wind data:', err))
       .finally(() => setLoading(false));
   }, [startDate, endDate, selectedZone]);
 
+  const { timeline, speedAligned, directionAligned } = useMemo(() => {
+    const {
+      timeline: tl,
+      speed,
+      direction,
+    } = alignWindSeriesByTimestamp(speedData, directionData);
+    return { timeline: tl, speedAligned: speed, directionAligned: direction };
+  }, [speedData, directionData]);
+
   return (
-    <Stack
+    <ChartLastDataShell
       spacing={2}
-      direction={{ base: "column", md: "row" }}
+      direction={{ base: 'column', md: 'row' }}
       align="start"
       width="100%"
-      height="100%"
       className="Box"
-    >
-      <Box flex={3} p={2} height="100%" width="100%">
-        <WindRadarChart
-          windSpeedData={speedData}
-          windDirectionData={directionData}
-          loading={loading}
-        />
-      </Box>
-      <Box flex={1} p={3} height="100%" width="100%">
-        <WindRadarLastData
-          windSpeedData={speedData}
-          windDirectionData={directionData}
-        />
-      </Box>
-    </Stack>
+      chart={
+        <Box flex={3} p={2} width="100%" minW={0}>
+          <ChartDateRangeGate timeline={timeline}>
+            {({ startIdx, endIdx }) => (
+              <VStack spacing={0} align="stretch" width="100%">
+                <WindRadarChart
+                  windSpeedData={speedAligned.slice(startIdx, endIdx + 1)}
+                  windDirectionData={directionAligned.slice(
+                    startIdx,
+                    endIdx + 1
+                  )}
+                  loading={loading}
+                />
+              </VStack>
+            )}
+          </ChartDateRangeGate>
+        </Box>
+      }
+      lastData={
+        <Box
+          flex={1}
+          p={3}
+          width="100%"
+          minW={0}
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="stretch"
+        >
+          <WindRadarLastData
+            windSpeedData={speedData}
+            windDirectionData={directionData}
+          />
+        </Box>
+      }
+    />
   );
 };
 

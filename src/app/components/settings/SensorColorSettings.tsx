@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   Box,
   Table,
@@ -12,10 +12,10 @@ import {
   Td,
   Input,
   useToast,
-} from "@chakra-ui/react";
-import api from "@/app/lib/api";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import EmptyBox from "../common/EmptyBox";
+} from '@chakra-ui/react';
+import api from '@/app/lib/api';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import EmptyBox from '../common/EmptyBox';
 
 const SensorColorSettings = () => {
   const { textColor } = useColorModeStyles();
@@ -30,13 +30,13 @@ const SensorColorSettings = () => {
   useEffect(() => {
     const fetchColors = async () => {
       try {
-        const response = await api.get("/api/sensor-color/");
+        const response = await api.get('/api/sensor-color/');
         setSensorColors(response.data);
       } catch (error) {
         toast({
-          title: "Error",
-          description: "Failed to fetch sensor colors",
-          status: "error",
+          title: 'Error',
+          description: 'Failed to fetch sensor colors',
+          status: 'error',
           duration: 3000,
           isClosable: true,
         });
@@ -53,31 +53,31 @@ const SensorColorSettings = () => {
 
   const saveChanges = async (key: string, value: string) => {
     try {
-      await api.put("/api/sensor-color/", { [key]: value });
+      await api.put('/api/sensor-color/', { [key]: value });
       toast({
-        title: "Success",
-        description: "Color updated successfully",
-        status: "success",
+        title: 'Success',
+        description: 'Color updated successfully',
+        status: 'success',
         duration: 2000,
         isClosable: true,
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to update color",
-        status: "error",
+        title: 'Error',
+        description: 'Failed to update color',
+        status: 'error',
         duration: 3000,
         isClosable: true,
       });
     }
   };
 
-  if (loading) return <EmptyBox/>;
+  if (loading) return <EmptyBox variant="loading" />;
 
   return (
     <Box overflowX="auto">
       <Text color={textColor}>Paramètres des couleurs des courbes</Text>
-      <Table variant="simple" >
+      <Table variant="simple">
         <Thead>
           <Tr>
             <Th>Name</Th>
@@ -88,7 +88,7 @@ const SensorColorSettings = () => {
           {sensorColors &&
             Object.entries(sensorColors).map(([key, value]) => (
               <Tr key={key}>
-                <Td>{key.replace(/_/g, " ")}</Td>
+                <Td>{key.replace(/_/g, ' ')}</Td>
                 <Td>
                   <Input
                     type="color"

@@ -1,26 +1,28 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode } from 'react';
 import {
   Box,
+  Flex,
   Text,
   useColorModeValue,
   useBreakpointValue,
   useColorMode,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 
 interface DashboardCardProps {
   title: string;
+  titleAddon?: ReactNode;
   content: ReactNode;
   maxHeight?: string; // Optional: Max height for card
 }
 
-const DashboardCard = ({ title, content }: DashboardCardProps) => {
-  const tableBg = useColorModeValue("white", "gray.800");
+const DashboardCard = ({ title, titleAddon, content }: DashboardCardProps) => {
+  const tableBg = useColorModeValue('white', 'gray.800');
   const { colorMode } = useColorMode();
 
   // Responsive height for scrollable content area
   const scrollableHeight = useBreakpointValue({
-    base: "500px",
-    md: "calc(100% - 30px)", // Subtract the title height from full height
+    base: '500px',
+    md: 'calc(100% - 30px)', // Subtract the title height from full height
   });
 
   return (
@@ -32,25 +34,35 @@ const DashboardCard = ({ title, content }: DashboardCardProps) => {
       // boxShadow="lg"
       overflow="hidden"
     >
-      {/* Title of the card */}
-      <Text
-        color={colorMode === "light" ? "gray.700" : "gray.200"}
-        fontSize="lg"
-        fontWeight="bold"
+      <Flex
         mb={2}
+        align="center"
+        justify="space-between"
+        gap={3}
+        wrap="wrap"
+        pr={titleAddon ? 0 : 2}
       >
-        {title}
-      </Text>
+        <Text
+          color={colorMode === 'light' ? 'gray.700' : 'gray.200'}
+          fontSize="lg"
+          fontWeight="bold"
+          flex="1"
+          minW="0"
+        >
+          {title}
+        </Text>
+        {titleAddon ? <Box flexShrink={0}>{titleAddon}</Box> : null}
+      </Flex>
 
       {/* Scrollable content area */}
       <Box
         width="100%"
         height={scrollableHeight} // Make it responsive
-        overflowY="auto"          // Enable scrolling
+        overflowY="auto" // Enable scrolling
         pb={2}
-        pr={2}                     // Padding for the content area
+        pr={2} // Padding for the content area
       >
-        {content}  {/* Dynamic content */}
+        {content} {/* Dynamic content */}
       </Box>
     </Box>
   );

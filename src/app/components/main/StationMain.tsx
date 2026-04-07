@@ -1,24 +1,26 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { Box, HStack, Text, useColorModeValue } from "@chakra-ui/react";
+'use client';
+import React, { useEffect, useState } from 'react';
+import { Box, HStack, Text, useColorModeValue } from '@chakra-ui/react';
 
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import api from "@/app/lib/api";
-import "@/app/styles/style.css";
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import api from '@/app/lib/api';
+import '@/app/styles/style.css';
 
-import DateRangePicker from "../analytics/DateRangePicker";
+import DateRangePicker from '../analytics/DateRangePicker';
 import getActiveGraphs, {
   ActiveGraphResponse,
-} from "@/app/utils/getActiveGraphs";
+} from '@/app/utils/getActiveGraphs';
 
 // Weather station components
-import TempuratureHumidtyMain from "../analytics/WeatherTempuratureHumidty/TempuratureHumidtyMain";
-import WindSpeedMain from "../analytics/WindSpeed/WindSpeedMain";
-import WindRadarMain from "../analytics/Wind/WindRadarMain";
-import ET0Main from "../analytics/ET0/ET0Main";
-import SolarRadiationMain from "../analytics/SolarRadiation/SolarRadiationMain";
-import CumulPrecipitationMain from "../analytics/CumulPrecipitation/CumulPrecipitationMain";
-import PrecipitationRateMain from "../analytics/PrecipitationRate/PrecipitationRateMain";
+import TempuratureHumidtyMain from '../analytics/WeatherTempuratureHumidty/TempuratureHumidtyMain';
+import WindSpeedMain from '../analytics/WindSpeed/WindSpeedMain';
+import WindRadarMain from '../analytics/Wind/WindRadarMain';
+import ET0Main from '../analytics/ET0/ET0Main';
+import SolarRadiationMain from '../analytics/SolarRadiation/SolarRadiationMain';
+import CumulPrecipitationMain from '../analytics/CumulPrecipitation/CumulPrecipitationMain';
+import PrecipitationRateMain from '../analytics/PrecipitationRate/PrecipitationRateMain';
+import VPDMain from '../analytics/VPD/VPDMain';
+import ZoneNotificationBell from '@/app/components/common/ZoneNotificationBell';
 
 const StationMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
@@ -28,9 +30,9 @@ const StationMain = () => {
   );
 
   const { bg, textColor } = useColorModeStyles();
-  const [startDate, setStartDate] = useState<string>("");
+  const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split('T')[0]
   );
 
   const filters = { startDate, endDate, selectedZone };
@@ -38,11 +40,11 @@ const StationMain = () => {
   useEffect(() => {
     const fetchZones = async () => {
       try {
-        const res = await api.get("/api/zones-names-per-user/");
+        const res = await api.get('/api/zones-names-per-user/');
         setZones(res.data || []);
         if (res.data.length > 0) setSelectedZone(res.data[0].id);
       } catch (error) {
-        console.error("Failed to fetch zones", error);
+        console.error('Failed to fetch zones', error);
       }
     };
     fetchZones();
@@ -57,16 +59,16 @@ const StationMain = () => {
   return (
     <div className="container">
       <Box bg={bg} className="header">
-        <HStack>
+        <HStack spacing={3} flexWrap="wrap" alignItems="center">
           <Text color={textColor}>Station météo du </Text>
           <select
-            value={selectedZone ?? ""}
+            value={selectedZone ?? ''}
             onChange={(e) => setSelectedZone(Number(e.target.value))}
             style={{
-              borderRadius: "2px",
-              padding: "4px",
-              color: useColorModeValue("black", "white"),
-              border: `1px solid ${useColorModeValue("black", "white")}`,
+              borderRadius: '2px',
+              padding: '4px',
+              color: useColorModeValue('black', 'white'),
+              border: `1px solid ${useColorModeValue('black', 'white')}`,
             }}
           >
             {zones.map((zone) => (
@@ -75,6 +77,14 @@ const StationMain = () => {
               </option>
             ))}
           </select>
+          {selectedZone != null && (
+            <ZoneNotificationBell
+              zoneId={selectedZone}
+              zoneName={
+                zones.find((z) => z.id === selectedZone)?.name ?? 'Zone'
+              }
+            />
+          )}
         </HStack>
       </Box>
 
@@ -88,9 +98,19 @@ const StationMain = () => {
         />
       </Box>
 
+      {activeGraph?.wind_radar_status && (
+        <Box bg={bg} className="box wide">
+          <WindRadarMain filters={filters} />
+        </Box>
+      )}
       {activeGraph?.weather_temperature_humidity_status && (
         <Box bg={bg} className="box wide">
           <TempuratureHumidtyMain filters={filters} />
+        </Box>
+      )}
+      {activeGraph?.weather_temperature_humidity_status && (
+        <Box bg={bg} className="box wide">
+          <VPDMain filters={filters} />
         </Box>
       )}
       {activeGraph?.et0_status && (
@@ -101,11 +121,6 @@ const StationMain = () => {
       {activeGraph?.wind_speed_status && (
         <Box bg={bg} className="box wide">
           <WindSpeedMain filters={filters} />
-        </Box>
-      )}
-      {activeGraph?.wind_radar_status && (
-        <Box bg={bg} className="box wide">
-          <WindRadarMain filters={filters} />
         </Box>
       )}
       {activeGraph?.solar_radiation_status && (
@@ -122,7 +137,7 @@ const StationMain = () => {
         <Box bg={bg} className="box wide">
           <PrecipitationRateMain filters={filters} />
         </Box>
-      )} 
+      )}
     </div>
   );
 };

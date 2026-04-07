@@ -1,6 +1,14 @@
-import { Box, Text, useColorModeValue } from "@chakra-ui/react";
-import { FaTint, FaRulerCombined } from "react-icons/fa";
-import { SensorData } from "@/app/types";
+import type { ReactNode } from 'react';
+import { Box, Divider, Text, useColorModeValue } from '@chakra-ui/react';
+import { FaTint, FaRulerCombined } from 'react-icons/fa';
+import { SensorData } from '@/app/types';
+import {
+  formatCalibratedReading,
+  resolveAxisUnit,
+} from '@/app/utils/unitOverrides';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import LastDataAddAlertButton from '../../common/LastDataAddAlertButton';
+import LastDataPanel from '../../common/LastDataPanel';
 
 const timeAgo = (timestamp: string): string => {
   const now = new Date();
@@ -9,10 +17,52 @@ const timeAgo = (timestamp: string): string => {
   const diffMin = Math.floor(diffMs / 60000);
   const diffH = Math.floor(diffMin / 60);
 
-  if (diffMin < 1) return "just now";
-  if (diffMin < 60) return `${diffMin} min ago`;
-  if (diffH < 24) return `${diffH} hours ago`;
+  if (diffMin < 1) return "à l'instant";
+  if (diffMin < 60) return `${diffMin} min.`;
+  if (diffH < 24) return `${diffH} h`;
   return then.toLocaleDateString();
+};
+
+const Block = ({
+  icon,
+  title,
+  latest,
+  sensorKey,
+}: {
+  icon: ReactNode;
+  title: string;
+  latest?: SensorData;
+  sensorKey: string;
+}) => {
+  const textColor = useColorModeValue('gray.600', 'gray.300');
+  const valueColor = useColorModeValue('blue.700', 'blue.200');
+  const subColor = useColorModeValue('gray.500', 'gray.400');
+
+  return (
+    <Box textAlign="center" py={2}>
+      <Box display="flex" justifyContent="center">
+        {icon}
+      </Box>
+      <Text
+        fontWeight="semibold"
+        fontSize="xs"
+        letterSpacing="0.06em"
+        textTransform="uppercase"
+        mt={2}
+        color={textColor}
+      >
+        {title}
+      </Text>
+      <Text fontSize="xl" fontWeight="semibold" color={valueColor} mt={1}>
+        {latest
+          ? `${formatCalibratedReading(sensorKey, latest.value)} ${resolveAxisUnit(sensorKey, latest.default_unit)}`
+          : '—'}
+      </Text>
+      <Text fontSize="xs" color={subColor} mt={1}>
+        {latest ? `Mesure : ${timeAgo(latest.timestamp)}` : ''}
+      </Text>
+    </Box>
+  );
 };
 
 const SoilSalinityConductivityLastData = ({
@@ -22,64 +72,36 @@ const SoilSalinityConductivityLastData = ({
   salinityData: SensorData[];
   conductivityData: SensorData[];
 }) => {
+  useUnitOverridesRevision();
   const latestSalinity = salinityData[salinityData.length - 1];
   const latestConductivity = conductivityData[conductivityData.length - 1];
 
-  const bgColor = useColorModeValue("green.100", "green.900");
-  const valueColor = useColorModeValue("green.700", "green.200");
-  const textColor = useColorModeValue("gray.600", "gray.300");
-
   return (
     <Box
-      bg={bgColor}
-      p={4}
-      borderRadius="md"
-      boxShadow="md"
-      minH="300px"
-      minW="250px"
-      height="100%"
-      width="100%"
+      flex={1}
+      minH={0}
+      minW={0}
+      w="100%"
+      alignSelf="stretch"
       display="flex"
       flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      textAlign="center"
     >
-      <Box textAlign="center">
-        <Box display="flex" justifyContent="center">
-          <FaTint size={50} color="#2b6cb0" />
-        </Box>
-        <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
-          Dernière salinité :
-        </Text>
-        <Text fontSize="2xl" color={valueColor}>
-          {latestSalinity ? `${latestSalinity.value.toFixed(2)} mg/l` : "N/A"}
-        </Text>
-        <Text fontSize="sm" color={textColor}>
-          {latestSalinity
-            ? `Mise à jour : ${timeAgo(latestSalinity.timestamp)}`
-            : ""}
-        </Text>
-      </Box>
-
-      <Box textAlign="center" mt={6}>
-        <Box display="flex" justifyContent="center">
-          <FaRulerCombined size={40} color="#48bb78" />
-        </Box>
-        <Text fontWeight="bold" fontSize="lg" mt={2} color={textColor}>
-          Dernière conductivité :
-        </Text>
-        <Text fontSize="2xl" color={valueColor}>
-          {latestConductivity
-            ? `${latestConductivity.value.toFixed(2)} μS/cm`
-            : "N/A"}
-        </Text>
-        <Text fontSize="sm" color={textColor}>
-          {latestConductivity
-            ? `Mise à jour : ${timeAgo(latestConductivity.timestamp)}`
-            : ""}
-        </Text>
-      </Box>
+      <LastDataPanel variant="soilSalinity">
+        <Block
+          icon={<FaTint size={40} color="#2b6cb0" />}
+          title="Salinité du sol"
+          latest={latestSalinity}
+          sensorKey="soil_salinity"
+        />
+        <Divider my={2} />
+        <Block
+          icon={<FaRulerCombined size={36} color="#48bb78" />}
+          title="Conductivité électrique"
+          latest={latestConductivity}
+          sensorKey="soil_conductivity"
+        />
+        <LastDataAddAlertButton />
+      </LastDataPanel>
     </Box>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from 'react';
 import {
   AreaChart,
   Area,
@@ -8,20 +8,35 @@ import {
   Legend,
   ResponsiveContainer,
   CartesianGrid,
-} from "recharts";
+} from 'recharts';
+import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
+import { FaDownload, FaCamera } from 'react-icons/fa';
+import html2canvas from 'html2canvas';
+import { SensorData } from '@/app/types';
+import ChartPanelHeading from '../../common/ChartPanelHeading';
+import ChartStateView from '../../common/ChartStateView';
+import UnifiedTooltip from '../../common/UnifiedTooltip';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
+import { calibrateChartValue } from '@/app/utils/chartSeriesCalibration';
+import { resolveAxisUnit } from '@/app/utils/unitOverrides';
+import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
+import ChartLegend, {
+  type ChartLegendPayloadEntry,
+} from '../../common/ChartLegend';
 import {
-  Box,
-  Button,
-  Flex,
-  HStack,
-  Text,
-  useBreakpointValue,
-} from "@chakra-ui/react";
-import { FaDownload, FaCamera } from "react-icons/fa";
-import html2canvas from "html2canvas";
-import { SensorData } from "@/app/types";
-import EmptyBox from "../../common/EmptyBox";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
+  activeDotForSeries,
+  addTimeMsToChartRows,
+  defaultLegendWrapperStyle,
+  getAdaptiveTimeXAxisProps,
+  getDefaultYAxisProps,
+  mergeAxisTheme,
+  themedCartesianGrid,
+  CHART_MARGIN_LEFT_Y_LABEL,
+  CHART_PLOT_HEIGHT_PX,
+  analyticsChartPanelLayoutProps,
+  yAxisLabelInsideLeft,
+} from '@/app/utils/chartAxisConfig';
 
 const SolarRadiationChart = ({
   data,
@@ -32,22 +47,35 @@ const SolarRadiationChart = ({
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const [showArea, setShowArea] = useState(true);
+  const unitRev = useUnitOverridesRevision();
 
-  const chartData = data.map((item) => ({
-    name: item.timestamp,
-    value: item.value,
-  }));
+  const chartData = useMemo(() => {
+    const sorted = [...data].sort((a, b) => {
+      const ta = Date.parse(a.timestamp);
+      const tb = Date.parse(b.timestamp);
+      if (!Number.isFinite(ta) || !Number.isFinite(tb)) return 0;
+      return ta - tb;
+    });
+    const rows = sorted.map((item) => ({
+      name: item.timestamp,
+      solar_radiation: calibrateChartValue('solar_radiation', item.value),
+      default_unit: item.default_unit,
+    }));
+    return addTimeMsToChartRows(rows, 'name');
+  }, [data, unitRev]);
 
-  const labelInterval = useBreakpointValue({
-    base: Math.ceil(chartData.length / 3),
-    md: Math.ceil(chartData.length / 5),
-  });
-
-  const labelAngle = useBreakpointValue({ base: -3, md: 5 });
   const { textColor } = useColorModeStyles();
+  const { axis, tickFill, grid } = useChartAxisColors();
+  const xAxisProps = mergeAxisTheme(
+    getAdaptiveTimeXAxisProps(chartData, 'name'),
+    axis,
+    tickFill
+  );
+  const yAxisProps = mergeAxisTheme(getDefaultYAxisProps(0), axis, tickFill);
+  const solarUnit = resolveAxisUnit('solar_radiation', data[0]?.default_unit);
 
-  const handleLegendClick = (payload: any) => {
-    if (payload.value === "Radiation solaire") {
+  const handleLegendClick = (payload: ChartLegendPayloadEntry) => {
+    if (payload.dataKey === 'solar_radiation') {
       setShowArea((prev) => !prev);
     }
   };
@@ -55,8 +83,8 @@ const SolarRadiationChart = ({
   const handleScreenshot = async () => {
     if (chartRef.current) {
       const canvas = await html2canvas(chartRef.current);
-      const link = document.createElement("a");
-      link.download = "solar_radiation_chart.png";
+      const link = document.createElement('a');
+      link.download = 'solar_radiation_chart.png';
       link.href = canvas.toDataURL();
       link.click();
     }
@@ -64,27 +92,28 @@ const SolarRadiationChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      "timestamp,value\n" +
-      data.map((d) => `${d.timestamp},${d.value}`).join("\n");
+      'timestamp,solar_radiation\n' +
+      chartData.map((d) => `${d.name},${d.solar_radiation}`).join('\n');
 
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
 
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
-    link.download = "solar_radiation_data.csv";
+    link.download = 'solar_radiation_data.csv';
     link.click();
 
     URL.revokeObjectURL(url);
   };
 
   return (
-    <Box width="100%" pr={4} pb={4}>
+    <Box {...analyticsChartPanelLayoutProps}>
       <Flex justify="space-between" align="center" mb={4}>
-        <Text fontSize="xl" fontWeight="bold" color={textColor}>
-          {/* Évolution de la radiation solaire */}
-          Rayonnement global
-        </Text>
+        <ChartPanelHeading
+          color={textColor}
+          title="Rayonnement solaire global"
+          subtitle="Flux au plan horizontal ; échelle temps adaptative."
+        />
         <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
@@ -105,47 +134,56 @@ const SolarRadiationChart = ({
         </HStack>
       </Flex>
 
-      <Box ref={chartRef} height="300px">
-        {loading ? (
-          <EmptyBox text="Chargement..." />
-        ) : data.length === 0 ? (
-          <EmptyBox text="Pas de données" />
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart
-              data={chartData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="name"
-                angle={labelAngle}
-                textAnchor="middle"
-                interval={labelInterval}
-              />
-              <YAxis
-                label={{
-                  angle: -90,
-                  fontSize: 16,
-                  dy: 80,
-                  position: "insideLeft",
-                }}
-              />
-              <Tooltip />
-              <Legend onClick={handleLegendClick} />
-              <Area
-                type="monotone"
-                dataKey="value"
-                name="Radiation solaire"
-                stroke={showArea ? "#f6c90e" : "gray"}
-                fill={showArea ? "#f6c90e55" : "gray"}
-                strokeWidth={2}
-                isAnimationActive={false}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        )}
-      </Box>
+      <ChartStateView
+        loading={loading}
+        empty={data.length === 0}
+        chartRef={chartRef}
+        height={CHART_PLOT_HEIGHT_PX}
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart
+            data={chartData}
+            margin={{
+              top: 12,
+              right: 12,
+              left: CHART_MARGIN_LEFT_Y_LABEL,
+              bottom: 8,
+            }}
+          >
+            <CartesianGrid {...themedCartesianGrid(grid)} />
+            <XAxis {...xAxisProps} />
+            <YAxis
+              {...yAxisProps}
+              label={yAxisLabelInsideLeft(solarUnit, tickFill)}
+            />
+            <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
+            <Legend
+              wrapperStyle={defaultLegendWrapperStyle}
+              content={
+                <ChartLegend
+                  onClick={handleLegendClick}
+                  hiddenDataKeys={showArea ? [] : ['solar_radiation']}
+                />
+              }
+            />
+            <Area
+              type="monotone"
+              dataKey="solar_radiation"
+              name={`Radiation solaire (${solarUnit})`}
+              hide={!showArea}
+              stroke="#f6c90e"
+              fill="#f6c90e"
+              fillOpacity={0.38}
+              strokeWidth={2.25}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              dot={false}
+              activeDot={activeDotForSeries('#f6c90e')}
+              isAnimationActive={false}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </ChartStateView>
     </Box>
   );
 };

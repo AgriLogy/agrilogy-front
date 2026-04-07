@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Flex,
   IconButton,
@@ -6,28 +6,26 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  
   Link,
   useColorMode,
-  
-} from "@chakra-ui/react";
-import { MoonIcon, SunIcon } from "@chakra-ui/icons";
-import { FaUser } from "react-icons/fa";
-import Image from "next/image";
-import api from "@/app/lib/api";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import logo from "../../public/logo.png";
+} from '@chakra-ui/react';
+import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { FaUser } from 'react-icons/fa';
+import Image from 'next/image';
+import api from '@/app/lib/api';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import logo from '../../public/logo.png';
 
 const AdminBigMenu = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { bg } = useColorModeStyles();
-  const [username, setUsername] = useState("User");
+  const [username, setUsername] = useState('User');
 
   useEffect(() => {
     api
-      .get("/api/header/")
+      .get('/api/header/')
       .then((response) => setUsername(response.data.username))
-      .catch((error) => console.error("Error fetching header data", error));
+      .catch((error) => console.error('Error fetching header data', error));
   }, []);
 
   return (
@@ -40,7 +38,7 @@ const AdminBigMenu = () => {
       height="60px"
     >
       <Link href="/">
-        <Image height={40} src={logo} alt="Logo" />
+        <Image height={40} src={logo} alt="Logo" priority />
       </Link>
       <Flex align="center" gap={4}>
         <Menu>
@@ -55,7 +53,7 @@ const AdminBigMenu = () => {
           </MenuList>
         </Menu>
         <IconButton
-          icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+          icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
           aria-label="Toggle Color Mode"
           variant="ghost"
           onClick={toggleColorMode}

@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   VStack,
   Box,
   useColorModeValue,
   useBreakpointValue,
-} from "@chakra-ui/react";
-import ElectrovanCard, { Electrovanne } from "./ElectrovanCard";
-import { electrovanneList } from "@/app/data/dashboard/electrovannes";
-import Loading from "../common/Loading";
-import DashboardCard from "./DashboardCard";
+} from '@chakra-ui/react';
+import ElectrovanCard, { Electrovanne } from './ElectrovanCard';
+import { electrovanneList } from '@/app/data/dashboard/electrovannes';
+import Loading from '../common/Loading';
+import DashboardCard from './DashboardCard';
 
 const ElectrovannesList = () => {
   const [vannes, setVannes] = useState<Electrovanne[]>([]);
-  const tableBg = useColorModeValue("white", "gray.800");
+  const tableBg = useColorModeValue('white', 'gray.800');
   const [loading, setLoading] = useState(true);
   const p = useBreakpointValue({ base: 2, md: 4 });
 
@@ -23,7 +23,7 @@ const ElectrovannesList = () => {
       setVannes(electrovanneList);
       setLoading(false);
     } catch (error) {
-      console.error("Failed to fetch zones:", error);
+      console.error('Failed to fetch zones:', error);
     }
   };
 

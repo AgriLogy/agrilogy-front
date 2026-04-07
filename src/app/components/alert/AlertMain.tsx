@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Box, Text, VStack, useToast } from "@chakra-ui/react";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import api from "@/app/lib/api";
-import FloatingButton from "./FloatingButton";
-import FormModalUpdate from "./FormModalUpdate";
-import FormModalCreate from "./FormModalCreate";
-import Alert from "../notifications/Alert";
-import "../../styles/style.css";
-import EmptyBox from "../common/EmptyBox";
+import React, { useEffect, useState } from 'react';
+import { Box, Text, VStack, useToast } from '@chakra-ui/react';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import api from '@/app/lib/api';
+import FloatingButton from './FloatingButton';
+import FormModalUpdate from './FormModalUpdate';
+import FormModalCreate from './FormModalCreate';
+import Alert from '../notifications/Alert';
+import '../../styles/style.css';
+import EmptyBox from '../common/EmptyBox';
 
 interface AlertData {
   id: number;
@@ -33,7 +33,7 @@ const AlertMain = () => {
     if (alerts.length >= 5) {
       toast({
         title: "Supprimer des alertes pour pouvoir en créer d'autres",
-        status: "warning",
+        status: 'warning',
         duration: 3000,
         isClosable: true,
       });
@@ -56,10 +56,10 @@ const AlertMain = () => {
 
   const fetchAlerts = async () => {
     try {
-      const response = await api.get("/api/alert/");
+      const response = await api.get('/api/alert/');
       setAlerts(response.data);
     } catch (error) {
-      console.error("Error fetching alerts:", error);
+      console.error('Error fetching alerts:', error);
     } finally {
       setLoading(false);
     }
@@ -73,8 +73,8 @@ const AlertMain = () => {
     try {
       await api.delete(`/api/alert/${alertId}/`);
       toast({
-        title: "Alerte supprimée",
-        status: "success",
+        title: 'Alerte supprimée',
+        status: 'success',
         duration: 3000,
         isClosable: true,
       });
@@ -84,14 +84,14 @@ const AlertMain = () => {
       console.error("Erreur lors de la suppression de l'alerte :", error);
       toast({
         title: "Erreur lors de la suppression de l'alerte",
-        status: "error",
+        status: 'error',
         duration: 3000,
         isClosable: true,
       });
     }
   };
 
-  if (loading) return <EmptyBox />;
+  if (loading) return <EmptyBox variant="loading" />;
 
   return (
     <div className="container">
@@ -130,7 +130,9 @@ const AlertMain = () => {
             isOpen={isModalOpen}
             onClose={closeModal}
             initialData={selectedAlert} // Pass the selected alert for updating
-            onDelete={() => handleDeleteAlert(selectedAlert?.id!)} // Delete handler
+            onDelete={() =>
+              selectedAlert?.id != null && handleDeleteAlert(selectedAlert.id)
+            } // Delete handler
             refreshAlerts={fetchAlerts} // Refresh alerts after update
           />
         ))}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   VStack,
@@ -11,7 +11,7 @@ import {
   Icon,
   Flex,
   useColorMode,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 import {
   Cloud,
   Sun,
@@ -20,9 +20,9 @@ import {
   Droplets,
   Sunrise,
   Sunset,
-} from "lucide-react";
-import useColorModeStyles from "@/app/utils/useColorModeStyles";
-import Loading from "../common/Loading";
+} from 'lucide-react';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import Loading from '../common/Loading';
 
 interface WeatherData {
   current: {
@@ -49,10 +49,10 @@ const WeatherDashboard = () => {
   const [useImperial, setUseImperial] = useState(false);
   const { colorMode } = useColorMode();
 
-  const bgColor = useColorModeValue("white", "gray.800");
-  const primaryText = useColorModeValue("gray.900", "white");
-  const secondaryText = useColorModeValue("gray.600", "gray.400");
-  const tableBg = useColorModeValue("white", "gray.800");
+  const bgColor = useColorModeValue('white', 'gray.800');
+  const primaryText = useColorModeValue('gray.900', 'white');
+  const secondaryText = useColorModeValue('gray.600', 'gray.400');
+  const tableBg = useColorModeValue('white', 'gray.800');
   const p = useBreakpointValue({ base: 2, md: 4 });
   const { hoverColor } = useColorModeStyles();
 
@@ -60,12 +60,12 @@ const WeatherDashboard = () => {
     const fetchWeather = async () => {
       try {
         const response = await fetch(
-          "https://api.open-meteo.com/v1/forecast/?latitude=32.906323&longitude=-6.934420&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=auto&temperature_unit=celsius"
+          'https://api.open-meteo.com/v1/forecast/?latitude=32.906323&longitude=-6.934420&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=auto&temperature_unit=celsius'
         );
         const data = await response.json();
         setWeatherData(data);
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       } finally {
         setLoading(false);
       }
@@ -95,19 +95,17 @@ const WeatherDashboard = () => {
   };
 
   const formatTime = (time: string) =>
-    new Date(time).toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
+    new Date(time).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
       hour12: false,
     });
 
   const formatDate = (date: string) =>
-    new Date(date).toLocaleDateString("fr-FR", { weekday: "long" });
+    new Date(date).toLocaleDateString('fr-FR', { weekday: 'long' });
 
   if (loading) {
-    return (
-      <Loading/>
-    );
+    return <Loading />;
   }
 
   if (!weatherData) return null;
@@ -119,7 +117,7 @@ const WeatherDashboard = () => {
       {/* Unit Toggle */}
       <HStack justify="space-between" mb={4}>
         <Text
-          color={colorMode === "light" ? "gray.700" : "gray.200"}
+          color={colorMode === 'light' ? 'gray.700' : 'gray.200'}
           fontSize="lg"
           fontWeight="bold"
           mb={4}
@@ -127,10 +125,10 @@ const WeatherDashboard = () => {
           Météo
         </Text>
         <HStack spacing={2}>
-          <Text 
-            fontSize="sm" 
+          <Text
+            fontSize="sm"
             color={!useImperial ? primaryText : secondaryText}
-            fontWeight={!useImperial ? "bold" : "normal"}
+            fontWeight={!useImperial ? 'bold' : 'normal'}
           >
             °C
           </Text>
@@ -140,10 +138,10 @@ const WeatherDashboard = () => {
             onChange={handleUnitToggle}
             colorScheme="blue"
           />
-          <Text 
-            fontSize="sm" 
+          <Text
+            fontSize="sm"
             color={useImperial ? primaryText : secondaryText}
-            fontWeight={useImperial ? "bold" : "normal"}
+            fontWeight={useImperial ? 'bold' : 'normal'}
           >
             °F
           </Text>
@@ -158,22 +156,22 @@ const WeatherDashboard = () => {
             {useImperial
               ? Math.round(toFahrenheit(current.temperature_2m))
               : Math.round(current.temperature_2m)}
-            °{useImperial ? "F" : "C"}
+            °{useImperial ? 'F' : 'C'}
           </Text>
         </HStack>
         <Text fontSize="xs" color={secondaryText}>
-          Température ressentie{" "}
+          Température ressentie{' '}
           {useImperial
             ? Math.round(toFahrenheit(current.apparent_temperature))
             : Math.round(current.apparent_temperature)}
-          °{useImperial ? "F" : "C"}
+          °{useImperial ? 'F' : 'C'}
         </Text>
       </VStack>
 
       {/* Stats */}
       <Grid templateColumns="repeat(4, 1fr)" gap={4} mb={4}>
         <Box
-          _hover={{ cursor: "pointer", borderColor: hoverColor }}
+          _hover={{ cursor: 'pointer', borderColor: hoverColor }}
           borderWidth="1px"
           borderRadius="xl"
           boxShadow="md"
@@ -185,12 +183,12 @@ const WeatherDashboard = () => {
           <Text fontSize="xs" color={primaryText}>
             {useImperial
               ? Math.round(toMilesPerHour(current.wind_speed_10m))
-              : Math.round(current.wind_speed_10m)}{" "}
-            {useImperial ? "mph" : "km/h"}
+              : Math.round(current.wind_speed_10m)}{' '}
+            {useImperial ? 'mph' : 'km/h'}
           </Text>
         </Box>
         <Box
-          _hover={{ cursor: "pointer", borderColor: hoverColor }}
+          _hover={{ cursor: 'pointer', borderColor: hoverColor }}
           bg={bgColor}
           p={4}
           textAlign="center"
@@ -204,7 +202,7 @@ const WeatherDashboard = () => {
           </Text>
         </Box>
         <Box
-          _hover={{ cursor: "pointer", borderColor: hoverColor }}
+          _hover={{ cursor: 'pointer', borderColor: hoverColor }}
           bg={bgColor}
           p={4}
           textAlign="center"
@@ -218,7 +216,7 @@ const WeatherDashboard = () => {
           </Text>
         </Box>
         <Box
-          _hover={{ cursor: "pointer", borderColor: hoverColor }}
+          _hover={{ cursor: 'pointer', borderColor: hoverColor }}
           bg={bgColor}
           p={4}
           textAlign="center"
@@ -237,12 +235,12 @@ const WeatherDashboard = () => {
       <HStack
         spacing={4}
         overflowX="auto"
-        justify={{ base: "flex-start", lg: "center" }}
+        justify={{ base: 'flex-start', lg: 'center' }}
         align="center"
       >
         {daily.time.slice(0, 7).map((date, index) => (
           <Box
-            _hover={{ cursor: "pointer", borderColor: hoverColor }}
+            _hover={{ cursor: 'pointer', borderColor: hoverColor }}
             key={date}
             bg={bgColor}
             p={4}
@@ -264,13 +262,13 @@ const WeatherDashboard = () => {
               {useImperial
                 ? Math.round(toFahrenheit(daily.temperature_2m_max[index]))
                 : Math.round(daily.temperature_2m_max[index])}
-              °{useImperial ? "F" : "C"}
+              °{useImperial ? 'F' : 'C'}
             </Text>
             <Text fontSize="xs" color={secondaryText}>
               {useImperial
                 ? Math.round(toFahrenheit(daily.temperature_2m_min[index]))
                 : Math.round(daily.temperature_2m_min[index])}
-              °{useImperial ? "F" : "C"}
+              °{useImperial ? 'F' : 'C'}
             </Text>
           </Box>
         ))}
