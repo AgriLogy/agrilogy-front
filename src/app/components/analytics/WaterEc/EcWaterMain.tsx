@@ -6,7 +6,7 @@ import ChartDateRangeGate from '../../common/ChartDateRangeGate';
 import { sortByTimestamp } from '@/app/utils/chartDateWindow';
 import { SensorData } from '@/app/types';
 import api from '@/app/lib/api';
-import '@/app/styles/style.css';
+import '@/app/styles/style.module.css';
 import EcWaterChart from './EcWaterChart';
 import EcWaterLastData from './EcWaterLastData';
 import { CHART_SHELL_MAX_HEIGHT } from '@/app/utils/chartAxisConfig';

@@ -6,7 +6,7 @@ import ChartDateRangeGate from '../../common/ChartDateRangeGate';
 import { sortByTimestamp } from '@/app/utils/chartDateWindow';
 import { SensorData } from '@/app/types';
 import api from '@/app/lib/api';
-import '@/app/styles/style.css';
+import '@/app/styles/style.module.css';
 import ElectricityconsumptionChart from './ElectricityconsumptionChart';
 import ElectricityconsumptionLastData from './ElectricityconsumptionLastData';
 

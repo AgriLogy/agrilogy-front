@@ -113,7 +113,7 @@ const VannesPompesMain = () => {
   };
 
   return (
-    <Box p={{ base: 4, md: 6 }} color={textColor}>
+    <Box p={{ base: 4, md: 7 }} color={textColor}>
       <Heading size="lg" mb={6}>
         Vannes et pompes
       </Heading>

@@ -8,7 +8,7 @@ import FruitSizeChart from './FruitSizeChart';
 import FruiteSizeLastData from './FruiteSizeLastData';
 import { SensorData } from '@/app/types';
 import api from '@/app/lib/api';
-import '@/app/styles/style.css';
+import '@/app/styles/style.module.css';
 import { CHART_SHELL_MAX_HEIGHT } from '@/app/utils/chartAxisConfig';
 
 const FruiteSizeMain = ({

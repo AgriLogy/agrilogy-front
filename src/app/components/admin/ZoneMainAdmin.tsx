@@ -51,7 +51,6 @@ const ZoneMain = ({ user }: Props) => {
   return (
     <>
       <Box
-        className="header "
         bg={bg}
         p={4}
         m={2}

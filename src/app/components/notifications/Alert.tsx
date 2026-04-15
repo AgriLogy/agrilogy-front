@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Text, Badge } from '@chakra-ui/react';
 import { ALERT_CHOICES } from '@/app/utils/alertChoices';
 import useColorModeStyles from '@/app/utils/useColorModeStyles'; // import the custom hook
-import '../../styles/style.css';
+import '../../styles/style.module.css';
 
 interface AlertProps {
   id: number;

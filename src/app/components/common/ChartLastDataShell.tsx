@@ -28,7 +28,7 @@ export default function ChartLastDataShell({
   width = '100%',
   /** Use `auto` so content (plot + date dragger) sets height; pass `100%` only inside a sized parent. */
   height = 'auto',
-  maxH,
+  maxH: _maxH,
   minH,
   ...stackProps
 }: ChartLastDataShellProps) {
@@ -41,9 +41,7 @@ export default function ChartLastDataShell({
       maxWidth="100%"
       minWidth={0}
       height={height}
-      maxH={maxH}
       minH={minH}
-      overflowY={maxH != null ? 'auto' : undefined}
       overflowX="hidden"
     >
       <Tooltip

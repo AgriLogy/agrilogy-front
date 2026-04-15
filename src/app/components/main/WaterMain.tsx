@@ -9,7 +9,7 @@ import getActiveGraphs, {
   ActiveGraphResponse,
 } from '@/app/utils/getActiveGraphs';
 
-import '@/app/styles/style.css';
+import s from '@/app/styles/style.module.css';
 import CumulPrecipitationMain from '../analytics/CumulPrecipitation/CumulPrecipitationMain';
 import EcWaterMain from '../analytics/WaterEc/EcWaterMain';
 import WaterFlowMain from '../analytics/WaterFlow/WaterFlowMain';
@@ -52,8 +52,8 @@ const WaterMain = () => {
   }, [selectedZone]);
 
   return (
-    <div className="container">
-      <Box bg={bg} className="header" border="1px">
+    <div className={s.container}>
+      <Box bg={bg} className={s.header} border="1px">
         <HStack spacing={3} flexWrap="wrap" alignItems="center">
           <Text color={textColor}>Données sur l&apos;eau du </Text>
           <select
@@ -63,6 +63,7 @@ const WaterMain = () => {
               borderRadius: '2px',
               padding: '4px',
               color: useColorModeValue('black', 'white'),
+              backgroundColor: useColorModeValue('white', '#2D3748'),
               border: `1px solid ${useColorModeValue('black', 'white')}`,
             }}
           >
@@ -83,7 +84,7 @@ const WaterMain = () => {
         </HStack>
       </Box>
 
-      <Box bg={bg} className="header" border="1px" mt={0} mb={0}>
+      <Box bg={bg} className={s.header} border="1px" mt={0} mb={0}>
         <DateRangePicker
           setStartDate={setStartDate}
           setEndDate={setEndDate}
@@ -94,27 +95,27 @@ const WaterMain = () => {
       </Box>
 
       {activeGraph?.water_flow_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <WaterFlowMain filters={filters} />
         </Box>
       )}
       {activeGraph?.water_pressure_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <WaterPressureMain filters={filters} />
         </Box>
       )}
       {activeGraph?.water_ph_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <PhWaterMain filters={filters} />
         </Box>
       )}
       {activeGraph?.water_ec_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <EcWaterMain filters={filters} />
         </Box>
       )}
       {activeGraph?.cumulative_precipitation_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <CumulPrecipitationMain filters={filters} />
         </Box>
       )}

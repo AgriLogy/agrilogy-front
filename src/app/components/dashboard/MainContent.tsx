@@ -1,4 +1,4 @@
-import './MainContent.css';
+import d from './MainContent.module.css';
 import { Box, Text } from '@chakra-ui/react';
 import Zones from './ZonesDashboardCard';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
@@ -15,27 +15,27 @@ const MainContent = () => {
     borderStyle: 'solid' as const,
   };
   return (
-    <div className="container">
-      <Box {...cardProps} className="header">
+    <div className={d.container}>
+      <Box {...cardProps} className={d.header}>
         <Text color={textColor}>Tableau de board</Text>
       </Box>
-      <Box {...cardProps} className="box">
-        <Box flex="1" minW={0} minH={0} w="100%" overflow="auto">
+      <Box {...cardProps} className={d.box}>
+        <Box flex="1" minW={0} minH={0} w="100%">
           <GoogleMapWeather />
         </Box>
       </Box>
-      <Box {...cardProps} className="box">
-        <Box flex="1" minW={0} minH={0} w="100%" overflow="auto">
+      <Box {...cardProps} className={d.box}>
+        <Box flex="1" minW={0} minH={0} w="100%">
           <WeatherDashboard />
         </Box>
       </Box>
-      <Box {...cardProps} className="box">
-        <Box flex="1" minW={0} minH={0} w="100%" overflow="auto">
+      <Box {...cardProps} className={d.box}>
+        <Box flex="1" minW={0} minH={0} w="100%">
           <Zones />
         </Box>
       </Box>
-      <Box {...cardProps} className="box">
-        <Box flex="1" minW={0} minH={0} w="100%" overflow="auto">
+      <Box {...cardProps} className={d.box}>
+        <Box flex="1" minW={0} minH={0} w="100%">
           <ElectrovannesList />
         </Box>
       </Box>

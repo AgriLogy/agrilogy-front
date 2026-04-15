@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
-import './NotificationsMain.css';
+import nt from './NotificationsMain.module.css';
 import {
   AlertDialog,
   AlertDialogBody,
@@ -223,7 +223,7 @@ const NotificationsMain: React.FC = () => {
 
   return (
     <>
-      <Box bg={bg} className="header">
+      <Box bg={bg} className={nt.header}>
         <HStack justify="space-between" flexWrap="wrap" spacing={3}>
           <Text color={textColor}>Notifications</Text>
           <Button

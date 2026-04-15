@@ -4,7 +4,7 @@ import ChartDateRangeDragger from '../../common/ChartDateRangeDragger';
 import ChartLastDataShell from '../../common/ChartLastDataShell';
 import ChartDateRangeGate from '../../common/ChartDateRangeGate';
 import api from '@/app/lib/api';
-import '@/app/styles/style.css';
+import '@/app/styles/style.module.css';
 import NpkLastData from './NpkLastData';
 import NpkSizeChart from './NpkSizeChart';
 import { NpkSensorData } from '@/app/types';

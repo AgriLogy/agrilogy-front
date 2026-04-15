@@ -12,7 +12,7 @@ import {
   mergeGustIntoSpeedRows,
   type WindSpeedSensorRow,
 } from '@/app/utils/windSpeedMerge';
-import '@/app/styles/style.css';
+import '@/app/styles/style.module.css';
 import WindSpeedChart from './WindSpeedChart';
 import WindSpeedLastData from './WindSpeedLastData';
 import { CHART_SHELL_MAX_HEIGHT } from '@/app/utils/chartAxisConfig';

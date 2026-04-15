@@ -6,7 +6,7 @@ import { AppPageShell } from '../components/layout/AppPageShell';
 
 const Page = () => {
   return (
-    <AppPageShell density="compact">
+    <AppPageShell>
       <VannesPompesMain />
     </AppPageShell>
   );

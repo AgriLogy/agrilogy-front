@@ -12,7 +12,7 @@ import { SensorData } from '@/app/types';
 import SoilSalinityConductivityLastData from './SoilSalinityConductivityLastData';
 import SoilSalinityConductivityChart from './SoilSalinityConductivityChart';
 
-import '@/app/styles/style.css';
+import '@/app/styles/style.module.css';
 import api from '@/app/lib/api';
 import { CHART_SHELL_MAX_HEIGHT } from '@/app/utils/chartAxisConfig';
 

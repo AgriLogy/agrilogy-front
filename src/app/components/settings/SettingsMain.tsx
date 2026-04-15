@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import './SettingsMain.css';
+import st from './SettingsMain.module.css';
 import { Box, HStack, Text, Button } from '@chakra-ui/react';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import SensorReadingsSettings from '@/app/components/settings/SensorReadingsSettings';
@@ -28,10 +28,10 @@ const SettingsMain = () => {
   ];
 
   return (
-    <div className="container">
+    <div className={st.container}>
       <Box
         bg={bg}
-        className="wide"
+        className={st.wide}
         borderRadius="5px"
         border="1px solid #e2e8f0"
         px={3}
@@ -69,7 +69,7 @@ const SettingsMain = () => {
       </Box>
       <Box
         bg={bg}
-        className="header"
+        className={st.header}
         borderWidth="1px"
         borderColor={borderColor}
         borderStyle="solid"
@@ -80,7 +80,7 @@ const SettingsMain = () => {
       </Box>
       <Box
         bg={bg}
-        className="wide text-box"
+        className={`${st.wide} ${st['text-box']}`}
         borderWidth="1px"
         borderColor={borderColor}
         borderStyle="solid"

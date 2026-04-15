@@ -14,7 +14,7 @@ import {
 } from '@chakra-ui/react';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import axiosInstance from '@/app/lib/api';
-import '@/app/styles/graphes.css';
+import g from '@/app/styles/graphes.module.css';
 
 const CreateUser = () => {
   const toast = useToast();
@@ -68,9 +68,9 @@ const CreateUser = () => {
   };
 
   return (
-    <div className="container">
+    <div className={g.container}>
       <Box
-        className="header"
+        className={g.header}
         bg={bg}
         p={4}
         mb={4}
@@ -87,7 +87,7 @@ const CreateUser = () => {
         p={5}
         borderRadius="lg"
         boxShadow="md"
-        className="wide admin-register"
+        className={`${g.wide} ${g['admin-register']}`}
       >
         <form onSubmit={handleSubmit}>
           <VStack spacing={4}>
