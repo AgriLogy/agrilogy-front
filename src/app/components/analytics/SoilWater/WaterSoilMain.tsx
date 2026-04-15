@@ -105,10 +105,9 @@ const WaterSoilMain = ({
     <ChartLastDataShell
       direction={{ base: 'column', md: 'row' }}
       width="100%"
-      // maxH={"500px"}
       spacing={4}
       chart={
-        <Box flex={3} p={3} minW={0} maxW="100%" minH={0}>
+        <Box flex={3} p={3} minW={0} maxW="100%" minH={100}>
           <ChartDateRangeGate timeline={timeline}>
             {({ startIdx, endIdx, setRange }) => (
               <VStack spacing={0} align="stretch" width="100%">

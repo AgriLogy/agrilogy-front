@@ -30,6 +30,7 @@ export default function GoogleMapWeather() {
       width="100%"
       borderRadius="md"
       overflow="hidden"
+      position="relative"
     >
       <AgricultureMapboxMap
         lat={DEFAULT_LAT}

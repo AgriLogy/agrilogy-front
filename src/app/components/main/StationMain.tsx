@@ -4,7 +4,7 @@ import { Box, HStack, Text, useColorModeValue } from '@chakra-ui/react';
 
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import api from '@/app/lib/api';
-import '@/app/styles/style.css';
+import s from '@/app/styles/style.module.css';
 
 import DateRangePicker from '../analytics/DateRangePicker';
 import getActiveGraphs, {
@@ -57,8 +57,8 @@ const StationMain = () => {
   }, [selectedZone]);
 
   return (
-    <div className="container">
-      <Box bg={bg} className="header">
+    <div className={s.container}>
+      <Box bg={bg} className={s.header}>
         <HStack spacing={3} flexWrap="wrap" alignItems="center">
           <Text color={textColor}>Station météo du </Text>
           <select
@@ -68,6 +68,7 @@ const StationMain = () => {
               borderRadius: '2px',
               padding: '4px',
               color: useColorModeValue('black', 'white'),
+              backgroundColor: useColorModeValue('white', '#2D3748'),
               border: `1px solid ${useColorModeValue('black', 'white')}`,
             }}
           >
@@ -88,7 +89,7 @@ const StationMain = () => {
         </HStack>
       </Box>
 
-      <Box bg={bg} className="header" mt={0} mb={0}>
+      <Box bg={bg} className={s.header} mt={0} mb={0}>
         <DateRangePicker
           setStartDate={setStartDate}
           setEndDate={setEndDate}
@@ -99,42 +100,42 @@ const StationMain = () => {
       </Box>
 
       {activeGraph?.wind_radar_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <WindRadarMain filters={filters} />
         </Box>
       )}
       {activeGraph?.weather_temperature_humidity_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <TempuratureHumidtyMain filters={filters} />
         </Box>
       )}
       {activeGraph?.weather_temperature_humidity_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <VPDMain filters={filters} />
         </Box>
       )}
       {activeGraph?.et0_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <ET0Main filters={filters} />
         </Box>
       )}
       {activeGraph?.wind_speed_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <WindSpeedMain filters={filters} />
         </Box>
       )}
       {activeGraph?.solar_radiation_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <SolarRadiationMain filters={filters} />
         </Box>
       )}
       {activeGraph?.cumulative_precipitation_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <CumulPrecipitationMain filters={filters} />
         </Box>
       )}
       {activeGraph?.precipitation_rate_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <PrecipitationRateMain filters={filters} />
         </Box>
       )}

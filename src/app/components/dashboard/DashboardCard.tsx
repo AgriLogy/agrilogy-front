@@ -4,7 +4,6 @@ import {
   Flex,
   Text,
   useColorModeValue,
-  useBreakpointValue,
   useColorMode,
 } from '@chakra-ui/react';
 
@@ -18,12 +17,6 @@ interface DashboardCardProps {
 const DashboardCard = ({ title, titleAddon, content }: DashboardCardProps) => {
   const tableBg = useColorModeValue('white', 'gray.800');
   const { colorMode } = useColorMode();
-
-  // Responsive height for scrollable content area
-  const scrollableHeight = useBreakpointValue({
-    base: '500px',
-    md: 'calc(100% - 30px)', // Subtract the title height from full height
-  });
 
   return (
     <Box
@@ -54,11 +47,9 @@ const DashboardCard = ({ title, titleAddon, content }: DashboardCardProps) => {
         {titleAddon ? <Box flexShrink={0}>{titleAddon}</Box> : null}
       </Flex>
 
-      {/* Scrollable content area */}
+      {/* Content area */}
       <Box
         width="100%"
-        height={scrollableHeight} // Make it responsive
-        overflowY="auto" // Enable scrolling
         pb={2}
         pr={2} // Padding for the content area
       >

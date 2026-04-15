@@ -6,7 +6,7 @@ import FloatingButton from './FloatingButton';
 import FormModalUpdate from './FormModalUpdate';
 import FormModalCreate from './FormModalCreate';
 import Alert from '../notifications/Alert';
-import '../../styles/style.css';
+import s from '../../styles/style.module.css';
 import EmptyBox from '../common/EmptyBox';
 
 interface AlertData {
@@ -94,12 +94,12 @@ const AlertMain = () => {
   if (loading) return <EmptyBox variant="loading" />;
 
   return (
-    <div className="container">
-      <Box bg={bg} className="header">
+    <div className={s.container}>
+      <Box bg={bg} className={s.header}>
         <Text color={textColor}>Gestion des alerts</Text>
       </Box>
 
-      <VStack mt={4} spacing={4} align="stretch" className="wide">
+      <VStack mt={4} spacing={4} align="stretch" className={s.wide}>
         {alerts.map((alert) => (
           <Alert
             key={alert.id}

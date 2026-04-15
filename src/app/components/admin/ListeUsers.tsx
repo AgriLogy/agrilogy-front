@@ -24,7 +24,7 @@ import {
 } from '@tanstack/react-table';
 import api from '@/app/lib/api';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
-import '@/app/styles/style.css';
+import s from '@/app/styles/style.module.css';
 
 interface User {
   id: number;
@@ -181,9 +181,9 @@ const ListeUsers: React.FC = () => {
   const { bg, textColor, bgColor, thBg, borderColor } = useColorModeStyles(); // Use the utility
 
   return (
-    <div className="container">
+    <div className={s.container}>
       <Box
-        className="header"
+        className={s.header}
         bg={bg}
         p={4}
         mb={4}
@@ -196,7 +196,7 @@ const ListeUsers: React.FC = () => {
         </Text>
       </Box>
 
-      <Box className="wide admin-register">
+      <Box className={s.wide}>
         <TableContainer
           bg={bgColor}
           borderRadius="lg"

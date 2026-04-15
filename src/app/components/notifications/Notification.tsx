@@ -158,7 +158,6 @@ const Notification: React.FC<NotificationProps> = ({
       borderWidth="1px"
       borderRadius="xl"
       boxShadow="md"
-      className="wide"
       _hover={{ borderColor: hoverColor }}
       color={textColor}
     >

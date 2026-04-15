@@ -5,7 +5,7 @@ import { Box, HStack, Text, useColorModeValue } from '@chakra-ui/react';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import api from '@/app/lib/api';
 import { logOptionalApiFailure } from '@/app/utils/apiClientErrors';
-import '@/app/styles/style.css';
+import s from '@/app/styles/style.module.css';
 
 import DateRangePicker from '../analytics/DateRangePicker';
 import getActiveGraphs, {
@@ -52,8 +52,8 @@ const PlantMain = () => {
   }, [selectedZone]);
 
   return (
-    <div className="container">
-      <Box bg={bg} className="header">
+    <div className={s.container}>
+      <Box bg={bg} className={s.header}>
         <HStack spacing={3} flexWrap="wrap" alignItems="center">
           <Text color={textColor}>Données des plantes du </Text>
           <select
@@ -63,6 +63,7 @@ const PlantMain = () => {
               borderRadius: '2px',
               padding: '4px',
               color: useColorModeValue('black', 'white'),
+              backgroundColor: useColorModeValue('white', '#2D3748'),
               border: `1px solid ${useColorModeValue('black', 'white')}`,
             }}
           >
@@ -83,7 +84,7 @@ const PlantMain = () => {
         </HStack>
       </Box>
 
-      <Box bg={bg} className="header" mt={0} mb={0}>
+      <Box bg={bg} className={s.header} mt={0} mb={0}>
         <DateRangePicker
           setStartDate={setStartDate}
           setEndDate={setEndDate}
@@ -95,47 +96,47 @@ const PlantMain = () => {
 
       {/* Conditionally render graphs based on activeGraph */}
       {activeGraph?.fruit_size_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <FruiteSizeMain filters={filters} />
         </Box>
       )}
       {activeGraph?.large_fruit_diameter_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <LargeFruitDiameterMain filters={filters} />
         </Box>
       )}
       {activeGraph?.leaf_sensor_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <SensorLeafMain filters={filters} />
         </Box>
       )}
       {/* {activeGraph?.npk_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <NpkMain filters={filters} />
         </Box>
       )}
       {activeGraph?.electricity_consumption_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <ElectricityconsumptionMain filters={filters} />
         </Box>
       )} */}
       {/* {activeGraph?.water_flow_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <WaterFlowMain filters={filters} />
         </Box>
       )} */}
       {/* {activeGraph?.water_pressure_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <WaterPressureMain filters={filters} />
         </Box>
       )}
       {activeGraph?.water_ph_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <PhWaterMain filters={filters} />
         </Box>
       )}
       {activeGraph?.water_ec_status && (
-        <Box bg={bg} className="box wide">
+        <Box bg={bg} className={`${s.box} ${s.wide}`}>
           <EcWaterMain filters={filters} />
         </Box>
       )} */}

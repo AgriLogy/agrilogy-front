@@ -1,10 +1,10 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { Box, Text } from '@chakra-ui/react';
-import './style.css';
+import a from './style.module.css';
 import axiosInstance from '@/app/lib/api';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
-import '@/app/styles/graphes.css';
+import g from '@/app/styles/graphes.module.css';
 import EmptyBox from '../common/EmptyBox';
 
 type Props = {
@@ -53,10 +53,10 @@ const UserAlldata: React.FC<Props> = ({ user }) => {
   }
 
   return (
-    <div className="container">
+    <div className={g.container}>
       {/* Header */}
       <Box
-        className="header"
+        className={g.header}
         bg={bg}
         p={4}
         mb={4}

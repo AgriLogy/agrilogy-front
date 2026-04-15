@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import axiosInstance from '@/app/lib/api';
-import '@/app/styles/graphes.css';
+import g from '@/app/styles/graphes.module.css';
 
 type Props = {
   user: string;
@@ -163,9 +163,9 @@ const GraphStatusMain = ({ user }: Props) => {
   );
 
   return (
-    <div className="container">
+    <div className={g.container}>
       <Box
-        className="header"
+        className={g.header}
         bg={bg}
         p={4}
         mb={4}
@@ -192,7 +192,7 @@ const GraphStatusMain = ({ user }: Props) => {
       </Box>
 
       <Box
-        className="wide"
+        className={g.wide}
         bg={bg}
         p={4}
         mb={4}

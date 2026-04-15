@@ -13,9 +13,9 @@ import TempHumidityGraph from '../station/TempHumidityGraph';
 import VaporPressureDeficitGraph from '../station/VaporPressureDeficitGraph';
 import WindDirectionGraph from '../station/WindDirectionGraph';
 import WindSpeedGraph from '../station/WindSpeedGraph';
-import '@/app/styles/graphes.css';
+import g from '@/app/styles/graphes.module.css';
 
-import './style.css';
+import a from './style.module.css';
 import EmptyBox from '../common/EmptyBox';
 
 type Props = {
@@ -80,10 +80,10 @@ const UserStationdata: React.FC<Props> = ({ user }) => {
   };
 
   return (
-    <div className="container">
+    <div className={g.container}>
       {/* Header */}
       <Box
-        className="header"
+        className={g.header}
         bg={bg}
         p={4}
         mb={4}
@@ -96,7 +96,7 @@ const UserStationdata: React.FC<Props> = ({ user }) => {
       </Box>
 
       {/* Date Range Picker */}
-      <Box bg={bg} className="header" mt={0} mb={0}>
+      <Box bg={bg} className={g.header} mt={0} mb={0}>
         <DateRangePicker
           setStartDate={setStartDate}
           setEndDate={setEndDate}
@@ -105,32 +105,32 @@ const UserStationdata: React.FC<Props> = ({ user }) => {
           setSelectedZone={() => {}}
         />
       </Box>
-      <Box bg={bg} className="box wide">
+      <Box bg={bg} className={`${g.box} ${g.wide}`}>
         <Et0Graph data={data} />
       </Box>
 
-      <Box bg={bg} className="box wide">
+      <Box bg={bg} className={`${g.box} ${g.wide}`}>
         <TempHumidityGraph data={data} />
       </Box>
-      <Box bg={bg} className="box wide">
+      <Box bg={bg} className={`${g.box} ${g.wide}`}>
         <WindSpeedGraph data={data} />
       </Box>
-      <Box bg={bg} className="box wide">
+      <Box bg={bg} className={`${g.box} ${g.wide}`}>
         <WindDirectionGraph data={data} />
       </Box>
-      <Box bg={bg} className="box wide">
+      <Box bg={bg} className={`${g.box} ${g.wide}`}>
         <PluvometricGraph data={data} />
       </Box>
-      <Box bg={bg} className="box wide">
+      <Box bg={bg} className={`${g.box} ${g.wide}`}>
         <SolarRadiationGraph data={data} />
       </Box>
-      <Box bg={bg} className="box wide">
+      <Box bg={bg} className={`${g.box} ${g.wide}`}>
         <VaporPressureDeficitGraph data={data} />
       </Box>
-      <Box bg={bg} className="box wide">
+      <Box bg={bg} className={`${g.box} ${g.wide}`}>
         <PrecipitationHumidityGraph data={data} />
       </Box>
-      <Box bg={bg} className="box wide">
+      <Box bg={bg} className={`${g.box} ${g.wide}`}>
         <DataTable data={data} />
       </Box>
     </div>

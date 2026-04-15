@@ -22,6 +22,7 @@ import {
   MenuList,
   Text,
   VStack,
+  useColorMode,
   useColorModeValue,
   useToast,
 } from '@chakra-ui/react';
@@ -310,6 +311,7 @@ export default function AgricultureMapboxMap({
   >(null);
 
   const toast = useToast();
+  const { colorMode } = useColorMode();
   const toolbarBg = useColorModeValue('whiteAlpha.900', 'blackAlpha.600');
   const toolbarBorder = useColorModeValue('gray.200', 'gray.600');
 
@@ -850,6 +852,14 @@ export default function AgricultureMapboxMap({
     drawRef.current?.changeMode(MapboxDraw.constants.modes.SIMPLE_SELECT);
   }, [showToolsPanel]);
 
+  /* Re-sync Mapbox canvas size after Chakra color-mode transition settles. */
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const id = window.setTimeout(() => map.resize(), 400);
+    return () => window.clearTimeout(id);
+  }, [colorMode]);
+
   const handleSave = () => {
     const draw = drawRef.current;
     if (!draw) return;
@@ -1250,6 +1260,7 @@ export default function AgricultureMapboxMap({
         minH={{ base: '240px', md: '360px' }}
         borderRadius="md"
         overflow="hidden"
+        position="relative"
         borderWidth="1px"
         borderColor={toolbarBorder}
         sx={{
