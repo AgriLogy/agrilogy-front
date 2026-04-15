@@ -34,6 +34,7 @@ import {
   PopoverFooter,
   PopoverHeader,
   PopoverTrigger,
+  Portal,
   Spinner,
   Text,
   VStack,
@@ -257,7 +258,12 @@ const NavbarNotificationsButton: React.FC = () => {
   }, [refresh]);
 
   return (
-    <Box position="relative" display="inline-flex" alignItems="center">
+    <Box
+      position="relative"
+      display="inline-flex"
+      alignItems="center"
+      flexShrink={0}
+    >
       {totalUnread > 0 && (
         <Box
           position="absolute"
@@ -290,124 +296,126 @@ const NavbarNotificationsButton: React.FC = () => {
             _dark={{ _hover: { bg: 'whiteAlpha.100', color: hoverColor } }}
           />
         </PopoverTrigger>
-        <PopoverContent
-          w="min(100vw - 24px, 380px)"
-          border="1px solid"
-          borderColor={headerBarBorder}
-          boxShadow="lg"
-          borderRadius="xl"
-          _focus={{ outline: 'none' }}
-        >
-          <PopoverArrow />
-          <PopoverHeader
-            borderBottomWidth="1px"
-            fontWeight="bold"
-            fontSize="sm"
-            py={3}
+        <Portal>
+          <PopoverContent
+            w="min(100vw - 24px, 380px)"
+            border="1px solid"
+            borderColor={headerBarBorder}
+            boxShadow="lg"
+            borderRadius="xl"
+            _focus={{ outline: 'none' }}
           >
-            Notifications
-          </PopoverHeader>
-          <PopoverBody p={0} maxH="min(60vh, 360px)" overflowY="auto">
-            {loading ? (
-              <Box py={8} textAlign="center">
-                <Spinner size="sm" mr={2} />
-                <Text as="span" fontSize="sm" color="gray.500">
-                  Chargement…
-                </Text>
-              </Box>
-            ) : items.length === 0 ? (
-              <Text fontSize="sm" color="gray.500" py={6} px={4}>
-                Aucune notification pour le moment.
-              </Text>
-            ) : (
-              <VStack spacing={0} align="stretch">
-                {items.slice(0, 12).map((row) => {
-                  const n = (row.notification ?? {}) as PopupNotificationBody;
-                  const template = n.template_summary;
-                  const when = n.notification_date
-                    ? new Date(n.notification_date).toLocaleString('fr-FR', {
-                        dateStyle: 'short',
-                        timeStyle: 'short',
-                      })
-                    : '—';
-                  const zone = row.zone_name ?? n.zone_name ?? '';
-                  const zid =
-                    notificationRowZoneId(row as unknown) ?? row.zone_id;
-                  const cfgId = resolveStoredNotificationConfigId(
-                    row as unknown
-                  );
-                  const cfg = cfgId
-                    ? getNotificationConfigById(cfgId)
-                    : undefined;
-                  const cfgName = cfg?.notificationName?.trim() ?? '';
-                  const rowTitle =
-                    cfgName.length > 0 ? cfgName : zone || 'Notification';
-                  return (
-                    <Box
-                      key={row.id}
-                      as="button"
-                      type="button"
-                      w="100%"
-                      textAlign="left"
-                      px={4}
-                      py={3}
-                      borderBottomWidth="1px"
-                      borderColor={headerBarBorder}
-                      opacity={row.is_read ? 0.75 : 1}
-                      cursor="pointer"
-                      transition="background 0.15s ease"
-                      _hover={{
-                        bg: 'blackAlpha.50',
-                        _dark: { bg: 'whiteAlpha.100' },
-                      }}
-                      onClick={() => openDetail(row)}
-                    >
-                      <Text
-                        fontSize="xs"
-                        fontWeight="semibold"
-                        color={textColor}
-                      >
-                        {rowTitle}
-                      </Text>
-                      <Text fontSize="xs" color="gray.500" mt={1}>
-                        {when}
-                      </Text>
-                      {template ? (
-                        <Text fontSize="xs" mt={2} noOfLines={4}>
-                          {template}
-                        </Text>
-                      ) : (
-                        <Text fontSize="xs" mt={2} noOfLines={2}>
-                          T {n.today_temperature ?? '—'}°C · sol{' '}
-                          {n.soil_humidity ?? '—'}% · ET0 {n.ET0 ?? '—'}
-                        </Text>
-                      )}
-                    </Box>
-                  );
-                })}
-              </VStack>
-            )}
-          </PopoverBody>
-          <PopoverFooter
-            borderTopWidth="1px"
-            py={2}
-            display="flex"
-            flexDirection="column"
-            gap={2}
-          >
-            <Divider />
-            <Button
-              as={Link}
-              href="/notifications"
-              size="sm"
-              variant="outline"
-              width="full"
-              borderRadius="lg"
+            <PopoverArrow />
+            <PopoverHeader
+              borderBottomWidth="1px"
+              fontWeight="bold"
+              fontSize="sm"
+              py={3}
             >
-              Voir tout
-            </Button>
-          </PopoverFooter>
-        </PopoverContent>
+              Notifications
+            </PopoverHeader>
+            <PopoverBody p={0} maxH="min(60vh, 360px)" overflowY="auto">
+              {loading ? (
+                <Box py={8} textAlign="center">
+                  <Spinner size="sm" mr={2} />
+                  <Text as="span" fontSize="sm" color="gray.500">
+                    Chargement…
+                  </Text>
+                </Box>
+              ) : items.length === 0 ? (
+                <Text fontSize="sm" color="gray.500" py={6} px={4}>
+                  Aucune notification pour le moment.
+                </Text>
+              ) : (
+                <VStack spacing={0} align="stretch">
+                  {items.slice(0, 12).map((row) => {
+                    const n = (row.notification ?? {}) as PopupNotificationBody;
+                    const template = n.template_summary;
+                    const when = n.notification_date
+                      ? new Date(n.notification_date).toLocaleString('fr-FR', {
+                          dateStyle: 'short',
+                          timeStyle: 'short',
+                        })
+                      : '—';
+                    const zone = row.zone_name ?? n.zone_name ?? '';
+                    const zid =
+                      notificationRowZoneId(row as unknown) ?? row.zone_id;
+                    const cfgId = resolveStoredNotificationConfigId(
+                      row as unknown
+                    );
+                    const cfg = cfgId
+                      ? getNotificationConfigById(cfgId)
+                      : undefined;
+                    const cfgName = cfg?.notificationName?.trim() ?? '';
+                    const rowTitle =
+                      cfgName.length > 0 ? cfgName : zone || 'Notification';
+                    return (
+                      <Box
+                        key={row.id}
+                        as="button"
+                        type="button"
+                        w="100%"
+                        textAlign="left"
+                        px={4}
+                        py={3}
+                        borderBottomWidth="1px"
+                        borderColor={headerBarBorder}
+                        opacity={row.is_read ? 0.75 : 1}
+                        cursor="pointer"
+                        transition="background 0.15s ease"
+                        _hover={{
+                          bg: 'blackAlpha.50',
+                          _dark: { bg: 'whiteAlpha.100' },
+                        }}
+                        onClick={() => openDetail(row)}
+                      >
+                        <Text
+                          fontSize="xs"
+                          fontWeight="semibold"
+                          color={textColor}
+                        >
+                          {rowTitle}
+                        </Text>
+                        <Text fontSize="xs" color="gray.500" mt={1}>
+                          {when}
+                        </Text>
+                        {template ? (
+                          <Text fontSize="xs" mt={2} noOfLines={4}>
+                            {template}
+                          </Text>
+                        ) : (
+                          <Text fontSize="xs" mt={2} noOfLines={2}>
+                            T {n.today_temperature ?? '—'}°C · sol{' '}
+                            {n.soil_humidity ?? '—'}% · ET0 {n.ET0 ?? '—'}
+                          </Text>
+                        )}
+                      </Box>
+                    );
+                  })}
+                </VStack>
+              )}
+            </PopoverBody>
+            <PopoverFooter
+              borderTopWidth="1px"
+              py={2}
+              display="flex"
+              flexDirection="column"
+              gap={2}
+            >
+              <Divider />
+              <Button
+                as={Link}
+                href="/notifications"
+                size="sm"
+                variant="outline"
+                width="full"
+                borderRadius="lg"
+              >
+                Voir tout
+              </Button>
+            </PopoverFooter>
+          </PopoverContent>
+        </Portal>
       </Popover>
 
       <Modal
