@@ -1,7 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { Box, Text } from '@chakra-ui/react';
-import a from './style.module.css';
 import axiosInstance from '@/app/lib/api';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import g from '@/app/styles/graphes.module.css';

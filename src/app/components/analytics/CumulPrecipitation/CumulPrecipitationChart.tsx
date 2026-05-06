@@ -10,7 +10,6 @@ import {
 } from 'recharts';
 import {
   Box,
-  Text,
   Flex,
   HStack,
   Button,

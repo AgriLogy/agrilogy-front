@@ -52,7 +52,6 @@ import {
   mergeNotificationsForStorage,
   normalizeApiNotificationsList,
   NOTIFICATIONS_CACHE_UPDATED_EVENT,
-  notificationRowZoneId,
   readNotificationsFromCache,
   writeNotificationsToCache,
 } from '@/app/lib/notificationsCacheStorage';
@@ -338,8 +337,6 @@ const NavbarNotificationsButton: React.FC = () => {
                         })
                       : '—';
                     const zone = row.zone_name ?? n.zone_name ?? '';
-                    const zid =
-                      notificationRowZoneId(row as unknown) ?? row.zone_id;
                     const cfgId = resolveStoredNotificationConfigId(
                       row as unknown
                     );

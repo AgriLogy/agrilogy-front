@@ -7,12 +7,24 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run lint && npm run format:check",
+    "check": "npm run lint && npm run typecheck && npm run format:check",
     "export": "next export",
     "prepare": "husky",
-    "test": "npm run format:check"
+    "release": "semantic-release",
+    "test": "npm run check"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,mjs,cjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css,scss,yml,yaml}": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
@@ -46,6 +58,13 @@
     "styled-components": "^6.1.13"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.1",
+    "@semantic-release/release-notes-generator": "^14.0.1",
     "@types/leaflet": "^1.9.20",
     "@types/mapbox__mapbox-gl-draw": "^1.4.9",
     "@types/node": "20.17.30",
@@ -57,8 +76,10 @@
     "eslint-config-next": "^16.1.6",
     "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",
+    "lint-staged": "^15.2.10",
     "postcss": "^8",
     "prettier": "^3.8.1",
+    "semantic-release": "^24.2.1",
     "tailwindcss": "^3.4.1",
     "typescript": "5.8.3"
   }

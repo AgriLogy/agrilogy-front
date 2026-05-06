@@ -15,7 +15,6 @@ import WindDirectionGraph from '../station/WindDirectionGraph';
 import WindSpeedGraph from '../station/WindSpeedGraph';
 import g from '@/app/styles/graphes.module.css';
 
-import a from './style.module.css';
 import EmptyBox from '../common/EmptyBox';
 
 type Props = {

@@ -32,7 +32,7 @@ const SensorColorSettings = () => {
       try {
         const response = await api.get('/api/sensor-color/');
         setSensorColors(response.data);
-      } catch (error) {
+      } catch {
         toast({
           title: 'Error',
           description: 'Failed to fetch sensor colors',
@@ -61,7 +61,7 @@ const SensorColorSettings = () => {
         duration: 2000,
         isClosable: true,
       });
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to update color',

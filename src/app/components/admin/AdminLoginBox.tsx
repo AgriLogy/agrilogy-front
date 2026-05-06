@@ -48,7 +48,7 @@ const LoginBox = () => {
         localStorage.setItem('refreshToken', refresh);
         router.push('/admin'); // Redirecting to the home page after successful login
       }
-    } catch (error) {
+    } catch {
       setErrorMessage("Nom d'utilisateur ou mot de passe incorrect.");
       toast({
         title: 'Erreur',

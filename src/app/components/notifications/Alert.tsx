@@ -63,9 +63,9 @@ const Alert: React.FC<AlertProps> = ({
         </Text>
         <Text color="gray.600">
           <strong>Condition:</strong>{' '}
-          {condition == '>'
+          {condition === '>'
             ? 'Supérieur'
-            : condition == '<'
+            : condition === '<'
               ? 'Inférieur'
               : 'Égal'}{' '}
           à {condition_nbr}

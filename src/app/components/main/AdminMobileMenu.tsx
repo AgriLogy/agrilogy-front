@@ -54,7 +54,7 @@ const MobileMenu = () => {
         const response = await api.get('/api/header/');
 
         setUsername(response.data.first_name);
-      } catch (error) {
+      } catch {
         console.error('[MobileMenu] Error fetching user data.');
       }
     };

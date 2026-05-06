@@ -1,14 +1,7 @@
 'use client';
 
 import React, { useMemo, useRef } from 'react';
-import {
-  Box,
-  Text,
-  Button,
-  HStack,
-  Flex,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { Box, Button, HStack, Flex, useColorModeValue } from '@chakra-ui/react';
 import ChartPanelHeading from '../../common/ChartPanelHeading';
 import ChartStateView from '../../common/ChartStateView';
 import { FaCamera, FaDownload } from 'react-icons/fa';

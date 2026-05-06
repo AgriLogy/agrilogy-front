@@ -60,7 +60,7 @@ const ZoneEditModal = ({
       onClose();
       toast({ title: 'Zone updated', status: 'success' });
       window.location.reload();
-    } catch (error) {
+    } catch {
       toast({ title: 'Failed to update zone', status: 'error' });
     }
   };
@@ -74,7 +74,7 @@ const ZoneEditModal = ({
       toast({ title: 'Zone deleted', status: 'success' });
       // Optionally, refresh the page
       window.location.reload(); // Refresh the page after delete
-    } catch (error) {
+    } catch {
       toast({ title: 'Failed to delete zone', status: 'error' });
     }
   };

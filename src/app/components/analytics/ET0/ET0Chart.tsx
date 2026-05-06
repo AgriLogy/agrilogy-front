@@ -9,14 +9,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import {
-  Box,
-  Text,
-  useColorModeValue,
-  Button,
-  HStack,
-  Flex,
-} from '@chakra-ui/react';
+import { Box, useColorModeValue, Button, HStack, Flex } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import ChartPanelHeading from '../../common/ChartPanelHeading';
