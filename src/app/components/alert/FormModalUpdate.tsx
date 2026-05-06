@@ -99,7 +99,7 @@ const FormModalUpdate: React.FC<FormModalUpdateProps> = ({
       });
       refreshAlerts(); // Rafraîchir la liste après la mise à jour
       onClose();
-    } catch (error) {
+    } catch {
       toast({
         title: "Erreur de mise à jour de l'alerte",
         description: "Échec de la mise à jour de l'alerte.",

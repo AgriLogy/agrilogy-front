@@ -72,7 +72,7 @@ const WindSpeedForm: React.FC = () => {
         description: '',
         condition_nbr: 0,
       });
-    } catch (error) {
+    } catch {
       toast({
         title: 'Erreur',
         description: "Échec de la création de l'alerte de vitesse du vent.",

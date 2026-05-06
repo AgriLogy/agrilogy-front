@@ -47,7 +47,7 @@ const LoginBox = () => {
         localStorage.setItem('refreshToken', refresh);
         is_staff ? router.push('/admin') : router.push('/');
       }
-    } catch (error) {
+    } catch {
       setErrorMessage("Nom d'utilisateur ou mot de passe incorrect.");
       // Clear error message after 5 seconds
     } finally {

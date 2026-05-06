@@ -40,8 +40,6 @@ const BigMenu = () => {
       .catch(() => setUsername(''));
   }, []);
 
-  const initial = username?.trim()?.charAt(0)?.toUpperCase() || '?';
-
   return (
     <Flex
       as="header"

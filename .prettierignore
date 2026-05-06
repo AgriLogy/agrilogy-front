@@ -11,3 +11,7 @@ package-lock.json
 
 # Generated
 next-env.d.ts
+
+# Editor / tooling
+.claude
+.vscode

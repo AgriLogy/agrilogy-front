@@ -92,7 +92,7 @@ const FormModalCreate: React.FC<FormModalCreateProps> = ({
       });
       await refreshAlerts(); // Rafraîchir la liste des alertes après la création
       onClose();
-    } catch (error) {
+    } catch {
       toast({
         title: "Erreur lors de la création de l'alerte",
         description: "La création de l'alerte a échoué.",

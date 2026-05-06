@@ -38,8 +38,6 @@ type ListedUser = {
   is_staff: boolean;
 };
 
-const PLACEMENT_TYPES = ['user', 'admin'] as const;
-
 const SuperAdminUsersSettings = () => {
   const toast = useToast();
   const { textColor, bgColor, borderColor, mutedTextColor } =

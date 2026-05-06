@@ -62,7 +62,7 @@ const HighTemperature: React.FC = () => {
         percentage: 1,
         description: '',
       });
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to create wind speed alert.',
