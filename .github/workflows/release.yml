@@ -18,6 +18,10 @@ jobs:
     name: Semantic release
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    # CI is the source of truth — disable Husky hooks so semantic-release's
+    # auto-generated release commit isn't blocked by commit-msg / pre-commit.
+    env:
+      HUSKY: '0'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
