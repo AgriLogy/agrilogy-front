@@ -1,14 +1,15 @@
 // app/layout.tsx
-import { Providers } from './providers';
+import './globals.scss';
 import { Metadata } from 'next';
+import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { ColorModeScript } from '@chakra-ui/react';
+import { Providers } from './providers';
 import { chakraColorModeConfig } from './colorModeConfig';
 
 export const metadata: Metadata = {
   title: 'Agrilogy',
   description:
     'Agrilogy is an innovative agriculture automation solution designed to enhance productivity, sustainability, and efficiency in farming. By utilizing smart technology and data-driven insights, Agrilogy optimizes irrigation, crop monitoring, and supply chain management, empowering farmers to achieve higher yields and reduce costs while promoting eco-friendly practices.',
-  // metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
 };
 
 export default function RootLayout({
@@ -22,7 +23,9 @@ export default function RootLayout({
         <ColorModeScript
           initialColorMode={chakraColorModeConfig.initialColorMode}
         />
-        <Providers>{children}</Providers>
+        <AntdRegistry>
+          <Providers>{children}</Providers>
+        </AntdRegistry>
       </body>
     </html>
   );

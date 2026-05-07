@@ -11,6 +11,7 @@ package-lock.json
 
 # Generated
 next-env.d.ts
+CHANGELOG.md
 
 # Editor / tooling
 .claude
