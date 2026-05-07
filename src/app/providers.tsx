@@ -4,6 +4,7 @@
 import { useEffect } from 'react';
 import { ChakraProvider, useColorMode } from '@chakra-ui/react';
 import {
+  App as AntdApp,
   ConfigProvider as AntdConfigProvider,
   theme as antdAlgorithm,
 } from 'antd';
@@ -39,7 +40,7 @@ function ThemedAntdProvider({ children }: { children: React.ReactNode }) {
             : antdAlgorithm.defaultAlgorithm,
       }}
     >
-      {children}
+      <AntdApp>{children}</AntdApp>
     </AntdConfigProvider>
   );
 }

@@ -1,40 +1,14 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  Button,
-  FormControl,
-  FormLabel,
-  HStack,
-  IconButton,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  NumberInput,
-  NumberInputField,
-  Switch,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-  VStack,
-} from '@chakra-ui/react';
-import { ChevronLeftIcon } from '@chakra-ui/icons';
-import { FaTrash } from 'react-icons/fa';
-import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { Button, Form, Input, InputNumber, Modal, Switch, Table } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
+import { DeleteOutlined, LeftOutlined } from '@ant-design/icons';
 import {
   type KcProtocolStageRow,
   defaultKcProtocolStages,
 } from '@/app/lib/zoneNotificationConfigStorage';
+import styles from './KcProtocolTableModal.module.scss';
 
 export type KcProtocolTableModalProps = {
   isOpen: boolean;
@@ -60,6 +34,8 @@ const emptyRow = (): KcProtocolStageRow => ({
   active: true,
 });
 
+type Row = KcProtocolStageRow & { __index: number };
+
 const KcProtocolTableModal: React.FC<KcProtocolTableModalProps> = ({
   isOpen,
   onClose,
@@ -67,8 +43,6 @@ const KcProtocolTableModal: React.FC<KcProtocolTableModalProps> = ({
   initialStages,
   onSave,
 }) => {
-  const { textColor, borderColor, headerBarBorder, mutedTextColor } =
-    useColorModeStyles();
   const [protocolName, setProtocolName] = useState('');
   const [stages, setStages] = useState<KcProtocolStageRow[]>([]);
 
@@ -114,228 +88,192 @@ const KcProtocolTableModal: React.FC<KcProtocolTableModalProps> = ({
     onClose();
   };
 
+  const dataSource: Row[] = stages.map((row, i) => ({ ...row, __index: i }));
+
+  const columns: ColumnsType<Row> = [
+    {
+      title: '#',
+      key: 'index',
+      width: 52,
+      render: (_v, _row, i) => String(i + 1).padStart(2, '0'),
+    },
+    {
+      title: 'Nom du stade',
+      dataIndex: 'stageName',
+      key: 'stageName',
+      render: (_v, row) => (
+        <Input
+          size="small"
+          value={row.stageName}
+          onChange={(e) =>
+            updateRow(row.__index, { stageName: e.target.value })
+          }
+          placeholder="ex. Avril"
+        />
+      ),
+    },
+    {
+      title: 'Durée (jours)',
+      dataIndex: 'durationDays',
+      key: 'durationDays',
+      align: 'right',
+      render: (_v, row) => (
+        <InputNumber
+          size="small"
+          min={0}
+          value={row.durationDays}
+          onChange={(v) =>
+            updateRow(row.__index, {
+              durationDays: typeof v === 'number' && Number.isFinite(v) ? v : 0,
+            })
+          }
+        />
+      ),
+    },
+    {
+      title: 'Kc début',
+      dataIndex: 'kcStart',
+      key: 'kcStart',
+      align: 'right',
+      render: (_v, row) => (
+        <InputNumber
+          size="small"
+          min={0}
+          max={2}
+          step={0.05}
+          value={row.kcStart}
+          onChange={(v) =>
+            updateRow(row.__index, {
+              kcStart: typeof v === 'number' && Number.isFinite(v) ? v : 0,
+            })
+          }
+        />
+      ),
+    },
+    {
+      title: 'Kc fin',
+      dataIndex: 'kcEnd',
+      key: 'kcEnd',
+      align: 'right',
+      render: (_v, row) => (
+        <InputNumber
+          size="small"
+          min={0}
+          max={2}
+          step={0.05}
+          value={row.kcEnd}
+          onChange={(v) =>
+            updateRow(row.__index, {
+              kcEnd: typeof v === 'number' && Number.isFinite(v) ? v : 0,
+            })
+          }
+        />
+      ),
+    },
+    {
+      title: 'Quantité (mm)',
+      dataIndex: 'amountMm',
+      key: 'amountMm',
+      align: 'right',
+      render: (_v, row) => (
+        <InputNumber
+          size="small"
+          min={0}
+          value={row.amountMm}
+          onChange={(v) =>
+            updateRow(row.__index, {
+              amountMm: typeof v === 'number' && Number.isFinite(v) ? v : 0,
+            })
+          }
+        />
+      ),
+    },
+    {
+      title: 'Actif',
+      dataIndex: 'active',
+      key: 'active',
+      align: 'center',
+      width: 72,
+      render: (_v, row) => (
+        <Switch
+          checked={row.active}
+          onChange={(checked) => updateRow(row.__index, { active: checked })}
+        />
+      ),
+    },
+    {
+      title: '',
+      key: 'remove',
+      width: 52,
+      render: (_v, row) => (
+        <Button
+          type="text"
+          danger
+          size="small"
+          icon={<DeleteOutlined />}
+          onClick={() => removeRow(row.__index)}
+          disabled={stages.length <= 1}
+          aria-label="Supprimer le stade"
+        />
+      ),
+    },
+  ];
+
   return (
     <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      size="6xl"
-      scrollBehavior="inside"
-      blockScrollOnMount={false}
-    >
-      <ModalOverlay bg="blackAlpha.400" backdropFilter="blur(4px)" />
-      <ModalContent
-        borderRadius="xl"
-        mx={{ base: 2, md: 4 }}
-        maxW="min(1100px, 100vw - 16px)"
-      >
-        <ModalHeader
-          pb={2}
-          borderBottomWidth="1px"
-          borderColor={headerBarBorder}
-        >
-          <HStack justify="space-between" align="flex-start" pr={10}>
-            <VStack align="start" spacing={1}>
-              <Text fontSize="sm" color={mutedTextColor} fontWeight="normal">
-                Nouveau protocole &gt; Météo
-              </Text>
-              <Text fontSize="md" fontWeight="bold" color={textColor}>
-                Table des coefficients Kc
-              </Text>
-            </VStack>
-          </HStack>
-          <ModalCloseButton borderRadius="full" />
-        </ModalHeader>
-        <ModalBody py={4}>
-          <FormControl mb={4} maxW="md">
-            <FormLabel fontSize="sm" color={textColor}>
-              Nom du protocole
-            </FormLabel>
-            <Input
-              value={protocolName}
-              onChange={(e) => setProtocolName(e.target.value)}
-              placeholder="Protocole météo Pomme"
-              borderRadius="lg"
-            />
-          </FormControl>
-
-          <TableContainer
-            borderWidth="1px"
-            borderColor={borderColor}
-            borderRadius="lg"
-            overflowX="auto"
-          >
-            <Table size="sm" variant="simple">
-              <Thead bg="blackAlpha.50" _dark={{ bg: 'whiteAlpha.50' }}>
-                <Tr>
-                  <Th color={textColor} w="52px">
-                    #
-                  </Th>
-                  <Th color={textColor} minW="120px">
-                    Nom du stade
-                  </Th>
-                  <Th color={textColor} isNumeric minW="100px">
-                    Durée (jours)
-                  </Th>
-                  <Th color={textColor} isNumeric minW="90px">
-                    Kc début
-                  </Th>
-                  <Th color={textColor} isNumeric minW="90px">
-                    Kc fin
-                  </Th>
-                  <Th color={textColor} isNumeric minW="100px">
-                    Quantité (mm)
-                  </Th>
-                  <Th color={textColor} textAlign="center" minW="72px">
-                    Actif
-                  </Th>
-                  <Th w="52px" />
-                </Tr>
-              </Thead>
-              <Tbody>
-                {stages.map((row, i) => (
-                  <Tr key={i}>
-                    <Td color={mutedTextColor} fontWeight="medium">
-                      {String(i + 1).padStart(2, '0')}
-                    </Td>
-                    <Td>
-                      <Input
-                        size="sm"
-                        value={row.stageName}
-                        onChange={(e) =>
-                          updateRow(i, { stageName: e.target.value })
-                        }
-                        placeholder="ex. Avril"
-                        borderRadius="md"
-                      />
-                    </Td>
-                    <Td>
-                      <NumberInput
-                        size="sm"
-                        min={0}
-                        value={row.durationDays}
-                        onChange={(_, v) =>
-                          updateRow(i, {
-                            durationDays: Number.isFinite(v) ? v : 0,
-                          })
-                        }
-                      >
-                        <NumberInputField borderRadius="md" />
-                      </NumberInput>
-                    </Td>
-                    <Td>
-                      <NumberInput
-                        size="sm"
-                        min={0}
-                        max={2}
-                        step={0.05}
-                        value={row.kcStart}
-                        onChange={(_, v) =>
-                          updateRow(i, { kcStart: Number.isFinite(v) ? v : 0 })
-                        }
-                      >
-                        <NumberInputField borderRadius="md" />
-                      </NumberInput>
-                    </Td>
-                    <Td>
-                      <NumberInput
-                        size="sm"
-                        min={0}
-                        max={2}
-                        step={0.05}
-                        value={row.kcEnd}
-                        onChange={(_, v) =>
-                          updateRow(i, { kcEnd: Number.isFinite(v) ? v : 0 })
-                        }
-                      >
-                        <NumberInputField borderRadius="md" />
-                      </NumberInput>
-                    </Td>
-                    <Td>
-                      <NumberInput
-                        size="sm"
-                        min={0}
-                        value={row.amountMm}
-                        onChange={(_, v) =>
-                          updateRow(i, {
-                            amountMm: Number.isFinite(v) ? v : 0,
-                          })
-                        }
-                      >
-                        <NumberInputField borderRadius="md" />
-                      </NumberInput>
-                    </Td>
-                    <Td textAlign="center">
-                      <Switch
-                        colorScheme="green"
-                        isChecked={row.active}
-                        onChange={(e) =>
-                          updateRow(i, { active: e.target.checked })
-                        }
-                      />
-                    </Td>
-                    <Td>
-                      <IconButton
-                        aria-label="Supprimer le stade"
-                        icon={<FaTrash />}
-                        size="sm"
-                        variant="ghost"
-                        colorScheme="red"
-                        onClick={() => removeRow(i)}
-                        isDisabled={stages.length <= 1}
-                      />
-                    </Td>
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </TableContainer>
-
+      open={isOpen}
+      onCancel={onClose}
+      width="min(1100px, calc(100vw - 16px))"
+      destroyOnClose
+      title={
+        <div>
+          <p className={styles.subhead}>Nouveau protocole &gt; Météo</p>
+          <p className={styles.title}>Table des coefficients Kc</p>
+        </div>
+      }
+      footer={
+        <div className={styles.totalRow}>
           <Button
-            mt={3}
-            size="sm"
-            variant="outline"
-            colorScheme="blue"
-            borderRadius="full"
-            onClick={addRow}
-          >
-            + Ajouter un stade
-          </Button>
-        </ModalBody>
-
-        <ModalFooter
-          borderTopWidth="1px"
-          borderColor={headerBarBorder}
-          flexDirection={{ base: 'column-reverse', md: 'row' }}
-          alignItems={{ base: 'stretch', md: 'center' }}
-          justifyContent="space-between"
-          gap={3}
-        >
-          <IconButton
-            aria-label="Retour"
-            icon={<ChevronLeftIcon boxSize={6} />}
-            variant="outline"
-            borderRadius="full"
+            shape="circle"
+            icon={<LeftOutlined />}
             onClick={onClose}
+            aria-label="Retour"
           />
-          <HStack
-            spacing={4}
-            flexWrap="wrap"
-            justify={{ base: 'center', md: 'flex-end' }}
-            w={{ base: 'full', md: 'auto' }}
-          >
-            <Text fontSize="sm" color={mutedTextColor} whiteSpace="nowrap">
+          <div className="flex flex-wrap items-center gap-4 justify-center md:justify-end">
+            <span className={styles.total}>
               Durée totale du protocole :{' '}
-              <Text as="span" fontWeight="bold" color={textColor}>
-                {totalDurationDays}
-              </Text>{' '}
+              <span className={styles.totalValue}>{totalDurationDays}</span>{' '}
               jours
-            </Text>
-            <Button colorScheme="blue" borderRadius="lg" onClick={handleSave}>
+            </span>
+            <Button type="primary" onClick={handleSave}>
               Enregistrer le protocole
             </Button>
-          </HStack>
-        </ModalFooter>
-      </ModalContent>
+          </div>
+        </div>
+      }
+    >
+      <Form layout="vertical" requiredMark={false}>
+        <Form.Item label="Nom du protocole" className="max-w-md">
+          <Input
+            value={protocolName}
+            onChange={(e) => setProtocolName(e.target.value)}
+            placeholder="Protocole météo Pomme"
+          />
+        </Form.Item>
+      </Form>
+
+      <Table<Row>
+        columns={columns}
+        dataSource={dataSource}
+        rowKey="__index"
+        size="small"
+        pagination={false}
+        scroll={{ x: 'max-content' }}
+      />
+
+      <Button className="mt-3" onClick={addRow}>
+        + Ajouter un stade
+      </Button>
     </Modal>
   );
 };

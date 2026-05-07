@@ -1,30 +1,12 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
-import nt from './NotificationsMain.module.css';
-import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
-  Box,
-  Button,
-  HStack,
-  Text,
-  SimpleGrid,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
-  useToast,
-} from '@chakra-ui/react';
-import { AddIcon, BellIcon } from '@chakra-ui/icons';
-import useColorModeStyles from '@/app/utils/useColorModeStyles';
-import Notification from '../notifications/Notification';
+
+import React, { useEffect, useState } from 'react';
+import { App, Button, Modal } from 'antd';
+import { BellOutlined, PlusOutlined } from '@ant-design/icons';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Notification, {
+  type NotificationPayload,
+} from '../notifications/Notification';
 import axiosInstance from '@/app/lib/api';
 import {
   mergeNotificationsForStorage,
@@ -37,29 +19,37 @@ import {
 import EmptyBox from '../common/EmptyBox';
 import { useNotificationBellCounts } from '@/app/hooks/useNotificationBellCounts';
 import ZoneNotificationConfigureForm from '@/app/components/notifications/ZoneNotificationConfigureForm';
-import { useRouter, useSearchParams } from 'next/navigation';
 import {
   deleteNotificationConfigById,
   getNotificationConfigById,
   getNotificationConfigsForZone,
   resolveStoredNotificationConfigId,
 } from '@/app/lib/zoneNotificationConfigStorage';
+import styles from './NotificationsMain.module.scss';
+
+type CachedNotificationRow = {
+  id: number;
+  is_read: boolean;
+  read_at: string | null;
+  zone_name?: string;
+  notification: NotificationPayload;
+  [key: string]: unknown;
+};
 
 const NotificationsMain: React.FC = () => {
-  const { bg, textColor } = useColorModeStyles();
-  const toast = useToast();
-  const deleteCancelRef = useRef<HTMLButtonElement>(null);
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const { message, modal } = App.useApp();
+  const [notifications, setNotifications] = useState<CachedNotificationRow[]>(
+    []
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const { refresh: refreshBell } = useNotificationBellCounts();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isConfigureOpen, setIsConfigureOpen] = useState(false);
   const [configureInitialZoneId, setConfigureInitialZoneId] = useState<
     number | undefined
   >(undefined);
   const [configureConfigId, setConfigureConfigId] = useState<
     string | undefined
   >(undefined);
-  const [deleteConfigId, setDeleteConfigId] = useState<string | null>(null);
   const [configureIntent, setConfigureIntent] = useState<'create' | 'edit'>(
     'create'
   );
@@ -77,7 +67,7 @@ const NotificationsMain: React.FC = () => {
     setConfigureInitialZoneId(undefined);
     setConfigureConfigId(undefined);
     stripConfigureParamsFromUrl();
-    onClose();
+    setIsConfigureOpen(false);
   };
 
   const refetchNotifications = () => {
@@ -86,16 +76,18 @@ const NotificationsMain: React.FC = () => {
       .then((r) => {
         const apiRows = normalizeApiNotificationsList(r.data?.notifications);
         const merged = mergeNotificationsForStorage(apiRows);
-        setNotifications(merged as any[]);
+        setNotifications(merged as CachedNotificationRow[]);
         writeNotificationsToCache(merged);
       })
       .catch(() => {
-        setNotifications(readNotificationsFromCache() as any[]);
+        setNotifications(
+          readNotificationsFromCache() as CachedNotificationRow[]
+        );
       });
   };
 
   const syncNotificationsFromCache = () => {
-    setNotifications(readNotificationsFromCache() as any[]);
+    setNotifications(readNotificationsFromCache() as CachedNotificationRow[]);
   };
 
   useEffect(() => {
@@ -108,10 +100,12 @@ const NotificationsMain: React.FC = () => {
           response.data?.notifications
         );
         const merged = mergeNotificationsForStorage(apiRows);
-        setNotifications(merged as any[]);
+        setNotifications(merged as CachedNotificationRow[]);
         writeNotificationsToCache(merged);
       } catch {
-        setNotifications(readNotificationsFromCache() as any[]);
+        setNotifications(
+          readNotificationsFromCache() as CachedNotificationRow[]
+        );
       } finally {
         setLoading(false);
       }
@@ -121,7 +115,7 @@ const NotificationsMain: React.FC = () => {
 
   useEffect(() => {
     const syncFromCache = () => {
-      setNotifications(readNotificationsFromCache() as any[]);
+      setNotifications(readNotificationsFromCache() as CachedNotificationRow[]);
     };
     window.addEventListener(NOTIFICATIONS_CACHE_UPDATED_EVENT, syncFromCache);
     return () =>
@@ -133,7 +127,7 @@ const NotificationsMain: React.FC = () => {
 
   useEffect(() => {
     if (
-      isOpen &&
+      isConfigureOpen &&
       configureIntent === 'edit' &&
       !configureConfigId &&
       configureInitialZoneId != null
@@ -143,7 +137,12 @@ const NotificationsMain: React.FC = () => {
         setConfigureConfigId(list[0].configId);
       }
     }
-  }, [isOpen, configureIntent, configureConfigId, configureInitialZoneId]);
+  }, [
+    isConfigureOpen,
+    configureIntent,
+    configureConfigId,
+    configureInitialZoneId,
+  ]);
 
   useEffect(() => {
     const cid = searchParams.get('configId')?.trim();
@@ -153,7 +152,7 @@ const NotificationsMain: React.FC = () => {
       setConfigureConfigId(cid);
       const cfg = getNotificationConfigById(cid);
       setConfigureInitialZoneId(cfg?.zoneId);
-      onOpen();
+      setIsConfigureOpen(true);
       return;
     }
     if (!z) return;
@@ -169,15 +168,15 @@ const NotificationsMain: React.FC = () => {
       setConfigureConfigId(undefined);
       setConfigureInitialZoneId(id);
     }
-    onOpen();
-  }, [searchParams, onOpen]);
+    setIsConfigureOpen(true);
+  }, [searchParams]);
 
   const openConfigure = () => {
     setConfigureIntent('create');
     setConfigureInitialZoneId(undefined);
     setConfigureConfigId(undefined);
     stripConfigureParamsFromUrl();
-    onOpen();
+    setIsConfigureOpen(true);
   };
 
   const openEditZone = (zoneId: number, configId?: string) => {
@@ -185,7 +184,7 @@ const NotificationsMain: React.FC = () => {
       setConfigureIntent('edit');
       setConfigureConfigId(configId.trim());
       setConfigureInitialZoneId(zoneId);
-      onOpen();
+      setIsConfigureOpen(true);
       return;
     }
     const list = getNotificationConfigsForZone(zoneId);
@@ -193,29 +192,34 @@ const NotificationsMain: React.FC = () => {
       setConfigureIntent('edit');
       setConfigureConfigId(list[0].configId);
       setConfigureInitialZoneId(zoneId);
-      onOpen();
+      setIsConfigureOpen(true);
       return;
     }
     setConfigureIntent('create');
     setConfigureConfigId(undefined);
     setConfigureInitialZoneId(zoneId);
-    onOpen();
+    setIsConfigureOpen(true);
   };
 
-  const confirmDeleteNotificationConfig = () => {
-    if (deleteConfigId == null) return;
-    const id = deleteConfigId;
-    setDeleteConfigId(null);
-    deleteNotificationConfigById(id);
-    setNotifications(readNotificationsFromCache() as any[]);
-    void refreshBell();
-    toast({
-      title: 'Notification supprimée',
-      description:
-        'La configuration locale de ce secteur a été effacée sur cet appareil.',
-      status: 'success',
-      duration: 4000,
-      isClosable: true,
+  const requestDeleteConfig = (configId: string) => {
+    modal.confirm({
+      title: 'Supprimer cette notification de zone ?',
+      content:
+        'La configuration de ce secteur est effacée sur cet appareil et les lignes locales liées disparaissent de la liste. Les autres notifications de la même zone ne sont pas modifiées.',
+      okText: 'Supprimer',
+      okButtonProps: { danger: true },
+      cancelText: 'Annuler',
+      onOk: () => {
+        deleteNotificationConfigById(configId);
+        setNotifications(
+          readNotificationsFromCache() as CachedNotificationRow[]
+        );
+        void refreshBell();
+        void message.success({
+          content: 'Notification supprimée',
+          duration: 4,
+        });
+      },
     });
   };
 
@@ -223,135 +227,79 @@ const NotificationsMain: React.FC = () => {
 
   return (
     <>
-      <Box bg={bg} className={nt.header}>
-        <HStack justify="space-between" flexWrap="wrap" spacing={3}>
-          <Text color={textColor}>Notifications</Text>
-          <Button
-            colorScheme="green"
-            leftIcon={<AddIcon />}
-            size="sm"
-            onClick={openConfigure}
-          >
-            Ajouter une notification de zone
-          </Button>
-        </HStack>
-      </Box>
+      <div className={styles.header}>
+        <span className={styles.headerTitle}>Notifications</span>
+        <Button
+          type="primary"
+          size="middle"
+          icon={<PlusOutlined />}
+          onClick={openConfigure}
+        >
+          Ajouter une notification de zone
+        </Button>
+      </div>
 
-      <SimpleGrid
-        m={1}
-        mt={4}
-        spacing={4}
-        columns={{ base: 1, sm: 2, md: 3, lg: 4 }}
-      >
+      <div className="m-1 mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {notifications.map((notification) => {
           const zid = notificationRowZoneId(notification);
           const rowCfgId = resolveStoredNotificationConfigId(notification);
           return (
-            <Box key={notification.id}>
-              <Notification
-                id={notification.id}
-                notification={{
-                  ...notification.notification,
-                  zone_id: zid,
-                  zone_name: notification.zone_name,
-                  notification_config_id: rowCfgId,
-                  notification_name:
-                    notification.notification?.notification_name,
-                }}
-                is_read={notification.is_read}
-                read_at={notification.read_at}
-                onEditZone={
-                  zid != null ? () => openEditZone(zid, rowCfgId) : undefined
-                }
-                onDeleteZone={
-                  zid != null && rowCfgId
-                    ? () => setDeleteConfigId(rowCfgId)
-                    : undefined
-                }
-              />
-            </Box>
+            <Notification
+              key={notification.id}
+              id={notification.id}
+              notification={{
+                ...notification.notification,
+                zone_id: zid,
+                zone_name: notification.zone_name,
+                notification_config_id: rowCfgId,
+                notification_name: notification.notification?.notification_name,
+              }}
+              is_read={notification.is_read}
+              read_at={notification.read_at}
+              onEditZone={
+                zid != null ? () => openEditZone(zid, rowCfgId) : undefined
+              }
+              onDeleteZone={
+                zid != null && rowCfgId
+                  ? () => requestDeleteConfig(rowCfgId)
+                  : undefined
+              }
+            />
           );
         })}
-      </SimpleGrid>
+      </div>
 
       <Modal
-        isOpen={isOpen}
-        onClose={closeConfigureModal}
-        size="6xl"
-        scrollBehavior="inside"
-        blockScrollOnMount={false}
-      >
-        <ModalOverlay bg="blackAlpha.400" backdropFilter="blur(4px)" />
-        <ModalContent
-          borderRadius="xl"
-          mx={{ base: 2, md: 4 }}
-          maxW="min(1200px, 100vw - 16px)"
-        >
-          <ModalHeader
-            display="flex"
-            alignItems="center"
-            gap={2}
-            fontSize="lg"
-            pb={1}
-          >
-            <BellIcon color="blue.400" />
+        open={isConfigureOpen}
+        onCancel={closeConfigureModal}
+        footer={null}
+        destroyOnClose
+        width="min(1200px, calc(100vw - 16px))"
+        styles={{ body: { paddingTop: 8 } }}
+        title={
+          <span className={styles.modalTitle}>
+            <BellOutlined className={styles.modalTitleIcon} />
             {configureIntent === 'edit'
               ? 'Modifier la notification de zone'
               : 'Nouvelle notification de zone'}
-          </ModalHeader>
-          <ModalCloseButton borderRadius="full" onClick={closeConfigureModal} />
-          <ModalBody pb={6}>
-            {isOpen && (
-              <ZoneNotificationConfigureForm
-                key={`${configureIntent}-${configureInitialZoneId ?? 'z'}-${configureConfigId ?? 'new'}`}
-                intent={configureIntent}
-                initialZoneId={configureInitialZoneId ?? null}
-                initialConfigId={configureConfigId ?? null}
-                onClose={closeConfigureModal}
-                onSaved={() => {
-                  syncNotificationsFromCache();
-                  void refreshBell();
-                  refetchNotifications();
-                }}
-              />
-            )}
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-
-      <AlertDialog
-        isOpen={deleteConfigId != null}
-        leastDestructiveRef={deleteCancelRef}
-        onClose={() => setDeleteConfigId(null)}
+          </span>
+        }
       >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Supprimer cette notification de zone ?
-            </AlertDialogHeader>
-            <AlertDialogBody>
-              La configuration de ce secteur est effacée sur cet appareil et les
-              lignes locales liées disparaissent de la liste. Les autres
-              notifications de la même zone ne sont pas modifiées.
-            </AlertDialogBody>
-            <AlertDialogFooter>
-              <Button
-                ref={deleteCancelRef}
-                onClick={() => setDeleteConfigId(null)}
-              >
-                Annuler
-              </Button>
-              <Button
-                colorScheme="red"
-                onClick={confirmDeleteNotificationConfig}
-                ml={3}
-              >
-                Supprimer
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
+        {isConfigureOpen && (
+          <ZoneNotificationConfigureForm
+            key={`${configureIntent}-${configureInitialZoneId ?? 'z'}-${configureConfigId ?? 'new'}`}
+            intent={configureIntent}
+            initialZoneId={configureInitialZoneId ?? null}
+            initialConfigId={configureConfigId ?? null}
+            onClose={closeConfigureModal}
+            onSaved={() => {
+              syncNotificationsFromCache();
+              void refreshBell();
+              refetchNotifications();
+            }}
+          />
+        )}
+      </Modal>
     </>
   );
 };

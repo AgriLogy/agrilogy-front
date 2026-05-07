@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { Badge, Box, Button, Divider, HStack, Text } from '@chakra-ui/react';
-import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { Button, Divider, Tag } from 'antd';
 import {
   evaluateV1NotificationDecision,
   logDecisionToConsole,
@@ -16,6 +15,7 @@ import {
   thresholdsFromConfig,
   ZONE_NOTIFICATION_CONFIG_UPDATED_EVENT,
 } from '@/app/lib/zoneNotificationConfigStorage';
+import styles from './Notification.module.scss';
 
 export interface NotificationPayload {
   yesterday_temperature: string;
@@ -32,14 +32,10 @@ export interface NotificationPayload {
   last_finish_irrigation_hour: string;
   used_water_irrigation: string;
   notification_date: string;
-  /** When present (API), binds this card to stored zone notification config & bell counts. */
   zone_id?: number;
   zone_name?: string;
-  /** Binds this row to one stored notification configuration (secteur). */
   notification_config_id?: string;
-  /** Optional API field to disambiguate when several configs share a zone. */
   notification_name?: string;
-  /** Local confirmation row after saving zone notification config. */
   template_summary?: string;
 }
 
@@ -48,13 +44,11 @@ interface NotificationProps {
   notification: NotificationPayload;
   is_read: boolean;
   read_at: string | null;
-  /** Ouvre l’édition de la configuration correspondant à cette carte. */
   onEditZone?: () => void;
-  /** Demande la suppression de la configuration locale pour cette carte. */
   onDeleteZone?: () => void;
 }
 
-const decisionBadgeColor = (d: NotificationDecisionLevel) => {
+const decisionTagColor = (d: NotificationDecisionLevel) => {
   if (d === 'critical') return 'red';
   if (d === 'advisory') return 'orange';
   return 'green';
@@ -66,6 +60,10 @@ const decisionLabelFr = (d: NotificationDecisionLevel) => {
   return 'OK — dans les seuils';
 };
 
+const SectionTitle: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => <p className="mt-3 mb-1 text-base font-bold">{children}</p>;
+
 const Notification: React.FC<NotificationProps> = ({
   id,
   notification,
@@ -73,7 +71,6 @@ const Notification: React.FC<NotificationProps> = ({
   onEditZone,
   onDeleteZone,
 }) => {
-  const { bg, textColor, hoverColor } = useColorModeStyles();
   const notificationDate = new Date(notification.notification_date);
   const formattedDate = notificationDate.toLocaleString('fr-FR');
   const [engineResult, setEngineResult] = useState<DecisionEngineResult | null>(
@@ -152,155 +149,114 @@ const Notification: React.FC<NotificationProps> = ({
   ]);
 
   return (
-    <Box
-      bg={bg}
-      p={4}
-      borderWidth="1px"
-      borderRadius="xl"
-      boxShadow="md"
-      _hover={{ borderColor: hoverColor }}
-      color={textColor}
-    >
+    <div className={`${styles.card} p-4`}>
       {zoneId != null ? (
-        <Text fontSize="sm" mb={2} lineHeight="short">
-          <Text
-            as="span"
-            fontWeight="semibold"
-            color="gray.600"
-            _dark={{ color: 'gray.400' }}
-          >
-            Nom de la notification :{' '}
-          </Text>
-          <Text as="span" fontWeight="bold" fontSize="md">
-            {zoneNotifName}
-          </Text>
-        </Text>
+        <p className="mb-2 text-sm leading-snug">
+          <span className={styles.fieldLabel}>Nom de la notification : </span>
+          <span className="text-base font-bold">{zoneNotifName}</span>
+        </p>
       ) : (
-        <Text fontWeight="bold" fontSize="md">
-          {notificationTitle}
-        </Text>
+        <p className="text-base font-bold">{notificationTitle}</p>
       )}
       {showLocationSub && (
-        <Text fontSize="sm" mt={1} opacity={0.9}>
-          📍 {notification.zone_name}
-        </Text>
+        <p className="mt-1 text-sm opacity-90">📍 {notification.zone_name}</p>
       )}
-      <Text fontSize="sm" mt={2}>
-        📅 {formattedDate}
-      </Text>
+      <p className={`mt-2 text-sm ${styles.metaText}`}>📅 {formattedDate}</p>
 
       {notification.template_summary && (
-        <Box
-          mt={3}
-          p={3}
-          borderRadius="md"
-          bg="blue.50"
-          _dark={{ bg: 'whiteAlpha.100' }}
-          borderWidth="1px"
-          borderColor="blue.100"
-        >
-          <Badge colorScheme="purple" mb={2}>
+        <div className={styles.confirmationPanel}>
+          <Tag color="purple" className="mb-2">
             Confirmation zone
-          </Badge>
-          <Text fontSize="sm">{notification.template_summary}</Text>
-        </Box>
+          </Tag>
+          <p className="text-sm m-0">{notification.template_summary}</p>
+        </div>
       )}
 
       {engineResult && (
-        <Box mt={3}>
-          <Badge colorScheme={decisionBadgeColor(engineResult.decision)} mr={2}>
+        <div className="mt-3">
+          <Tag color={decisionTagColor(engineResult.decision)}>
             Moteur v1 — {engineResult.decision.toUpperCase()}
-          </Badge>
-          <Text fontSize="sm" mt={2}>
+          </Tag>
+          <p className="mt-2 text-sm">
             {decisionLabelFr(engineResult.decision)} — ETo×Kc ={' '}
             {Number.isFinite(engineResult.et0TimesKc)
               ? engineResult.et0TimesKc.toFixed(3)
               : '—'}{' '}
             mm (Kc utilisé : {config?.kc ?? 1})
-          </Text>
-          <Text fontSize="xs" color="gray.500" mt={1}>
+          </p>
+          <p className={`mt-1 text-xs ${styles.metaText}`}>
             Règles : {engineResult.rulesFired.join(', ')}
-          </Text>
-        </Box>
+          </p>
+        </div>
       )}
 
-      <Box mt={4}>
-        <Text fontWeight="bold" fontSize="md">
-          🌡️ Température
-        </Text>
-        <Text>• Hier : {notification.yesterday_temperature}°C</Text>
-        <Text>• Aujourd’hui : {notification.today_temperature}°C</Text>
-      </Box>
+      <div className="mt-4">
+        <SectionTitle>🌡️ Température</SectionTitle>
+        <p className="m-0 text-sm">
+          • Hier : {notification.yesterday_temperature}°C
+        </p>
+        <p className="m-0 text-sm">
+          • Aujourd’hui : {notification.today_temperature}°C
+        </p>
+      </div>
 
-      <Box mt={3}>
-        <Text fontWeight="bold" fontSize="md">
-          💧 Humidité
-        </Text>
-        <Text>• Hier : {notification.yesterday_humidity}%</Text>
-        <Text>• Aujourd’hui : {notification.today_humidity}%</Text>
-      </Box>
+      <div className="mt-3">
+        <SectionTitle>💧 Humidité</SectionTitle>
+        <p className="m-0 text-sm">
+          • Hier : {notification.yesterday_humidity}%
+        </p>
+        <p className="m-0 text-sm">
+          • Aujourd’hui : {notification.today_humidity}%
+        </p>
+      </div>
 
-      <Box mt={3}>
-        <Text fontWeight="bold" fontSize="md">
-          🔎 ET0
-        </Text>
-        <Text>{notification.ET0} mm</Text>
-      </Box>
+      <div className="mt-3">
+        <SectionTitle>🔎 ET0</SectionTitle>
+        <p className="m-0 text-sm">{notification.ET0} mm</p>
+      </div>
 
-      <Box mt={3}>
-        <Text fontWeight="bold" fontSize="md">
-          🌱 Sol
-        </Text>
-        <Text>• Humidité : {notification.soil_humidity}%</Text>
-        <Text>• Température : {notification.soil_temperature}°C</Text>
-        <Text>• pH : {notification.soil_ph}</Text>
-      </Box>
+      <div className="mt-3">
+        <SectionTitle>🌱 Sol</SectionTitle>
+        <p className="m-0 text-sm">
+          • Humidité : {notification.soil_humidity}%
+        </p>
+        <p className="m-0 text-sm">
+          • Température : {notification.soil_temperature}°C
+        </p>
+        <p className="m-0 text-sm">• pH : {notification.soil_ph}</p>
+      </div>
 
-      <Box mt={3}>
-        <Text fontWeight="bold" fontSize="md">
-          🚰 Irrigation
-        </Text>
-        <Text>• Période idéale : {notification.perfect_irrigation_period}</Text>
-        <Text>• Dernière date : {notification.last_irrigation_date}</Text>
-        <Text>
+      <div className="mt-3">
+        <SectionTitle>🚰 Irrigation</SectionTitle>
+        <p className="m-0 text-sm">
+          • Période idéale : {notification.perfect_irrigation_period}
+        </p>
+        <p className="m-0 text-sm">
+          • Dernière date : {notification.last_irrigation_date}
+        </p>
+        <p className="m-0 text-sm">
           • Eau utilisée : {notification.used_water_irrigation} litres
-        </Text>
-      </Box>
+        </p>
+      </div>
 
       {zoneId != null && (onEditZone || onDeleteZone) && (
         <>
-          <Divider
-            my={4}
-            borderColor="gray.200"
-            _dark={{ borderColor: 'whiteAlpha.300' }}
-          />
-          <HStack spacing={3} flexWrap="wrap">
+          <Divider className="my-4" />
+          <div className="flex flex-wrap gap-3">
             {onEditZone && (
-              <Button
-                size="sm"
-                colorScheme="blue"
-                variant="solid"
-                borderRadius="lg"
-                onClick={() => onEditZone()}
-              >
+              <Button type="primary" size="small" onClick={onEditZone}>
                 Modifier la notification
               </Button>
             )}
             {onDeleteZone && (
-              <Button
-                size="sm"
-                colorScheme="red"
-                variant="outline"
-                borderRadius="lg"
-                onClick={() => onDeleteZone()}
-              >
+              <Button danger size="small" onClick={onDeleteZone}>
                 Supprimer la notification
               </Button>
             )}
-          </HStack>
+          </div>
         </>
       )}
-    </Box>
+    </div>
   );
 };
 
