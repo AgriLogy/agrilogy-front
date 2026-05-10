@@ -58,7 +58,7 @@ const NpkLastData = ({ data }: { data: NpkSensorData[] }) => {
         textAlign="center"
         minW="250px"
       >
-        <GiChemicalDrop size={44} color="#2B6CB0" />
+        <GiChemicalDrop size={44} color="#175E33" />
         <Text
           fontWeight="semibold"
           fontSize="xs"

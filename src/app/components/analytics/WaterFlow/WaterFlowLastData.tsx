@@ -48,7 +48,7 @@ const WaterFlowLastData = ({ data }: { data: SensorData[] }) => {
         textAlign="center"
         minW="250px"
       >
-        <RiWaterFlashFill size={44} color="#00b4d8" />
+        <RiWaterFlashFill size={44} color="#2e924f" />
         <Text
           fontWeight="semibold"
           fontSize="xs"
@@ -67,7 +67,7 @@ const WaterFlowLastData = ({ data }: { data: SensorData[] }) => {
         <Text fontSize="xs" color={subColor} mt={2}>
           {latest ? `Mesure : ${timeAgo(latest.timestamp)}` : ''}
         </Text>
-        <LastDataAddAlertButton />
+        <LastDataAddAlertButton sensorKey="water_flow" />
       </LastDataPanel>
     </Box>
   );

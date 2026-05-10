@@ -114,7 +114,7 @@ const WindRadarLastData = ({
             Mesure : {timeAgo(latestSpeed.timestamp)}
           </Text>
         )}
-        <LastDataAddAlertButton />
+        <LastDataAddAlertButton sensorKey="wind_speed" />
       </LastDataPanel>
     </Box>
   );

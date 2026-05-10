@@ -1,141 +1,271 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Text, VStack, useToast } from '@chakra-ui/react';
-import useColorModeStyles from '@/app/utils/useColorModeStyles';
-import api from '@/app/lib/api';
-import FloatingButton from './FloatingButton';
-import FormModalUpdate from './FormModalUpdate';
-import FormModalCreate from './FormModalCreate';
-import Alert from '../notifications/Alert';
-import s from '../../styles/style.module.css';
-import EmptyBox from '../common/EmptyBox';
+'use client';
 
-interface AlertData {
-  id: number;
-  name: string;
-  type: string;
-  description: string;
-  condition: string;
-  condition_nbr: number;
-  user: number;
-}
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  App,
+  Button,
+  Empty,
+  Popconfirm,
+  Space,
+  Table,
+  Tag,
+  Tooltip,
+  Typography,
+} from 'antd';
+import type { ColumnsType } from 'antd/es/table';
+import {
+  BellOutlined,
+  EditOutlined,
+  PlusOutlined,
+  DeleteOutlined,
+} from '@ant-design/icons';
+import { alertApi, type AlertRecord } from '@/app/lib/alertApi';
+import {
+  ALERT_CHOICES,
+  CONDITION_CHOICES,
+  DEFAULT_SENSOR_KEYS,
+  type SensorKeyOption,
+} from '@/app/utils/alertChoices';
+import AlertCreateDrawer from './AlertCreateDrawer';
+import styles from './AlertMain.module.scss';
 
-const AlertMain = () => {
-  const [alerts, setAlerts] = useState<AlertData[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [selectedAlert, setSelectedAlert] = useState<AlertData | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isCreateModal, setIsCreateModal] = useState(false); // To determine which modal to open
-  const toast = useToast();
+const { Title, Paragraph } = Typography;
+const ALERT_LIMIT = 10;
 
-  const { bg, textColor } = useColorModeStyles();
+const conditionLabel = (c: string) =>
+  CONDITION_CHOICES.find((cc) => cc.value === c)?.label ?? c;
 
-  const openCreateModal = () => {
-    if (alerts.length >= 5) {
-      toast({
-        title: "Supprimer des alertes pour pouvoir en créer d'autres",
-        status: 'warning',
-        duration: 3000,
-        isClosable: true,
-      });
-      return; // Prevent opening the create modal
-    }
-    setIsCreateModal(true);
-    setIsModalOpen(true);
-  };
+const typeLabel = (t: string) =>
+  ALERT_CHOICES.find((c) => c.value === t)?.label ?? t;
 
-  const openUpdateModal = (alert: AlertData) => {
-    setSelectedAlert(alert);
-    setIsCreateModal(false); // Set to false since it's for update
-    setIsModalOpen(true);
-  };
+const AlertMain: React.FC = () => {
+  const { message } = App.useApp();
+  const [alerts, setAlerts] = useState<AlertRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [sensorKeys, setSensorKeys] =
+    useState<SensorKeyOption[]>(DEFAULT_SENSOR_KEYS);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [editing, setEditing] = useState<AlertRecord | null>(null);
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedAlert(null); // Reset selected alert
-  };
-
-  const fetchAlerts = async () => {
+  const fetchAlerts = useCallback(async () => {
+    setLoading(true);
     try {
-      const response = await api.get('/api/alert/');
-      setAlerts(response.data);
-    } catch (error) {
-      console.error('Error fetching alerts:', error);
+      const data = await alertApi.list();
+      setAlerts(data);
+    } catch {
+      message.error('Impossible de charger les alertes.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [message]);
 
   useEffect(() => {
-    fetchAlerts();
+    void fetchAlerts();
+  }, [fetchAlerts]);
+
+  useEffect(() => {
+    void alertApi
+      .sensorKeys()
+      .then((keys) => {
+        if (Array.isArray(keys) && keys.length > 0) {
+          setSensorKeys(
+            keys.map((k) => ({ key: k.key, label: k.label, unit: k.unit }))
+          );
+        }
+      })
+      .catch(() => {
+        /* keep DEFAULT_SENSOR_KEYS */
+      });
   }, []);
 
-  const handleDeleteAlert = async (alertId: number) => {
+  const openCreate = () => {
+    if (alerts.length >= ALERT_LIMIT) {
+      message.warning(
+        `Limite atteinte : supprimez une alerte pour en créer une autre (max ${ALERT_LIMIT}).`
+      );
+      return;
+    }
+    setEditing(null);
+    setDrawerOpen(true);
+  };
+
+  const openEdit = (alert: AlertRecord) => {
+    setEditing(alert);
+    setDrawerOpen(true);
+  };
+
+  const closeDrawer = () => {
+    setDrawerOpen(false);
+    setEditing(null);
+  };
+
+  const handleDelete = async (id: number) => {
     try {
-      await api.delete(`/api/alert/${alertId}/`);
-      toast({
-        title: 'Alerte supprimée',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-      closeModal();
-      fetchAlerts(); // Rafraîchir la liste des alertes après la suppression
-    } catch (error) {
-      console.error("Erreur lors de la suppression de l'alerte :", error);
-      toast({
-        title: "Erreur lors de la suppression de l'alerte",
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      await alertApi.remove(id);
+      message.success('Alerte supprimée.');
+      setAlerts((prev) => prev.filter((a) => a.id !== id));
+    } catch {
+      message.error('Échec de la suppression.');
     }
   };
 
-  if (loading) return <EmptyBox variant="loading" />;
+  const handleToggleActive = async (alert: AlertRecord) => {
+    try {
+      const updated = await alertApi.update(alert.id, {
+        is_active: !alert.is_active,
+      });
+      setAlerts((prev) => prev.map((a) => (a.id === updated.id ? updated : a)));
+    } catch {
+      message.error('Impossible de changer le statut.');
+    }
+  };
+
+  const columns: ColumnsType<AlertRecord> = useMemo(
+    () => [
+      {
+        title: 'Nom',
+        dataIndex: 'name',
+        key: 'name',
+        render: (text: string, row) => (
+          <Space size={8}>
+            <strong>{text}</strong>
+            {row.last_triggered_at && (
+              <Tag color="red" className={styles.triggeredTag}>
+                Récemment déclenchée
+              </Tag>
+            )}
+          </Space>
+        ),
+      },
+      {
+        title: 'Capteur',
+        dataIndex: 'sensor_key',
+        key: 'sensor_key',
+        render: (key: string) =>
+          sensorKeys.find((s) => s.key === key)?.label ?? key ?? '—',
+      },
+      {
+        title: 'Catégorie',
+        dataIndex: 'type',
+        key: 'type',
+        render: (t: string) => <Tag>{typeLabel(t)}</Tag>,
+      },
+      {
+        title: 'Condition',
+        key: 'condition',
+        render: (_, row) => (
+          <span>
+            {conditionLabel(row.condition)}{' '}
+            <strong>{row.threshold ?? row.condition_nbr}</strong>{' '}
+            <span className={styles.thresholdHint}>
+              {sensorKeys.find((s) => s.key === row.sensor_key)?.unit ?? ''}
+            </span>
+          </span>
+        ),
+      },
+      {
+        title: 'Active',
+        dataIndex: 'is_active',
+        key: 'is_active',
+        render: (on: boolean, row) => (
+          <Tooltip title={on ? 'Désactiver' : 'Activer'}>
+            <Tag
+              color={on ? 'green' : 'default'}
+              onClick={() => handleToggleActive(row)}
+              style={{ cursor: 'pointer' }}
+            >
+              {on ? 'oui' : 'non'}
+            </Tag>
+          </Tooltip>
+        ),
+      },
+      {
+        title: 'Actions',
+        key: 'actions',
+        align: 'right',
+        render: (_, row) => (
+          <Space>
+            <Button
+              icon={<EditOutlined />}
+              onClick={() => openEdit(row)}
+              aria-label={`Modifier ${row.name}`}
+            >
+              Modifier
+            </Button>
+            <Popconfirm
+              title="Supprimer cette alerte ?"
+              okText="Supprimer"
+              cancelText="Annuler"
+              onConfirm={() => handleDelete(row.id)}
+            >
+              <Button
+                danger
+                icon={<DeleteOutlined />}
+                aria-label={`Supprimer ${row.name}`}
+              >
+                Supprimer
+              </Button>
+            </Popconfirm>
+          </Space>
+        ),
+      },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [sensorKeys]
+  );
 
   return (
-    <div className={s.container}>
-      <Box bg={bg} className={s.header}>
-        <Text color={textColor}>Gestion des alerts</Text>
-      </Box>
+    <div className={styles.page} data-testid="alert-main">
+      <header className={styles.headerRow}>
+        <div>
+          <Title level={3} className={styles.title}>
+            <BellOutlined style={{ marginRight: 8 }} />
+            Gestion des alertes
+          </Title>
+          <Paragraph className={styles.subtitle}>
+            Configurez des seuils par capteur. Chaque alerte se trace
+            automatiquement sur le graphique correspondant.
+          </Paragraph>
+        </div>
+        <div className={styles.toolbar}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={openCreate}
+            data-testid="alert-create-button"
+          >
+            Nouvelle alerte
+          </Button>
+        </div>
+      </header>
 
-      <VStack mt={4} spacing={4} align="stretch" className={s.wide}>
-        {alerts.map((alert) => (
-          <Alert
-            key={alert.id}
-            id={alert.id}
-            name={alert.name}
-            type={alert.type}
-            description={alert.description}
-            condition={alert.condition}
-            condition_nbr={alert.condition_nbr}
-            onClick={() => openUpdateModal(alert)} // Open update modal when alert is clicked
-          />
-        ))}
-      </VStack>
+      <section className={styles.tableCard}>
+        <Table<AlertRecord>
+          rowKey="id"
+          columns={columns}
+          dataSource={alerts}
+          loading={loading}
+          pagination={false}
+          locale={{
+            emptyText: (
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description="Aucune alerte configurée"
+              />
+            ),
+          }}
+        />
+      </section>
 
-      {/* Floating Button to Create New Alert */}
-      <FloatingButton onClick={openCreateModal} />
-
-      {/* Modal for Create and Update */}
-      {isModalOpen &&
-        (isCreateModal ? (
-          <FormModalCreate
-            isOpen={isModalOpen}
-            onClose={closeModal}
-            refreshAlerts={fetchAlerts} // Refresh alerts after create
-          />
-        ) : (
-          <FormModalUpdate
-            isOpen={isModalOpen}
-            onClose={closeModal}
-            initialData={selectedAlert} // Pass the selected alert for updating
-            onDelete={() =>
-              selectedAlert?.id != null && handleDeleteAlert(selectedAlert.id)
-            } // Delete handler
-            refreshAlerts={fetchAlerts} // Refresh alerts after update
-          />
-        ))}
+      <AlertCreateDrawer
+        open={drawerOpen}
+        onClose={closeDrawer}
+        editing={editing}
+        onSaved={() => {
+          closeDrawer();
+          void fetchAlerts();
+        }}
+      />
     </div>
   );
 };

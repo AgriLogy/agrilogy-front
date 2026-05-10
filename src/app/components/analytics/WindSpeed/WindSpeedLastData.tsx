@@ -67,7 +67,7 @@ const WindSpeedLastData = ({ data }: { data: SensorData[] }) => {
         <Text fontSize="xs" color={timeColor} mt={2}>
           {latest ? `Mesure : ${timeAgo(latest.timestamp)}` : ''}
         </Text>
-        <LastDataAddAlertButton />
+        <LastDataAddAlertButton sensorKey="wind_speed" />
       </LastDataPanel>
     </Box>
   );

@@ -129,7 +129,7 @@ const SolarRadiationLastData = ({ data }: { data: SensorData[] }) => {
         <Text fontSize="xs" color={timeColor} mt={2}>
           {latest ? `Mesure : ${timeAgo(latest.timestamp)}` : ''}
         </Text>
-        <LastDataAddAlertButton />
+        <LastDataAddAlertButton sensorKey="solar_radiation" />
       </LastDataPanel>
     </Box>
   );

@@ -71,7 +71,7 @@ const ET0LastData = ({
         textAlign="center"
         minW="250px"
       >
-        <GiWaterDrop size={44} color="#2B6CB0" />
+        <GiWaterDrop size={44} color="#175E33" />
         <Text
           fontWeight="semibold"
           fontSize="xs"
@@ -117,7 +117,7 @@ const ET0LastData = ({
             Mesure : {timeAgo(newestTs)}
           </Text>
         )}
-        <LastDataAddAlertButton />
+        <LastDataAddAlertButton sensorKey="et0" />
       </LastDataPanel>
     </Box>
   );

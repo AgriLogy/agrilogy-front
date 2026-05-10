@@ -67,7 +67,7 @@ const ElectricityconsumptionLastData = ({ data }: { data: SensorData[] }) => {
         <Text fontSize="xs" color={subColor} mt={2}>
           {latest ? `Mesure : ${timeAgo(latest.timestamp)}` : ''}
         </Text>
-        <LastDataAddAlertButton />
+        <LastDataAddAlertButton sensorKey="electricity_consumption" />
       </LastDataPanel>
     </Box>
   );

@@ -15,7 +15,8 @@
     "export": "next export",
     "prepare": "husky",
     "release": "semantic-release",
-    "test": "npm run check"
+    "test": "npm run check && npm run test:jest",
+    "test:jest": "jest --passWithNoTests"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,mjs,cjs}": [
