@@ -229,7 +229,7 @@ const CumulPrecipitationChart = ({
               {...defaultBarProps}
               maxBarSize={maxBarSizeForPointCount(chartData.length)}
               hide={!showBar}
-              fill={colorMode === 'dark' ? '#60a5fa' : '#3b82f6'}
+              fill={colorMode === 'dark' ? '#7ecb98' : '#2e924f'}
             />
           </BarChart>
         </ResponsiveContainer>

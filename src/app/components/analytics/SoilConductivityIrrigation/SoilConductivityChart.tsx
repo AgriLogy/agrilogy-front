@@ -279,7 +279,7 @@ const SoilConductivityChart = ({
               name={`Irrigation (${flowUnit})`}
               {...defaultBarProps}
               hide={!activeLines.water_flow}
-              fill="#00B0FF"
+              fill="#2E924F"
               maxBarSize={maxBarSizeForPointCount(chartData.length)}
               fillOpacity={0.75}
             />

@@ -83,13 +83,18 @@ interface WindData {
   default_unit: string;
 }
 
-/** Bin edges in raw API space (catalog default m/s); labels follow unit overrides. */
+/** Bin edges in raw API space (catalog default m/s); labels follow unit overrides.
+ *
+ * Wind-speed colours use a brand-aligned intensity scale: calm (light
+ * brand green) → moderate (mid brand green) → high (warning orange) →
+ * danger (red). Removes the legacy blues that conflicted with the rest
+ * of the green-only palette. */
 const SPEED_BINS_RAW = [
-  { min: 0, max: 2, color: '#7cb5ec' },
-  { min: 2, max: 4, color: '#434348' },
-  { min: 4, max: 6, color: '#90ed7d' },
-  { min: 6, max: 8, color: '#f7a35c' },
-  { min: 8, max: Infinity, color: '#8085e9' },
+  { min: 0, max: 2, color: '#d6f0dd' }, // primary-100
+  { min: 2, max: 4, color: '#7ecb98' }, // primary-300
+  { min: 4, max: 6, color: '#2e924f' }, // primary-500
+  { min: 6, max: 8, color: '#d97706' }, // semantic.warning
+  { min: 8, max: Infinity, color: '#dc2626' }, // semantic.danger
 ] as const;
 
 type SpeedBin = { label: string; min: number; max: number; color: string };
@@ -417,7 +422,7 @@ const WindRadarChart = ({
         <HStack spacing={2}>
           <Button
             aria-label="Capture"
-            colorScheme="teal"
+            colorScheme="brand"
             variant="ghost"
             onClick={handleScreenshot}
           >
@@ -425,7 +430,7 @@ const WindRadarChart = ({
           </Button>
           <Button
             aria-label="Export"
-            colorScheme="blue"
+            colorScheme="brand"
             variant="ghost"
             onClick={handleDownloadData}
             isDisabled={isDataEmpty}

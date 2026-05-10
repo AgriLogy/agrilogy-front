@@ -132,7 +132,7 @@ const PluvometricGraph = ({ data }: { data: any }) => {
               strokeLinejoin="round"
               dot={false}
               activeDot={activeDotForSeries(
-                data.sensor_colors?.precipitation_rate_color ?? '#0ea5e9'
+                data.sensor_colors?.precipitation_rate_color ?? '#2e924f'
               )}
               hide={!showSeries}
             />

@@ -171,7 +171,7 @@ const NpkSizeChart = ({
         <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
-            colorScheme="teal"
+            colorScheme="brand"
             variant="ghost"
             onClick={handleScreenshot}
           >
@@ -179,7 +179,7 @@ const NpkSizeChart = ({
           </Button>
           <Button
             aria-label="Exporter CSV"
-            colorScheme="blue"
+            colorScheme="brand"
             variant="ghost"
             onClick={handleDownloadData}
           >
@@ -299,13 +299,13 @@ const NpkSizeChart = ({
               dataKey="npk_k"
               name={`${data[0]?.potassium_courbe_name || 'Potassium (K)'} (${unitK})`}
               hide={!activeLines.npk_k}
-              stroke={data[0]?.potassium_color || '#4682b4'}
+              stroke={data[0]?.potassium_color || '#1f7740'}
               strokeWidth={2.25}
               strokeLinecap="round"
               strokeLinejoin="round"
               dot={false}
               activeDot={activeDotForSeries(
-                data[0]?.potassium_color || '#4682b4'
+                data[0]?.potassium_color || '#1f7740'
               )}
             />
           </LineChart>

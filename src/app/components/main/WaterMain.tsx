@@ -1,9 +1,8 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Box, HStack, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
-import DateRangePicker from '../analytics/DateRangePicker';
 import api from '@/app/lib/api';
 import getActiveGraphs, {
   ActiveGraphResponse,
@@ -15,7 +14,7 @@ import EcWaterMain from '../analytics/WaterEc/EcWaterMain';
 import WaterFlowMain from '../analytics/WaterFlow/WaterFlowMain';
 import PhWaterMain from '../analytics/WaterPh/PhWaterMain';
 import WaterPressureMain from '../analytics/WaterPressure/WaterPressureMain';
-import ZoneNotificationBell from '@/app/components/common/ZoneNotificationBell';
+import DashboardHeader from './DashboardHeader';
 
 const WaterMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
@@ -24,7 +23,7 @@ const WaterMain = () => {
     null
   );
 
-  const { bg, textColor } = useColorModeStyles();
+  const { bg } = useColorModeStyles();
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>(
     new Date().toISOString().split('T')[0]
@@ -53,46 +52,14 @@ const WaterMain = () => {
 
   return (
     <div className={s.container}>
-      <Box bg={bg} className={s.header} border="1px">
-        <HStack spacing={3} flexWrap="wrap" alignItems="center">
-          <Text color={textColor}>Données sur l&apos;eau du </Text>
-          <select
-            value={selectedZone ?? ''}
-            onChange={(e) => setSelectedZone(Number(e.target.value))}
-            style={{
-              borderRadius: '2px',
-              padding: '4px',
-              color: useColorModeValue('black', 'white'),
-              backgroundColor: useColorModeValue('white', '#2D3748'),
-              border: `1px solid ${useColorModeValue('black', 'white')}`,
-            }}
-          >
-            {zones.map((zone) => (
-              <option key={zone.id} value={zone.id}>
-                {zone.name}
-              </option>
-            ))}
-          </select>
-          {selectedZone != null && (
-            <ZoneNotificationBell
-              zoneId={selectedZone}
-              zoneName={
-                zones.find((z) => z.id === selectedZone)?.name ?? 'Zone'
-              }
-            />
-          )}
-        </HStack>
-      </Box>
-
-      <Box bg={bg} className={s.header} border="1px" mt={0} mb={0}>
-        <DateRangePicker
-          setStartDate={setStartDate}
-          setEndDate={setEndDate}
-          zones={zones}
-          selectedZone={selectedZone}
-          setSelectedZone={setSelectedZone}
-        />
-      </Box>
+      <DashboardHeader
+        label="Données sur l'eau"
+        zones={zones}
+        selectedZone={selectedZone}
+        setSelectedZone={setSelectedZone}
+        setStartDate={setStartDate}
+        setEndDate={setEndDate}
+      />
 
       {activeGraph?.water_flow_status && (
         <Box bg={bg} className={`${s.box} ${s.wide}`}>

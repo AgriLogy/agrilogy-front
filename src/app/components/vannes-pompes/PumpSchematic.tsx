@@ -11,7 +11,7 @@ export interface PumpSchematicProps {
 const PumpSchematic = ({ running, label }: PumpSchematicProps) => {
   const idleFill = useColorModeValue('#94a3b8', '#64748b');
   const outline = useColorModeValue('#0f172a', '#e2e8f0');
-  const pipeStroke = useColorModeValue('#38bdf8', '#22d3ee');
+  const pipeStroke = useColorModeValue('#4cae70', '#7ecb98');
   const body = running ? '#10b981' : idleFill;
 
   return (

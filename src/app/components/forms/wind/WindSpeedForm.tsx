@@ -151,7 +151,7 @@ const WindSpeedForm: React.FC = () => {
         </FormControl>
 
         {/* Bouton de soumission */}
-        <Button colorScheme="blue" onClick={handleSubmit} w="full">
+        <Button colorScheme="brand" onClick={handleSubmit} w="full">
           Soumettre
         </Button>
       </VStack>

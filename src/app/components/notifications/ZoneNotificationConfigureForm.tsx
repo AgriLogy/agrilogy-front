@@ -3,35 +3,17 @@
 import React, { useEffect, useState } from 'react';
 import type { IconType } from 'react-icons';
 import {
-  Box,
+  App,
   Button,
   Checkbox,
   Divider,
-  FormControl,
-  FormLabel,
-  Grid,
-  GridItem,
-  HStack,
-  Icon,
+  Form,
   Input,
-  InputGroup,
-  InputRightAddon,
-  NumberInput,
-  NumberInputField,
+  InputNumber,
   Radio,
-  RadioGroup,
   Select,
-  SimpleGrid,
   Slider,
-  SliderFilledTrack,
-  SliderThumb,
-  SliderTrack,
-  Stack,
-  Text,
-  useToast,
-  useDisclosure,
-  VStack,
-} from '@chakra-ui/react';
+} from 'antd';
 import {
   FaBell,
   FaBolt,
@@ -61,7 +43,6 @@ import {
   FaWater,
   FaWhatsapp,
 } from 'react-icons/fa';
-import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import api from '@/app/lib/api';
 import { logOptionalApiFailure } from '@/app/utils/apiClientErrors';
 import {
@@ -80,6 +61,7 @@ import {
   removeLocalZoneTemplateNotificationsForConfig,
 } from '@/app/lib/notificationsCacheStorage';
 import { buildLocalZoneConfirmationNotification } from '@/app/lib/zoneNotificationTemplate';
+import styles from './ZoneNotificationConfigureForm.module.scss';
 
 const defaultConfig = (
   zoneId: number,
@@ -191,64 +173,43 @@ function pickInitialZoneId(
 }
 
 function LabelWithIcon({
-  icon,
+  icon: Icon,
   children,
-  iconColor = 'teal.500',
-  labelColor,
 }: {
   icon: IconType;
   children: React.ReactNode;
-  iconColor?: string;
-  labelColor: string;
 }) {
   return (
-    <FormLabel
-      display="flex"
-      alignItems="center"
-      gap={2}
-      mb={2}
-      fontWeight="medium"
-      color={labelColor}
-    >
-      <Icon
-        as={icon}
-        boxSize={4}
-        color={iconColor}
-        flexShrink={0}
-        aria-hidden
-      />
+    <span className={styles.label}>
+      <Icon className={styles.labelIcon} aria-hidden />
       <span>{children}</span>
-    </FormLabel>
+    </span>
   );
 }
 
 function PanelTitle({
-  icon,
+  icon: Icon,
   title,
-  accent = 'green.400',
-  titleColor,
+  accentClassName = 'text-primary-500',
 }: {
   icon: IconType;
   title: string;
-  accent?: string;
-  titleColor: string;
+  accentClassName?: string;
 }) {
   return (
-    <HStack mb={4} spacing={3}>
-      <Icon as={icon} boxSize={6} color={accent} aria-hidden />
-      <Text fontWeight="bold" fontSize="md" color={titleColor}>
-        {title}
-      </Text>
-    </HStack>
+    <div className={styles.panelTitle}>
+      <Icon
+        className={`${styles.panelTitleIcon} ${accentClassName}`}
+        aria-hidden
+      />
+      <span className={styles.panelTitleText}>{title}</span>
+    </div>
   );
 }
 
 export type ZoneNotificationConfigureFormProps = {
-  /** When provided, selects this zone after zones load (e.g. deep link). */
   initialZoneId?: number | null;
-  /** When provided, loads this notification configuration (secteur) for editing. */
   initialConfigId?: string | null;
-  /** create = nouvelle config ; edit = modifier une zone existante (affiche les données sauvegardées). */
   intent?: 'create' | 'edit';
   onClose: () => void;
   onSaved?: () => void;
@@ -263,13 +224,8 @@ const ZoneNotificationConfigureForm: React.FC<
   onClose,
   onSaved,
 }) => {
-  const { bg, textColor, mutedTextColor } = useColorModeStyles();
-  const toast = useToast();
-  const {
-    isOpen: isKcTableOpen,
-    onOpen: onKcTableOpen,
-    onClose: onKcTableClose,
-  } = useDisclosure();
+  const { message } = App.useApp();
+  const [isKcTableOpen, setIsKcTableOpen] = useState(false);
 
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
   const [zoneId, setZoneId] = useState<number>(0);
@@ -294,12 +250,10 @@ const ZoneNotificationConfigureForm: React.FC<
                 cfgId = list[0].configId;
               } else if (list.length > 1) {
                 cfgId = list[0].configId;
-                toast({
-                  title: 'Plusieurs secteurs pour cette zone',
-                  description:
-                    'Ouvrez la modification depuis la carte de notification concernée pour cibler le bon secteur.',
-                  status: 'info',
-                  duration: 5000,
+                void message.info({
+                  content:
+                    'Plusieurs secteurs pour cette zone. Ouvrez la modification depuis la carte de notification concernée pour cibler le bon secteur.',
+                  duration: 5,
                 });
               }
             }
@@ -341,11 +295,9 @@ const ZoneNotificationConfigureForm: React.FC<
             const initialId = pickInitialZoneId(z, initialZoneId ?? null);
             if (initialId !== undefined) {
               setZoneId(initialId);
-              toast({
-                title: 'Configuration introuvable',
-                description:
-                  'Aucune notification enregistrée pour cette zone. Fermez ce panneau et utilisez « Ajouter une notification de zone ».',
-                status: 'warning',
+              void message.warning({
+                content:
+                  'Configuration introuvable. Aucune notification enregistrée pour cette zone. Fermez ce panneau et utilisez « Ajouter une notification de zone ».',
               });
               setForm(mergeZoneConfig(initialId, undefined));
             }
@@ -353,11 +305,11 @@ const ZoneNotificationConfigureForm: React.FC<
         }
       } catch (k) {
         logOptionalApiFailure('ZoneNotificationConfigure: zones', k);
-        toast({ title: 'Impossible de charger les zones', status: 'error' });
+        void message.error({ content: 'Impossible de charger les zones' });
       }
     };
     void load();
-  }, [initialZoneId, initialConfigId, intent, toast]);
+  }, [initialZoneId, initialConfigId, intent, message]);
 
   const update = <K extends keyof ZoneNotificationConfig>(
     key: K,
@@ -368,25 +320,24 @@ const ZoneNotificationConfigureForm: React.FC<
 
   const apply = async () => {
     if (!form) {
-      toast({ title: 'Chargement…', status: 'warning' });
+      void message.warning({ content: 'Chargement…' });
       return;
     }
     if (!zones.length) {
-      toast({ title: 'Aucune zone disponible', status: 'error' });
+      void message.error({ content: 'Aucune zone disponible' });
       return;
     }
     const resolvedZoneId = zones.some((z) => z.id === zoneId)
       ? zoneId
       : form.zoneId;
     if (!zones.some((z) => z.id === resolvedZoneId)) {
-      toast({ title: 'Veuillez sélectionner une zone', status: 'warning' });
+      void message.warning({ content: 'Veuillez sélectionner une zone' });
       return;
     }
     const cfgId = form.configId?.trim();
     if (!cfgId) {
-      toast({
-        title: 'Identifiant de configuration manquant',
-        status: 'error',
+      void message.error({
+        content: 'Identifiant de configuration manquant',
       });
       return;
     }
@@ -441,12 +392,11 @@ const ZoneNotificationConfigureForm: React.FC<
       });
     }
 
-    toast({
-      title:
+    void message.success({
+      content:
         intent === 'edit'
           ? 'Modifications enregistrées'
           : 'Configuration enregistrée',
-      status: 'success',
     });
     onSaved?.();
     onClose();
@@ -454,31 +404,31 @@ const ZoneNotificationConfigureForm: React.FC<
 
   if (!zones.length) {
     return (
-      <Box p={6} color={textColor}>
-        <Text fontWeight="medium">
+      <div className="p-6">
+        <p className="font-medium m-0">
           Aucune zone n&apos;est disponible pour ce compte.
-        </Text>
-        <Text fontSize="sm" mt={2} color={mutedTextColor}>
+        </p>
+        <p className={`mt-2 ${styles.muted}`}>
           Créez ou assignez d&apos;abord une parcelle / zone côté Agrilogy, puis
           revenez configurer une notification.
-        </Text>
-      </Box>
+        </p>
+      </div>
     );
   }
 
   if (!form) {
     return (
-      <Box p={6} color={textColor}>
-        <Text>Chargement…</Text>
-      </Box>
+      <div className="p-6">
+        <p className="m-0">Chargement…</p>
+      </div>
     );
   }
 
   return (
-    <Box>
+    <div>
       <KcProtocolTableModal
         isOpen={isKcTableOpen}
-        onClose={onKcTableClose}
+        onClose={() => setIsKcTableOpen(false)}
         initialProtocolName={form.kcProtocolName}
         initialStages={form.kcStages}
         onSave={({ protocolName, stages }) => {
@@ -495,612 +445,550 @@ const ZoneNotificationConfigureForm: React.FC<
           );
         }}
       />
-      <Grid
-        templateColumns={{ base: '1fr', lg: '1fr 1fr' }}
-        gap={6}
-        alignItems="start"
-      >
-        <GridItem>
-          <Box bg={bg} p={5} borderRadius="xl" borderWidth="1px" boxShadow="sm">
-            <PanelTitle
-              icon={FaSeedling}
-              title="Paramètres zone"
-              titleColor={textColor}
-            />
-            {intent === 'edit' ? (
-              <Text fontSize="sm" color={mutedTextColor} mb={3}>
-                Enregistrer met à jour cette notification (secteur, seuils et
-                canaux) pour la zone sélectionnée.
-              </Text>
-            ) : (
-              <Text fontSize="sm" color={mutedTextColor} mb={3}>
-                Une même zone peut regrouper plusieurs secteurs : créez une
-                notification par secteur pour des seuils et un suivi distincts.
-                Un court message de confirmation est ajouté à la liste la
-                première fois que vous enregistrez cette configuration.
-              </Text>
-            )}
-            <VStack align="stretch" spacing={4}>
-              <FormControl>
-                <LabelWithIcon icon={FaMapMarkedAlt} labelColor={textColor}>
-                  Zone
-                </LabelWithIcon>
-                <Select
-                  value={zoneId}
-                  onChange={(e) => {
-                    const id = Number(e.target.value);
-                    setZoneId(id);
-                    setForm((f) =>
-                      f
-                        ? mergeZoneConfig(id, f)
-                        : mergeZoneConfig(id, undefined)
-                    );
-                  }}
-                >
-                  {zones.map((z) => (
-                    <option key={z.id} value={z.id}>
-                      {z.name}
-                    </option>
-                  ))}
-                </Select>
-              </FormControl>
+      <Form layout="vertical" requiredMark={false} className="w-full">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 items-start">
+          <div className={styles.panel}>
+            <PanelTitle icon={FaSeedling} title="Paramètres zone" />
+            <p className={`${styles.muted} mb-3`}>
+              {intent === 'edit'
+                ? 'Enregistrer met à jour cette notification (secteur, seuils et canaux) pour la zone sélectionnée.'
+                : 'Une même zone peut regrouper plusieurs secteurs : créez une notification par secteur pour des seuils et un suivi distincts. Un court message de confirmation est ajouté à la liste la première fois que vous enregistrez cette configuration.'}
+            </p>
 
-              <FormControl>
-                <LabelWithIcon icon={FaSitemap} labelColor={textColor}>
+            <Form.Item
+              label={<LabelWithIcon icon={FaMapMarkedAlt}>Zone</LabelWithIcon>}
+            >
+              <Select
+                value={zoneId}
+                onChange={(id) => {
+                  setZoneId(id);
+                  setForm((f) =>
+                    f ? mergeZoneConfig(id, f) : mergeZoneConfig(id, undefined)
+                  );
+                }}
+                options={zones.map((z) => ({ value: z.id, label: z.name }))}
+              />
+            </Form.Item>
+
+            <Form.Item
+              label={
+                <LabelWithIcon icon={FaSitemap}>
                   Secteur (dans la zone)
                 </LabelWithIcon>
-                <Input
-                  value={form.secteurLabel}
-                  onChange={(e) => update('secteurLabel', e.target.value)}
-                  placeholder="Ex. Secteur nord, Parcelle B, Bloc 2…"
-                />
-                <Text fontSize="xs" color={mutedTextColor} mt={1}>
+              }
+              help={
+                <span className={styles.fineprint}>
                   Identifie la portion de la zone couverte par cette
                   notification.
-                </Text>
-              </FormControl>
+                </span>
+              }
+            >
+              <Input
+                value={form.secteurLabel}
+                onChange={(e) => update('secteurLabel', e.target.value)}
+                placeholder="Ex. Secteur nord, Parcelle B, Bloc 2…"
+              />
+            </Form.Item>
 
-              <FormControl>
-                <LabelWithIcon icon={FaPen} labelColor={textColor}>
+            <Form.Item
+              label={
+                <LabelWithIcon icon={FaPen}>
                   Nom de la notification
                 </LabelWithIcon>
-                <Input
-                  value={form.notificationName}
-                  onChange={(e) => update('notificationName', e.target.value)}
-                  placeholder="Ex. Zone 1 pommes de terre"
-                />
-              </FormControl>
+              }
+            >
+              <Input
+                value={form.notificationName}
+                onChange={(e) => update('notificationName', e.target.value)}
+                placeholder="Ex. Zone 1 pommes de terre"
+              />
+            </Form.Item>
 
-              <FormControl>
-                <LabelWithIcon icon={FaFilter} labelColor={textColor}>
-                  Type de sol
-                </LabelWithIcon>
-                <RadioGroup
-                  value={form.soilType}
-                  onChange={(v) =>
-                    update('soilType', v as ZoneNotificationConfig['soilType'])
-                  }
-                >
-                  <HStack spacing={4}>
-                    <Radio value="light">Léger</Radio>
-                    <Radio value="medium">Moyen</Radio>
-                    <Radio value="heavy">Lourd</Radio>
-                  </HStack>
-                </RadioGroup>
-              </FormControl>
+            <Form.Item
+              label={<LabelWithIcon icon={FaFilter}>Type de sol</LabelWithIcon>}
+            >
+              <Radio.Group
+                value={form.soilType}
+                onChange={(e) =>
+                  update(
+                    'soilType',
+                    e.target.value as ZoneNotificationConfig['soilType']
+                  )
+                }
+              >
+                <Radio value="light">Léger</Radio>
+                <Radio value="medium">Moyen</Radio>
+                <Radio value="heavy">Lourd</Radio>
+              </Radio.Group>
+            </Form.Item>
 
-              <FormControl>
-                <LabelWithIcon icon={FaInfoCircle} labelColor={textColor}>
+            <Form.Item
+              label={
+                <LabelWithIcon icon={FaInfoCircle}>
                   Caractéristique du sol
                 </LabelWithIcon>
-                <Input
-                  value={form.soilCharacteristics}
-                  onChange={(e) =>
-                    update('soilCharacteristics', e.target.value)
-                  }
-                />
-              </FormControl>
+              }
+            >
+              <Input
+                value={form.soilCharacteristics}
+                onChange={(e) => update('soilCharacteristics', e.target.value)}
+              />
+            </Form.Item>
 
-              <FormControl>
-                <LabelWithIcon icon={FaTint} labelColor={textColor}>
+            <Form.Item
+              label={
+                <LabelWithIcon icon={FaTint}>
                   Humidité du sol (source)
                 </LabelWithIcon>
-                <Select
-                  value={form.soilMoistureSource}
-                  onChange={(e) => update('soilMoistureSource', e.target.value)}
-                >
-                  <option value="avg_sensors">Capteur moyen (1+2+3)</option>
-                  <option value="sensor_1">Capteur 1</option>
-                  <option value="sensor_2">Capteur 2</option>
-                  <option value="sensor_3">Capteur 3</option>
-                </Select>
-              </FormControl>
+              }
+            >
+              <Select
+                value={form.soilMoistureSource}
+                onChange={(v) => update('soilMoistureSource', v)}
+                options={[
+                  { value: 'avg_sensors', label: 'Capteur moyen (1+2+3)' },
+                  { value: 'sensor_1', label: 'Capteur 1' },
+                  { value: 'sensor_2', label: 'Capteur 2' },
+                  { value: 'sensor_3', label: 'Capteur 3' },
+                ]}
+              />
+            </Form.Item>
 
-              <SimpleGrid columns={2} spacing={4}>
-                <FormControl>
-                  <LabelWithIcon icon={FaChartLine} labelColor={textColor}>
+            <div className="grid grid-cols-2 gap-4">
+              <Form.Item
+                label={
+                  <LabelWithIcon icon={FaChartLine}>
                     Coefficient Kc
                   </LabelWithIcon>
-                  <Select
-                    value={form.kcMode}
-                    onChange={(e) => {
-                      const v = e.target
-                        .value as ZoneNotificationConfig['kcMode'];
-                      update('kcMode', v);
-                      if (v === 'table') {
-                        setForm((f) =>
-                          f
-                            ? {
-                                ...f,
-                                kc: representativeKcFromStages(f.kcStages),
-                              }
-                            : f
-                        );
-                        onKcTableOpen();
-                      }
-                    }}
-                  >
-                    <option value="table">Table</option>
-                    <option value="manual">Manuel</option>
-                  </Select>
-                  {form.kcMode === 'table' && (
-                    <Button
-                      mt={2}
-                      size="xs"
-                      variant="outline"
-                      colorScheme="blue"
-                      borderRadius="full"
-                      onClick={onKcTableOpen}
-                    >
-                      Ouvrir la table Kc…
-                    </Button>
-                  )}
-                </FormControl>
-                <FormControl>
-                  <LabelWithIcon icon={FaBolt} labelColor={textColor}>
-                    Valeur Kc
-                  </LabelWithIcon>
-                  <NumberInput
-                    value={
-                      form.kcMode === 'table'
-                        ? representativeKcFromStages(form.kcStages)
-                        : form.kc
-                    }
-                    min={0}
-                    max={2}
-                    step={0.05}
-                    isReadOnly={form.kcMode === 'table'}
-                    onChange={(_, v) => {
-                      if (form.kcMode === 'manual') update('kc', v);
-                    }}
-                  >
-                    <NumberInputField
-                      opacity={form.kcMode === 'table' ? 0.85 : 1}
-                    />
-                  </NumberInput>
-                  {form.kcMode === 'table' && (
-                    <Text fontSize="xs" color={mutedTextColor} mt={1}>
-                      Moyenne pondérée (stades actifs) — éditable via la table.
-                    </Text>
-                  )}
-                </FormControl>
-              </SimpleGrid>
-
-              <Grid
-                templateColumns={{ base: '1fr', md: 'minmax(140px,auto) 1fr' }}
-                gap={{ base: 2, md: 6 }}
-                alignItems="start"
-                mt={2}
+                }
               >
-                <Text
-                  fontWeight="semibold"
-                  fontSize="sm"
-                  color={textColor}
-                  pt={1}
-                >
-                  Coefficient Kc
-                </Text>
-                <VStack align="stretch" spacing={2}>
-                  <Checkbox
-                    colorScheme="green"
-                    isChecked={form.kcSensorHumidityLow}
-                    onChange={(e) =>
-                      update('kcSensorHumidityLow', e.target.checked)
-                    }
-                    sx={{
-                      '& .chakra-checkbox__label': {
-                        color: 'green.600',
-                        fontWeight: '500',
-                      },
-                    }}
-                    _dark={{
-                      '& .chakra-checkbox__label': { color: 'green.300' },
-                    }}
-                  >
-                    Humidité basse (%)
-                  </Checkbox>
-                  <Checkbox
-                    colorScheme="green"
-                    isChecked={form.kcSensorHumidityMid}
-                    onChange={(e) =>
-                      update('kcSensorHumidityMid', e.target.checked)
-                    }
-                    sx={{
-                      '& .chakra-checkbox__label': {
-                        color: 'green.600',
-                        fontWeight: '500',
-                      },
-                    }}
-                    _dark={{
-                      '& .chakra-checkbox__label': { color: 'green.300' },
-                    }}
-                  >
-                    Humidité moyenne (%)
-                  </Checkbox>
-                  <Checkbox
-                    colorScheme="green"
-                    isChecked={form.kcSensorHumidityHigh}
-                    onChange={(e) =>
-                      update('kcSensorHumidityHigh', e.target.checked)
-                    }
-                    sx={{
-                      '& .chakra-checkbox__label': {
-                        color: 'green.600',
-                        fontWeight: '500',
-                      },
-                    }}
-                    _dark={{
-                      '& .chakra-checkbox__label': { color: 'green.300' },
-                    }}
-                  >
-                    Humidité haute (%)
-                  </Checkbox>
-                </VStack>
-              </Grid>
-
-              <FormControl>
-                <LabelWithIcon icon={FaSun} labelColor={textColor}>
-                  Référence ETo
-                </LabelWithIcon>
                 <Select
-                  value={form.et0Source}
+                  value={form.kcMode}
+                  onChange={(v) => {
+                    update('kcMode', v as ZoneNotificationConfig['kcMode']);
+                    if (v === 'table') {
+                      setForm((f) =>
+                        f
+                          ? {
+                              ...f,
+                              kc: representativeKcFromStages(f.kcStages),
+                            }
+                          : f
+                      );
+                      setIsKcTableOpen(true);
+                    }
+                  }}
+                  options={[
+                    { value: 'table', label: 'Table' },
+                    { value: 'manual', label: 'Manuel' },
+                  ]}
+                />
+                {form.kcMode === 'table' && (
+                  <Button
+                    size="small"
+                    className="mt-2"
+                    onClick={() => setIsKcTableOpen(true)}
+                  >
+                    Ouvrir la table Kc…
+                  </Button>
+                )}
+              </Form.Item>
+              <Form.Item
+                label={<LabelWithIcon icon={FaBolt}>Valeur Kc</LabelWithIcon>}
+                help={
+                  form.kcMode === 'table' ? (
+                    <span className={styles.fineprint}>
+                      Moyenne pondérée (stades actifs) — éditable via la table.
+                    </span>
+                  ) : undefined
+                }
+              >
+                <InputNumber
+                  className="w-full"
+                  value={
+                    form.kcMode === 'table'
+                      ? representativeKcFromStages(form.kcStages)
+                      : form.kc
+                  }
+                  min={0}
+                  max={2}
+                  step={0.05}
+                  readOnly={form.kcMode === 'table'}
+                  onChange={(v) => {
+                    if (form.kcMode === 'manual' && typeof v === 'number') {
+                      update('kc', v);
+                    }
+                  }}
+                />
+              </Form.Item>
+            </div>
+
+            <div className="mt-2 grid grid-cols-1 md:grid-cols-[minmax(140px,auto)_1fr] gap-2 md:gap-6 items-start">
+              <p className="text-sm font-semibold pt-1 m-0">Coefficient Kc</p>
+              <div className="flex flex-col gap-2">
+                <Checkbox
+                  checked={form.kcSensorHumidityLow}
                   onChange={(e) =>
-                    update(
-                      'et0Source',
-                      e.target.value as ZoneNotificationConfig['et0Source']
-                    )
+                    update('kcSensorHumidityLow', e.target.checked)
                   }
                 >
-                  <option value="weather_station">Calcul station météo</option>
-                  <option value="calculated">Calcul locale</option>
-                </Select>
-              </FormControl>
-
-              <FormControl>
-                <LabelWithIcon icon={FaCloud} labelColor={textColor}>
-                  Précipitations
-                </LabelWithIcon>
-                <Select
-                  value={form.precipSource}
-                  onChange={(e) => update('precipSource', e.target.value)}
+                  Humidité basse (%)
+                </Checkbox>
+                <Checkbox
+                  checked={form.kcSensorHumidityMid}
+                  onChange={(e) =>
+                    update('kcSensorHumidityMid', e.target.checked)
+                  }
                 >
-                  <option value="sensor">Capteur de précipitation</option>
-                  <option value="station">Station</option>
-                </Select>
-              </FormControl>
+                  Humidité moyenne (%)
+                </Checkbox>
+                <Checkbox
+                  checked={form.kcSensorHumidityHigh}
+                  onChange={(e) =>
+                    update('kcSensorHumidityHigh', e.target.checked)
+                  }
+                >
+                  Humidité haute (%)
+                </Checkbox>
+              </div>
+            </div>
 
-              <FormControl>
-                <LabelWithIcon icon={FaPercent} labelColor={textColor}>
+            <Form.Item
+              label={<LabelWithIcon icon={FaSun}>Référence ETo</LabelWithIcon>}
+              className="mt-4"
+            >
+              <Select
+                value={form.et0Source}
+                onChange={(v) =>
+                  update('et0Source', v as ZoneNotificationConfig['et0Source'])
+                }
+                options={[
+                  { value: 'weather_station', label: 'Calcul station météo' },
+                  { value: 'calculated', label: 'Calcul locale' },
+                ]}
+              />
+            </Form.Item>
+
+            <Form.Item
+              label={
+                <LabelWithIcon icon={FaCloud}>Précipitations</LabelWithIcon>
+              }
+            >
+              <Select
+                value={form.precipSource}
+                onChange={(v) => update('precipSource', v)}
+                options={[
+                  { value: 'sensor', label: 'Capteur de précipitation' },
+                  { value: 'station', label: 'Station' },
+                ]}
+              />
+            </Form.Item>
+
+            <Form.Item
+              label={
+                <LabelWithIcon icon={FaPercent}>
                   Facteur KR ({form.krFactor.toFixed(2)})
                 </LabelWithIcon>
-                <Slider
-                  min={0}
-                  max={1}
-                  step={0.01}
-                  value={form.krFactor}
-                  onChange={(v) => update('krFactor', v)}
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </FormControl>
+              }
+            >
+              <Slider
+                min={0}
+                max={1}
+                step={0.01}
+                value={form.krFactor}
+                onChange={(v) => update('krFactor', v as number)}
+              />
+            </Form.Item>
 
-              <HStack align="flex-start">
-                <FormControl>
-                  <LabelWithIcon icon={FaVectorSquare} labelColor={textColor}>
+            <div className="grid grid-cols-2 gap-4">
+              <Form.Item
+                label={
+                  <LabelWithIcon icon={FaVectorSquare}>
                     Surface (ha)
                   </LabelWithIcon>
-                  <NumberInput
-                    value={form.zoneAreaHa}
-                    min={0}
-                    step={0.1}
-                    onChange={(_, v) => update('zoneAreaHa', v)}
-                  >
-                    <NumberInputField />
-                  </NumberInput>
-                </FormControl>
-                <FormControl>
-                  <LabelWithIcon icon={FaLeaf} labelColor={textColor}>
-                    Culture
-                  </LabelWithIcon>
-                  <Input
-                    value={form.cropType}
-                    onChange={(e) => update('cropType', e.target.value)}
-                  />
-                </FormControl>
-              </HStack>
-
-              <FormControl>
-                <LabelWithIcon icon={FaWater} labelColor={textColor}>
-                  Débit (m³/h)
-                </LabelWithIcon>
-                <NumberInput
-                  value={form.flowRateM3h}
+                }
+              >
+                <InputNumber
+                  className="w-full"
+                  value={form.zoneAreaHa}
                   min={0}
-                  onChange={(_, v) =>
-                    update('flowRateM3h', Number.isFinite(v) ? v : 0)
+                  step={0.1}
+                  onChange={(v) =>
+                    update('zoneAreaHa', typeof v === 'number' ? v : 0)
                   }
-                >
-                  <NumberInputField />
-                </NumberInput>
-              </FormControl>
-            </VStack>
-          </Box>
-        </GridItem>
+                />
+              </Form.Item>
+              <Form.Item
+                label={<LabelWithIcon icon={FaLeaf}>Culture</LabelWithIcon>}
+              >
+                <Input
+                  value={form.cropType}
+                  onChange={(e) => update('cropType', e.target.value)}
+                />
+              </Form.Item>
+            </div>
 
-        <GridItem>
-          <Box bg={bg} p={5} borderRadius="xl" borderWidth="1px" boxShadow="sm">
+            <Form.Item
+              label={<LabelWithIcon icon={FaWater}>Débit (m³/h)</LabelWithIcon>}
+            >
+              <InputNumber
+                className="w-full"
+                value={form.flowRateM3h}
+                min={0}
+                onChange={(v) =>
+                  update('flowRateM3h', typeof v === 'number' ? v : 0)
+                }
+              />
+            </Form.Item>
+          </div>
+
+          <div className={styles.panel}>
             <PanelTitle
               icon={FaShower}
               title="Irrigation & seuils moteur v1"
-              accent="cyan.400"
-              titleColor={textColor}
+              accentClassName="text-info"
             />
-            <VStack align="stretch" spacing={4}>
-              <FormControl>
-                <LabelWithIcon icon={FaWater} labelColor={textColor}>
+
+            <Form.Item
+              label={
+                <LabelWithIcon icon={FaWater}>
                   Méthode d&apos;irrigation
                 </LabelWithIcon>
-                <RadioGroup
-                  value={form.irrigationMethod}
-                  onChange={(v) =>
-                    update(
-                      'irrigationMethod',
-                      v as ZoneNotificationConfig['irrigationMethod']
-                    )
-                  }
-                >
-                  <Stack>
-                    <Radio value="drip_sprinkler">Goutte / aspersion</Radio>
-                    <Radio value="subsurface_drip">Goutte souterraine</Radio>
-                  </Stack>
-                </RadioGroup>
-              </FormControl>
+              }
+            >
+              <Radio.Group
+                value={form.irrigationMethod}
+                onChange={(e) =>
+                  update(
+                    'irrigationMethod',
+                    e.target.value as ZoneNotificationConfig['irrigationMethod']
+                  )
+                }
+              >
+                <div className="flex flex-col gap-1">
+                  <Radio value="drip_sprinkler">Goutte / aspersion</Radio>
+                  <Radio value="subsurface_drip">Goutte souterraine</Radio>
+                </div>
+              </Radio.Group>
+            </Form.Item>
 
-              <FormControl>
-                <LabelWithIcon icon={FaClock} labelColor={textColor}>
+            <Form.Item
+              label={
+                <LabelWithIcon icon={FaClock}>
                   Fréquence & notification
                 </LabelWithIcon>
-                <InputGroup>
-                  <Input
-                    type="number"
-                    inputMode="numeric"
-                    min={5}
-                    max={1440}
-                    step={5}
-                    value={form.intervalMinutes}
-                    onChange={(e) => {
-                      const v = Number(e.target.value);
-                      if (!Number.isFinite(v)) return;
-                      update(
-                        'intervalMinutes',
-                        Math.min(1440, Math.max(5, Math.round(v)))
-                      );
-                    }}
-                  />
-                  <InputRightAddon>minutes</InputRightAddon>
-                </InputGroup>
-              </FormControl>
+              }
+            >
+              <InputNumber
+                className="w-full"
+                addonAfter="minutes"
+                min={5}
+                max={1440}
+                step={5}
+                value={form.intervalMinutes}
+                onChange={(v) => {
+                  if (typeof v !== 'number' || !Number.isFinite(v)) return;
+                  update(
+                    'intervalMinutes',
+                    Math.min(1440, Math.max(5, Math.round(v)))
+                  );
+                }}
+              />
+            </Form.Item>
 
-              <FormControl>
-                <LabelWithIcon icon={FaSlidersH} labelColor={textColor}>
+            <Form.Item
+              label={
+                <LabelWithIcon icon={FaSlidersH}>
                   Perméabilité ({form.soilPermeabilityPct} %)
                 </LabelWithIcon>
-                <Slider
-                  min={0}
-                  max={100}
-                  step={1}
-                  value={form.soilPermeabilityPct}
-                  onChange={(v) => update('soilPermeabilityPct', v)}
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-              </FormControl>
+              }
+            >
+              <Slider
+                min={0}
+                max={100}
+                step={1}
+                value={form.soilPermeabilityPct}
+                onChange={(v) => update('soilPermeabilityPct', v as number)}
+              />
+            </Form.Item>
 
-              <FormControl>
-                <LabelWithIcon icon={FaRandom} labelColor={textColor}>
-                  Vanne
-                </LabelWithIcon>
-                <RadioGroup
-                  value={form.valveMode}
-                  onChange={(v) =>
-                    update(
-                      'valveMode',
-                      v as ZoneNotificationConfig['valveMode']
-                    )
-                  }
-                >
-                  <HStack spacing={4}>
-                    <Radio value="auto">Automatique</Radio>
-                    <Radio value="manual">Manuelle</Radio>
-                  </HStack>
-                </RadioGroup>
-              </FormControl>
+            <Form.Item
+              label={<LabelWithIcon icon={FaRandom}>Vanne</LabelWithIcon>}
+            >
+              <Radio.Group
+                value={form.valveMode}
+                onChange={(e) =>
+                  update(
+                    'valveMode',
+                    e.target.value as ZoneNotificationConfig['valveMode']
+                  )
+                }
+              >
+                <Radio value="auto">Automatique</Radio>
+                <Radio value="manual">Manuelle</Radio>
+              </Radio.Group>
+            </Form.Item>
 
-              <FormControl>
-                <LabelWithIcon icon={FaFan} labelColor={textColor}>
-                  Seuil DPV (kPa)
-                </LabelWithIcon>
-                <NumberInput
-                  value={form.vpdThresholdKpa}
-                  min={0}
-                  max={5}
-                  step={0.1}
-                  onChange={(_, v) => update('vpdThresholdKpa', v)}
-                >
-                  <NumberInputField />
-                </NumberInput>
-              </FormControl>
+            <Form.Item
+              label={
+                <LabelWithIcon icon={FaFan}>Seuil DPV (kPa)</LabelWithIcon>
+              }
+            >
+              <InputNumber
+                className="w-full"
+                value={form.vpdThresholdKpa}
+                min={0}
+                max={5}
+                step={0.1}
+                onChange={(v) =>
+                  update('vpdThresholdKpa', typeof v === 'number' ? v : 0)
+                }
+              />
+            </Form.Item>
 
-              <FormControl>
-                <LabelWithIcon icon={FaTree} labelColor={textColor}>
-                  Surveillance racine
-                </LabelWithIcon>
-                <Select
-                  value={form.rootMonitoring}
-                  onChange={(e) =>
-                    update(
-                      'rootMonitoring',
-                      e.target.value as ZoneNotificationConfig['rootMonitoring']
-                    )
-                  }
-                >
-                  <option value="on">Activée</option>
-                  <option value="off">Désactivée</option>
-                </Select>
-              </FormControl>
+            <Form.Item
+              label={
+                <LabelWithIcon icon={FaTree}>Surveillance racine</LabelWithIcon>
+              }
+            >
+              <Select
+                value={form.rootMonitoring}
+                onChange={(v) =>
+                  update(
+                    'rootMonitoring',
+                    v as ZoneNotificationConfig['rootMonitoring']
+                  )
+                }
+                options={[
+                  { value: 'on', label: 'Activée' },
+                  { value: 'off', label: 'Désactivée' },
+                ]}
+              />
+            </Form.Item>
 
-              <Divider />
+            <Divider />
 
-              <HStack spacing={2}>
-                <Icon as={FaTachometerAlt} color="orange.400" boxSize={5} />
-                <Text fontWeight="semibold" color={textColor}>
-                  Seuils moteur v1 (ET0 × Kc, humidité)
-                </Text>
-              </HStack>
+            <div className={`${styles.thresholdsHeading} mb-3`}>
+              <FaTachometerAlt className="text-warning" aria-hidden />
+              <span>Seuils moteur v1 (ET0 × Kc, humidité)</span>
+            </div>
 
-              <FormControl>
-                <LabelWithIcon
-                  icon={FaTint}
-                  labelColor={textColor}
-                  iconColor="blue.400"
-                >
+            <Form.Item
+              label={
+                <LabelWithIcon icon={FaTint}>
                   Seuil critique humidité sol (%)
                 </LabelWithIcon>
-                <Slider
-                  min={5}
-                  max={60}
-                  step={1}
-                  value={form.criticalThresholdPct}
-                  onChange={(v) => update('criticalThresholdPct', v)}
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
-                <Text fontSize="sm" color="gray.500">
+              }
+              help={
+                <span className={styles.sliderValue}>
                   {form.criticalThresholdPct} % — en dessous = décision critique
-                </Text>
-              </FormControl>
+                </span>
+              }
+            >
+              <Slider
+                min={5}
+                max={60}
+                step={1}
+                value={form.criticalThresholdPct}
+                onChange={(v) => update('criticalThresholdPct', v as number)}
+              />
+            </Form.Item>
 
-              <FormControl>
-                <LabelWithIcon icon={FaBolt} labelColor={textColor}>
+            <Form.Item
+              label={
+                <LabelWithIcon icon={FaBolt}>
                   Seuil conseil ET0×Kc (mm)
                 </LabelWithIcon>
-                <NumberInput
-                  value={form.et0KcAdvisoryMm}
-                  min={0}
-                  max={20}
-                  step={0.5}
-                  onChange={(_, v) => update('et0KcAdvisoryMm', v)}
-                >
-                  <NumberInputField />
-                </NumberInput>
-                <Text fontSize="sm" color="gray.500">
+              }
+              help={
+                <span className={styles.sliderValue}>
                   Au-dessus = décision advisory (demande en eau élevée)
-                </Text>
-              </FormControl>
+                </span>
+              }
+            >
+              <InputNumber
+                className="w-full"
+                value={form.et0KcAdvisoryMm}
+                min={0}
+                max={20}
+                step={0.5}
+                onChange={(v) =>
+                  update('et0KcAdvisoryMm', typeof v === 'number' ? v : 0)
+                }
+              />
+            </Form.Item>
 
-              <FormControl>
-                <LabelWithIcon icon={FaCubes} labelColor={textColor}>
+            <Form.Item
+              label={
+                <LabelWithIcon icon={FaCubes}>
                   Volume d&apos;eau max (m³)
                 </LabelWithIcon>
-                <NumberInput
-                  value={form.maxWaterM3}
-                  min={0}
-                  onChange={(_, v) => update('maxWaterM3', v)}
-                >
-                  <NumberInputField />
-                </NumberInput>
-              </FormControl>
+              }
+            >
+              <InputNumber
+                className="w-full"
+                value={form.maxWaterM3}
+                min={0}
+                onChange={(v) =>
+                  update('maxWaterM3', typeof v === 'number' ? v : 0)
+                }
+              />
+            </Form.Item>
 
-              <Divider />
+            <Divider />
 
-              <HStack spacing={2}>
-                <Icon as={FaBell} color="purple.400" boxSize={5} />
-                <Text fontWeight="semibold" color={textColor}>
-                  Canaux de notification
-                </Text>
-              </HStack>
-              <Text fontSize="sm" color="gray.500" mb={1}>
-                Cochez les canaux que vous acceptez pour recevoir des alertes.
-              </Text>
+            <div className={`${styles.thresholdsHeading} mb-1`}>
+              <FaBell className="text-info" aria-hidden />
+              <span>Canaux de notification</span>
+            </div>
+            <p className={`${styles.muted} mb-3`}>
+              Cochez les canaux que vous acceptez pour recevoir des alertes.
+            </p>
 
-              <VStack align="stretch" spacing={3} pl={1}>
-                <Checkbox
-                  isChecked={form.notifyEmail}
-                  onChange={(e) => update('notifyEmail', e.target.checked)}
-                  colorScheme="blue"
-                >
-                  <HStack spacing={2} as="span">
-                    <Icon as={FaEnvelopeOpenText} color="blue.400" />
-                    <span>E-mail</span>
-                  </HStack>
-                </Checkbox>
-                <Checkbox
-                  isChecked={form.notifySms}
-                  onChange={(e) => update('notifySms', e.target.checked)}
-                  colorScheme="blue"
-                >
-                  <HStack spacing={2} as="span">
-                    <Icon as={FaMobileAlt} color="green.500" />
-                    <span>SMS</span>
-                  </HStack>
-                </Checkbox>
-                <Checkbox
-                  isChecked={form.notifyWhatsapp}
-                  onChange={(e) => update('notifyWhatsapp', e.target.checked)}
-                  colorScheme="blue"
-                >
-                  <HStack spacing={2} as="span">
-                    <Icon as={FaWhatsapp} color="green.400" />
-                    <span>WhatsApp</span>
-                  </HStack>
-                </Checkbox>
-              </VStack>
-            </VStack>
-          </Box>
-        </GridItem>
-      </Grid>
+            <div className="flex flex-col gap-3 pl-1">
+              <Checkbox
+                checked={form.notifyEmail}
+                onChange={(e) => update('notifyEmail', e.target.checked)}
+              >
+                <span className={styles.channelsRow}>
+                  <FaEnvelopeOpenText className="text-info" />
+                  <span>E-mail</span>
+                </span>
+              </Checkbox>
+              <Checkbox
+                checked={form.notifySms}
+                onChange={(e) => update('notifySms', e.target.checked)}
+              >
+                <span className={styles.channelsRow}>
+                  <FaMobileAlt className="text-success" />
+                  <span>SMS</span>
+                </span>
+              </Checkbox>
+              <Checkbox
+                checked={form.notifyWhatsapp}
+                onChange={(e) => update('notifyWhatsapp', e.target.checked)}
+              >
+                <span className={styles.channelsRow}>
+                  <FaWhatsapp className="text-success" />
+                  <span>WhatsApp</span>
+                </span>
+              </Checkbox>
+            </div>
+          </div>
+        </div>
 
-      <HStack justify="center" mt={8}>
-        <Button
-          type="button"
-          colorScheme="blue"
-          size="lg"
-          leftIcon={<Icon as={FaBell} />}
-          onClick={() => void apply()}
-        >
-          Enregistrer la notification de zone
-        </Button>
-      </HStack>
-    </Box>
+        <div className="mt-8 flex justify-center">
+          <Button
+            type="primary"
+            size="large"
+            icon={<FaBell />}
+            onClick={() => void apply()}
+          >
+            Enregistrer la notification de zone
+          </Button>
+        </div>
+      </Form>
+    </div>
   );
 };
 

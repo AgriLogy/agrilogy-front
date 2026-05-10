@@ -118,7 +118,7 @@ const VPDChart = ({
         <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
-            colorScheme="teal"
+            colorScheme="brand"
             variant="ghost"
             onClick={handleScreenshot}
           >
@@ -126,7 +126,7 @@ const VPDChart = ({
           </Button>
           <Button
             aria-label="Exporter CSV"
-            colorScheme="blue"
+            colorScheme="brand"
             variant="ghost"
             onClick={handleDownloadData}
           >
@@ -183,10 +183,10 @@ const VPDChart = ({
             <Line
               dataKey="vpd"
               name={vpdUnit ? `${LEGEND_NAME} (${vpdUnit})` : LEGEND_NAME}
-              stroke="#3182ce"
+              stroke="#1f7740"
               {...defaultLineProps}
               hide={!showVpd}
-              activeDot={activeDotForSeries('#3182ce')}
+              activeDot={activeDotForSeries('#1f7740')}
               isAnimationActive={false}
             />
           </LineChart>

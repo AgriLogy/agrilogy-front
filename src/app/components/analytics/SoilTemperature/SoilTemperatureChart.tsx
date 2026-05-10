@@ -217,7 +217,7 @@ const SoilTemperatureChart = ({
         <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
-            colorScheme="teal"
+            colorScheme="brand"
             variant="ghost"
             onClick={handleScreenshot}
           >
@@ -225,7 +225,7 @@ const SoilTemperatureChart = ({
           </Button>
           <Button
             aria-label="Exporter CSV"
-            colorScheme="blue"
+            colorScheme="brand"
             variant="ghost"
             onClick={handleDownloadData}
           >
@@ -335,12 +335,12 @@ const SoilTemperatureChart = ({
               type="monotone"
               dataKey="low"
               name="Basse"
-              stroke="#3182CE"
+              stroke="#1F7740"
               strokeWidth={2.25}
               strokeLinecap="round"
               strokeLinejoin="round"
               dot={false}
-              activeDot={activeDotForSeries('#3182CE')}
+              activeDot={activeDotForSeries('#1F7740')}
               hide={!showLow}
               isAnimationActive={false}
             />

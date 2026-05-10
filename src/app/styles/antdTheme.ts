@@ -17,6 +17,12 @@ export const antdTheme: ThemeConfig = {
     colorWarning: colors.semantic.warning,
     colorError: colors.semantic.danger,
     colorInfo: colors.semantic.info,
+    /* Anchor / hyperlink tokens default to a separate antd blue
+     * (#1677ff). Pin them to the brand so anchors, breadcrumb links,
+     * Tag info text, "voir plus" links, etc. all render green. */
+    colorLink: colors.primary[600],
+    colorLinkHover: colors.primary[500],
+    colorLinkActive: colors.primary[700],
 
     // Note: colorTextBase / colorBgBase are intentionally NOT set here.
     // AntD's algorithm derives them per mode (dark vs light) — overriding

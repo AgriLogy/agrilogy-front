@@ -1,12 +1,11 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Box, HStack, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import api from '@/app/lib/api';
 import s from '@/app/styles/style.module.css';
 
-import DateRangePicker from '../analytics/DateRangePicker';
 import getActiveGraphs, {
   ActiveGraphResponse,
 } from '@/app/utils/getActiveGraphs';
@@ -20,7 +19,7 @@ import SolarRadiationMain from '../analytics/SolarRadiation/SolarRadiationMain';
 import CumulPrecipitationMain from '../analytics/CumulPrecipitation/CumulPrecipitationMain';
 import PrecipitationRateMain from '../analytics/PrecipitationRate/PrecipitationRateMain';
 import VPDMain from '../analytics/VPD/VPDMain';
-import ZoneNotificationBell from '@/app/components/common/ZoneNotificationBell';
+import DashboardHeader from './DashboardHeader';
 
 const StationMain = () => {
   const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
@@ -29,7 +28,7 @@ const StationMain = () => {
     null
   );
 
-  const { bg, textColor } = useColorModeStyles();
+  const { bg } = useColorModeStyles();
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>(
     new Date().toISOString().split('T')[0]
@@ -58,46 +57,14 @@ const StationMain = () => {
 
   return (
     <div className={s.container}>
-      <Box bg={bg} className={s.header}>
-        <HStack spacing={3} flexWrap="wrap" alignItems="center">
-          <Text color={textColor}>Station météo du </Text>
-          <select
-            value={selectedZone ?? ''}
-            onChange={(e) => setSelectedZone(Number(e.target.value))}
-            style={{
-              borderRadius: '2px',
-              padding: '4px',
-              color: useColorModeValue('black', 'white'),
-              backgroundColor: useColorModeValue('white', '#2D3748'),
-              border: `1px solid ${useColorModeValue('black', 'white')}`,
-            }}
-          >
-            {zones.map((zone) => (
-              <option key={zone.id} value={zone.id}>
-                {zone.name}
-              </option>
-            ))}
-          </select>
-          {selectedZone != null && (
-            <ZoneNotificationBell
-              zoneId={selectedZone}
-              zoneName={
-                zones.find((z) => z.id === selectedZone)?.name ?? 'Zone'
-              }
-            />
-          )}
-        </HStack>
-      </Box>
-
-      <Box bg={bg} className={s.header} mt={0} mb={0}>
-        <DateRangePicker
-          setStartDate={setStartDate}
-          setEndDate={setEndDate}
-          zones={zones}
-          selectedZone={selectedZone}
-          setSelectedZone={setSelectedZone}
-        />
-      </Box>
+      <DashboardHeader
+        label="Station météo"
+        zones={zones}
+        selectedZone={selectedZone}
+        setSelectedZone={setSelectedZone}
+        setStartDate={setStartDate}
+        setEndDate={setEndDate}
+      />
 
       {activeGraph?.wind_radar_status && (
         <Box bg={bg} className={`${s.box} ${s.wide}`}>

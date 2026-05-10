@@ -270,8 +270,8 @@ const VannesPompesSchemaMain = () => {
   const dosingPumps = pumps.length > 1 ? pumps.slice(1) : [];
 
   const pipeTrack = useColorModeValue(
-    'linear(to-r, #7dd3fc 0%, #38bdf8 50%, #7dd3fc 100%)',
-    'linear(to-r, #0369a1 0%, #0284c7 50%, #0369a1 100%)'
+    'linear(to-r, #7ecb98 0%, #4cae70 50%, #7ecb98 100%)',
+    'linear(to-r, #114828 0%, #1f7740 50%, #114828 100%)'
   );
 
   return (
@@ -292,7 +292,7 @@ const VannesPompesSchemaMain = () => {
           <VStack align={{ base: 'stretch', md: 'flex-start' }} spacing={3}>
             <HStack>
               <Badge
-                colorScheme="teal"
+                colorScheme="brand"
                 variant="subtle"
                 borderRadius="md"
                 px={2}
@@ -367,7 +367,7 @@ const VannesPompesSchemaMain = () => {
               <Button
                 as={NextLink}
                 href="/vannes-pompes"
-                colorScheme="teal"
+                colorScheme="brand"
                 size="lg"
                 borderRadius="xl"
                 px={8}

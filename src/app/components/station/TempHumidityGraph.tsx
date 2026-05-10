@@ -166,7 +166,7 @@ const TempHumidityGraph = ({ data }: { data: any }) => {
               strokeLinejoin="round"
               dot={false}
               activeDot={activeDotForSeries(
-                data.sensor_colors?.humidity_weather_color ?? '#0d9488'
+                data.sensor_colors?.humidity_weather_color ?? '#2e924f'
               )}
               hide={!seriesVisible.humidity_weather}
             />

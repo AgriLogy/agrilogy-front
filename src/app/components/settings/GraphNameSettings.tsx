@@ -118,7 +118,7 @@ const GraphNameSettings = () => {
           </Table>
 
           <Flex justifyContent="center" mt={4}>
-            <Button colorScheme="blue" size="lg" onClick={handleSave}>
+            <Button colorScheme="brand" size="lg" onClick={handleSave}>
               Mettre à jour
             </Button>
           </Flex>

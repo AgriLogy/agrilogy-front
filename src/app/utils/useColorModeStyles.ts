@@ -13,7 +13,7 @@ const useColorModeStyles = () => {
   const iconColor = useColorModeValue('gray.600', 'gray.300');
   const textColor = useColorModeValue('gray.800', 'gray.200');
   const zoneColor = useColorModeValue('gray.500', 'gray.500');
-  const hoverColor = useColorModeValue('blue.500', 'blue.300');
+  const hoverColor = useColorModeValue('brand.500', 'brand.300');
   // const bgColor = useColorModeValue('green.500', 'green.300');
   const navBgColor = useColorModeValue('gray.100', 'gray.600');
   const tableStripeClore = useColorModeValue('gray.400', 'gray.800');
@@ -41,7 +41,7 @@ const useColorModeStyles = () => {
   const thBg = useColorModeValue('gray.100', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
   const mutedTextColor = useColorModeValue('gray.600', 'gray.400');
-  const tabAccent = useColorModeValue('blue.600', 'blue.300');
+  const tabAccent = useColorModeValue('brand.600', 'brand.300');
 
   return {
     bg,

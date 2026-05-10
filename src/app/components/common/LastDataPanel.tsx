@@ -42,16 +42,25 @@ export default function LastDataPanel({
       bg={bg}
       borderRadius="2xl"
       p={{ base: 4, md: 5 }}
-      minH="280px"
-      minW={0}
-      w="100%"
-      maxW="100%"
-      flex={1}
+      /* Content-driven width so the column's alignItems="center" can
+       *  actually center the panel horizontally (a w=100% panel would
+       *  swallow the available space and look pinned to the left).
+       *  alignSelf overrides the per-sensor wrapper that defaults to
+       *  alignItems="stretch", and mx="auto" handles the block-flow
+       *  case for good measure. */
+      w="auto"
+      minW="220px"
+      maxW="320px"
       boxShadow="sm"
       display="flex"
       flexDirection="column"
-      justifyContent="flex-start"
-      alignItems="stretch"
+      justifyContent="center"
+      alignItems="center"
+      alignSelf="center"
+      textAlign="center"
+      gap={2}
+      mx="auto"
+      my="auto"
       {...props}
     >
       {children}

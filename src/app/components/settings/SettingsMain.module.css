@@ -1,7 +1,13 @@
+/* Mirror the home dashboard / station layout: 2-col grid with safe gutters. */
 .container {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  margin-right: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  gap: 0.5rem;
+  padding: 0 4px 8px 0;
+  align-content: start;
 }
 
 .header {
@@ -26,17 +32,26 @@
 }
 .box {
   margin: 3px;
-  border-radius: 5px;
+  border-radius: 8px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   flex-wrap: wrap;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 400px;
+  min-height: 280px;
+  box-sizing: border-box;
   font-size: 24px;
   font-weight: bold;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+[data-theme='dark'] .box {
+  background: var(--surface-elevated);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
 .wide {

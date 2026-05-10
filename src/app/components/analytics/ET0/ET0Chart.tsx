@@ -140,7 +140,7 @@ const EC0Chart = ({
         <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
-            colorScheme="teal"
+            colorScheme="brand"
             variant="ghost"
             onClick={handleScreenshot}
           >
@@ -148,7 +148,7 @@ const EC0Chart = ({
           </Button>
           <Button
             aria-label="Exporter CSV"
-            colorScheme="blue"
+            colorScheme="brand"
             variant="ghost"
             onClick={handleDownloadData}
           >
@@ -195,7 +195,7 @@ const EC0Chart = ({
               dataKey="et0_sensor"
               {...defaultBarProps}
               maxBarSize={maxBarSizeForPointCount(chartData.length)}
-              fill="#3182ce"
+              fill="#1f7740"
               name={`ET0 Capteur (${et0Unit})`}
               hide={!seriesVisible.et0_sensor}
             />

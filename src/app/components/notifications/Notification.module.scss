@@ -1,0 +1,42 @@
+.card {
+  background: var(--surface-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition:
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
+
+.card:hover {
+  border-color: var(--brand);
+  box-shadow: var(--shadow-card);
+}
+
+[data-theme='dark'] .card {
+  background: var(--surface-elevated);
+}
+
+.confirmationPanel {
+  background: var(--brand-soft);
+  border: 1px solid var(--color-primary-200);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+  margin-top: 0.75rem;
+  color: var(--text-primary);
+}
+
+[data-theme='dark'] .confirmationPanel {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--border-subtle);
+}
+
+.fieldLabel {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.metaText {
+  color: var(--text-secondary);
+}

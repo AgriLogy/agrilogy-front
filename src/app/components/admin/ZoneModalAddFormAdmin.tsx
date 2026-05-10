@@ -161,7 +161,7 @@ const ZoneModalAddForm = ({ isOpen, onClose, user }: ZoneModalAddForm) => {
 
         <ModalFooter>
           <Button
-            colorScheme="blue"
+            colorScheme="brand"
             mr={3}
             onClick={handleSubmit}
             isLoading={loading}

@@ -1009,7 +1009,7 @@ export default function AgricultureMapboxMap({
                 <Button
                   size="sm"
                   onClick={handleSelect}
-                  colorScheme="blue"
+                  colorScheme="brand"
                   variant={drawMode === 'simple_select' ? 'solid' : 'outline'}
                 >
                   Sélectionner
