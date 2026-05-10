@@ -121,7 +121,7 @@ const ElectricityconsumptionChart = ({
         <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
-            colorScheme="teal"
+            colorScheme="brand"
             variant="ghost"
             onClick={handleScreenshot}
           >
@@ -129,7 +129,7 @@ const ElectricityconsumptionChart = ({
           </Button>
           <Button
             aria-label="Exporter CSV"
-            colorScheme="blue"
+            colorScheme="brand"
             variant="ghost"
             onClick={handleDownloadData}
           >

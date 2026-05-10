@@ -30,7 +30,7 @@ const FloatingButton = () => {
         right="20px"
         borderRadius="50%"
         size="lg"
-        colorScheme="blue"
+        colorScheme="brand"
         onClick={() => setIsOpen(true)}
       />
 
@@ -44,7 +44,7 @@ const FloatingButton = () => {
           </ModalBody>
           <ModalFooter>
             <Button
-              colorScheme="blue"
+              colorScheme="brand"
               onClick={() => router.push('/admin/users/create')}
             >
               Oui

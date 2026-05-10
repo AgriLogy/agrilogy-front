@@ -315,6 +315,13 @@ const SensorReadingsSettings = () => {
     h: '10' as const,
     px: 3,
     bg: panelBg,
+    /* native <select> doesn't pick up Chakra Input defaults; ring it
+     *  brand-green explicitly so its focus outline matches the rest. */
+    _focus: {
+      borderColor: 'brand.500' as const,
+      boxShadow: '0 0 0 1px var(--chakra-colors-brand-500)' as const,
+      outlineColor: 'var(--chakra-colors-brand-500)' as const,
+    },
   };
 
   const toolbarSelectProps = {
@@ -439,7 +446,7 @@ const SensorReadingsSettings = () => {
                   size="sm"
                   icon={<FaPen />}
                   variant="ghost"
-                  colorScheme="blue"
+                  colorScheme="brand"
                   onClick={() => startEdit(row)}
                 />
               </Td>
@@ -452,7 +459,7 @@ const SensorReadingsSettings = () => {
         <Button size="sm" variant="outline" onClick={handleReset}>
           Reinitialiser
         </Button>
-        <Button size="sm" colorScheme="blue" onClick={handleSave}>
+        <Button size="sm" colorScheme="brand" onClick={handleSave}>
           Enregistrer
         </Button>
       </Flex>
@@ -589,7 +596,7 @@ const SensorReadingsSettings = () => {
             </Button>
             <Button
               leftIcon={<FaCheck />}
-              colorScheme="blue"
+              colorScheme="brand"
               onClick={() => {
                 if (editingRow) applyEdit(editingRow.key);
               }}

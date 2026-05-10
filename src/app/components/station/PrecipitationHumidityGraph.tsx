@@ -153,7 +153,7 @@ const PrecipitationHumidityGraph = ({ data }: { data: any }) => {
               strokeLinejoin="round"
               dot={false}
               activeDot={activeDotForSeries(
-                data.sensor_colors?.precipitation_rate_color ?? '#38bdf8'
+                data.sensor_colors?.precipitation_rate_color ?? '#4cae70'
               )}
               hide={!seriesVisible.precipitation_rate}
             />
@@ -168,7 +168,7 @@ const PrecipitationHumidityGraph = ({ data }: { data: any }) => {
               strokeLinejoin="round"
               dot={false}
               activeDot={activeDotForSeries(
-                data.sensor_colors?.humidity_weather_color ?? '#6366f1'
+                data.sensor_colors?.humidity_weather_color ?? '#2e924f'
               )}
               hide={!seriesVisible.humidity_weather}
             />

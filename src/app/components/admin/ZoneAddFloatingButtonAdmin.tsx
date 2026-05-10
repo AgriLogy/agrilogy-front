@@ -33,7 +33,7 @@ const ZoneAddFloatingButton = ({ user }: Props) => {
         right="20px"
         borderRadius="50%"
         size="lg"
-        colorScheme="blue"
+        colorScheme="brand"
         onClick={() => setIsConfirmOpen(true)}
       />
 
@@ -51,7 +51,7 @@ const ZoneAddFloatingButton = ({ user }: Props) => {
           </ModalBody>
           <ModalFooter>
             <Button
-              colorScheme="blue"
+              colorScheme="brand"
               onClick={() => {
                 setIsConfirmOpen(false);
                 setShowForm(true);

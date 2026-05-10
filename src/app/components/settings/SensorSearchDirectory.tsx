@@ -124,7 +124,11 @@ const SensorSearchDirectory = ({
           maxW="420px"
         />
         {allowAdd && (
-          <Button size="sm" colorScheme="blue" onClick={() => setOpenAdd(true)}>
+          <Button
+            size="sm"
+            colorScheme="brand"
+            onClick={() => setOpenAdd(true)}
+          >
             Ajouter capteur
           </Button>
         )}
@@ -200,7 +204,7 @@ const SensorSearchDirectory = ({
             <Button variant="ghost" mr={2} onClick={() => setOpenAdd(false)}>
               Annuler
             </Button>
-            <Button colorScheme="blue" onClick={addSensor}>
+            <Button colorScheme="brand" onClick={addSensor}>
               Ajouter
             </Button>
           </ModalFooter>

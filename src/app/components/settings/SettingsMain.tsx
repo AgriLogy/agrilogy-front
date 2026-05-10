@@ -32,8 +32,10 @@ const SettingsMain = () => {
       <Box
         bg={bg}
         className={st.wide}
-        borderRadius="5px"
-        border="1px solid #e2e8f0"
+        borderRadius="8px"
+        borderWidth="1px"
+        borderColor={borderColor}
+        borderStyle="solid"
         px={3}
         py={2}
         mb={2}

@@ -147,3 +147,41 @@ svg {
     text-wrap: balance;
   }
 }
+
+/* Fullscreen modal used by ZoneNotificationConfigureModal. antd v6
+ * dropped the `content` key on styles={...}, so we apply via rootClassName. */
+.agri-fullscreen-modal .ant-modal,
+.agri-fullscreen-modal .ant-modal-content {
+  height: 100vh !important;
+  border-radius: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Brand the native form-control accent colour so native checkboxes,
+ * radios, range sliders, and the Settings toolbar's `<chakra.select>`
+ * focus ring stop drawing the OS default blue. */
+:root {
+  accent-color: var(--brand);
+}
+
+select:focus,
+select:focus-visible,
+input:focus,
+input:focus-visible {
+  outline-color: var(--brand);
+}
+
+/* Catch-all for any Chakra Input/Select focus ring that slipped past
+ * the theme defaultProps (multi-part components, third-party, etc).
+ * Chakra's focus ring is a 1px box-shadow on the field element. */
+.chakra-input:focus,
+.chakra-input:focus-visible,
+.chakra-select:focus,
+.chakra-select:focus-visible,
+.chakra-textarea:focus,
+.chakra-textarea:focus-visible,
+.chakra-numberinput input:focus,
+.chakra-numberinput input:focus-visible {
+  border-color: var(--brand) !important;
+  box-shadow: 0 0 0 1px var(--brand) !important;
+}

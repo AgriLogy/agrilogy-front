@@ -203,7 +203,7 @@ const UnifiedTooltip: React.FC<UnifiedTooltipProps> = ({
   valuesAlreadyCalibrated = false,
 }) => {
   const bg = useColorModeValue('white', 'gray.800');
-  const accentBorder = useColorModeValue('#3182ce', '#63b3ed');
+  const accentBorder = useColorModeValue('#1f7740', '#7ecb98');
   const textColor = useColorModeValue('gray.800', 'gray.100');
   const mutedColor = useColorModeValue('gray.600', 'gray.400');
   const footerMuted = useColorModeValue('gray.500', 'gray.400');
@@ -257,7 +257,7 @@ const UnifiedTooltip: React.FC<UnifiedTooltipProps> = ({
         {payload.map((item, index) => {
           const name = (item.name ?? item.dataKey ?? '') as string;
           const value = item.value;
-          const color = item.color ?? '#3182ce';
+          const color = item.color ?? '#1f7740';
           const displayValue = formatValue(
             value as number | string,
             name,

@@ -77,7 +77,7 @@ const DataTable = ({
           filename="sensor_data.csv"
           style={{ textDecoration: 'none' }}
         >
-          <Button colorScheme="teal" mb={4}>
+          <Button colorScheme="brand" mb={4}>
             Exporter CSV
           </Button>
         </CSVLink>

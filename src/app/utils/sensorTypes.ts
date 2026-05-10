@@ -3,7 +3,7 @@ export const SENSOR_TYPES = [
   {
     id: 'soil_moisture',
     label: 'Humidité sol',
-    color: '#0ea5e9',
+    color: '#2e924f',
     mapSymbol: '💧',
   },
   {
@@ -27,13 +27,13 @@ export const SENSOR_TYPES = [
   {
     id: 'weather_station',
     label: 'Station météo',
-    color: '#14b8a6',
+    color: '#4cae70',
     mapSymbol: '🛰️',
   },
   {
     id: 'water_level',
     label: 'Niveau d’eau',
-    color: '#2563eb',
+    color: '#2e924f',
     mapSymbol: '🌊',
   },
   { id: 'flow_meter', label: 'Débitmètre', color: '#db2777', mapSymbol: '🔧' },

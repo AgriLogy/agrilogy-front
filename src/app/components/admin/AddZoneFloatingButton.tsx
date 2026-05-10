@@ -96,7 +96,7 @@
 //         right="20px"
 //         borderRadius="50%"
 //         size="lg"
-//         colorScheme="blue"
+//         colorScheme="brand"
 //         onClick={() => setIsOpen(true)}
 //       />
 
@@ -162,7 +162,7 @@
 //           </ModalBody>
 //           <ModalFooter>
 //             <Button
-//               colorScheme="blue"
+//               colorScheme="brand"
 //               onClick={handleCreateZone}
 //               mr={3}
 //               isLoading={loading}

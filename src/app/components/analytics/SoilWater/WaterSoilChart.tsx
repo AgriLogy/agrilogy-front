@@ -53,7 +53,7 @@ import {
 const MOISTURE_AXIS_UNIT = '%';
 
 /** Débit (eau) — même bleu pour trait, remplissage et hover */
-const WATER_FLOW_BLUE = '#2563eb';
+const WATER_FLOW_BLUE = '#2e924f';
 
 /** Même teintes que les pastilles de légende au-dessus du graphique */
 const ZONE_CRITIQUE_FILL = 'rgba(239, 68, 68, 0.45)';
@@ -227,7 +227,7 @@ const WaterSoilChart = ({
         <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
-            colorScheme="teal"
+            colorScheme="brand"
             variant="ghost"
             onClick={handleScreenshot}
           >
@@ -235,7 +235,7 @@ const WaterSoilChart = ({
           </Button>
           <Button
             aria-label="Exporter CSV"
-            colorScheme="blue"
+            colorScheme="brand"
             variant="ghost"
             onClick={handleDownloadData}
           >

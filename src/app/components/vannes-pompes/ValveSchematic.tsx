@@ -24,8 +24,8 @@ const ValveSchematic = ({
   const lineStroke = useColorModeValue('#0f172a', '#e2e8f0');
   const pipeBorder = useColorModeValue('whiteAlpha.700', 'whiteAlpha.200');
   const pipeGradient = useColorModeValue(
-    'linear(to-b, #bae6fd, #38bdf8)',
-    'linear(to-b, #0369a1, #0ea5e9)'
+    'linear(to-b, #aee0bd, #4cae70)',
+    'linear(to-b, #114828, #2e924f)'
   );
   const w = compact ? 40 : 56;
   const glyphMinH = compact ? '48px' : '72px';

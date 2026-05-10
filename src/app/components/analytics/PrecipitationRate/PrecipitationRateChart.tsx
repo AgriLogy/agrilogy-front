@@ -123,7 +123,7 @@ const PrecipitationRateChart = ({
         <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
-            colorScheme="teal"
+            colorScheme="brand"
             variant="ghost"
             onClick={handleScreenshot}
           >
@@ -131,7 +131,7 @@ const PrecipitationRateChart = ({
           </Button>
           <Button
             aria-label="Exporter CSV"
-            colorScheme="blue"
+            colorScheme="brand"
             variant="ghost"
             onClick={handleDownloadData}
           >
@@ -185,7 +185,7 @@ const PrecipitationRateChart = ({
               {...defaultBarProps}
               maxBarSize={maxBarSizeForPointCount(chartData.length)}
               hide={!showBar}
-              fill={colorMode === 'dark' ? '#60a5fa' : '#3b82f6'}
+              fill={colorMode === 'dark' ? '#7ecb98' : '#2e924f'}
               activeBar={<Rectangle fill="gold" stroke="purple" />}
               isAnimationActive={false}
             />

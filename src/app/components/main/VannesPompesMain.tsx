@@ -3,29 +3,26 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import NextLink from 'next/link';
 import {
+  App,
   Badge,
-  Box,
   Button,
-  Divider,
-  FormControl,
-  FormLabel,
-  Heading,
-  HStack,
+  Col,
+  Flex,
+  Form,
   Input,
   Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  SimpleGrid,
-  Text,
-  useDisclosure,
-  VStack,
-} from '@chakra-ui/react';
-import { MdPowerSettingsNew } from 'react-icons/md';
-import useColorModeStyles from '@/app/utils/useColorModeStyles';
+  Row,
+  Tag,
+  Tooltip,
+  Typography,
+} from 'antd';
+import {
+  ApiOutlined,
+  ClusterOutlined,
+  PlusOutlined,
+  PoweroffOutlined,
+  ShareAltOutlined,
+} from '@ant-design/icons';
 import ValveSchematic from '@/app/components/vannes-pompes/ValveSchematic';
 import PumpSchematic from '@/app/components/vannes-pompes/PumpSchematic';
 import {
@@ -35,8 +32,11 @@ import {
   type Pump,
   type Vane,
 } from '@/app/utils/vannesPompesStorage';
+import styles from './VannesPompesMain.module.scss';
 
 export type { Pump, Vane };
+
+const { Title, Text, Paragraph } = Typography;
 
 function newId(prefix: string) {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -45,17 +45,25 @@ function newId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
+interface VaneFormValues {
+  name: string;
+  devEui?: string;
+}
+
+interface PumpFormValues {
+  name: string;
+}
+
 const VannesPompesMain = () => {
-  const { bg, textColor, borderColor } = useColorModeStyles();
+  const { message } = App.useApp();
   const [vanes, setVanes] = useState<Vane[]>([]);
   const [pumps, setPumps] = useState<Pump[]>([]);
   const [hydrated, setHydrated] = useState(false);
 
-  const addVaneModal = useDisclosure();
-  const addPumpModal = useDisclosure();
-  const [newVaneName, setNewVaneName] = useState('');
-  const [newVaneDevEui, setNewVaneDevEui] = useState('');
-  const [newPumpName, setNewPumpName] = useState('');
+  const [vaneOpen, setVaneOpen] = useState(false);
+  const [pumpOpen, setPumpOpen] = useState(false);
+  const [vaneForm] = Form.useForm<VaneFormValues>();
+  const [pumpForm] = Form.useForm<PumpFormValues>();
 
   useEffect(() => {
     const { vanes: v, pumps: p } = loadVannesPompesFromStorage();
@@ -74,180 +82,178 @@ const VannesPompesMain = () => {
     persist({ vanes, pumps });
   }, [vanes, pumps, hydrated, persist]);
 
-  const submitVane = () => {
-    const name = newVaneName.trim();
+  const submitVane = (values: VaneFormValues) => {
+    const name = values.name.trim();
     if (!name) return;
-    const devEui = newVaneDevEui.trim() || '—';
+    const devEui = (values.devEui ?? '').trim() || '—';
     setVanes((prev) => [
       ...prev,
-      {
-        id: newId('vane'),
-        name,
-        devEui,
-        active: false,
-      },
+      { id: newId('vane'), name, devEui, active: false },
     ]);
-    setNewVaneName('');
-    setNewVaneDevEui('');
-    addVaneModal.onClose();
+    vaneForm.resetFields();
+    setVaneOpen(false);
+    void message.success('Vanne créée.');
   };
 
-  const submitPump = () => {
-    const name = newPumpName.trim();
+  const submitPump = (values: PumpFormValues) => {
+    const name = values.name.trim();
     if (!name) return;
     setPumps((prev) => [...prev, { id: newId('pump'), name, running: false }]);
-    setNewPumpName('');
-    addPumpModal.onClose();
+    pumpForm.resetFields();
+    setPumpOpen(false);
+    void message.success('Pompe créée.');
   };
 
-  const toggleVane = (id: string) => {
+  const toggleVane = (id: string) =>
     setVanes((prev) =>
       prev.map((v) => (v.id === id ? { ...v, active: !v.active } : v))
     );
-  };
 
-  const togglePump = (id: string) => {
+  const togglePump = (id: string) =>
     setPumps((prev) =>
       prev.map((p) => (p.id === id ? { ...p, running: !p.running } : p))
     );
-  };
 
   return (
-    <Box p={{ base: 4, md: 7 }} color={textColor}>
-      <Heading size="lg" mb={6}>
-        Vannes et pompes
-      </Heading>
+    <div className={styles.page} data-testid="vannes-pompes-main">
+      {/* Header — matches the dashboard flow (StationMain, SoilMain, …) */}
+      <Flex className={styles.header} align="center" gap={12} wrap="wrap">
+        <ApiOutlined style={{ fontSize: 18 }} />
+        <Title level={5} className={styles.title}>
+          Vannes et pompes
+        </Title>
 
-      <HStack flexWrap="wrap" gap={4} mb={8}>
-        <Button colorScheme="blue" onClick={addVaneModal.onOpen}>
+        <div className={styles.spacer} />
+
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => setVaneOpen(true)}
+        >
           Ajouter une vanne
         </Button>
-        <Button
-          colorScheme="blue"
-          variant="outline"
-          onClick={addPumpModal.onOpen}
-        >
+        <Button icon={<PlusOutlined />} onClick={() => setPumpOpen(true)}>
           Ajouter une pompe
         </Button>
-        <Button
-          as={NextLink}
-          href="/vannes-pompes/schema"
-          variant="outline"
-          colorScheme="teal"
+        <Tooltip title="Voir le schéma de réseau complet">
+          <Button icon={<ShareAltOutlined />}>
+            <NextLink href="/vannes-pompes/schema">Vue schéma</NextLink>
+          </Button>
+        </Tooltip>
+      </Flex>
+
+      {/* Vannes */}
+      <section className={styles.section}>
+        <Flex align="center" gap={8} wrap="wrap">
+          <ClusterOutlined />
+          <Title level={5} className={styles.sectionTitle}>
+            Vannes
+          </Title>
+          <Tag>{vanes.length}</Tag>
+        </Flex>
+        {vanes.length === 0 ? (
+          <Paragraph className={styles.empty}>
+            Aucune vanne. Cliquez sur « Ajouter une vanne » pour en créer une.
+          </Paragraph>
+        ) : (
+          <Row gutter={[16, 16]}>
+            {vanes.map((vane, index) => (
+              <Col key={vane.id} xs={24} md={12} xl={8}>
+                <VaneCard
+                  vane={vane}
+                  schematicLabel={String(index + 1)}
+                  onToggle={() => toggleVane(vane.id)}
+                />
+              </Col>
+            ))}
+          </Row>
+        )}
+      </section>
+
+      {/* Pompes */}
+      <section className={styles.section}>
+        <Flex align="center" gap={8} wrap="wrap">
+          <PoweroffOutlined />
+          <Title level={5} className={styles.sectionTitle}>
+            Pompes
+          </Title>
+          <Tag>{pumps.length}</Tag>
+        </Flex>
+        {pumps.length === 0 ? (
+          <Paragraph className={styles.empty}>
+            Aucune pompe. Utilisez « Ajouter une pompe » pour en créer une.
+          </Paragraph>
+        ) : (
+          <Row gutter={[16, 16]}>
+            {pumps.map((pump) => (
+              <Col key={pump.id} xs={24} md={12} xl={8}>
+                <PumpCard pump={pump} onToggle={() => togglePump(pump.id)} />
+              </Col>
+            ))}
+          </Row>
+        )}
+      </section>
+
+      {/* Modals */}
+      <Modal
+        title="Nouvelle vanne"
+        open={vaneOpen}
+        onCancel={() => setVaneOpen(false)}
+        onOk={() => vaneForm.submit()}
+        okText="Créer"
+        cancelText="Annuler"
+        destroyOnHidden
+      >
+        <Form
+          form={vaneForm}
+          layout="vertical"
+          onFinish={submitVane}
+          requiredMark={false}
         >
-          Vue schéma réseau
-        </Button>
-      </HStack>
-
-      <Heading size="md" mb={4}>
-        Vannes
-      </Heading>
-      {vanes.length === 0 ? (
-        <Text opacity={0.8} mb={10}>
-          Aucune vanne. Cliquez sur « Ajouter une vanne » pour en créer une.
-        </Text>
-      ) : (
-        <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={6} mb={12}>
-          {vanes.map((vane, index) => (
-            <VaneCard
-              key={vane.id}
-              vane={vane}
-              schematicLabel={String(index + 1)}
-              onToggle={() => toggleVane(vane.id)}
-              bg={bg}
-              borderColor={borderColor}
+          <Form.Item
+            label="Nom"
+            name="name"
+            rules={[{ required: true, message: 'Le nom est requis.' }]}
+          >
+            <Input placeholder="ex. Vanne 1" />
+          </Form.Item>
+          <Form.Item label="DevEUI (optionnel)" name="devEui">
+            <Input
+              placeholder="0004A30B00F7A7FE"
+              style={{
+                fontFamily:
+                  'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, monospace',
+              }}
             />
-          ))}
-        </SimpleGrid>
-      )}
-
-      <Divider my={8} />
-
-      <Heading size="md" mb={4}>
-        Pompes
-      </Heading>
-      {pumps.length === 0 ? (
-        <Text opacity={0.8} mb={0}>
-          Aucune pompe. Utilisez « Ajouter une pompe » pour en créer une.
-        </Text>
-      ) : (
-        <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={6}>
-          {pumps.map((pump) => (
-            <PumpCard
-              key={pump.id}
-              pump={pump}
-              onToggle={() => togglePump(pump.id)}
-              bg={bg}
-              borderColor={borderColor}
-            />
-          ))}
-        </SimpleGrid>
-      )}
-
-      <Modal isOpen={addVaneModal.isOpen} onClose={addVaneModal.onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Nouvelle vanne</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <VStack spacing={4}>
-              <FormControl isRequired>
-                <FormLabel>Nom</FormLabel>
-                <Input
-                  value={newVaneName}
-                  onChange={(e) => setNewVaneName(e.target.value)}
-                  placeholder="ex. Vanne 1"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>DevEUI (optionnel)</FormLabel>
-                <Input
-                  value={newVaneDevEui}
-                  onChange={(e) => setNewVaneDevEui(e.target.value)}
-                  placeholder="0004A30B00F7A7FE"
-                  fontFamily="mono"
-                  fontSize="sm"
-                />
-              </FormControl>
-            </VStack>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={addVaneModal.onClose}>
-              Annuler
-            </Button>
-            <Button colorScheme="blue" onClick={submitVane}>
-              Créer
-            </Button>
-          </ModalFooter>
-        </ModalContent>
+          </Form.Item>
+        </Form>
       </Modal>
 
-      <Modal isOpen={addPumpModal.isOpen} onClose={addPumpModal.onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Nouvelle pompe</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FormControl isRequired>
-              <FormLabel>Nom</FormLabel>
-              <Input
-                value={newPumpName}
-                onChange={(e) => setNewPumpName(e.target.value)}
-                placeholder="ex. Pompe ligne principale"
-              />
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={addPumpModal.onClose}>
-              Annuler
-            </Button>
-            <Button colorScheme="blue" onClick={submitPump}>
-              Créer
-            </Button>
-          </ModalFooter>
-        </ModalContent>
+      <Modal
+        title="Nouvelle pompe"
+        open={pumpOpen}
+        onCancel={() => setPumpOpen(false)}
+        onOk={() => pumpForm.submit()}
+        okText="Créer"
+        cancelText="Annuler"
+        destroyOnHidden
+      >
+        <Form
+          form={pumpForm}
+          layout="vertical"
+          onFinish={submitPump}
+          requiredMark={false}
+        >
+          <Form.Item
+            label="Nom"
+            name="name"
+            rules={[{ required: true, message: 'Le nom est requis.' }]}
+          >
+            <Input placeholder="ex. Pompe ligne principale" />
+          </Form.Item>
+        </Form>
       </Modal>
-    </Box>
+    </div>
   );
 };
 
@@ -255,124 +261,79 @@ function VaneCard({
   vane,
   schematicLabel,
   onToggle,
-  bg,
-  borderColor,
 }: {
   vane: Vane;
   schematicLabel: string;
   onToggle: () => void;
-  bg: string;
-  borderColor: string;
 }) {
-  const accent = vane.active ? 'green.400' : 'red.500';
-
   return (
-    <Box
-      bg={bg}
-      borderWidth="1px"
-      borderColor={borderColor}
-      borderLeftWidth="4px"
-      borderLeftColor={accent}
-      borderRadius="md"
-      p={4}
-      boxShadow="sm"
+    <div
+      className={`${styles.card} ${vane.active ? styles.cardActive : styles.cardInactive}`}
     >
-      <HStack align="flex-start" spacing={4}>
-        <Box flexShrink={0}>
+      <div className={styles.cardRow}>
+        <div style={{ flexShrink: 0 }}>
           <ValveSchematic active={vane.active} label={schematicLabel} />
-        </Box>
-        <VStack align="stretch" spacing={2} flex={1}>
-          <HStack justify="space-between" align="center">
-            <Text fontWeight="bold" fontSize="lg">
+        </div>
+        <div className={styles.cardBody}>
+          <Flex justify="space-between" align="center">
+            <Title level={5} className={styles.cardName}>
               {vane.name}
-            </Text>
-            <Badge colorScheme="gray" variant="subtle">
-              Manuel
-            </Badge>
-          </HStack>
-          <Text fontSize="sm" opacity={0.85} fontFamily="mono">
-            DevEUI: {vane.devEui}
-          </Text>
-          <HStack>
-            <Box
-              w="10px"
-              h="10px"
-              borderRadius="full"
-              bg={vane.active ? 'green.400' : 'gray.400'}
+            </Title>
+            <Tag>Manuel</Tag>
+          </Flex>
+          <Text className={styles.devEui}>DevEUI : {vane.devEui}</Text>
+          <span className={styles.statusRow}>
+            <Badge
+              status={vane.active ? 'success' : 'default'}
+              text={vane.active ? 'Ouverte (active)' : 'Fermée (inactive)'}
             />
-            <Text fontSize="sm">
-              {vane.active ? 'Ouverte (active)' : 'Fermée (inactive)'}
-            </Text>
-          </HStack>
-        </VStack>
-      </HStack>
+          </span>
+        </div>
+      </div>
       <Button
-        mt={4}
-        w="100%"
-        leftIcon={<MdPowerSettingsNew />}
-        colorScheme={vane.active ? 'green' : 'red'}
-        variant={vane.active ? 'solid' : 'solid'}
+        block
+        type={vane.active ? 'primary' : 'primary'}
+        danger={!vane.active}
+        icon={<PoweroffOutlined />}
         onClick={onToggle}
       >
-        {vane.active ? 'DÉSACTIVER' : 'ACTIVER'}
+        {vane.active ? 'Désactiver' : 'Activer'}
       </Button>
-    </Box>
+    </div>
   );
 }
 
-function PumpCard({
-  pump,
-  onToggle,
-  bg,
-  borderColor,
-}: {
-  pump: Pump;
-  onToggle: () => void;
-  bg: string;
-  borderColor: string;
-}) {
-  const accent = pump.running ? 'green.400' : 'gray.500';
-
+function PumpCard({ pump, onToggle }: { pump: Pump; onToggle: () => void }) {
   return (
-    <Box
-      bg={bg}
-      borderWidth="1px"
-      borderColor={borderColor}
-      borderLeftWidth="4px"
-      borderLeftColor={accent}
-      borderRadius="md"
-      p={4}
-      boxShadow="sm"
+    <div
+      className={`${styles.card} ${pump.running ? styles.cardActive : styles.cardIdle}`}
     >
-      <HStack align="flex-start" spacing={4}>
-        <Box flexShrink={0}>
+      <div className={styles.cardRow}>
+        <div style={{ flexShrink: 0 }}>
           <PumpSchematic running={pump.running} />
-        </Box>
-        <VStack align="stretch" spacing={2} flex={1}>
-          <Text fontWeight="bold" fontSize="lg">
+        </div>
+        <div className={styles.cardBody}>
+          <Title level={5} className={styles.cardName}>
             {pump.name}
-          </Text>
-          <HStack>
-            <Box
-              w="10px"
-              h="10px"
-              borderRadius="full"
-              bg={pump.running ? 'green.400' : 'gray.400'}
+          </Title>
+          <span className={styles.statusRow}>
+            <Badge
+              status={pump.running ? 'success' : 'default'}
+              text={pump.running ? 'En marche' : 'Arrêtée'}
             />
-            <Text fontSize="sm">{pump.running ? 'En marche' : 'Arrêtée'}</Text>
-          </HStack>
-        </VStack>
-      </HStack>
+          </span>
+        </div>
+      </div>
       <Button
-        mt={4}
-        w="100%"
-        leftIcon={<MdPowerSettingsNew />}
-        colorScheme={pump.running ? 'orange' : 'green'}
+        block
+        type="primary"
+        danger={pump.running}
+        icon={<PoweroffOutlined />}
         onClick={onToggle}
       >
-        {pump.running ? 'ARRÊTER' : 'DÉMARRER'}
+        {pump.running ? 'Arrêter' : 'Démarrer'}
       </Button>
-    </Box>
+    </div>
   );
 }
 

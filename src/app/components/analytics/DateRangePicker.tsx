@@ -1,120 +1,59 @@
 'use client';
-import React, { useState } from 'react';
-import {
-  Button,
-  HStack,
-  Input,
-  Text,
-  useBreakpointValue,
-} from '@chakra-ui/react';
-import { subDays, subWeeks, subMonths, subYears, format } from 'date-fns';
-import useColorModeStyles from '@/app/utils/useColorModeStyles';
+
+import React from 'react';
+import { DatePicker, Space, Typography } from 'antd';
+import type { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
+
+const { RangePicker } = DatePicker;
 
 interface DateRangePickerProps {
   setStartDate: (date: string) => void;
   setEndDate: (date: string) => void;
-  zones: { id: number; name: string }[];
-  selectedZone: number | null;
-  setSelectedZone: (id: number) => void;
+  /** Kept for legacy callers; unused. */
+  zones?: { id: number; name: string }[];
+  selectedZone?: number | null;
+  setSelectedZone?: (id: number) => void;
 }
+
+const PRESETS: { label: string; value: [Dayjs, Dayjs] }[] = [
+  {
+    label: 'Aujourd’hui',
+    value: [dayjs().startOf('day'), dayjs().endOf('day')],
+  },
+  { label: '7 derniers jours', value: [dayjs().subtract(7, 'day'), dayjs()] },
+  { label: '30 derniers jours', value: [dayjs().subtract(30, 'day'), dayjs()] },
+  { label: '3 derniers mois', value: [dayjs().subtract(3, 'month'), dayjs()] },
+  { label: '6 derniers mois', value: [dayjs().subtract(6, 'month'), dayjs()] },
+  { label: '12 derniers mois', value: [dayjs().subtract(1, 'year'), dayjs()] },
+];
 
 const DateRangePicker: React.FC<DateRangePickerProps> = ({
   setStartDate,
   setEndDate,
-  zones: _zones,
-  selectedZone: _selectedZone,
-  setSelectedZone: _setSelectedZone,
 }) => {
-  const { textColor } = useColorModeStyles();
-  const today = new Date();
-  const formattedToday = format(today, 'yyyy-MM-dd');
-
-  const [manualStartDate, setManualStartDate] = useState<string>('');
-  const [manualEndDate, setManualEndDate] = useState<string>('');
-
-  const handleDateRangeClick = (days: number) => {
-    const startDate = format(subDays(today, days), 'yyyy-MM-dd');
-    setStartDate(startDate);
-    setEndDate(formattedToday);
+  const handleChange = (range: [Dayjs | null, Dayjs | null] | null) => {
+    if (!range || !range[0] || !range[1]) return;
+    setStartDate(range[0].format('YYYY-MM-DD'));
+    setEndDate(range[1].format('YYYY-MM-DD'));
   };
-
-  const handleWeeksClick = (weeks: number) => {
-    const startDate = format(subWeeks(today, weeks), 'yyyy-MM-dd');
-    setStartDate(startDate);
-    setEndDate(formattedToday);
-  };
-
-  const handleMonthsClick = (months: number) => {
-    const startDate = format(subMonths(today, months), 'yyyy-MM-dd');
-    setStartDate(startDate);
-    setEndDate(formattedToday);
-  };
-
-  const handleYearsClick = (years: number) => {
-    const startDate = format(subYears(today, years), 'yyyy-MM-dd');
-    setStartDate(startDate);
-    setEndDate(formattedToday);
-  };
-
-  const handleManualDateSelection = () => {
-    if (manualStartDate && manualEndDate) {
-      setStartDate(manualStartDate);
-      setEndDate(manualEndDate);
-    }
-  };
-
-  const showManualDatePicker = useBreakpointValue({ base: false, lg: true });
 
   return (
-    <HStack
-      spacing={2}
-      overflow="hidden" // Prevent overflow
-      justifyContent="space-between"
-      width="100%"
-    >
-      <HStack>
-        <Button onClick={() => handleDateRangeClick(1)}>1d</Button>
-        <Button onClick={() => handleDateRangeClick(3)}>3d</Button>
-        <Button onClick={() => handleWeeksClick(1)}>1 w</Button>
-        <Button onClick={() => handleWeeksClick(2)}>2 w</Button>
-        <Button onClick={() => handleMonthsClick(1)}>1 m</Button>
-        {showManualDatePicker && (
-          <Button onClick={() => handleMonthsClick(3)}>3 m</Button>
-        )}
-        {showManualDatePicker && (
-          <Button onClick={() => handleMonthsClick(6)}>6 m</Button>
-        )}
-        {showManualDatePicker && (
-          <Button onClick={() => handleYearsClick(1)}>1 y</Button>
-        )}
-      </HStack>
-
-      {showManualDatePicker && (
-        <HStack alignItems="center" gap="1" ml="auto" mr={2} flexWrap="wrap">
-          <Text color={textColor}>De:</Text>
-          <Input
-            color={textColor}
-            type="date"
-            maxW="160px" // ✅ Keep narrow
-            value={manualStartDate}
-            onChange={(e) => setManualStartDate(e.target.value)}
-          />
-          <Text color={textColor}>à:</Text>
-          <Input
-            color={textColor}
-            type="date"
-            maxW="160px"
-            value={manualEndDate}
-            onChange={(e) => setManualEndDate(e.target.value)}
-          />
-          <Button onClick={handleManualDateSelection} whiteSpace="nowrap">
-            <Text color={textColor} px={2}>
-              Appliquer
-            </Text>
-          </Button>
-        </HStack>
-      )}
-    </HStack>
+    <Space size={8} align="center">
+      <Typography.Text type="secondary" style={{ whiteSpace: 'nowrap' }}>
+        Période
+      </Typography.Text>
+      <RangePicker
+        size="middle"
+        format="DD/MM/YYYY"
+        allowClear
+        presets={PRESETS}
+        onChange={(range) =>
+          handleChange(range as [Dayjs | null, Dayjs | null] | null)
+        }
+        style={{ minWidth: 280 }}
+      />
+    </Space>
   );
 };
 

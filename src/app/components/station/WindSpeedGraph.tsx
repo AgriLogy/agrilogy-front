@@ -130,7 +130,7 @@ const WindSpeedGraph = ({ data }: { data: any }) => {
               strokeLinejoin="round"
               dot={false}
               activeDot={activeDotForSeries(
-                data.sensor_colors?.wind_speed_color ?? '#14b8a6'
+                data.sensor_colors?.wind_speed_color ?? '#4cae70'
               )}
               hide={!showSeries}
             />

@@ -85,7 +85,7 @@ const ListeUsers: React.FC = () => {
           info.getValue() ? (
             <Badge colorScheme="purple">Admin</Badge>
           ) : (
-            <Badge colorScheme="blue">User</Badge>
+            <Badge colorScheme="brand">User</Badge>
           ),
       },
       {
@@ -96,10 +96,10 @@ const ListeUsers: React.FC = () => {
             href={`/admin/graph-per-user/${info.getValue()}`}
             _hover={{ textDecoration: 'none' }}
           >
-            {/* <Button size="sm" colorScheme="blue">
+            {/* <Button size="sm" colorScheme="brand">
               Voire
             </Button> */}
-            <Badge colorScheme="blue">Voire</Badge>
+            <Badge colorScheme="brand">Voire</Badge>
           </Link>
         ),
       },
@@ -111,10 +111,10 @@ const ListeUsers: React.FC = () => {
             href={`/admin/users/data/soil/${info.getValue()}`}
             _hover={{ textDecoration: 'none' }}
           >
-            {/* <Button size="sm" colorScheme="blue">
+            {/* <Button size="sm" colorScheme="brand">
               Voire
             </Button> */}
-            <Badge colorScheme="blue">Voire</Badge>
+            <Badge colorScheme="brand">Voire</Badge>
           </Link>
         ),
       },
@@ -126,10 +126,10 @@ const ListeUsers: React.FC = () => {
             href={`/admin/users/data/station/${info.getValue()}`}
             _hover={{ textDecoration: 'none' }}
           >
-            {/* <Button size="sm" colorScheme="blue">
+            {/* <Button size="sm" colorScheme="brand">
               Voire
             </Button> */}
-            <Badge colorScheme="blue">Voire</Badge>
+            <Badge colorScheme="brand">Voire</Badge>
           </Link>
         ),
       },
@@ -141,10 +141,10 @@ const ListeUsers: React.FC = () => {
             href={`/admin/zone-per-user/${info.getValue()}`}
             _hover={{ textDecoration: 'none' }}
           >
-            {/* <Button size="sm" colorScheme="blue">
+            {/* <Button size="sm" colorScheme="brand">
               Modify
             </Button> */}
-            <Badge colorScheme="blue">Voire</Badge>
+            <Badge colorScheme="brand">Voire</Badge>
           </Link>
         ),
       },
@@ -157,10 +157,10 @@ const ListeUsers: React.FC = () => {
             href={`/admin/users/modify/${info.getValue()}`}
             _hover={{ textDecoration: 'none' }}
           >
-            {/* <Button size="sm" colorScheme="blue">
+            {/* <Button size="sm" colorScheme="brand">
               Modifier
             </Button> */}
-            <Badge colorScheme="blue">Modifer</Badge>
+            <Badge colorScheme="brand">Modifer</Badge>
           </Link>
         ),
       },

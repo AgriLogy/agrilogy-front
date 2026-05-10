@@ -1,5 +1,5 @@
 const orange = '#fbb03b';
-const blue = '#3bb2d0';
+const blue = '#2e924f';
 const white = '#fff';
 
 export const sectorMapDrawStyles: object[] = [

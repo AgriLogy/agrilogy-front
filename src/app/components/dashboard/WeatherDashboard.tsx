@@ -136,7 +136,7 @@ const WeatherDashboard = () => {
             id="unit-toggle"
             isChecked={useImperial}
             onChange={handleUnitToggle}
-            colorScheme="blue"
+            colorScheme="brand"
           />
           <Text
             fontSize="sm"
