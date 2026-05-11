@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/AgriLogy/agrilogy-front/compare/v1.0.1...v1.1.0) (2026-05-11)
+
+
+### Features
+
+* **alerts:** plug-and-play alert workflow with antd UI + jest behavi… ([#35](https://github.com/AgriLogy/agrilogy-front/issues/35)) ([fdb36b9](https://github.com/AgriLogy/agrilogy-front/commit/fdb36b9bf057dc9a21241e5635167f13e0660973))
+
 ## [1.0.1](https://github.com/AgriLogy/agrilogy-front/compare/v1.0.0...v1.0.1) (2026-05-07)
 
 # 1.0.0 (2026-05-06)
