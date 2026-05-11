@@ -100,7 +100,7 @@ const TempuratureHumidtyLastData = ({
             <Box>
               <WiHumidity
                 size={32}
-                style={{ display: 'inline', color: '#3182ce' }}
+                style={{ display: 'inline', color: '#1f7740' }}
               />
               <Text fontSize="xs" color={muted} mt={1}>
                 Humidité relative
@@ -119,7 +119,7 @@ const TempuratureHumidtyLastData = ({
             </Text>
           )}
         </VStack>
-        <LastDataAddAlertButton />
+        <LastDataAddAlertButton sensorKey="temperature_weather" />
       </LastDataPanel>
     </Box>
   );

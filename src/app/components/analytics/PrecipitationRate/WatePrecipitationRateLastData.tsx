@@ -52,7 +52,7 @@ const PrecipitationRateLastData = ({ data }: { data: SensorData[] }) => {
       >
         <FaCloudShowersHeavy
           size={44}
-          fill={colorMode === 'dark' ? '#60a5fa' : '#3b82f6'}
+          fill={colorMode === 'dark' ? '#7ecb98' : '#2e924f'}
         />
         <Text
           fontWeight="semibold"
@@ -72,7 +72,7 @@ const PrecipitationRateLastData = ({ data }: { data: SensorData[] }) => {
         <Text fontSize="xs" color={subColor} mt={2}>
           {latest ? `Mesure : ${timeAgo(latest.timestamp)}` : ''}
         </Text>
-        <LastDataAddAlertButton />
+        <LastDataAddAlertButton sensorKey="precipitation_rate" />
       </LastDataPanel>
     </Box>
   );

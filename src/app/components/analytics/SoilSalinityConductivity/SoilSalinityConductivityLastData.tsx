@@ -88,7 +88,7 @@ const SoilSalinityConductivityLastData = ({
     >
       <LastDataPanel variant="soilSalinity">
         <Block
-          icon={<FaTint size={40} color="#2b6cb0" />}
+          icon={<FaTint size={40} color="#175e33" />}
           title="Salinité du sol"
           latest={latestSalinity}
           sensorKey="soil_salinity"
@@ -100,7 +100,7 @@ const SoilSalinityConductivityLastData = ({
           latest={latestConductivity}
           sensorKey="soil_conductivity"
         />
-        <LastDataAddAlertButton />
+        <LastDataAddAlertButton sensorKey="soil_salinity" />
       </LastDataPanel>
     </Box>
   );

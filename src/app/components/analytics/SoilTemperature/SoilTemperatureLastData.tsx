@@ -125,7 +125,7 @@ const SoilTemperatureLastData = ({
             sensorKey="soil_temp_high"
           />
         </VStack>
-        <LastDataAddAlertButton />
+        <LastDataAddAlertButton sensorKey="soil_temperature_medium" />
       </LastDataPanel>
     </Box>
   );

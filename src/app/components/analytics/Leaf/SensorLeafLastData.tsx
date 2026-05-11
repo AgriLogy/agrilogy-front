@@ -111,7 +111,7 @@ const SensorLeafLastData = ({
             </Text>
           </Box>
         </VStack>
-        <LastDataAddAlertButton />
+        <LastDataAddAlertButton sensorKey="leaf_temperature" />
       </LastDataPanel>
     </Box>
   );
