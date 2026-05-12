@@ -434,7 +434,7 @@ const NavbarNotificationsButton: React.FC = () => {
             alignItems="center"
             gap={2}
           >
-            <BellIcon color="blue.400" />
+            <BellIcon color="primary.400" />
             Détail de la notification
           </ModalHeader>
           <ModalCloseButton borderRadius="full" />

@@ -433,7 +433,7 @@ const NotificationDetailFrench: React.FC<NotificationDetailFrenchProps> = ({
         )}
         <Divider my={4} />
         <HStack align="flex-start" spacing={2}>
-          <Icon as={FaTint} color="blue.400" boxSize={5} mt={0.5} />
+          <Icon as={FaTint} color="primary.400" boxSize={5} mt={0.5} />
           <Box>
             <Text fontWeight="bold" fontSize="sm" color={textColor}>
               Décision d’irrigation aujourd’hui
@@ -442,7 +442,7 @@ const NotificationDetailFrench: React.FC<NotificationDetailFrenchProps> = ({
               fontSize="sm"
               fontWeight="bold"
               mt={1}
-              color="blue.600"
+              color="primary.600"
               _dark={{ color: 'blue.300' }}
             >
               {irrigationDecisionLine}

@@ -1059,7 +1059,7 @@ const ZoneNotificationConfigureForm: React.FC<
                   colorScheme="brand"
                 >
                   <HStack spacing={2} as="span">
-                    <Icon as={FaEnvelopeOpenText} color="blue.400" />
+                    <Icon as={FaEnvelopeOpenText} color="primary.400" />
                     <span>E-mail</span>
                   </HStack>
                 </Checkbox>

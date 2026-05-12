@@ -90,7 +90,7 @@ const WeatherDashboard = () => {
       case 3:
         return <Icon as={Cloud} color="gray.500" />;
       default:
-        return <Icon as={CloudRain} color="blue.500" />;
+        return <Icon as={CloudRain} color="primary.500" />;
     }
   };
 
@@ -179,7 +179,7 @@ const WeatherDashboard = () => {
           p={4}
           textAlign="center"
         >
-          <Icon as={Wind} boxSize="24px" color="blue.500" mb={1} />
+          <Icon as={Wind} boxSize="24px" color="primary.500" mb={1} />
           <Text fontSize="xs" color={primaryText}>
             {useImperial
               ? Math.round(toMilesPerHour(current.wind_speed_10m))
@@ -196,7 +196,7 @@ const WeatherDashboard = () => {
           borderWidth="1px"
           borderRadius="xl"
         >
-          <Icon as={Droplets} boxSize="24px" color="cyan.500" mb={1} />
+          <Icon as={Droplets} boxSize="24px" color="primary.400" mb={1} />
           <Text fontSize="xs" color={primaryText}>
             {current.relative_humidity_2m}%
           </Text>

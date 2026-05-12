@@ -39,7 +39,9 @@ const ElectrovanCard = ({ electrovanne, onClick }: Props) => {
       <Text color={textColor} fontSize="sm" mt={2}>
         ⚙️ Mode:{' '}
         <Tag
-          colorScheme={electrovanne.statusMode === 'manual' ? 'yellow' : 'blue'}
+          colorScheme={
+            electrovanne.statusMode === 'manual' ? 'yellow' : 'brand'
+          }
           textTransform="capitalize"
         >
           {electrovanne.statusMode}

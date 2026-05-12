@@ -289,7 +289,7 @@ const NotificationsMain: React.FC = () => {
             fontSize="lg"
             pb={1}
           >
-            <BellIcon color="blue.400" />
+            <BellIcon color="primary.400" />
             {configureIntent === 'edit'
               ? 'Modifier la notification de zone'
               : 'Nouvelle notification de zone'}
