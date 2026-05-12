@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/AgriLogy/agrilogy-front/compare/v1.1.0...v1.1.1) (2026-05-12)
+
+
+### Bug Fixes
+
+* **et0:** align frontend with hourly ET0 backend ([#38](https://github.com/AgriLogy/agrilogy-front/issues/38)) ([b17e677](https://github.com/AgriLogy/agrilogy-front/commit/b17e6770faabea302da0837dd810d54974ba82a1))
+
 # [1.1.0](https://github.com/AgriLogy/agrilogy-front/compare/v1.0.1...v1.1.0) (2026-05-11)
 
 
