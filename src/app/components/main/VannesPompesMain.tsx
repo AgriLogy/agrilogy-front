@@ -26,6 +26,7 @@ import {
 } from '@chakra-ui/react';
 import { MdPowerSettingsNew } from 'react-icons/md';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { PageInfoBar } from '@/app/components/layout/PageInfoBar';
 import ValveSchematic from '@/app/components/vannes-pompes/ValveSchematic';
 import PumpSchematic from '@/app/components/vannes-pompes/PumpSchematic';
 import {
@@ -113,31 +114,34 @@ const VannesPompesMain = () => {
   };
 
   return (
-    <Box p={{ base: 4, md: 7 }} color={textColor}>
-      <Heading size="lg" mb={6}>
-        Vannes et pompes
-      </Heading>
-
-      <HStack flexWrap="wrap" gap={4} mb={8}>
-        <Button colorScheme="blue" onClick={addVaneModal.onOpen}>
-          Ajouter une vanne
-        </Button>
-        <Button
-          colorScheme="blue"
-          variant="outline"
-          onClick={addPumpModal.onOpen}
-        >
-          Ajouter une pompe
-        </Button>
-        <Button
-          as={NextLink}
-          href="/vannes-pompes/schema"
-          variant="outline"
-          colorScheme="teal"
-        >
-          Vue schéma réseau
-        </Button>
-      </HStack>
+    <Box px={{ base: 3, md: 4 }} py={{ base: 3, md: 4 }} color={textColor}>
+      <PageInfoBar
+        title="Vannes et pompes"
+        subtitle={`${vanes.length} vanne${vanes.length === 1 ? '' : 's'} · ${pumps.length} pompe${pumps.length === 1 ? '' : 's'}`}
+        actions={
+          <HStack flexWrap="wrap" gap={2}>
+            <Button colorScheme="brand" size="sm" onClick={addVaneModal.onOpen}>
+              Ajouter une vanne
+            </Button>
+            <Button
+              colorScheme="brand"
+              variant="outline"
+              size="sm"
+              onClick={addPumpModal.onOpen}
+            >
+              Ajouter une pompe
+            </Button>
+            <Button
+              as={NextLink}
+              href="/vannes-pompes/schema"
+              variant="outline"
+              size="sm"
+            >
+              Vue schéma réseau
+            </Button>
+          </HStack>
+        }
+      />
 
       <Heading size="md" mb={4}>
         Vannes
