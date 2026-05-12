@@ -10,7 +10,6 @@ import {
   HStack,
   Icon,
   Flex,
-  useColorMode,
 } from '@chakra-ui/react';
 import {
   Cloud,
@@ -47,8 +46,6 @@ const WeatherDashboard = () => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
   const [useImperial, setUseImperial] = useState(false);
-  const { colorMode } = useColorMode();
-
   const bgColor = useColorModeValue('white', 'gray.800');
   const primaryText = useColorModeValue('gray.900', 'white');
   const secondaryText = useColorModeValue('gray.600', 'gray.400');
@@ -116,12 +113,7 @@ const WeatherDashboard = () => {
     <Box bg={tableBg} p={p} width="100%" borderRadius="md" boxShadow="lg">
       {/* Unit Toggle */}
       <HStack justify="space-between" mb={4}>
-        <Text
-          color={colorMode === 'light' ? 'gray.700' : 'gray.200'}
-          fontSize="lg"
-          fontWeight="bold"
-          mb={4}
-        >
+        <Text color="app.text" fontSize="lg" fontWeight="bold" mb={4}>
           Météo
         </Text>
         <HStack spacing={2}>
