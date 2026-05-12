@@ -41,7 +41,6 @@ import {
   yAxisLabelInsideLeft,
   yAxisLabelInsideRight,
 } from '@/app/utils/chartAxisConfig';
-// import { calculateET0 } from "../data/dashboard/calculateET0";
 
 interface SensorDataChartProps {
   data: SensorData[];
