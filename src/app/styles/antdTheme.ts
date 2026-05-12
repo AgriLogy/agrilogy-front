@@ -42,5 +42,13 @@ export const antdTheme: ThemeConfig = {
       controlHeight: 40,
       controlHeightLG: 48,
     },
+    Select: {
+      controlHeight: 40,
+      controlHeightLG: 48,
+    },
+    DatePicker: {
+      controlHeight: 40,
+      controlHeightLG: 48,
+    },
   },
 };

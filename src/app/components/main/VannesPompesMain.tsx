@@ -6,7 +6,6 @@ import {
   Badge,
   Box,
   Button,
-  Divider,
   FormControl,
   FormLabel,
   Heading,
@@ -26,6 +25,7 @@ import {
 } from '@chakra-ui/react';
 import { MdPowerSettingsNew } from 'react-icons/md';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import { ChartSection } from '@/app/components/layout/ChartSection';
 import { PageInfoBar } from '@/app/components/layout/PageInfoBar';
 import ValveSchematic from '@/app/components/vannes-pompes/ValveSchematic';
 import PumpSchematic from '@/app/components/vannes-pompes/PumpSchematic';
@@ -143,50 +143,66 @@ const VannesPompesMain = () => {
         }
       />
 
-      <Heading size="md" mb={4}>
-        Vannes
-      </Heading>
-      {vanes.length === 0 ? (
-        <Text opacity={0.8} mb={10}>
-          Aucune vanne. Cliquez sur « Ajouter une vanne » pour en créer une.
-        </Text>
-      ) : (
-        <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={6} mb={12}>
-          {vanes.map((vane, index) => (
-            <VaneCard
-              key={vane.id}
-              vane={vane}
-              schematicLabel={String(index + 1)}
-              onToggle={() => toggleVane(vane.id)}
-              bg={bg}
-              borderColor={borderColor}
-            />
-          ))}
-        </SimpleGrid>
-      )}
+      <VStack spacing={{ base: 3, md: 4 }} align="stretch" minW={0}>
+        <ChartSection>
+          <Heading
+            size="md"
+            mb={4}
+            color="app.text"
+            fontWeight="semibold"
+            lineHeight="short"
+          >
+            Vannes
+          </Heading>
+          {vanes.length === 0 ? (
+            <Text color="app.text.muted">
+              Aucune vanne. Cliquez sur « Ajouter une vanne » pour en créer une.
+            </Text>
+          ) : (
+            <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={6}>
+              {vanes.map((vane, index) => (
+                <VaneCard
+                  key={vane.id}
+                  vane={vane}
+                  schematicLabel={String(index + 1)}
+                  onToggle={() => toggleVane(vane.id)}
+                  bg={bg}
+                  borderColor={borderColor}
+                />
+              ))}
+            </SimpleGrid>
+          )}
+        </ChartSection>
 
-      <Divider my={8} />
-
-      <Heading size="md" mb={4}>
-        Pompes
-      </Heading>
-      {pumps.length === 0 ? (
-        <Text opacity={0.8} mb={0}>
-          Aucune pompe. Utilisez « Ajouter une pompe » pour en créer une.
-        </Text>
-      ) : (
-        <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={6}>
-          {pumps.map((pump) => (
-            <PumpCard
-              key={pump.id}
-              pump={pump}
-              onToggle={() => togglePump(pump.id)}
-              bg={bg}
-              borderColor={borderColor}
-            />
-          ))}
-        </SimpleGrid>
-      )}
+        <ChartSection>
+          <Heading
+            size="md"
+            mb={4}
+            color="app.text"
+            fontWeight="semibold"
+            lineHeight="short"
+          >
+            Pompes
+          </Heading>
+          {pumps.length === 0 ? (
+            <Text color="app.text.muted">
+              Aucune pompe. Utilisez « Ajouter une pompe » pour en créer une.
+            </Text>
+          ) : (
+            <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={6}>
+              {pumps.map((pump) => (
+                <PumpCard
+                  key={pump.id}
+                  pump={pump}
+                  onToggle={() => togglePump(pump.id)}
+                  bg={bg}
+                  borderColor={borderColor}
+                />
+              ))}
+            </SimpleGrid>
+          )}
+        </ChartSection>
+      </VStack>
 
       <Modal isOpen={addVaneModal.isOpen} onClose={addVaneModal.onClose}>
         <ModalOverlay />
@@ -219,7 +235,7 @@ const VannesPompesMain = () => {
             <Button variant="ghost" mr={3} onClick={addVaneModal.onClose}>
               Annuler
             </Button>
-            <Button colorScheme="blue" onClick={submitVane}>
+            <Button colorScheme="brand" onClick={submitVane}>
               Créer
             </Button>
           </ModalFooter>
@@ -245,7 +261,7 @@ const VannesPompesMain = () => {
             <Button variant="ghost" mr={3} onClick={addPumpModal.onClose}>
               Annuler
             </Button>
-            <Button colorScheme="blue" onClick={submitPump}>
+            <Button colorScheme="brand" onClick={submitPump}>
               Créer
             </Button>
           </ModalFooter>
