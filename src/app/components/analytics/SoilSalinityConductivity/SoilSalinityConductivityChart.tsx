@@ -167,14 +167,10 @@ const SoilSalinityConductivityChart = ({
           subtitle="Teneur en sels et conductivité électrique — indicateurs de stress ionique."
         />
         <HStack spacing={2}>
-          <Button onClick={handleScreenshot} variant="ghost" colorScheme="teal">
+          <Button onClick={handleScreenshot} variant="ghost">
             <FaCamera />
           </Button>
-          <Button
-            onClick={handleDownloadData}
-            variant="ghost"
-            colorScheme="blue"
-          >
+          <Button onClick={handleDownloadData} variant="ghost">
             <FaDownload />
           </Button>
         </HStack>

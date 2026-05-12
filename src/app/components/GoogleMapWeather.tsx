@@ -44,7 +44,7 @@ export default function GoogleMapWeather() {
     <Button
       size="sm"
       variant={mapToolsOpen ? 'solid' : 'outline'}
-      colorScheme="green"
+      colorScheme="brand"
       onClick={() => setMapToolsOpen((o) => !o)}
     >
       {mapToolsOpen ? 'Masquer les outils' : 'Outils carte'}

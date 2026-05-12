@@ -256,7 +256,7 @@ const ModifyUser = ({ user }: Props) => {
             <HStack width="100%" justify="flex-end" spacing={3}>
               <Button
                 onClick={handleFillLocation}
-                colorScheme="teal"
+                colorScheme="brand"
                 isLoading={loadingLocation}
                 loadingText="Fetching location"
                 size="sm"
@@ -268,7 +268,7 @@ const ModifyUser = ({ user }: Props) => {
             <Button
               type="submit"
               // bg={bgColor}
-              colorScheme="blue"
+              colorScheme="brand"
               color="white"
               _hover={{ bg: hoverColor }}
               width="100%"

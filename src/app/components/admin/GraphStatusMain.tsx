@@ -151,7 +151,7 @@ const GraphStatusMain = ({ user }: Props) => {
           <Checkbox
             key={key}
             isChecked={graphStatus[key]}
-            colorScheme="green"
+            colorScheme="brand"
             onChange={(e) => updateStatus(key, e.target.checked)}
             _hover={{ color: hoverColor }}
           >

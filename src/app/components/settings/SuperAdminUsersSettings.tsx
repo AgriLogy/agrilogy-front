@@ -245,7 +245,7 @@ const SuperAdminUsersSettings = () => {
           ))}
         </SimpleGrid>
 
-        <Button type="submit" size="sm" colorScheme="blue">
+        <Button type="submit" size="sm" colorScheme="brand">
           Créer l&apos;utilisateur
         </Button>
       </Box>
@@ -271,7 +271,7 @@ const SuperAdminUsersSettings = () => {
                 <Td fontSize="xs">{u.email}</Td>
                 <Td>
                   {u.is_staff ? (
-                    <Badge colorScheme="purple">Admin</Badge>
+                    <Badge colorScheme="brand">Admin</Badge>
                   ) : (
                     <Badge>User</Badge>
                   )}

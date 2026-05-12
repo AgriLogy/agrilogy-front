@@ -439,7 +439,7 @@ const SensorReadingsSettings = () => {
                   size="sm"
                   icon={<FaPen />}
                   variant="ghost"
-                  colorScheme="blue"
+                  colorScheme="brand"
                   onClick={() => startEdit(row)}
                 />
               </Td>
@@ -452,7 +452,7 @@ const SensorReadingsSettings = () => {
         <Button size="sm" variant="outline" onClick={handleReset}>
           Reinitialiser
         </Button>
-        <Button size="sm" colorScheme="blue" onClick={handleSave}>
+        <Button size="sm" colorScheme="brand" onClick={handleSave}>
           Enregistrer
         </Button>
       </Flex>
@@ -589,7 +589,7 @@ const SensorReadingsSettings = () => {
             </Button>
             <Button
               leftIcon={<FaCheck />}
-              colorScheme="blue"
+              colorScheme="brand"
               onClick={() => {
                 if (editingRow) applyEdit(editingRow.key);
               }}

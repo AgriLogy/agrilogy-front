@@ -124,7 +124,7 @@ const ZoneEditModal = ({
           </VStack>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="green" onClick={handleSubmit}>
+          <Button colorScheme="brand" onClick={handleSubmit}>
             Save
           </Button>
           <Button onClick={handleDelete} colorScheme="red" ml={3}>

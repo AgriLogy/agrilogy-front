@@ -456,7 +456,7 @@ const NavbarNotificationsButton: React.FC = () => {
             >
               <Button
                 size="sm"
-                colorScheme="blue"
+                colorScheme="brand"
                 variant="solid"
                 borderRadius="lg"
                 onClick={goModifyZoneNotification}

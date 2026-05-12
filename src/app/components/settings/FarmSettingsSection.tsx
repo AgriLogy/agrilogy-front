@@ -222,7 +222,7 @@ const FarmSettingsSection = () => {
                 </FormControl>
                 <Button
                   size="sm"
-                  colorScheme="blue"
+                  colorScheme="brand"
                   alignSelf="flex-start"
                   onClick={() => void saveZone(zone)}
                 >
