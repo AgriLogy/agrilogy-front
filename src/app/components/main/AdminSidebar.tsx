@@ -1,99 +1,107 @@
 'use client';
-import React, { useRef } from 'react';
+
 import {
-  Flex,
-  IconButton,
-  Box,
-  Tooltip,
-  Link,
-  useDisclosure,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  Button,
-} from '@chakra-ui/react';
-import { FaHome, FaSignOutAlt } from 'react-icons/fa';
+  AuditOutlined,
+  DashboardOutlined,
+  LogoutOutlined,
+  TeamOutlined,
+} from '@ant-design/icons';
+import { App, Menu, Tooltip } from 'antd';
+import { useRouter, usePathname } from 'next/navigation';
+import { useMemo } from 'react';
+
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
-import { useRouter } from 'next/navigation';
 
 const AdminSidebar = () => {
-  const { bg, hoverColor } = useColorModeStyles();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = useRef(null);
+  const { bg } = useColorModeStyles();
   const router = useRouter();
+  const pathname = usePathname() ?? '/admin';
+  const { modal } = App.useApp();
+
+  const selectedKey = useMemo(() => {
+    if (pathname.startsWith('/admin/users')) return 'users';
+    if (pathname.startsWith('/admin/affirmations')) return 'affirmations';
+    return 'dashboard';
+  }, [pathname]);
 
   const handleLogout = () => {
-    localStorage.clear();
-    onClose();
-    router.push('/login');
+    modal.confirm({
+      title: 'Confirmer la déconnexion',
+      content: 'Êtes-vous sûr de vouloir vous déconnecter ?',
+      okText: 'Se déconnecter',
+      okType: 'danger',
+      cancelText: 'Annuler',
+      onOk: () => {
+        localStorage.clear();
+        router.push('/login');
+      },
+    });
   };
 
   return (
-    <>
-      <Flex
-        direction="column"
-        align="center"
-        bg={bg}
-        p={4}
-        width="100%"
-        height="100%"
-      >
-        <Tooltip label="Tableau de board" aria-label="Tableau de board">
-          <Link href="/admin">
-            <IconButton
-              icon={<FaHome />}
-              aria-label="Tableau de board"
-              variant="ghost"
-              mb={2}
-              _hover={{ color: hoverColor }}
-            />
-          </Link>
-        </Tooltip>
-
-        <Box height="1px" width="20px" bg="gray.400" mb={2} />
-
-        {/* Logout icon */}
-        <Tooltip label="Déconnexion" aria-label="Logout">
-          <IconButton
-            icon={<FaSignOutAlt />}
-            aria-label="Logout"
-            variant="ghost"
-            onClick={onOpen}
-            _hover={{ color: hoverColor }}
-          />
-        </Tooltip>
-      </Flex>
-
-      <AlertDialog
-        isOpen={isOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={onClose}
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Confirmer la déconnexion
-            </AlertDialogHeader>
-
-            <AlertDialogBody>
-              Êtes-vous sûr de vouloir vous déconnecter ?
-            </AlertDialogBody>
-
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose}>
-                Annuler
-              </Button>
-              <Button colorScheme="red" onClick={handleLogout} ml={3}>
-                Déconnexion
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
-    </>
+    <div
+      style={{
+        background: bg,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+      }}
+    >
+      <Menu
+        mode="inline"
+        inlineCollapsed
+        selectedKeys={[selectedKey]}
+        style={{ borderInlineEnd: 'none', background: 'transparent' }}
+        items={[
+          {
+            key: 'dashboard',
+            icon: (
+              <Tooltip title="Tableau de bord" placement="right">
+                <DashboardOutlined />
+              </Tooltip>
+            ),
+            onClick: () => router.push('/admin'),
+          },
+          {
+            key: 'users',
+            icon: (
+              <Tooltip title="Utilisateurs" placement="right">
+                <TeamOutlined />
+              </Tooltip>
+            ),
+            onClick: () => router.push('/admin/users'),
+          },
+          {
+            key: 'affirmations',
+            icon: (
+              <Tooltip title="Affirmations manager" placement="right">
+                <AuditOutlined />
+              </Tooltip>
+            ),
+            onClick: () => router.push('/admin/affirmations'),
+          },
+        ]}
+      />
+      <Menu
+        mode="inline"
+        inlineCollapsed
+        selectable={false}
+        style={{ borderInlineEnd: 'none', background: 'transparent' }}
+        items={[
+          {
+            key: 'logout',
+            danger: true,
+            icon: (
+              <Tooltip title="Déconnexion" placement="right">
+                <LogoutOutlined />
+              </Tooltip>
+            ),
+            onClick: handleLogout,
+          },
+        ]}
+      />
+    </div>
   );
 };
 

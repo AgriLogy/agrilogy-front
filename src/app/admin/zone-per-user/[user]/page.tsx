@@ -1,29 +1,16 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import ZoneMain from '@/app/components/admin/ZoneMainAdmin';
-import { AdminPageShell } from '@/app/components/layout/AdminPageShell';
 
-type Params = {
-  user: string;
-};
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-const ModifyUserpage = ({ params }: { params: Params }) => {
-  const { user } = params;
+type Params = { user: string };
 
-  const [isMounted, setIsMounted] = useState(false);
-
+const Page = ({ params }: { params: Params }) => {
+  const router = useRouter();
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return null;
-  }
-  return (
-    <AdminPageShell>
-      <ZoneMain user={user} />
-    </AdminPageShell>
-  );
+    router.replace(`/admin/users/${encodeURIComponent(params.user)}?tab=zones`);
+  }, [params.user, router]);
+  return null;
 };
 
-export default ModifyUserpage;
+export default Page;
