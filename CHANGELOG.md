@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/AgriLogy/agrilogy-front/compare/v1.2.0...v1.2.1) (2026-05-14)
+
+
+### Bug Fixes
+
+* **login:** show error on wrong password, expose logout in account menu ([#54](https://github.com/AgriLogy/agrilogy-front/issues/54)) ([c06af56](https://github.com/AgriLogy/agrilogy-front/commit/c06af56d00e764ca6d7cb50f07dffe06f79a4b76)), closes [#53](https://github.com/AgriLogy/agrilogy-front/issues/53)
+
 # [1.2.0](https://github.com/AgriLogy/agrilogy-front/compare/v1.1.1...v1.2.0) (2026-05-14)
 
 
