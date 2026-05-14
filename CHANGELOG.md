@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/AgriLogy/agrilogy-front/compare/v1.1.1...v1.2.0) (2026-05-14)
+
+
+### Features
+
+* UI harmonization ([#52](https://github.com/AgriLogy/agrilogy-front/issues/52)) ([eb484cb](https://github.com/AgriLogy/agrilogy-front/commit/eb484cb7830ce4fb3b4cd9dbdf4906a96f26a2b7)), closes [fff/#ccc](https://github.com/AgriLogy/agrilogy-front/issues/ccc) [#44](https://github.com/AgriLogy/agrilogy-front/issues/44)
+
 ## [1.1.1](https://github.com/AgriLogy/agrilogy-front/compare/v1.1.0...v1.1.1) (2026-05-12)
 
 
