@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Flex,
   IconButton,
@@ -9,6 +10,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  MenuDivider,
   Tooltip,
   useColorMode,
   Avatar,
@@ -19,6 +21,7 @@ import {
 } from '@chakra-ui/react';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { FaCog } from 'react-icons/fa';
+import { IoLogOut } from 'react-icons/io5';
 import Image from 'next/image';
 import api from '@/app/lib/api';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
@@ -28,6 +31,7 @@ import NavbarNotificationsButton from '@/app/components/main/NavbarNotifications
 const HEADER_H = '64px';
 
 const BigMenu = () => {
+  const router = useRouter();
   const { colorMode, toggleColorMode } = useColorMode();
   const { hoverColor, headerBarBg, headerBarBorder, textColor } =
     useColorModeStyles();
@@ -39,6 +43,11 @@ const BigMenu = () => {
       .then((response) => setUsername(response.data.username ?? ''))
       .catch(() => setUsername(''));
   }, []);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    router.push('/login');
+  };
 
   return (
     <Flex
@@ -138,6 +147,16 @@ const BigMenu = () => {
               mx={1}
             >
               Paramètres
+            </MenuItem>
+            <MenuDivider />
+            <MenuItem
+              icon={<IoLogOut />}
+              onClick={handleLogout}
+              color="red.500"
+              borderRadius="md"
+              mx={1}
+            >
+              Se déconnecter
             </MenuItem>
           </MenuList>
         </Menu>

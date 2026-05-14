@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Alert, Button, Form, Input } from 'antd';
+import { App, Button, Form, Input } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import axiosInstance from '../lib/api';
 import { LoginCard } from '../components/auth/LoginCard';
@@ -21,12 +21,11 @@ type SignInResponse = {
 
 export default function LoginBox() {
   const router = useRouter();
+  const { notification } = App.useApp();
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
 
   const onFinish = async (values: LoginFormValues) => {
     setLoading(true);
-    setErrorMessage('');
 
     try {
       const { status, data } = await axiosInstance.post<SignInResponse>(
@@ -40,7 +39,12 @@ export default function LoginBox() {
         router.push(data.is_staff ? '/admin' : '/');
       }
     } catch {
-      setErrorMessage("Nom d'utilisateur ou mot de passe incorrect.");
+      notification.error({
+        message: "Nom d'utilisateur ou mot de passe incorrect.",
+        placement: 'bottom',
+        duration: 4,
+        showProgress: true,
+      });
     } finally {
       setLoading(false);
     }
@@ -51,16 +55,6 @@ export default function LoginBox() {
       title="Se connecter"
       subtitle="Accédez à votre tableau de bord Agrilogy"
     >
-      {errorMessage && (
-        <Alert
-          type="error"
-          description={errorMessage}
-          showIcon
-          closable={{ onClose: () => setErrorMessage('') }}
-          style={{ marginBottom: '1rem' }}
-        />
-      )}
-
       <Form<LoginFormValues>
         layout="vertical"
         size="large"
