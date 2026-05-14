@@ -60,7 +60,7 @@ export default function ChartLastDataShell({
           icon={chartVisible ? <FaEyeSlash /> : <FaEye />}
           size="sm"
           variant="ghost"
-          colorScheme="blue"
+          colorScheme="brand"
           position="absolute"
           top={0}
           right={0}

@@ -115,7 +115,7 @@ const SensorGroupsSettings = () => {
         <Button
           size="sm"
           leftIcon={<FaPlus />}
-          colorScheme="blue"
+          colorScheme="brand"
           onClick={addGroup}
         >
           Créer un groupe
@@ -167,7 +167,7 @@ const SensorGroupsSettings = () => {
             {g.sensorKeys.map((k) => (
               <Badge
                 key={k}
-                colorScheme="teal"
+                colorScheme="brand"
                 cursor="pointer"
                 onClick={() => removeSensorFromGroup(g.id, k)}
                 title="Cliquer pour retirer"

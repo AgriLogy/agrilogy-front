@@ -92,7 +92,7 @@ const BigMenu = () => {
               <Avatar
                 size="sm"
                 name={username || 'Utilisateur'}
-                bg="green.500"
+                bg="primary.500"
               />
               <Box display={{ base: 'none', lg: 'block' }} textAlign="left">
                 <Text

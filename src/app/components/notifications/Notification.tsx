@@ -199,7 +199,7 @@ const Notification: React.FC<NotificationProps> = ({
           borderWidth="1px"
           borderColor="blue.100"
         >
-          <Badge colorScheme="purple" mb={2}>
+          <Badge colorScheme="brand" mb={2}>
             Confirmation zone
           </Badge>
           <Text fontSize="sm">{notification.template_summary}</Text>
@@ -278,7 +278,7 @@ const Notification: React.FC<NotificationProps> = ({
             {onEditZone && (
               <Button
                 size="sm"
-                colorScheme="blue"
+                colorScheme="brand"
                 variant="solid"
                 borderRadius="lg"
                 onClick={() => onEditZone()}

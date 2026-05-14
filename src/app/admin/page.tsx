@@ -1,12 +1,12 @@
 'use client';
 import React from 'react';
-import ListeUsers from '@/app/components/admin/ListeUsers';
+import AdminDashboardMain from '@/app/components/admin/AdminDashboardMain';
 import { AdminPageShell } from '@/app/components/layout/AdminPageShell';
 
 const Page = () => {
   return (
     <AdminPageShell>
-      <ListeUsers />
+      <AdminDashboardMain />
     </AdminPageShell>
   );
 };

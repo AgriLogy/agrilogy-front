@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
-import nt from './NotificationsMain.module.css';
+import { PageInfoBar } from '@/app/components/layout/PageInfoBar';
 import {
   AlertDialog,
   AlertDialogBody,
@@ -10,8 +10,6 @@ import {
   AlertDialogOverlay,
   Box,
   Button,
-  HStack,
-  Text,
   SimpleGrid,
   Modal,
   ModalOverlay,
@@ -23,7 +21,6 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { AddIcon, BellIcon } from '@chakra-ui/icons';
-import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import Notification from '../notifications/Notification';
 import axiosInstance from '@/app/lib/api';
 import {
@@ -46,7 +43,6 @@ import {
 } from '@/app/lib/zoneNotificationConfigStorage';
 
 const NotificationsMain: React.FC = () => {
-  const { bg, textColor } = useColorModeStyles();
   const toast = useToast();
   const deleteCancelRef = useRef<HTMLButtonElement>(null);
   const [notifications, setNotifications] = useState<any[]>([]);
@@ -222,25 +218,24 @@ const NotificationsMain: React.FC = () => {
   if (loading) return <EmptyBox variant="loading" />;
 
   return (
-    <>
-      <Box bg={bg} className={nt.header}>
-        <HStack justify="space-between" flexWrap="wrap" spacing={3}>
-          <Text color={textColor}>Notifications</Text>
+    <Box px={{ base: 3, md: 4 }} py={{ base: 3, md: 4 }}>
+      <PageInfoBar
+        title="Notifications"
+        subtitle="Configurez les alertes email et consultez l'historique"
+        actions={
           <Button
-            colorScheme="green"
+            colorScheme="brand"
             leftIcon={<AddIcon />}
             size="sm"
             onClick={openConfigure}
           >
             Ajouter une notification de zone
           </Button>
-        </HStack>
-      </Box>
+        }
+      />
 
       <SimpleGrid
-        m={1}
-        mt={4}
-        spacing={4}
+        spacing={{ base: 3, md: 4 }}
         columns={{ base: 1, sm: 2, md: 3, lg: 4 }}
       >
         {notifications.map((notification) => {
@@ -294,7 +289,7 @@ const NotificationsMain: React.FC = () => {
             fontSize="lg"
             pb={1}
           >
-            <BellIcon color="blue.400" />
+            <BellIcon color="primary.400" />
             {configureIntent === 'edit'
               ? 'Modifier la notification de zone'
               : 'Nouvelle notification de zone'}
@@ -352,7 +347,7 @@ const NotificationsMain: React.FC = () => {
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
-    </>
+    </Box>
   );
 };
 

@@ -10,7 +10,6 @@ import {
   HStack,
   Icon,
   Flex,
-  useColorMode,
 } from '@chakra-ui/react';
 import {
   Cloud,
@@ -47,8 +46,6 @@ const WeatherDashboard = () => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
   const [useImperial, setUseImperial] = useState(false);
-  const { colorMode } = useColorMode();
-
   const bgColor = useColorModeValue('white', 'gray.800');
   const primaryText = useColorModeValue('gray.900', 'white');
   const secondaryText = useColorModeValue('gray.600', 'gray.400');
@@ -90,7 +87,7 @@ const WeatherDashboard = () => {
       case 3:
         return <Icon as={Cloud} color="gray.500" />;
       default:
-        return <Icon as={CloudRain} color="blue.500" />;
+        return <Icon as={CloudRain} color="primary.500" />;
     }
   };
 
@@ -116,12 +113,7 @@ const WeatherDashboard = () => {
     <Box bg={tableBg} p={p} width="100%" borderRadius="md" boxShadow="lg">
       {/* Unit Toggle */}
       <HStack justify="space-between" mb={4}>
-        <Text
-          color={colorMode === 'light' ? 'gray.700' : 'gray.200'}
-          fontSize="lg"
-          fontWeight="bold"
-          mb={4}
-        >
+        <Text color="app.text" fontSize="lg" fontWeight="bold" mb={4}>
           Météo
         </Text>
         <HStack spacing={2}>
@@ -136,7 +128,7 @@ const WeatherDashboard = () => {
             id="unit-toggle"
             isChecked={useImperial}
             onChange={handleUnitToggle}
-            colorScheme="blue"
+            colorScheme="brand"
           />
           <Text
             fontSize="sm"
@@ -179,7 +171,7 @@ const WeatherDashboard = () => {
           p={4}
           textAlign="center"
         >
-          <Icon as={Wind} boxSize="24px" color="blue.500" mb={1} />
+          <Icon as={Wind} boxSize="24px" color="primary.500" mb={1} />
           <Text fontSize="xs" color={primaryText}>
             {useImperial
               ? Math.round(toMilesPerHour(current.wind_speed_10m))
@@ -196,7 +188,7 @@ const WeatherDashboard = () => {
           borderWidth="1px"
           borderRadius="xl"
         >
-          <Icon as={Droplets} boxSize="24px" color="cyan.500" mb={1} />
+          <Icon as={Droplets} boxSize="24px" color="primary.400" mb={1} />
           <Text fontSize="xs" color={primaryText}>
             {current.relative_humidity_2m}%
           </Text>

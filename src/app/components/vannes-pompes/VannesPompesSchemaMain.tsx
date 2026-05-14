@@ -292,7 +292,7 @@ const VannesPompesSchemaMain = () => {
           <VStack align={{ base: 'stretch', md: 'flex-start' }} spacing={3}>
             <HStack>
               <Badge
-                colorScheme="teal"
+                colorScheme="brand"
                 variant="subtle"
                 borderRadius="md"
                 px={2}
@@ -367,7 +367,7 @@ const VannesPompesSchemaMain = () => {
               <Button
                 as={NextLink}
                 href="/vannes-pompes"
-                colorScheme="teal"
+                colorScheme="brand"
                 size="lg"
                 borderRadius="xl"
                 px={8}

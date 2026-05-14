@@ -648,7 +648,7 @@ const ZoneNotificationConfigureForm: React.FC<
                       mt={2}
                       size="xs"
                       variant="outline"
-                      colorScheme="blue"
+                      colorScheme="brand"
                       borderRadius="full"
                       onClick={onKcTableOpen}
                     >
@@ -702,7 +702,7 @@ const ZoneNotificationConfigureForm: React.FC<
                 </Text>
                 <VStack align="stretch" spacing={2}>
                   <Checkbox
-                    colorScheme="green"
+                    colorScheme="brand"
                     isChecked={form.kcSensorHumidityLow}
                     onChange={(e) =>
                       update('kcSensorHumidityLow', e.target.checked)
@@ -720,7 +720,7 @@ const ZoneNotificationConfigureForm: React.FC<
                     Humidité basse (%)
                   </Checkbox>
                   <Checkbox
-                    colorScheme="green"
+                    colorScheme="brand"
                     isChecked={form.kcSensorHumidityMid}
                     onChange={(e) =>
                       update('kcSensorHumidityMid', e.target.checked)
@@ -738,7 +738,7 @@ const ZoneNotificationConfigureForm: React.FC<
                     Humidité moyenne (%)
                   </Checkbox>
                   <Checkbox
-                    colorScheme="green"
+                    colorScheme="brand"
                     isChecked={form.kcSensorHumidityHigh}
                     onChange={(e) =>
                       update('kcSensorHumidityHigh', e.target.checked)
@@ -1056,17 +1056,17 @@ const ZoneNotificationConfigureForm: React.FC<
                 <Checkbox
                   isChecked={form.notifyEmail}
                   onChange={(e) => update('notifyEmail', e.target.checked)}
-                  colorScheme="blue"
+                  colorScheme="brand"
                 >
                   <HStack spacing={2} as="span">
-                    <Icon as={FaEnvelopeOpenText} color="blue.400" />
+                    <Icon as={FaEnvelopeOpenText} color="primary.400" />
                     <span>E-mail</span>
                   </HStack>
                 </Checkbox>
                 <Checkbox
                   isChecked={form.notifySms}
                   onChange={(e) => update('notifySms', e.target.checked)}
-                  colorScheme="blue"
+                  colorScheme="brand"
                 >
                   <HStack spacing={2} as="span">
                     <Icon as={FaMobileAlt} color="green.500" />
@@ -1076,7 +1076,7 @@ const ZoneNotificationConfigureForm: React.FC<
                 <Checkbox
                   isChecked={form.notifyWhatsapp}
                   onChange={(e) => update('notifyWhatsapp', e.target.checked)}
-                  colorScheme="blue"
+                  colorScheme="brand"
                 >
                   <HStack spacing={2} as="span">
                     <Icon as={FaWhatsapp} color="green.400" />
@@ -1092,7 +1092,7 @@ const ZoneNotificationConfigureForm: React.FC<
       <HStack justify="center" mt={8}>
         <Button
           type="button"
-          colorScheme="blue"
+          colorScheme="brand"
           size="lg"
           leftIcon={<Icon as={FaBell} />}
           onClick={() => void apply()}

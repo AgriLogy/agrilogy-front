@@ -51,7 +51,7 @@ const Alert: React.FC<AlertProps> = ({
         <Text fontWeight="bold" fontSize="xl" color={textColor}>
           {name}
         </Text>
-        <Badge colorScheme="blue" fontSize="sm" p={2}>
+        <Badge colorScheme="brand" fontSize="sm" p={2}>
           {typeLabels || type}
         </Badge>
       </Box>

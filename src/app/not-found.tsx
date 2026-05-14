@@ -23,7 +23,7 @@ export default function NotFound() {
         <Text color="gray.600" _dark={{ color: 'gray.300' }}>
           The page you are looking for does not exist or has been moved.
         </Text>
-        <Button as={Link} href="/" colorScheme="green" alignSelf="center">
+        <Button as={Link} href="/" colorScheme="brand" alignSelf="center">
           Go back home
         </Button>
       </Stack>

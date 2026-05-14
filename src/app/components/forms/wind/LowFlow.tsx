@@ -125,7 +125,7 @@ const LowFlow: React.FC = () => {
         </FormControl>
 
         {/* Submit Button */}
-        <Button colorScheme="blue" onClick={handleSubmit} w="full">
+        <Button colorScheme="brand" onClick={handleSubmit} w="full">
           Submit
         </Button>
       </VStack>

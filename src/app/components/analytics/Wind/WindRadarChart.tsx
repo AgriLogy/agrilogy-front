@@ -417,7 +417,6 @@ const WindRadarChart = ({
         <HStack spacing={2}>
           <Button
             aria-label="Capture"
-            colorScheme="teal"
             variant="ghost"
             onClick={handleScreenshot}
           >
@@ -425,7 +424,6 @@ const WindRadarChart = ({
           </Button>
           <Button
             aria-label="Export"
-            colorScheme="blue"
             variant="ghost"
             onClick={handleDownloadData}
             isDisabled={isDataEmpty}

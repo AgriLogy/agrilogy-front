@@ -1,89 +1,77 @@
 'use client';
+
 import React from 'react';
-import st from './SettingsMain.module.css';
-import { Box, HStack, Text, Button } from '@chakra-ui/react';
+import { Box, Button, HStack } from '@chakra-ui/react';
+
+import { PageInfoBar } from '@/app/components/layout/PageInfoBar';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
-import SensorReadingsSettings from '@/app/components/settings/SensorReadingsSettings';
 import FarmSettingsSection from '@/app/components/settings/FarmSettingsSection';
-import SuperAdminUsersSettings from '@/app/components/settings/SuperAdminUsersSettings';
 import SensorDirectorySettings from '@/app/components/settings/SensorDirectorySettings';
 import SensorGroupsSettings from '@/app/components/settings/SensorGroupsSettings';
+import SensorReadingsSettings from '@/app/components/settings/SensorReadingsSettings';
+import SuperAdminUsersSettings from '@/app/components/settings/SuperAdminUsersSettings';
+
+type SettingsTab = 'farms' | 'users' | 'sensors' | 'readings' | 'groups';
+
+const TABS: Array<{ key: SettingsTab; label: string }> = [
+  { key: 'farms', label: 'Fermes' },
+  { key: 'users', label: 'Utilisateurs' },
+  { key: 'sensors', label: 'Capteurs' },
+  { key: 'readings', label: 'Lectures' },
+  { key: 'groups', label: 'Groupes de capteurs' },
+];
 
 const SettingsMain = () => {
-  const { bg, textColor, borderColor, tabAccent, iconColor } =
-    useColorModeStyles();
-  const [activeTab, setActiveTab] = React.useState<
-    'farms' | 'users' | 'sensors' | 'readings' | 'groups'
-  >('readings');
-
-  const tabs: Array<{
-    key: 'farms' | 'users' | 'sensors' | 'readings' | 'groups';
-    label: string;
-  }> = [
-    { key: 'farms', label: 'Fermes' },
-    { key: 'users', label: 'Utilisateurs' },
-    { key: 'sensors', label: 'Capteurs' },
-    { key: 'readings', label: 'Lectures' },
-    { key: 'groups', label: 'Groupes de capteurs' },
-  ];
+  const { tabAccent, iconColor } = useColorModeStyles();
+  const [activeTab, setActiveTab] = React.useState<SettingsTab>('readings');
+  const activeLabel =
+    TABS.find((t) => t.key === activeTab)?.label ?? 'Lectures';
 
   return (
-    <div className={st.container}>
+    <Box px={{ base: 3, md: 4 }} py={{ base: 3, md: 4 }}>
+      <PageInfoBar
+        title="Paramètres"
+        subtitle={activeLabel}
+        actions={
+          <HStack
+            spacing={{ base: 1, md: 2 }}
+            overflowX="auto"
+            whiteSpace="nowrap"
+          >
+            {TABS.map((tab) => {
+              const isActive = tab.key === activeTab;
+              return (
+                <Button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  variant="ghost"
+                  size="sm"
+                  color={isActive ? tabAccent : iconColor}
+                  borderBottomWidth="2px"
+                  borderBottomColor={isActive ? tabAccent : 'transparent'}
+                  borderRadius="0"
+                  textTransform="uppercase"
+                  fontSize="xs"
+                  fontWeight="700"
+                  letterSpacing="0.3px"
+                  _hover={{ color: tabAccent }}
+                >
+                  {tab.label}
+                </Button>
+              );
+            })}
+          </HStack>
+        }
+      />
+
       <Box
-        bg={bg}
-        className={st.wide}
-        borderRadius="5px"
-        border="1px solid #e2e8f0"
-        px={3}
-        py={2}
-        mb={2}
-      >
-        <HStack
-          spacing={{ base: 1, md: 3 }}
-          overflowX="auto"
-          whiteSpace="nowrap"
-        >
-          {tabs.map((tab) => {
-            const isActive = tab.key === activeTab;
-            return (
-              <Button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                variant="ghost"
-                size="sm"
-                color={isActive ? tabAccent : iconColor}
-                borderBottomWidth="2px"
-                borderBottomColor={isActive ? tabAccent : 'transparent'}
-                borderRadius="0"
-                textTransform="uppercase"
-                fontSize="xs"
-                fontWeight="700"
-                letterSpacing="0.3px"
-                _hover={{ color: tabAccent }}
-              >
-                {tab.label}
-              </Button>
-            );
-          })}
-        </HStack>
-      </Box>
-      <Box
-        bg={bg}
-        className={st.header}
+        bg="app.surface"
         borderWidth="1px"
-        borderColor={borderColor}
-        borderStyle="solid"
-      >
-        <Text color={textColor}>
-          {tabs.find((t) => t.key === activeTab)?.label ?? 'Lectures'}
-        </Text>
-      </Box>
-      <Box
-        bg={bg}
-        className={`${st.wide} ${st['text-box']}`}
-        borderWidth="1px"
-        borderColor={borderColor}
-        borderStyle="solid"
+        borderColor="app.border"
+        borderRadius="lg"
+        px={{ base: 3, md: 4 }}
+        py={{ base: 3, md: 4 }}
+        minW={0}
       >
         {activeTab === 'readings' && <SensorReadingsSettings />}
         {activeTab === 'farms' && <FarmSettingsSection />}
@@ -91,7 +79,7 @@ const SettingsMain = () => {
         {activeTab === 'sensors' && <SensorDirectorySettings />}
         {activeTab === 'groups' && <SensorGroupsSettings />}
       </Box>
-    </div>
+    </Box>
   );
 };
 

@@ -118,7 +118,6 @@ const VPDChart = ({
         <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
-            colorScheme="teal"
             variant="ghost"
             onClick={handleScreenshot}
           >
@@ -126,7 +125,6 @@ const VPDChart = ({
           </Button>
           <Button
             aria-label="Exporter CSV"
-            colorScheme="blue"
             variant="ghost"
             onClick={handleDownloadData}
           >

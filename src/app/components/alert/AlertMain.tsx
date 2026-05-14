@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Box } from '@chakra-ui/react';
 import {
   App,
   Button,
@@ -10,15 +11,9 @@ import {
   Table,
   Tag,
   Tooltip,
-  Typography,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import {
-  BellOutlined,
-  EditOutlined,
-  PlusOutlined,
-  DeleteOutlined,
-} from '@ant-design/icons';
+import { EditOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { alertApi, type AlertRecord } from '@/app/lib/alertApi';
 import {
   ALERT_CHOICES,
@@ -26,10 +21,10 @@ import {
   DEFAULT_SENSOR_KEYS,
   type SensorKeyOption,
 } from '@/app/utils/alertChoices';
+import { PageInfoBar } from '@/app/components/layout/PageInfoBar';
 import AlertCreateDrawer from './AlertCreateDrawer';
 import styles from './AlertMain.module.scss';
 
-const { Title, Paragraph } = Typography;
 const ALERT_LIMIT = 10;
 
 const conditionLabel = (c: string) =>
@@ -215,19 +210,15 @@ const AlertMain: React.FC = () => {
   );
 
   return (
-    <div className={styles.page} data-testid="alert-main">
-      <header className={styles.headerRow}>
-        <div>
-          <Title level={3} className={styles.title}>
-            <BellOutlined style={{ marginRight: 8 }} />
-            Gestion des alertes
-          </Title>
-          <Paragraph className={styles.subtitle}>
-            Configurez des seuils par capteur. Chaque alerte se trace
-            automatiquement sur le graphique correspondant.
-          </Paragraph>
-        </div>
-        <div className={styles.toolbar}>
+    <Box
+      px={{ base: 3, md: 4 }}
+      py={{ base: 3, md: 4 }}
+      data-testid="alert-main"
+    >
+      <PageInfoBar
+        title="Gestion des alertes"
+        subtitle="Configurez des seuils par capteur. Chaque alerte se trace automatiquement sur le graphique correspondant."
+        actions={
           <Button
             type="primary"
             icon={<PlusOutlined />}
@@ -236,10 +227,18 @@ const AlertMain: React.FC = () => {
           >
             Nouvelle alerte
           </Button>
-        </div>
-      </header>
+        }
+      />
 
-      <section className={styles.tableCard}>
+      <Box
+        bg="app.surface"
+        borderWidth="1px"
+        borderColor="app.border"
+        borderRadius="lg"
+        px={{ base: 3, md: 4 }}
+        py={{ base: 3, md: 4 }}
+        minW={0}
+      >
         <Table<AlertRecord>
           rowKey="id"
           columns={columns}
@@ -255,7 +254,7 @@ const AlertMain: React.FC = () => {
             ),
           }}
         />
-      </section>
+      </Box>
 
       <AlertCreateDrawer
         open={drawerOpen}
@@ -266,7 +265,7 @@ const AlertMain: React.FC = () => {
           void fetchAlerts();
         }}
       />
-    </div>
+    </Box>
   );
 };
 

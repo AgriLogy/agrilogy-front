@@ -43,7 +43,7 @@ export function ErrorState({
           </Text>
         )}
         {onRetry && (
-          <Button colorScheme="green" onClick={onRetry} alignSelf="center">
+          <Button colorScheme="brand" onClick={onRetry} alignSelf="center">
             {retryLabel}
           </Button>
         )}

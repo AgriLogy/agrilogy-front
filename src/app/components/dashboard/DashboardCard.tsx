@@ -1,11 +1,5 @@
 import React, { ReactNode } from 'react';
-import {
-  Box,
-  Flex,
-  Text,
-  useColorModeValue,
-  useColorMode,
-} from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 
 interface DashboardCardProps {
   title: string;
@@ -15,16 +9,12 @@ interface DashboardCardProps {
 }
 
 const DashboardCard = ({ title, titleAddon, content }: DashboardCardProps) => {
-  const tableBg = useColorModeValue('white', 'gray.800');
-  const { colorMode } = useColorMode();
-
   return (
     <Box
       width="100%"
       height="100%"
-      bg={tableBg}
+      bg="app.surface"
       borderRadius="md"
-      // boxShadow="lg"
       overflow="hidden"
     >
       <Flex
@@ -36,7 +26,7 @@ const DashboardCard = ({ title, titleAddon, content }: DashboardCardProps) => {
         pr={titleAddon ? 0 : 2}
       >
         <Text
-          color={colorMode === 'light' ? 'gray.700' : 'gray.200'}
+          color="app.text"
           fontSize="lg"
           fontWeight="bold"
           flex="1"
