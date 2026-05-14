@@ -1,17 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Flex,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Link,
-  useColorMode,
-} from '@chakra-ui/react';
-import { MoonIcon, SunIcon } from '@chakra-ui/icons';
-import { FaUser } from 'react-icons/fa';
+'use client';
+
+import { MoonOutlined, SunOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Dropdown, Flex } from 'antd';
+import { useColorMode } from '@chakra-ui/react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+
 import api from '@/app/lib/api';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import logo from '../../public/logo.png';
@@ -24,38 +19,47 @@ const AdminBigMenu = () => {
   useEffect(() => {
     api
       .get('/api/header/')
-      .then((response) => setUsername(response.data.username))
-      .catch((error) => console.error('Error fetching header data', error));
+      .then((res) => {
+        if (res.data?.username) setUsername(res.data.username);
+      })
+      .catch(() => {
+        /* keep default */
+      });
   }, []);
 
   return (
     <Flex
-      justify="space-between"
       align="center"
-      px={6}
-      py={3}
-      bg={bg}
-      height="60px"
+      justify="space-between"
+      style={{
+        background: bg,
+        height: '100%',
+        padding: '0 16px',
+      }}
     >
-      <Link href="/">
-        <Image height={40} src={logo} alt="Logo" priority />
+      <Link href="/" aria-label="Accueil">
+        <Image height={32} src={logo} alt="Logo" priority />
       </Link>
-      <Flex align="center" gap={4}>
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            icon={<FaUser />}
-            aria-label="Profile"
-            variant="ghost"
-          />
-          <MenuList>
-            <MenuItem>Bonjour {username}</MenuItem>
-          </MenuList>
-        </Menu>
-        <IconButton
-          icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-          aria-label="Toggle Color Mode"
-          variant="ghost"
+
+      <Flex align="center" gap={8}>
+        <Dropdown
+          trigger={['click']}
+          menu={{
+            items: [
+              {
+                key: 'hi',
+                label: `Bonjour ${username}`,
+                disabled: true,
+              },
+            ],
+          }}
+        >
+          <Button type="text" icon={<UserOutlined />} aria-label="Profil" />
+        </Dropdown>
+        <Button
+          type="text"
+          aria-label="Basculer le mode sombre"
+          icon={colorMode === 'light' ? <MoonOutlined /> : <SunOutlined />}
           onClick={toggleColorMode}
         />
       </Flex>

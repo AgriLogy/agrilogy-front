@@ -1,14 +1,14 @@
 'use client';
-import React from 'react';
-import CreateUser from '@/app/components/admin/CreateUser';
-import { AdminPageShell } from '@/app/components/layout/AdminPageShell';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const Page = () => {
-  return (
-    <AdminPageShell>
-      <CreateUser />
-    </AdminPageShell>
-  );
+  const router = useRouter();
+  useEffect(() => {
+    router.replace('/admin/users/new');
+  }, [router]);
+  return null;
 };
 
 export default Page;
