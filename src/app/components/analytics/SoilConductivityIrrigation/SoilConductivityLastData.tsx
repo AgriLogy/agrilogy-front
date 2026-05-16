@@ -92,7 +92,7 @@ const SoilConductivityLastData = ({
         >
           CE sol et débit d’irrigation
         </Text>
-        <FaWater size={40} color="#00B0FF" style={{ margin: '0 auto' }} />
+        <FaWater size={40} color="#2E924F" style={{ margin: '0 auto' }} />
         <VStack spacing={4} mt={4} align="stretch" w="100%">
           <Row
             labelColor={rowLabelColor}
@@ -145,7 +145,7 @@ const SoilConductivityLastData = ({
             Mesure : {timeAgo(ts)}
           </Text>
         )}
-        <LastDataAddAlertButton />
+        <LastDataAddAlertButton sensorKey="soil_conductivity" />
       </LastDataPanel>
     </Box>
   );

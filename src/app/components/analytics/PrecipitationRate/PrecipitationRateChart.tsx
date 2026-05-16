@@ -10,14 +10,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from 'recharts';
-import {
-  Box,
-  Flex,
-  Text,
-  Button,
-  HStack,
-  useColorMode,
-} from '@chakra-ui/react';
+import { Box, Flex, Button, HStack, useColorMode } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
@@ -130,7 +123,6 @@ const PrecipitationRateChart = ({
         <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
-            colorScheme="teal"
             variant="ghost"
             onClick={handleScreenshot}
           >
@@ -138,7 +130,6 @@ const PrecipitationRateChart = ({
           </Button>
           <Button
             aria-label="Exporter CSV"
-            colorScheme="blue"
             variant="ghost"
             onClick={handleDownloadData}
           >

@@ -1001,7 +1001,7 @@ export default function AgricultureMapboxMap({
                 <Button
                   size="sm"
                   onClick={handleDrawPolygon}
-                  colorScheme="green"
+                  colorScheme="brand"
                   variant={drawMode === 'draw_polygon' ? 'solid' : 'outline'}
                 >
                   Dessiner
@@ -1009,7 +1009,7 @@ export default function AgricultureMapboxMap({
                 <Button
                   size="sm"
                   onClick={handleSelect}
-                  colorScheme="blue"
+                  colorScheme="brand"
                   variant={drawMode === 'simple_select' ? 'solid' : 'outline'}
                 >
                   Sélectionner
@@ -1017,7 +1017,7 @@ export default function AgricultureMapboxMap({
                 <Button
                   size="sm"
                   onClick={handleEditVertices}
-                  colorScheme="orange"
+                  colorScheme="brand"
                   variant={drawMode === 'direct_select' ? 'solid' : 'outline'}
                 >
                   Sommets
@@ -1033,7 +1033,7 @@ export default function AgricultureMapboxMap({
                 <Button
                   size="sm"
                   onClick={handleSave}
-                  colorScheme="cyan"
+                  colorScheme="brand"
                   variant="solid"
                 >
                   Enregistrer
@@ -1088,7 +1088,7 @@ export default function AgricultureMapboxMap({
                   </FormControl>
                   <Button
                     size="sm"
-                    colorScheme="purple"
+                    colorScheme="brand"
                     variant="solid"
                     alignSelf={{ base: 'stretch', sm: 'flex-end' }}
                     onClick={handleApplySectorRename}
@@ -1116,7 +1116,7 @@ export default function AgricultureMapboxMap({
                 <MenuButton
                   as={Button}
                   size="sm"
-                  colorScheme="pink"
+                  colorScheme="brand"
                   variant={sensorPlacementType ? 'solid' : 'outline'}
                   rightIcon={<ChevronDownIcon />}
                 >

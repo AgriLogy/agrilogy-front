@@ -1,14 +1,7 @@
 'use client';
 
 import React, { useMemo, useRef } from 'react';
-import {
-  Box,
-  Text,
-  Button,
-  HStack,
-  Flex,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { Box, Button, HStack, Flex, useColorModeValue } from '@chakra-ui/react';
 import ChartPanelHeading from '../../common/ChartPanelHeading';
 import ChartStateView from '../../common/ChartStateView';
 import { FaCamera, FaDownload } from 'react-icons/fa';
@@ -424,7 +417,6 @@ const WindRadarChart = ({
         <HStack spacing={2}>
           <Button
             aria-label="Capture"
-            colorScheme="teal"
             variant="ghost"
             onClick={handleScreenshot}
           >
@@ -432,7 +424,6 @@ const WindRadarChart = ({
           </Button>
           <Button
             aria-label="Export"
-            colorScheme="blue"
             variant="ghost"
             onClick={handleDownloadData}
             isDisabled={isDataEmpty}

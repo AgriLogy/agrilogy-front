@@ -10,14 +10,7 @@ import {
   CartesianGrid,
   ReferenceArea, // ⬅️ add this
 } from 'recharts';
-import {
-  Box,
-  Flex,
-  Text,
-  Button,
-  HStack,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { Box, Flex, Button, HStack, useColorModeValue } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import ChartPanelHeading from '../../common/ChartPanelHeading';
@@ -224,7 +217,6 @@ const SoilTemperatureChart = ({
         <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
-            colorScheme="teal"
             variant="ghost"
             onClick={handleScreenshot}
           >
@@ -232,7 +224,6 @@ const SoilTemperatureChart = ({
           </Button>
           <Button
             aria-label="Exporter CSV"
-            colorScheme="blue"
             variant="ghost"
             onClick={handleDownloadData}
           >

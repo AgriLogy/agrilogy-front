@@ -1,14 +1,12 @@
-import { Flex, IconButton, useColorMode, Spacer } from '@chakra-ui/react';
+'use client';
+
+import { Flex, IconButton, Spacer, useColorMode } from '@chakra-ui/react';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import Image from 'next/image';
 import logo from '../public/logo.png';
 
 const NonAuthNavbar = () => {
   const { colorMode, toggleColorMode } = useColorMode();
-  // const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  // const handleDrawerOpen = () => setIsDrawerOpen(true);
-  // const handleDrawerClose = () => setIsDrawerOpen(false);
 
   return (
     <Flex
@@ -16,17 +14,20 @@ const NonAuthNavbar = () => {
       align="center"
       justify="space-between"
       padding="1rem"
-      boxShadow="sm"
-      bg={colorMode === 'light' ? '#C4DAD2' : '#6A9C89'}
+      bg="var(--surface-page)"
+      borderBottom="1px solid var(--border-subtle)"
       position="sticky"
       top={0}
       zIndex={10}
     >
-      <Image src={logo} alt="Logo" height={50} priority />
-
+      <Image src={logo} alt="Agrilogy" height={50} priority />
       <Spacer />
       <IconButton
-        aria-label="Toggle dark/light mode"
+        aria-label={
+          colorMode === 'light'
+            ? 'Activer le mode sombre'
+            : 'Activer le mode clair'
+        }
         icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
         onClick={toggleColorMode}
         variant="ghost"

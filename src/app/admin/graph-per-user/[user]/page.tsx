@@ -1,29 +1,18 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import GraphStatusMain from '@/app/components/admin/GraphStatusMain';
-import { AdminPageShell } from '@/app/components/layout/AdminPageShell';
 
-type Params = {
-  user: string;
-};
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-const ModifyUserpage = ({ params }: { params: Params }) => {
-  const { user } = params;
+type Params = { user: string };
 
-  const [isMounted, setIsMounted] = useState(false);
-
+const Page = ({ params }: { params: Params }) => {
+  const router = useRouter();
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return null;
-  }
-  return (
-    <AdminPageShell>
-      <GraphStatusMain user={user} />
-    </AdminPageShell>
-  );
+    router.replace(
+      `/admin/users/${encodeURIComponent(params.user)}?tab=graphs`
+    );
+  }, [params.user, router]);
+  return null;
 };
 
-export default ModifyUserpage;
+export default Page;

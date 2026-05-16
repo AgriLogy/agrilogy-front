@@ -52,7 +52,6 @@ import {
   mergeNotificationsForStorage,
   normalizeApiNotificationsList,
   NOTIFICATIONS_CACHE_UPDATED_EVENT,
-  notificationRowZoneId,
   readNotificationsFromCache,
   writeNotificationsToCache,
 } from '@/app/lib/notificationsCacheStorage';
@@ -338,8 +337,6 @@ const NavbarNotificationsButton: React.FC = () => {
                         })
                       : '—';
                     const zone = row.zone_name ?? n.zone_name ?? '';
-                    const zid =
-                      notificationRowZoneId(row as unknown) ?? row.zone_id;
                     const cfgId = resolveStoredNotificationConfigId(
                       row as unknown
                     );
@@ -437,7 +434,7 @@ const NavbarNotificationsButton: React.FC = () => {
             alignItems="center"
             gap={2}
           >
-            <BellIcon color="blue.400" />
+            <BellIcon color="primary.400" />
             Détail de la notification
           </ModalHeader>
           <ModalCloseButton borderRadius="full" />
@@ -459,7 +456,7 @@ const NavbarNotificationsButton: React.FC = () => {
             >
               <Button
                 size="sm"
-                colorScheme="blue"
+                colorScheme="brand"
                 variant="solid"
                 borderRadius="lg"
                 onClick={goModifyZoneNotification}

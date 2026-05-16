@@ -65,9 +65,9 @@ export const SENSOR_CATALOG: SensorCatalogItem[] = [
   },
   {
     key: 'et0',
-    readingLabel: 'Évapotranspiration quotidienne',
+    readingLabel: 'Évapotranspiration de référence (horaire)',
     typeLabel: 'Évapotranspiration ET₀',
-    defaultUnit: 'mm',
+    defaultUnit: 'mm/h',
     category: 'lecture',
   },
   {

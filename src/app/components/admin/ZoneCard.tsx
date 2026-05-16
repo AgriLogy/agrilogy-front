@@ -29,7 +29,7 @@ const ZoneCard = ({ zone, onClick }: ZoneCardType) => {
       </Text>
 
       <Text color={textColor} fontSize="sm">
-        🧱 Type de sol : <Badge colorScheme="teal">{zone.soil_type}</Badge>
+        🧱 Type de sol : <Badge colorScheme="brand">{zone.soil_type}</Badge>
       </Text>
 
       <Text color={textColor} fontSize="sm">
@@ -38,7 +38,7 @@ const ZoneCard = ({ zone, onClick }: ZoneCardType) => {
 
       <Text color={textColor} fontSize="sm">
         🚿 Méthode d&apos;irrigation :{' '}
-        <Tag colorScheme="blue">{zone.irrigation_method}</Tag>
+        <Tag colorScheme="brand">{zone.irrigation_method}</Tag>
       </Text>
 
       <Text color={textColor} fontSize="sm">

@@ -2,7 +2,6 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  Box,
   Button,
   FormControl,
   FormLabel,
@@ -267,7 +266,7 @@ const KcProtocolTableModal: React.FC<KcProtocolTableModalProps> = ({
                     </Td>
                     <Td textAlign="center">
                       <Switch
-                        colorScheme="green"
+                        colorScheme="brand"
                         isChecked={row.active}
                         onChange={(e) =>
                           updateRow(i, { active: e.target.checked })
@@ -295,7 +294,7 @@ const KcProtocolTableModal: React.FC<KcProtocolTableModalProps> = ({
             mt={3}
             size="sm"
             variant="outline"
-            colorScheme="blue"
+            colorScheme="brand"
             borderRadius="full"
             onClick={addRow}
           >
@@ -331,7 +330,7 @@ const KcProtocolTableModal: React.FC<KcProtocolTableModalProps> = ({
               </Text>{' '}
               jours
             </Text>
-            <Button colorScheme="blue" borderRadius="lg" onClick={handleSave}>
+            <Button colorScheme="brand" borderRadius="lg" onClick={handleSave}>
               Enregistrer le protocole
             </Button>
           </HStack>

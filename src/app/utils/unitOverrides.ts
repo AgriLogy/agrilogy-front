@@ -81,6 +81,7 @@ const NAME_TO_SENSOR_KEY: Record<string, string> = {
   'precipitation (mm)': 'precipitation_rate',
   'vapor pressure deficit (kpa)': 'pressure_weather',
   'et₀ (mm)': 'et0',
+  'et₀ (mm/h)': 'et0',
   'et0 capteur': 'et0',
   'et0 calculé': 'et0',
   'taux de précipitation (mm/h)': 'precipitation_rate',

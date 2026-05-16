@@ -1,45 +1,52 @@
-import d from './MainContent.module.css';
-import { Box, Text } from '@chakra-ui/react';
-import Zones from './ZonesDashboardCard';
-import useColorModeStyles from '@/app/utils/useColorModeStyles';
-import GoogleMapWeather from '../GoogleMapWeather';
+'use client';
+
+import { Box, SimpleGrid } from '@chakra-ui/react';
+
+import { PageInfoBar } from '@/app/components/layout/PageInfoBar';
 import ElectrovannesList from './ElectrovannesDashboardCard';
+import GoogleMapWeather from '../GoogleMapWeather';
 import WeatherDashboard from './WeatherDashboard';
+import Zones from './ZonesDashboardCard';
+
+const Card = ({ children }: { children: React.ReactNode }) => (
+  <Box
+    bg="app.surface"
+    borderWidth="1px"
+    borderColor="app.border"
+    borderRadius="lg"
+    minH="280px"
+    p={{ base: 3, md: 4 }}
+    display="flex"
+    flexDirection="column"
+  >
+    <Box flex="1" minW={0} minH={0} w="100%">
+      {children}
+    </Box>
+  </Box>
+);
 
 const MainContent = () => {
-  const { bg, textColor, borderColor } = useColorModeStyles();
-  const cardProps = {
-    bg,
-    borderWidth: '1px',
-    borderColor,
-    borderStyle: 'solid' as const,
-  };
   return (
-    <div className={d.container}>
-      <Box {...cardProps} className={d.header}>
-        <Text color={textColor}>Tableau de board</Text>
-      </Box>
-      <Box {...cardProps} className={d.box}>
-        <Box flex="1" minW={0} minH={0} w="100%">
+    <Box px={{ base: 3, md: 4 }} py={{ base: 3, md: 4 }}>
+      <PageInfoBar
+        title="Tableau de bord"
+        subtitle="Vue d'ensemble de la ferme — météo, zones, et état du réseau d'irrigation"
+      />
+      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={{ base: 3, md: 4 }}>
+        <Card>
           <GoogleMapWeather />
-        </Box>
-      </Box>
-      <Box {...cardProps} className={d.box}>
-        <Box flex="1" minW={0} minH={0} w="100%">
+        </Card>
+        <Card>
           <WeatherDashboard />
-        </Box>
-      </Box>
-      <Box {...cardProps} className={d.box}>
-        <Box flex="1" minW={0} minH={0} w="100%">
+        </Card>
+        <Card>
           <Zones />
-        </Box>
-      </Box>
-      <Box {...cardProps} className={d.box}>
-        <Box flex="1" minW={0} minH={0} w="100%">
+        </Card>
+        <Card>
           <ElectrovannesList />
-        </Box>
-      </Box>
-    </div>
+        </Card>
+      </SimpleGrid>
+    </Box>
   );
 };
 

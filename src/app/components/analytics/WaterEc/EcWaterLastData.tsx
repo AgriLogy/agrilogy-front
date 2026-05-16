@@ -48,7 +48,7 @@ const EcWaterLastData = ({ data }: { data: SensorData[] }) => {
         textAlign="center"
         minW="250px"
       >
-        <GiElectricalResistance size={44} color="#38bdf8" />
+        <GiElectricalResistance size={44} color="#4cae70" />
         <Text
           fontWeight="semibold"
           fontSize="xs"
@@ -67,7 +67,7 @@ const EcWaterLastData = ({ data }: { data: SensorData[] }) => {
         <Text fontSize="xs" color={subColor} mt={2}>
           {latest ? `Mesure : ${timeAgo(latest.timestamp)}` : ''}
         </Text>
-        <LastDataAddAlertButton />
+        <LastDataAddAlertButton sensorKey="water_ec" />
       </LastDataPanel>
     </Box>
   );

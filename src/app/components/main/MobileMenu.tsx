@@ -58,9 +58,9 @@ const MobileMenu = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { headerBarBg, headerBarBorder, hoverColor, textColor } =
     useColorModeStyles();
-  const navActiveBg = useColorModeValue('green.50', 'whiteAlpha.100');
-  const navActiveColor = useColorModeValue('green.800', 'green.300');
-  const navActiveBorder = useColorModeValue('green.200', 'whiteAlpha.200');
+  const navActiveBg = useColorModeValue('primary.50', 'whiteAlpha.100');
+  const navActiveColor = useColorModeValue('primary.800', 'primary.300');
+  const navActiveBorder = useColorModeValue('primary.200', 'whiteAlpha.200');
   const cancelRef = useRef<HTMLButtonElement>(null);
   const [username, setUsername] = useState('');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -186,7 +186,7 @@ const MobileMenu = () => {
               <Avatar
                 size="sm"
                 name={username || 'Utilisateur'}
-                bg="green.500"
+                bg="primary.500"
               />
             }
             aria-label="Menu compte"

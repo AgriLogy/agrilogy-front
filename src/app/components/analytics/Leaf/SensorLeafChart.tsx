@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from 'recharts';
-import { Box, Text, Flex, HStack, Button } from '@chakra-ui/react';
+import { Box, Flex, HStack, Button } from '@chakra-ui/react';
 import { FaCamera, FaDownload } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
@@ -144,7 +144,6 @@ const SensorLeafChart = ({
         <HStack spacing={2}>
           <Button
             aria-label="Capture graphique"
-            colorScheme="teal"
             variant="ghost"
             onClick={handleScreenshot}
           >
@@ -152,7 +151,6 @@ const SensorLeafChart = ({
           </Button>
           <Button
             aria-label="Exporter CSV"
-            colorScheme="blue"
             variant="ghost"
             onClick={handleDownloadData}
           >

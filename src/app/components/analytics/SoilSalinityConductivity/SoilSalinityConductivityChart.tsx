@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from 'recharts';
-import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack } from '@chakra-ui/react';
 import { FaCamera, FaDownload } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import { SensorData } from '@/app/types';
@@ -167,14 +167,10 @@ const SoilSalinityConductivityChart = ({
           subtitle="Teneur en sels et conductivité électrique — indicateurs de stress ionique."
         />
         <HStack spacing={2}>
-          <Button onClick={handleScreenshot} variant="ghost" colorScheme="teal">
+          <Button onClick={handleScreenshot} variant="ghost">
             <FaCamera />
           </Button>
-          <Button
-            onClick={handleDownloadData}
-            variant="ghost"
-            colorScheme="blue"
-          >
+          <Button onClick={handleDownloadData} variant="ghost">
             <FaDownload />
           </Button>
         </HStack>

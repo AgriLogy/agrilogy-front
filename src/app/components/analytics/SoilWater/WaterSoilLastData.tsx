@@ -127,7 +127,7 @@ const WaterSoilLastData = ({
           )}
           {soilMedium && (
             <SensorRow
-              icon={<GiWaterDrop size={36} color="#2b6cb0" />}
+              icon={<GiWaterDrop size={36} color="#175e33" />}
               label="Humidité (sonde moyenne)"
               data={soilMedium}
               sensorKey="soil_moisture_medium"
@@ -150,7 +150,7 @@ const WaterSoilLastData = ({
             />
           )}
         </VStack>
-        <LastDataAddAlertButton />
+        <LastDataAddAlertButton sensorKey="soil_moisture_medium" />
       </LastDataPanel>
     </Box>
   );

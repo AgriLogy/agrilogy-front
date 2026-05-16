@@ -1,0 +1,92 @@
+/* Alert page chrome — token-driven so it follows the same light/dark
+   contract as the login page (var(--surface-card), var(--text-primary)…). */
+
+.page {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0 4px 8px 0;
+  color: var(--text-primary);
+}
+
+.headerRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--surface-card);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme='dark'] .headerRow {
+  background: var(--surface-elevated);
+}
+
+.title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.tableCard {
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--surface-card);
+  padding: 0.5rem 0.5rem 0.25rem;
+  overflow: hidden;
+}
+
+[data-theme='dark'] .tableCard {
+  background: var(--surface-elevated);
+}
+
+.empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.label {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.input {
+  background: var(--surface-card);
+  color: var(--text-primary);
+}
+
+[data-theme='dark'] .input {
+  background: var(--surface-elevated);
+  border-color: var(--border-subtle);
+}
+
+.thresholdHint {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.triggeredTag {
+  font-weight: 600;
+}

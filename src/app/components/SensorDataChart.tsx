@@ -16,6 +16,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import ChartAlertOverlay from './alert/ChartAlertOverlay';
 import { SensorData } from '../data/dashboard/data';
 import EmptyBox from './common/EmptyBox';
 import UnifiedTooltip from './common/UnifiedTooltip';
@@ -40,7 +41,6 @@ import {
   yAxisLabelInsideLeft,
   yAxisLabelInsideRight,
 } from '@/app/utils/chartAxisConfig';
-// import { calculateET0 } from "../data/dashboard/calculateET0";
 
 interface SensorDataChartProps {
   data: SensorData[];
@@ -71,7 +71,7 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
   const solarUnit = resolveAxisUnit('solar_radiation');
   const et0Unit = resolveAxisUnit('et0');
 
-  const chartColor = useColorModeValue('#4A90E2', '#90CDF4');
+  const chartColor = useColorModeValue('#2E924F', '#7ECB98');
   const chartBg = useColorModeValue('white', 'gray.800');
   const { axis, tickFill, grid } = useChartAxisColors();
   const p = useBreakpointValue({ base: 2, md: 4 });
@@ -221,6 +221,8 @@ const SensorDataChart: React.FC<SensorDataChartProps> = ({ data }) => {
             activeDot={activeDotForSeries('#ffc658')}
             hide={!seriesVisible.et0}
           />
+          <ChartAlertOverlay sensorKey="temperature_weather" yAxisId="temp" />
+          <ChartAlertOverlay sensorKey="et0" yAxisId="et0" />
         </LineChart>
       </ResponsiveContainer>
     </Box>

@@ -48,7 +48,7 @@ const CumulPrecipitationLastData = ({ data }: { data: SensorData[] }) => {
         textAlign="center"
         minW="250px"
       >
-        <FaCloudRain size={44} color="#3b82f6" />
+        <FaCloudRain size={44} color="#2e924f" />
         <Text
           fontWeight="semibold"
           fontSize="xs"
@@ -67,7 +67,7 @@ const CumulPrecipitationLastData = ({ data }: { data: SensorData[] }) => {
         <Text fontSize="xs" color={subColor} mt={2}>
           {latest ? `Mesure : ${timeAgo(latest.timestamp)}` : ''}
         </Text>
-        <LastDataAddAlertButton />
+        <LastDataAddAlertButton sensorKey="precipitation_rate" />
       </LastDataPanel>
     </Box>
   );

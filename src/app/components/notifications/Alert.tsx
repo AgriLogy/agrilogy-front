@@ -51,7 +51,7 @@ const Alert: React.FC<AlertProps> = ({
         <Text fontWeight="bold" fontSize="xl" color={textColor}>
           {name}
         </Text>
-        <Badge colorScheme="blue" fontSize="sm" p={2}>
+        <Badge colorScheme="brand" fontSize="sm" p={2}>
           {typeLabels || type}
         </Badge>
       </Box>
@@ -63,9 +63,9 @@ const Alert: React.FC<AlertProps> = ({
         </Text>
         <Text color="gray.600">
           <strong>Condition:</strong>{' '}
-          {condition == '>'
+          {condition === '>'
             ? 'Supérieur'
-            : condition == '<'
+            : condition === '<'
               ? 'Inférieur'
               : 'Égal'}{' '}
           à {condition_nbr}

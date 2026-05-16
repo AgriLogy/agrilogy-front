@@ -1,131 +1,94 @@
-import React, { useEffect, useState } from 'react';
-import { Box, HStack, Text, useColorModeValue } from '@chakra-ui/react';
-import s from '@/app/styles/style.module.css';
-import useColorModeStyles from '@/app/utils/useColorModeStyles';
-import DateRangePicker from '../analytics/DateRangePicker';
-import api from '@/app/lib/api';
-import getActiveGraphs, {
-  ActiveGraphResponse,
-} from '@/app/utils/getActiveGraphs';
+'use client';
 
-// Soil-specific components
-import WaterSoilMain from '../analytics/SoilWater/WaterSoilMain';
-import PhSoilMain from '../analytics/SoilPh/PhSoilMain';
-import SoilSalinityConductivityMain from '../analytics/SoilSalinityConductivity/SoilSalinityConductivityMain';
-import SoilConductivityIrrigationMain from '../analytics/SoilConductivityIrrigation/SoilConductivityIrrigationMain';
-import NpkMain from '../analytics/npk/NpkMain';
-import SoilTemperatureMain from '../analytics/SoilTemperature/SoilTemperatureMain';
+import { Box, Stack } from '@chakra-ui/react';
+
 import ZoneNotificationBell from '@/app/components/common/ZoneNotificationBell';
+import { ChartDateRangeControl } from '@/app/components/layout/ChartDateRangeControl';
+import { ChartSection } from '@/app/components/layout/ChartSection';
+import { PageInfoBar } from '@/app/components/layout/PageInfoBar';
+import { ZoneSelect } from '@/app/components/layout/ZoneSelect';
+import { pageSubtitle } from '@/app/components/layout/pageSubtitle';
+import { useAnalyticsHeader } from '@/app/components/layout/useAnalyticsHeader';
+
+import NpkMain from '../analytics/npk/NpkMain';
+import PhSoilMain from '../analytics/SoilPh/PhSoilMain';
+import SoilConductivityIrrigationMain from '../analytics/SoilConductivityIrrigation/SoilConductivityIrrigationMain';
+import SoilSalinityConductivityMain from '../analytics/SoilSalinityConductivity/SoilSalinityConductivityMain';
+import SoilTemperatureMain from '../analytics/SoilTemperature/SoilTemperatureMain';
+import WaterSoilMain from '../analytics/SoilWater/WaterSoilMain';
 
 const SoilMain = () => {
-  const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
-  const [selectedZone, setSelectedZone] = useState<number | null>(null);
-  const [activeGraph, setActiveGraph] = useState<ActiveGraphResponse | null>(
-    null
-  );
-
-  const { bg, textColor } = useColorModeStyles();
-  const [startDate, setStartDate] = useState<string>('');
-  const [endDate, setEndDate] = useState<string>(
-    new Date().toISOString().split('T')[0]
-  );
-
-  const filters = { startDate, endDate, selectedZone };
-
-  useEffect(() => {
-    const fetchZones = async () => {
-      try {
-        const res = await api.get('/api/zones-names-per-user/');
-        setZones(res.data || []);
-        if (res.data.length > 0) setSelectedZone(res.data[0].id);
-      } catch (error) {
-        console.error('Failed to fetch zones', error);
-      }
-    };
-    fetchZones();
-  }, []);
-
-  useEffect(() => {
-    if (selectedZone !== null) {
-      getActiveGraphs(selectedZone).then(setActiveGraph);
-    }
-  }, [selectedZone]);
+  const {
+    zones,
+    selectedZone,
+    setSelectedZone,
+    zoneName,
+    range,
+    setRange,
+    activeGraph,
+    filters,
+  } = useAnalyticsHeader();
 
   return (
-    <div className={s.container}>
-      <Box bg={bg} className={s.header}>
-        <HStack spacing={3} flexWrap="wrap" alignItems="center">
-          <Text color={textColor}>Données sur le sol du </Text>
-          <select
-            value={selectedZone ?? ''}
-            onChange={(e) => setSelectedZone(Number(e.target.value))}
-            style={{
-              borderRadius: '2px',
-              padding: '4px',
-              color: useColorModeValue('black', 'white'),
-              backgroundColor: useColorModeValue('white', '#2D3748'),
-              border: `1px solid ${useColorModeValue('black', 'white')}`,
-            }}
-          >
-            {zones.map((zone) => (
-              <option key={zone.id} value={zone.id}>
-                {zone.name}
-              </option>
-            ))}
-          </select>
-          {selectedZone != null && (
+    <Box px={{ base: 3, md: 4 }} py={{ base: 3, md: 4 }}>
+      <PageInfoBar
+        title="Données sur le sol"
+        subtitle={pageSubtitle({
+          zoneName,
+          startDate: range.startDate,
+          endDate: range.endDate,
+        })}
+        zoneControl={
+          <ZoneSelect
+            zones={zones}
+            value={selectedZone}
+            onChange={setSelectedZone}
+          />
+        }
+        dateRange={<ChartDateRangeControl value={range} onChange={setRange} />}
+        actions={
+          selectedZone != null ? (
             <ZoneNotificationBell
               zoneId={selectedZone}
-              zoneName={
-                zones.find((z) => z.id === selectedZone)?.name ?? 'Zone'
-              }
+              zoneName={zoneName ?? 'Zone'}
             />
-          )}
-        </HStack>
-      </Box>
+          ) : null
+        }
+      />
 
-      <Box bg={bg} className={s.header} mt={0} mb={0}>
-        <DateRangePicker
-          setStartDate={setStartDate}
-          setEndDate={setEndDate}
-          zones={zones}
-          selectedZone={selectedZone}
-          setSelectedZone={setSelectedZone}
-        />
-      </Box>
-
-      {activeGraph?.soil_irrigation_status && (
-        <Box bg={bg} className={`${s.box} ${s.wide}`}>
-          <WaterSoilMain filters={filters} />
-        </Box>
-      )}
-      {activeGraph?.soil_temperature_status && (
-        <Box bg={bg} className={`${s.box} ${s.wide}`}>
-          <SoilTemperatureMain filters={filters} />
-        </Box>
-      )}
-      {activeGraph?.soil_ph_status && (
-        <Box bg={bg} className={`${s.box} ${s.wide}`}>
-          <PhSoilMain filters={filters} />
-        </Box>
-      )}
-
-      {activeGraph?.soil_conductivity_status && (
-        <Box bg={bg} className={`${s.box} ${s.wide}`}>
-          <SoilSalinityConductivityMain filters={filters} />
-        </Box>
-      )}
-      {activeGraph?.soil_moisture_status && (
-        <Box bg={bg} className={`${s.box} ${s.wide}`}>
-          <SoilConductivityIrrigationMain filters={filters} />
-        </Box>
-      )}
-      {activeGraph?.npk_status && (
-        <Box bg={bg} className={`${s.box} ${s.wide}`}>
-          <NpkMain filters={filters} />
-        </Box>
-      )}
-    </div>
+      <Stack spacing={{ base: 3, md: 4 }} minW={0}>
+        {activeGraph?.soil_irrigation_status && (
+          <ChartSection>
+            <WaterSoilMain filters={filters} />
+          </ChartSection>
+        )}
+        {activeGraph?.soil_temperature_status && (
+          <ChartSection>
+            <SoilTemperatureMain filters={filters} />
+          </ChartSection>
+        )}
+        {activeGraph?.soil_ph_status && (
+          <ChartSection>
+            <PhSoilMain filters={filters} />
+          </ChartSection>
+        )}
+        {activeGraph?.soil_conductivity_status && (
+          <ChartSection>
+            <SoilSalinityConductivityMain filters={filters} />
+          </ChartSection>
+        )}
+        {activeGraph?.soil_moisture_status && (
+          <ChartSection>
+            <SoilConductivityIrrigationMain filters={filters} />
+          </ChartSection>
+        )}
+        {activeGraph?.npk_status && (
+          <ChartSection>
+            <NpkMain filters={filters} />
+          </ChartSection>
+        )}
+      </Stack>
+    </Box>
   );
 };
 

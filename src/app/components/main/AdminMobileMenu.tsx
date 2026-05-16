@@ -1,189 +1,157 @@
 'use client';
-import React, { useState, useRef, useEffect } from 'react';
-import {
-  Flex,
-  IconButton,
-  Link,
-  AlertDialog,
-  AlertDialogOverlay,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogBody,
-  AlertDialogFooter,
-  Button,
-  useColorMode,
-  Drawer,
-  DrawerBody,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  useDisclosure,
-} from '@chakra-ui/react';
-import { HamburgerIcon, MoonIcon, SunIcon } from '@chakra-ui/icons';
-import { FaUser, FaHome } from 'react-icons/fa';
-import { IoLogOut } from 'react-icons/io5';
-import Image from 'next/image';
-import logo from '../../public/logo.png';
-import useColorModeStyles from '@/app/utils/useColorModeStyles';
-import api from '@/app/lib/api';
-import { useRouter } from 'next/navigation';
 
-const MobileMenu = () => {
+import {
+  AuditOutlined,
+  DashboardOutlined,
+  LogoutOutlined,
+  MenuOutlined,
+  MoonOutlined,
+  SunOutlined,
+  TeamOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import { App, Button, Drawer, Dropdown, Flex, Menu } from 'antd';
+import { useColorMode } from '@chakra-ui/react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
+import api from '@/app/lib/api';
+import useColorModeStyles from '@/app/utils/useColorModeStyles';
+import logo from '../../public/logo.png';
+
+const AdminMobileMenu = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { bg } = useColorModeStyles();
-  const cancelRef = useRef(null);
-  const [username, setUsername] = useState('User');
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { modal } = App.useApp();
   const router = useRouter();
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const handleLogout = () => {
-    localStorage.clear();
-    onClose();
-    router.push('/login');
-  };
+  const [open, setOpen] = useState(false);
+  const [username, setUsername] = useState('User');
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await api.get('/api/header/');
-
-        setUsername(response.data.first_name);
-      } catch (error) {
-        console.error('[MobileMenu] Error fetching user data.');
-      }
-    };
-    fetchUser();
+    api
+      .get('/api/header/')
+      .then((res) => {
+        if (res.data?.username) setUsername(res.data.username);
+      })
+      .catch(() => {
+        /* keep default */
+      });
   }, []);
+
+  const askLogout = () => {
+    setOpen(false);
+    modal.confirm({
+      title: 'Confirmer la déconnexion',
+      content: 'Êtes-vous sûr de vouloir vous déconnecter ?',
+      okText: 'Se déconnecter',
+      okType: 'danger',
+      cancelText: 'Annuler',
+      onOk: () => {
+        localStorage.clear();
+        router.push('/login');
+      },
+    });
+  };
 
   return (
     <Flex
-      as="header"
-      justify="space-between"
       align="center"
-      px={4}
-      height="60px"
-      bg={bg}
-      boxShadow="sm"
+      justify="space-between"
+      style={{ background: bg, height: '100%', padding: '0 12px' }}
     >
-      {/* Logo */}
-      <Link href="/">
-        <Image
-          height={40}
-          width={100}
-          src={logo}
-          alt="Logo"
-          priority
-          style={{ objectFit: 'contain' }}
-        />
+      <Link href="/" aria-label="Accueil">
+        <Image height={32} src={logo} alt="Logo" priority />
       </Link>
 
-      <Flex justify="space-between" bg={bg}>
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            icon={<FaUser />}
-            aria-label="Profile"
-            variant="ghost"
-          />
-          <MenuList>
-            <MenuItem>Bonjour {username}</MenuItem>
-            <MenuItem
-              onClick={onOpen}
-              icon={<IoLogOut style={{ transform: 'scaleX(-1)' }} />}
-            >
-              Déconnexion
-            </MenuItem>
-          </MenuList>
-        </Menu>
-        {/* Burger Menu */}
-        <IconButton
-          icon={<HamburgerIcon />}
-          aria-label="Open Menu"
-          variant="ghost"
-          onClick={() => setIsDrawerOpen(true)}
+      <Flex align="center" gap={8}>
+        <Dropdown
+          trigger={['click']}
+          menu={{
+            items: [
+              { key: 'hi', label: `Bonjour ${username}`, disabled: true },
+              { type: 'divider' },
+              {
+                key: 'logout',
+                label: 'Déconnexion',
+                icon: <LogoutOutlined />,
+                danger: true,
+                onClick: askLogout,
+              },
+            ],
+          }}
+        >
+          <Button type="text" icon={<UserOutlined />} aria-label="Profil" />
+        </Dropdown>
+        <Button
+          type="text"
+          aria-label="Ouvrir le menu"
+          icon={<MenuOutlined />}
+          onClick={() => setOpen(true)}
         />
       </Flex>
 
-      {/* Full-Screen Drawer Menu */}
       <Drawer
-        isOpen={isDrawerOpen}
+        title="Menu"
         placement="right"
-        onClose={() => setIsDrawerOpen(false)}
+        open={open}
+        onClose={() => setOpen(false)}
+        width={280}
       >
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerCloseButton />
-          <DrawerHeader>Menu</DrawerHeader>
-          <DrawerBody>
-            <Flex direction="column" gap={4}>
-              <Link href="/">
-                <Button
-                  leftIcon={<FaHome />}
-                  variant="ghost"
-                  justifyContent="flex-start"
-                  w="full"
-                >
-                  Tableau de board
-                </Button>
-              </Link>
-              <Button
-                leftIcon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-                onClick={toggleColorMode}
-                variant="ghost"
-                justifyContent="flex-start"
-              >
-                {colorMode === 'light' ? 'Mode sombre' : 'Mode sombre'}
-              </Button>
-              <Button
-                leftIcon={<IoLogOut />}
-                colorScheme="red"
-                onClick={onClose}
-                ref={cancelRef}
-                variant="ghost"
-                justifyContent="flex-start"
-              >
-                Déconnexion
-              </Button>
-            </Flex>
-          </DrawerBody>
-        </DrawerContent>
+        <Menu
+          mode="inline"
+          style={{ borderInlineEnd: 'none' }}
+          items={[
+            {
+              key: 'dashboard',
+              icon: <DashboardOutlined />,
+              label: 'Tableau de bord',
+              onClick: () => {
+                router.push('/admin');
+                setOpen(false);
+              },
+            },
+            {
+              key: 'users',
+              icon: <TeamOutlined />,
+              label: 'Utilisateurs',
+              onClick: () => {
+                router.push('/admin/users');
+                setOpen(false);
+              },
+            },
+            {
+              key: 'affirmations',
+              icon: <AuditOutlined />,
+              label: 'Affirmations manager',
+              onClick: () => {
+                router.push('/admin/affirmations');
+                setOpen(false);
+              },
+            },
+            { type: 'divider' },
+            {
+              key: 'theme',
+              icon: colorMode === 'light' ? <MoonOutlined /> : <SunOutlined />,
+              label: colorMode === 'light' ? 'Mode sombre' : 'Mode clair',
+              onClick: () => {
+                toggleColorMode();
+                setOpen(false);
+              },
+            },
+            {
+              key: 'logout',
+              icon: <LogoutOutlined />,
+              danger: true,
+              label: 'Déconnexion',
+              onClick: askLogout,
+            },
+          ]}
+        />
       </Drawer>
-
-      {/* Logout Confirmation Dialog */}
-      <AlertDialog
-        isOpen={isOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={onClose}
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Confirmer la déconnexion
-            </AlertDialogHeader>
-
-            <AlertDialogBody>
-              Êtes-vous sûr de vouloir vous déconnecter ?
-            </AlertDialogBody>
-
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose}>
-                Annuler
-              </Button>
-              <Button colorScheme="red" onClick={handleLogout} ml={3}>
-                Se déconnecter
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
     </Flex>
   );
 };
 
-export default MobileMenu;
+export default AdminMobileMenu;

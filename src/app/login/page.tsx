@@ -1,28 +1,18 @@
-'use client';
-import { Flex, useColorModeValue } from '@chakra-ui/react';
 import NonAuthNavbar from '../components/NonAuthNavbar ';
-import LoginBox from '../components/LoginBox ';
+import LoginBox from './LoginBox';
 
-const LoginPage = () => {
-  const bgGradient = useColorModeValue(
-    'linear(to-b, #C4DAD2, green.200)',
-    'linear(to-b, #6A9C89, gray.700)'
-  );
+const NAVBAR_HEIGHT_PX = 82;
 
+export default function LoginPage() {
   return (
     <>
       <NonAuthNavbar />
-      <Flex
-        align="center"
-        justify="center"
-        height="calc(100vh - 82px)"
-        px={{ base: 4, md: 0 }}
-        bgGradient={bgGradient}
+      <main
+        className="flex items-center justify-center px-4 md:px-0 bg-neutral-50 dark:bg-neutral-900"
+        style={{ minHeight: `calc(100vh - ${NAVBAR_HEIGHT_PX}px)` }}
       >
         <LoginBox />
-      </Flex>
+      </main>
     </>
   );
-};
-
-export default LoginPage;
+}

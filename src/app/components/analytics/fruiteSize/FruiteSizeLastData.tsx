@@ -66,7 +66,7 @@ const FruiteSizeLastData = ({ data }: { data: SensorData[] }) => {
         <Text fontSize="xs" color={subColor} mt={2}>
           {latest ? `Mesure : ${timeAgo(latest.timestamp)}` : ''}
         </Text>
-        <LastDataAddAlertButton />
+        <LastDataAddAlertButton sensorKey="fruit_size" />
       </LastDataPanel>
     </Box>
   );

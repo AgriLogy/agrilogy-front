@@ -8,6 +8,7 @@ services:
         NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN: pk.eyJ1IjoiYWdyZyIsImEiOiJjbW5ianloY2IwdzRyMm9wYjFjMTZrcmI1In0.8qR-z1_SzULfE92ZoGozlA
         NEXT_PUBLIC_API_URL: https://agrilogy-pi.com
     image: agrifront:v1.0
+    env_file: .env.local
     environment:
       - HOST=0.0.0.0
       - PORT=3000
