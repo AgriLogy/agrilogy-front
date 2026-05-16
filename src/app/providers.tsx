@@ -12,7 +12,6 @@ import { EmotionCacheProvider } from './EmotionCache';
 import { theme } from './theme';
 import { antdTheme } from './styles/antdTheme';
 import PeriodicZoneNotificationScheduler from './components/main/PeriodicZoneNotificationScheduler';
-import { ChatProvider } from './components/agryChatBot/ChatProvider';
 
 /**
  * Bridges Chakra's color mode to:
