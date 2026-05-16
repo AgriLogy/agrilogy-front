@@ -2,7 +2,7 @@ name: Deploy Frontend to DigitalOcean
 
 on:
   push:
-    branches: [main]
+    branches: [alpha]
 
 jobs:
   deploy:
@@ -17,5 +17,7 @@ jobs:
           key: ${{ secrets.DO_SSH_KEY }}
           script: |
             cd /root/agrilogy-front
-            git pull origin main
+            git fetch origin
+            git checkout alpha
+            git reset --hard origin/alpha
             docker compose up -d --build --no-deps agryfront
