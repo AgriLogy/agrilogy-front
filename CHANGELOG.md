@@ -1,3 +1,18 @@
+# [1.3.0](https://github.com/AgriLogy/agrilogy-front/compare/v1.2.3...v1.3.0) (2026-05-16)
+
+
+### Bug Fixes
+
+* deployement errrors ([e14a29a](https://github.com/AgriLogy/agrilogy-front/commit/e14a29afb0197c763df0c5b74494935ece20b592))
+* Dockerfile ([bad8a84](https://github.com/AgriLogy/agrilogy-front/commit/bad8a84ac2e8a18a82ecc8ad0ce2e9c430e19308))
+* **lint:** drop unused ChatProvider import in providers.tsx ([de94cc0](https://github.com/AgriLogy/agrilogy-front/commit/de94cc0c7ac23b1d91c49a1bd3f2e65baba086a5))
+* navbar and notification error fixed ([c13fea9](https://github.com/AgriLogy/agrilogy-front/commit/c13fea92c685ff4108724d0f796c0a1fb9dafe87))
+
+
+### Features
+
+* add agrilogy chat bot ([#21](https://github.com/AgriLogy/agrilogy-front/issues/21)) ([2bd3dc2](https://github.com/AgriLogy/agrilogy-front/commit/2bd3dc23141e28059d5219d57707d94ada65e1be))
+
 ## [1.2.3](https://github.com/AgriLogy/agrilogy-front/compare/v1.2.2...v1.2.3) (2026-05-16)
 
 ## [1.2.2](https://github.com/AgriLogy/agrilogy-front/compare/v1.2.1...v1.2.2) (2026-05-16)
