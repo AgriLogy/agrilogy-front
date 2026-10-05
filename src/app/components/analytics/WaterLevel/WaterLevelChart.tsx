@@ -1,25 +1,25 @@
 import React, { useMemo, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import {
-  LineChart,
+  Area,
+  CartesianGrid,
+  ComposedChart,
+  Legend,
   Line,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  CartesianGrid,
 } from 'recharts';
 import { Box, Flex, Button, HStack } from '@chakra-ui/react';
 import { FaDownload, FaCamera } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
-import { SensorData } from '@/app/types';
 import ChartPanelHeading from '../../common/ChartPanelHeading';
 import ChartStateView from '../../common/ChartStateView';
 import UnifiedTooltip from '../../common/UnifiedTooltip';
 import useColorModeStyles from '@/app/utils/useColorModeStyles';
 import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
-import { resolveAxisUnit } from '@/app/utils/unitOverrides';
 import { useChartAxisColors } from '@/app/utils/useChartAxisColors';
 import ChartLegend from '../../common/ChartLegend';
 import {
@@ -36,14 +36,28 @@ import {
   yAxisLabelInsideLeft,
 } from '@/app/utils/chartAxisConfig';
 
-const STROKE = '#3182ce';
+export interface BasinChartRow {
+  timestamp: string;
+  /** Raw captor distance D(t) in sensor units. */
+  distance: number;
+  waterHeight: number;
+  fillPct: number;
+  volumeL: number;
+}
+
+const STROKE_VOL = '#2563eb';
+const STROKE_PCT = '#0ea5e9';
 
 const WaterLevelChart = ({
   data,
   loading,
+  vMaxL,
+  hasGeometry,
 }: {
-  data: SensorData[];
+  data: BasinChartRow[];
   loading: boolean;
+  vMaxL: number | null;
+  hasGeometry: boolean;
 }) => {
   const t = useTranslations();
   const chartRef = useRef<HTMLDivElement>(null);
@@ -54,8 +68,8 @@ const WaterLevelChart = ({
       addTimeMsToChartRows(
         data.map((item) => ({
           name: item.timestamp,
-          water_level: item.value,
-          default_unit: item.default_unit,
+          volumeL: item.volumeL,
+          fillPct: item.fillPct,
         })),
         'name'
       ),
@@ -70,13 +84,12 @@ const WaterLevelChart = ({
     tickFill
   );
   const yProps = mergeAxisTheme(getDefaultYAxisProps(1), axis, tickFill);
-  const unit = resolveAxisUnit('water_level', data[0]?.default_unit);
 
   const handleScreenshot = async () => {
     if (chartRef.current) {
       const canvas = await html2canvas(chartRef.current);
       const link = document.createElement('a');
-      link.download = 'water_level_chart.png';
+      link.download = 'basin_volume_chart.png';
       link.href = canvas.toDataURL();
       link.click();
     }
@@ -84,13 +97,13 @@ const WaterLevelChart = ({
 
   const handleDownloadData = () => {
     const csv =
-      'timestamp,water_level\n' +
-      chartData.map((d) => `${d.name},${d.water_level}`).join('\n');
+      'timestamp,volume_L,fill_pct\n' +
+      data.map((d) => `${d.timestamp},${d.volumeL},${d.fillPct}`).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'water_level_data.csv';
+    link.download = 'basin_volume_data.csv';
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -133,7 +146,7 @@ const WaterLevelChart = ({
         height={CHART_PLOT_HEIGHT_PX}
       >
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart
+          <ComposedChart
             data={chartData}
             margin={{
               top: 12,
@@ -144,25 +157,57 @@ const WaterLevelChart = ({
           >
             <CartesianGrid {...themedCartesianGrid(grid)} />
             <XAxis {...xAxisProps} />
-            <YAxis {...yProps} label={yAxisLabelInsideLeft(unit, tickFill)} />
+            <YAxis
+              yAxisId="vol"
+              {...yProps}
+              label={yAxisLabelInsideLeft('L', tickFill)}
+            />
+            <YAxis
+              yAxisId="pct"
+              orientation="right"
+              domain={[0, 100]}
+              tickFormatter={(v: number) => `${v}%`}
+            />
             <Tooltip content={<UnifiedTooltip valuesAlreadyCalibrated />} />
             <Legend
               wrapperStyle={defaultLegendWrapperStyle}
               content={<ChartLegend />}
             />
-            <Line
+            <Area
+              yAxisId="vol"
               type="monotone"
-              dataKey="water_level"
-              name={`${t('analytics.waterLevel.seriesName')} (${unit})`}
-              stroke={STROKE}
+              dataKey="volumeL"
+              name={`${t('analytics.waterLevel.volumeSeries')} (L)`}
+              stroke={STROKE_VOL}
+              fill={STROKE_VOL}
+              fillOpacity={0.25}
               strokeWidth={2.25}
-              strokeLinecap="round"
-              strokeLinejoin="round"
               dot={false}
-              activeDot={activeDotForSeries(STROKE)}
+              activeDot={activeDotForSeries(STROKE_VOL)}
               isAnimationActive={false}
             />
-          </LineChart>
+            <Line
+              yAxisId="pct"
+              type="monotone"
+              dataKey="fillPct"
+              name={`${t('analytics.waterLevel.fillSeries')} (%)`}
+              stroke={STROKE_PCT}
+              strokeWidth={2}
+              strokeDasharray="6 3"
+              dot={false}
+              activeDot={activeDotForSeries(STROKE_PCT)}
+              isAnimationActive={false}
+            />
+            {vMaxL != null && hasGeometry && (
+              <ReferenceLine
+                yAxisId="vol"
+                y={vMaxL}
+                stroke="#e53e3e"
+                strokeDasharray="4 4"
+                label={{ value: 'V_max', fontSize: 11, fill: '#e53e3e' }}
+              />
+            )}
+          </ComposedChart>
         </ResponsiveContainer>
       </ChartStateView>
     </Box>
