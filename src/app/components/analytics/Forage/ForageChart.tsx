@@ -48,11 +48,14 @@ const ForageChart = ({
   loading,
   highM,
   lowM,
+  playTimestamp,
 }: {
   data: ForageChartRow[];
   loading: boolean;
   highM: number | null;
   lowM: number | null;
+  /** Playhead timestamp: vertical marker while the animation plays. */
+  playTimestamp?: string | null;
 }) => {
   const t = useTranslations();
   const chartRef = useRef<HTMLDivElement>(null);
@@ -172,6 +175,15 @@ const ForageChart = ({
               activeDot={activeDotForSeries(STROKE_DEPTH)}
               isAnimationActive={false}
             />
+            {playTimestamp != null && (
+              <ReferenceLine
+                yAxisId="depth"
+                x={playTimestamp}
+                stroke="#805ad5"
+                strokeWidth={2}
+                label={{ value: '▶', fontSize: 12, fill: '#805ad5' }}
+              />
+            )}
             {highM != null && (
               <ReferenceLine
                 yAxisId="depth"

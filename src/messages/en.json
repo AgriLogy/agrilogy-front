@@ -775,6 +775,8 @@
       "forageHigh": "High threshold (m)",
       "forageLow": "Low threshold (m)",
       "saveForage": "Save",
+      "play": "Play",
+      "pause": "Pause",
       "forageConfigHint": "Cylinder Ø × H + high/low thresholds (kept in this browser)."
     },
     "waterFlow": {

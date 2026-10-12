@@ -775,6 +775,8 @@
       "forageHigh": "العتبة العليا (م)",
       "forageLow": "العتبة الدنيا (م)",
       "saveForage": "حفظ",
+      "play": "تشغيل",
+      "pause": "إيقاف",
       "forageConfigHint": "أسطوانة Ø × H + العتبتين (محفوظة في المتصفح)."
     },
     "waterFlow": {

@@ -161,6 +161,10 @@ const ForageCylinder = ({
         else if (mat) mat.dispose();
       });
       renderer.dispose();
+      // Release the GL context synchronously: without this, rapid
+      // rebuilds (forage playback ticks) exhaust the browser's ~16
+      // contexts and the oldest canvas goes black.
+      renderer.forceContextLoss();
       renderer.domElement.remove();
     };
   }, [diameterM, totalDepthM, depthM, highM, lowM]);

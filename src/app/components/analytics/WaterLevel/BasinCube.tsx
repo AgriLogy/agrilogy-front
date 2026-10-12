@@ -159,6 +159,8 @@ const BasinCube = ({
         else if (mat) mat.dispose();
       });
       renderer.dispose();
+      // Release the GL context synchronously so rebuilds never exhaust
+      // the browser's context budget (see ForageCylinder).
       renderer.domElement.remove();
     };
   }, [lengthM, widthM, hTotM, hM, hMaxM, fillPct]);

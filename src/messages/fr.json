@@ -775,6 +775,8 @@
       "forageHigh": "Seuil haut (m)",
       "forageLow": "Seuil bas (m)",
       "saveForage": "Enregistrer",
+      "play": "Lecture",
+      "pause": "Pause",
       "forageConfigHint": "Cylindre Ø × H + seuils haut/bas (conservé dans ce navigateur)."
     },
     "waterFlow": {

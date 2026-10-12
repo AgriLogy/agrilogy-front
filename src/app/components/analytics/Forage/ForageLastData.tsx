@@ -6,11 +6,11 @@ import { useUnitOverridesRevision } from '@/app/hooks/useUnitOverridesRevision';
 import { formatNumber } from '@/app/utils/formatNumber';
 import {
   depthToForagePoint,
-  rawToMetres,
   resolveForage,
   type ForageGeometry,
   type ForageStatus,
 } from '@/app/utils/forageLevel';
+import type { ForageChartRow } from './ForageChart';
 import LastDataPanel from '../../common/LastDataPanel';
 import dynamic from 'next/dynamic';
 
@@ -66,9 +66,15 @@ const Row = ({
 
 const ForageLastData = ({
   data,
+  rows,
+  activeIndex,
   forage,
 }: {
   data: SensorData[];
+  /** Full chart series; the panel follows rows[activeIndex] while playing. */
+  rows: ForageChartRow[];
+  /** Playhead index into rows (null = latest reading). */
+  activeIndex: number | null;
   forage: ForageGeometry;
 }) => {
   const t = useTranslations();
@@ -84,10 +90,23 @@ const ForageLastData = ({
   const titleColor = useColorModeValue('gray.600', 'gray.300');
   const dimColor = useColorModeValue('gray.500', 'gray.400');
 
-  const reading = typeof latest?.value === 'number' ? latest.value : null;
+  // While the animation plays, show the playhead row instead of the latest.
+  const activeRow =
+    activeIndex != null && rows[activeIndex] != null
+      ? rows[activeIndex]
+      : (rows[rows.length - 1] ?? null);
+  const rawMatch =
+    activeRow != null
+      ? data.find((d) => d.timestamp === activeRow.timestamp)
+      : null;
+  const reading =
+    rawMatch != null && typeof rawMatch.value === 'number'
+      ? rawMatch.value
+      : typeof latest?.value === 'number'
+        ? latest.value
+        : null;
   // Captor reports D(t) = depth to the water surface, displayed as-is.
-  const depthM =
-    reading === null ? null : rawToMetres(reading, latest?.default_unit);
+  const depthM = activeRow != null ? activeRow.depthM : null;
   const point = depthM === null ? null : depthToForagePoint(depthM, resolved);
 
   const dash = '—';
