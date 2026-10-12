@@ -14,6 +14,11 @@ export type ZoneOption = {
   basin_length_m?: number | null;
   basin_width_m?: number | null;
   basin_height_m?: number | null;
+  /** Borehole (forage) cylinder geometry + thresholds (m). */
+  forage_diameter_m?: number | null;
+  forage_total_depth_m?: number | null;
+  forage_high_m?: number | null;
+  forage_low_m?: number | null;
 };
 
 export type ZoneSelectProps = {
