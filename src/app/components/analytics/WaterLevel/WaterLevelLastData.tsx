@@ -10,13 +10,32 @@ import {
   resolveBasin,
   type BasinGeometryRect,
 } from '@/app/utils/basinVolume';
+import dynamic from 'next/dynamic';
 import LastDataPanel from '../../common/LastDataPanel';
+
+// three.js Canvas touches DOM-bound React internals at import time, so it
+// must load client-side only (Next SSR prerender crashes otherwise).
+const BasinCube = dynamic(() => import('./BasinCube'), {
+  ssr: false,
+  loading: () => (
+    <div
+      style={{
+        width: '100%',
+        height: '190px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#718096',
+        fontSize: '12px',
+      }}
+    >
+      …
+    </div>
+  ),
+});
 
 // Re-exported so WaterLevelMain/StationMain keep importing from here.
 export type BasinGeometry = BasinGeometryRect;
-
-const clamp = (v: number, lo: number, hi: number) =>
-  Math.min(hi, Math.max(lo, v));
 
 const Row = ({
   label,
@@ -58,8 +77,6 @@ const WaterLevelLastData = ({
 
   const valueColor = useColorModeValue('blue.700', 'blue.200');
   const titleColor = useColorModeValue('gray.600', 'gray.300');
-  const tankBorder = useColorModeValue('blue.300', 'blue.600');
-  const tankBg = useColorModeValue('blue.50', 'gray.700');
   const dimColor = useColorModeValue('gray.500', 'gray.400');
 
   const reading = typeof latest?.value === 'number' ? latest.value : null;
@@ -110,51 +127,25 @@ const WaterLevelLastData = ({
           {t('analytics.waterLevel.cardTitle')}
         </Text>
 
-        {/* Rectangle basin visualization (exported to PNG with the chart) */}
+        {/* 3D basin: L x W x H_tot auto-scaled to fit, water from h(t) */}
         <Flex justify="center" my={3} data-basin-visual>
           <Box w="100%" maxW="220px">
-            <Box
-              position="relative"
-              w="100%"
-              h="140px"
-              borderWidth="2px"
-              borderColor={tankBorder}
-              borderRadius="md"
-              bg={tankBg}
-              overflow="hidden"
-            >
-              {/* Max-level line at D_max */}
-              {resolved.hTotM != null &&
-                resolved.hTotM > 0 &&
-                resolved.hMaxM != null && (
-                  <Box
-                    position="absolute"
-                    left={0}
-                    right={0}
-                    top={`${clamp(
-                      (resolved.dMaxM / resolved.hTotM) * 100,
-                      0,
-                      100
-                    )}%`}
-                    borderTopWidth="2px"
-                    borderTopStyle="dashed"
-                    borderTopColor="red.400"
-                  />
-                )}
-              <Box
-                position="absolute"
-                bottom={0}
-                left={0}
-                right={0}
-                h={`${fillPct ?? 0}%`}
-                bgGradient="linear(to-t, blue.500, blue.300)"
-                transition="height 0.4s ease"
+            <Box position="relative" w="100%" h="190px">
+              <BasinCube
+                lengthM={resolved.lengthM}
+                widthM={resolved.widthM}
+                hTotM={resolved.hTotM}
+                hM={waterHeight}
+                hMaxM={resolved.hMaxM}
+                fillPct={fillPct}
               />
               <Flex
                 position="absolute"
-                inset={0}
-                align="center"
+                top={1}
+                left={0}
+                right={0}
                 justify="center"
+                pointerEvents="none"
               >
                 <Text fontSize="md" fontWeight="bold" color={valueColor}>
                   {fillPct !== null ? `${formatNumber(fillPct)}%` : dash}
