@@ -15,8 +15,10 @@ import { useAnalyticsHeader } from '@/app/components/layout/useAnalyticsHeader';
 
 import CumulPrecipitationMain from '../analytics/CumulPrecipitation/CumulPrecipitationMain';
 import EcWaterMain from '../analytics/WaterEc/EcWaterMain';
+import ForageMain from '../analytics/Forage/ForageMain';
 import WaterFlowMain from '../analytics/WaterFlow/WaterFlowMain';
 import PhWaterMain from '../analytics/WaterPh/PhWaterMain';
+import WaterLevelMain from '../analytics/WaterLevel/WaterLevelMain';
 import WaterPressureMain from '../analytics/WaterPressure/WaterPressureMain';
 
 const WaterMain = () => {
@@ -33,6 +35,21 @@ const WaterMain = () => {
     activeGraph,
     filters,
   } = useAnalyticsHeader();
+
+  // Basin / borehole sections show for zones carrying that geometry
+  // (same gating as the station page used to apply).
+  const currentZone = zones.find((z) => z.id === selectedZone);
+  const hasBasin =
+    currentZone?.basin_max_depth_m != null ||
+    currentZone?.basin_area_m2 != null ||
+    currentZone?.basin_length_m != null ||
+    currentZone?.basin_width_m != null ||
+    currentZone?.basin_height_m != null;
+  const hasForage =
+    currentZone?.forage_diameter_m != null ||
+    currentZone?.forage_total_depth_m != null ||
+    currentZone?.forage_high_m != null ||
+    currentZone?.forage_low_m != null;
 
   return (
     <Box px={{ base: 3, md: 4 }} py={{ base: 3, md: 4 }}>
@@ -90,6 +107,35 @@ const WaterMain = () => {
           {activeGraph?.cumulative_precipitation_status && (
             <ChartSection>
               <CumulPrecipitationMain filters={filters} />
+            </ChartSection>
+          )}
+          {hasBasin && (
+            <ChartSection>
+              <WaterLevelMain
+                filters={filters}
+                basin={{
+                  lengthM: currentZone?.basin_length_m,
+                  widthM: currentZone?.basin_width_m,
+                  heightM: currentZone?.basin_height_m,
+                  sensorToMaxM: currentZone?.sensor_mount_offset_m,
+                  maxDepthM: currentZone?.basin_max_depth_m,
+                  areaM2: currentZone?.basin_area_m2,
+                  offsetM: currentZone?.sensor_mount_offset_m,
+                }}
+              />
+            </ChartSection>
+          )}
+          {hasForage && (
+            <ChartSection>
+              <ForageMain
+                filters={filters}
+                forage={{
+                  diameterM: currentZone?.forage_diameter_m,
+                  totalDepthM: currentZone?.forage_total_depth_m,
+                  highM: currentZone?.forage_high_m,
+                  lowM: currentZone?.forage_low_m,
+                }}
+              />
             </ChartSection>
           )}
         </Stack>
